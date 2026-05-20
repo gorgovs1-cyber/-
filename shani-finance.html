@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>שני | Finance</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* ── Dark Green + Royal Gold palette ── */
+  --bg:         #0B1A0F;
+  --bg2:        #112215;
+  --bg3:        #172C1B;
+  --card:       #1A2E1E;
+  --card2:      #213624;
+  --card3:      #0E1F12;
+
+  --border:     rgba(184,152,40,.18);
+  --border2:    rgba(184,152,40,.32);
+
+  --gold:       #D4AF37;
+  --gold-lt:    rgba(212,175,55,.14);
+  --gold-dk:    #A88A1A;
+  --gold-glow:  rgba(212,175,55,.25);
+
+  --hero:       #163D20;
+  --hero2:      #0F2E17;
+
+  --pos:        #5FD87A;
+  --pos-dim:    rgba(95,216,122,.15);
+  --neg:        #FF6B6B;
+  --neg-dim:    rgba(255,107,107,.15);
+  --warn:       #FFB347;
+  --warn-dim:   rgba(255,179,71,.15);
+
+  --text:       #FFFFFF;
+  --text2:      rgba(255,255,255,.78);
+  --muted:      rgba(255,255,255,.48);
+  --muted2:     rgba(255,255,255,.28);
+
+  --r-s: 10px; --r: 16px; --r-l: 22px; --r-xl: 30px;
+  --shadow: 0 2px 12px rgba(0,0,0,.35);
+}
+
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent }
+html { background:var(--bg); overscroll-behavior:none }
+body {
+  font-family:'Sora',sans-serif; direction:rtl;
+  background: linear-gradient(160deg, #0B1A0F 0%, #0E2214 50%, #0B1A0F 100%);
+  color:var(--text); max-width:430px; margin:0 auto;
+  min-height:100dvh; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+
+/* ═══ TOP NAV ═══════════════════════════════════════════ */
+.top-nav {
+  position:fixed; top:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:430px; z-index:200;
+  background: rgba(11,26,15,.94);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+  display:flex; align-items:stretch;
+  padding-top: env(safe-area-inset-top, 0px);
+  height: calc(48px + env(safe-area-inset-top, 0px));
+  overflow-x:auto; scrollbar-width:none;
+}
+.top-nav::-webkit-scrollbar { display:none }
+
+.tnb {
+  flex-shrink:0; display:flex; align-items:center; gap:5px;
+  padding:0 15px;
+  border:none; background:transparent;
+  color:var(--muted); font-family:'Sora',sans-serif;
+  font-size:11.5px; font-weight:600; cursor:pointer;
+  border-bottom:2.5px solid transparent;
+  transition:all .18s; white-space:nowrap; letter-spacing:.2px;
+}
+.tnb:active { opacity:.7 }
+.tnb.on {
+  color:var(--gold);
+  border-bottom-color:var(--gold);
+  text-shadow: 0 0 12px var(--gold-glow);
+}
+.tnb .ticon { font-size:14px; line-height:1 }
+
+/* ═══ SCREENS ════════════════════════════════════════════ */
+.screen {
+  display:none;
+  padding-top: calc(48px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  min-height:100dvh;
+  animation: fadeUp .2s ease both;
+}
+.screen.active { display:block }
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(5px) }
+  to   { opacity:1; transform:translateY(0) }
+}
+
+/* ═══ HERO SECTION ═══════════════════════════════════════ */
+.hero {
+  background: linear-gradient(150deg, var(--hero) 0%, var(--hero2) 100%);
+  padding:18px 20px 22px; position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; width:220px; height:220px; border-radius:50%;
+  background:rgba(212,175,55,.06); top:-80px; left:-60px; pointer-events:none;
+}
+.hero::after {
+  content:''; position:absolute; width:140px; height:140px; border-radius:50%;
+  background:rgba(212,175,55,.04); bottom:-40px; right:-30px; pointer-events:none;
+}
+.hero-top {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  margin-bottom:16px; position:relative; z-index:1;
+}
+.hero-greeting { font-size:18px; font-weight:700; color:#fff; letter-spacing:-.2px }
+.hero-date { font-size:11px; color:rgba(255,255,255,.5); margin-top:3px }
+.backup-btn {
+  background:rgba(212,175,55,.15); border:1px solid rgba(212,175,55,.3);
+  color:var(--gold); font-family:'Sora',sans-serif; font-size:10px; font-weight:700;
+  padding:7px 13px; border-radius:20px; cursor:pointer; white-space:nowrap;
+  letter-spacing:.3px;
+}
+.hero-lbl {
+  font-size:10px; font-weight:700; color:rgba(255,255,255,.5);
+  letter-spacing:1.4px; text-transform:uppercase;
+  margin-bottom:6px; position:relative; z-index:1;
+}
+.hero-balance {
+  font-size:50px; font-weight:900; letter-spacing:-3px; line-height:1;
+  font-variant-numeric:tabular-nums; position:relative; z-index:1;
+  margin-bottom:8px;
+}
+.hero-balance.pos { color:var(--pos); text-shadow:0 0 30px rgba(95,216,122,.3) }
+.hero-balance.neg { color:var(--neg); text-shadow:0 0 30px rgba(255,107,107,.3) }
+.hero-sub {
+  font-size:12px; color:rgba(255,255,255,.5); position:relative; z-index:1;
+  line-height:1.6;
+}
+.hero-sub b { color:rgba(255,255,255,.85) }
+
+/* ═══ ALERT ══════════════════════════════════════════════ */
+.alert-wrap { padding:10px 16px 0 }
+.alert-card {
+  border-radius:var(--r); padding:13px 16px;
+  display:flex; align-items:center; gap:12px;
+}
+.alert-card.warn {
+  background:linear-gradient(135deg,rgba(30,20,5,.9),rgba(40,28,5,.9));
+  border:1px solid rgba(212,175,55,.4);
+}
+.alert-card.danger {
+  background:linear-gradient(135deg,rgba(40,10,10,.9),rgba(30,8,8,.9));
+  border:1px solid rgba(255,107,107,.35);
+}
+.alert-card.ok {
+  background:linear-gradient(135deg,rgba(10,35,16,.9),rgba(8,28,12,.9));
+  border:1px solid rgba(95,216,122,.3);
+}
+.alert-icon { font-size:22px; flex-shrink:0 }
+.alert-body { flex:1; min-width:0 }
+.alert-title { font-size:13px; font-weight:700; margin-bottom:3px }
+.alert-card.warn   .alert-title { color:var(--gold) }
+.alert-card.danger .alert-title { color:var(--neg) }
+.alert-card.ok     .alert-title { color:var(--pos) }
+.alert-detail { font-size:11px; color:var(--muted); line-height:1.5 }
+.alert-amt { font-size:19px; font-weight:800; flex-shrink:0; font-variant-numeric:tabular-nums }
+.alert-card.warn   .alert-amt { color:var(--gold) }
+.alert-card.danger .alert-amt { color:var(--neg) }
+.alert-card.ok     .alert-amt { color:var(--pos) }
+
+/* ═══ MONTH NAV ═════════════════════════════════════════ */
+.mnav {
+  display:flex; align-items:center; justify-content:center;
+  gap:14px; padding:14px 16px 10px;
+}
+.marrow {
+  width:34px; height:34px; border-radius:50%;
+  background:var(--card); border:1px solid var(--border);
+  color:var(--muted); font-size:17px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .15s; flex-shrink:0;
+}
+.marrow:hover { border-color:var(--border2); color:var(--gold) }
+.marrow:disabled { opacity:.2; cursor:default }
+.mlabel { font-size:15px; font-weight:700; color:var(--text); min-width:92px; text-align:center }
+
+/* ═══ STAT TILES ════════════════════════════════════════ */
+.tiles {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:10px; padding:0 16px 14px;
+}
+.tile {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r); padding:14px 10px;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  transition:transform .15s; cursor:default;
+}
+.tile:active { transform:scale(.97) }
+.tile-icon { font-size:24px; line-height:1 }
+.tile-val {
+  font-size:15px; font-weight:800; letter-spacing:-.5px;
+  font-variant-numeric:tabular-nums; text-align:center;
+}
+.tile-val.pos { color:var(--pos) }
+.tile-val.neg { color:var(--neg) }
+.tile-val.gold { color:var(--gold) }
+.tile-lbl { font-size:10px; color:var(--muted); text-align:center; font-weight:500 }
+
+/* ═══ CREDIT CARDS ══════════════════════════════════════ */
+.sl {
+  font-size:10px; font-weight:700; color:var(--muted);
+  letter-spacing:1.4px; text-transform:uppercase;
+  padding:0 20px; margin:12px 0 8px;
+}
+.cards-row {
+  display:flex; gap:10px; padding:0 16px 14px;
+  overflow-x:auto; scrollbar-width:none;
+}
+.cards-row::-webkit-scrollbar { display:none }
+.cc {
+  flex-shrink:0; width:162px; border-radius:var(--r);
+  padding:15px; position:relative; overflow:hidden; cursor:pointer;
+  transition:transform .15s;
+}
+.cc:active { transform:scale(.97) }
+.cc.mc   { background:linear-gradient(135deg,#2D1260,#5B21B6); border:1px solid rgba(139,92,246,.4) }
+.cc.visa { background:linear-gradient(135deg,#0C2461,#1E4FA0); border:1px solid rgba(30,79,160,.5) }
+.cc.bank { background:linear-gradient(135deg,#14532D,#166534); border:1px solid rgba(21,83,44,.8) }
+.cc::before {
+  content:''; position:absolute; width:90px; height:90px; border-radius:50%;
+  background:rgba(255,255,255,.07); top:-25px; left:-20px; pointer-events:none;
+}
+.cc-brand { font-size:9px; font-weight:700; letter-spacing:1.6px; color:rgba(255,255,255,.55); text-transform:uppercase; margin-bottom:11px }
+.cc-lbl { font-size:9px; color:rgba(255,255,255,.5); margin-bottom:2px }
+.cc-amount { font-size:21px; font-weight:800; color:#fff; letter-spacing:-.5px; font-variant-numeric:tabular-nums }
+.cc-due { font-size:10px; color:rgba(255,255,255,.55); margin-top:7px; line-height:1.5 }
+.cc-due b { color:#fff }
+.cc-tag {
+  display:inline-block; font-size:9px; font-weight:700;
+  padding:2px 8px; border-radius:20px; margin-top:6px;
+  background:rgba(255,179,71,.2); color:var(--warn);
+}
+.cc-ok {
+  display:inline-block; font-size:9px; font-weight:700;
+  padding:2px 8px; border-radius:20px; margin-top:6px;
+  background:rgba(95,216,122,.2); color:var(--pos);
+}
+
+/* ═══ LISTS ══════════════════════════════════════════════ */
+.lcard {
+  background:var(--card); border-radius:var(--r); margin:0 16px 14px;
+  border:1px solid var(--border); overflow:hidden;
+}
+.lrow {
+  display:flex; align-items:center; padding:11px 16px;
+  border-bottom:1px solid rgba(255,255,255,.05); gap:10px;
+}
+.lrow:last-child { border-bottom:none }
+.lrow:hover { background:var(--card2) }
+
+/* ═══ FORMS ══════════════════════════════════════════════ */
+.add-card {
+  background:var(--card3); border-radius:var(--r);
+  margin:0 16px 14px; padding:16px; border:1px solid var(--border);
+}
+.frow { display:flex; gap:8px; margin-bottom:10px; align-items:flex-end; flex-wrap:wrap }
+.fld { flex:1; min-width:85px }
+.fld label {
+  display:block; font-size:10px; font-weight:700; color:var(--muted);
+  margin-bottom:5px; letter-spacing:.7px; text-transform:uppercase;
+}
+.fld input, .fld select, .fld textarea {
+  width:100%; font-family:'Sora',sans-serif; font-size:14px;
+  padding:10px 12px; border:1.5px solid var(--border); border-radius:12px;
+  background:rgba(255,255,255,.06); color:var(--text); outline:none; -webkit-appearance:none;
+}
+.fld input:focus, .fld select:focus { border-color:var(--gold) }
+.btn-gold {
+  background:linear-gradient(135deg,var(--gold),var(--gold-dk));
+  color:#0B1A0F; font-family:'Sora',sans-serif;
+  font-size:13px; font-weight:800; padding:11px 20px;
+  border-radius:12px; border:none; cursor:pointer;
+  box-shadow:0 2px 12px var(--gold-glow);
+}
+.toast-line { font-size:12px; font-weight:600; margin-top:8px; min-height:16px; color:var(--gold) }
+
+/* ═══ PLACEHOLDER SCREENS ════════════════════════════════ */
+.placeholder {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:60dvh; gap:16px; padding:40px 24px;
+}
+.ph-icon { font-size:56px; opacity:.6 }
+.ph-title { font-size:20px; font-weight:800; color:var(--gold); letter-spacing:-.3px }
+.ph-sub { font-size:13px; color:var(--muted); text-align:center; line-height:1.7; max-width:280px }
+.ph-badge {
+  background:var(--gold-lt); border:1px solid var(--border2);
+  color:var(--gold); font-size:11px; font-weight:700;
+  padding:6px 16px; border-radius:20px; letter-spacing:.5px;
+}
+
+/* ═══ MODAL ══════════════════════════════════════════════ */
+.mbg {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.65); backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px); z-index:500;
+  align-items:flex-end; justify-content:center;
+}
+.mbg.open { display:flex }
+.modal {
+  background:#162419; border-radius:24px 24px 0 0;
+  width:100%; max-width:430px;
+  padding:8px 20px calc(36px + env(safe-area-inset-bottom,0px));
+  animation:slideUp .22s ease; border-top:1px solid var(--border2);
+  box-shadow:0 -8px 40px rgba(0,0,0,.5);
+}
+.modal::before {
+  content:''; display:block; width:36px; height:4px;
+  background:var(--border2); border-radius:2px; margin:14px auto 18px;
+}
+@keyframes slideUp { from { transform:translateY(100%) } to { transform:translateY(0) } }
+.modal-title { font-size:19px; font-weight:800; margin-bottom:4px }
+.modal-sub { font-size:12px; color:var(--muted); margin-bottom:16px }
+.mc-row {
+  display:flex; align-items:center; gap:10px;
+  padding:11px 0; border-bottom:1px solid rgba(255,255,255,.07);
+}
+.mc-row:last-child { border-bottom:none }
+.mc-name { flex:1; font-size:14px; font-weight:600 }
+.mc-amt { font-size:14px; font-weight:800; font-variant-numeric:tabular-nums }
+.mc-amt.done { color:var(--pos) }
+.mc-amt.planned { color:var(--warn) }
+.sbtn { font-size:11px; padding:4px 11px; border-radius:8px; border:none; cursor:pointer; font-family:'Sora',sans-serif; font-weight:700 }
+.sbtn.done    { background:var(--pos-dim); color:var(--pos) }
+.sbtn.planned { background:var(--warn-dim); color:var(--warn) }
+.del-btn { background:none; border:none; color:var(--muted); font-size:16px; cursor:pointer; padding:2px 5px; line-height:1 }
+.del-btn:hover { color:var(--neg) }
+.modal-sep { height:1px; background:rgba(255,255,255,.08); margin:10px 0 16px }
+.mi-row { display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap }
+.mfld { flex:1; min-width:80px }
+.mfld label { display:block; font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:700; text-transform:uppercase; letter-spacing:.5px }
+.mfld input, .mfld select {
+  width:100%; font-family:'Sora',sans-serif; font-size:14px; padding:10px 12px;
+  border:1.5px solid var(--border); border-radius:12px;
+  background:rgba(255,255,255,.07); color:var(--text); outline:none; -webkit-appearance:none;
+}
+.mfld input:focus { border-color:var(--gold) }
+.madd-btn {
+  background:linear-gradient(135deg,var(--gold),var(--gold-dk));
+  color:#0B1A0F; font-family:'Sora',sans-serif;
+  font-size:15px; font-weight:800; padding:10px 16px;
+  border-radius:12px; border:none; cursor:pointer;
+}
+.mclose { display:block; width:100%; text-align:center; font-size:13px; color:var(--muted); margin-top:16px; background:none; border:none; font-family:'Sora',sans-serif; cursor:pointer }
+.mempty { font-size:13px; color:var(--muted); text-align:center; padding:12px 0 }
+
+/* ═══ CALENDAR ═══════════════════════════════════════════ */
+.cal-wrap {
+  margin:0 16px 14px; background:var(--card3);
+  border-radius:var(--r); border:1px solid var(--border); overflow:hidden;
+}
+.cal-hdr {
+  display:grid; grid-template-columns:repeat(7,1fr);
+  background:rgba(212,175,55,.07); border-bottom:1px solid var(--border);
+}
+.cal-dn { text-align:center; font-size:9px; font-weight:700; color:var(--muted2); padding:9px 0; letter-spacing:.5px }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr) }
+.cal-cell {
+  min-height:50px; border-bottom:1px solid rgba(255,255,255,.04);
+  border-right:1px solid rgba(255,255,255,.04);
+  padding:4px 3px; cursor:pointer; transition:background .1s;
+}
+.cal-cell:nth-child(7n+1) { border-right:none }
+.cal-cell:hover { background:rgba(212,175,55,.08) }
+.cal-cell.empty { cursor:default; background:transparent!important }
+.cal-cell.today .cal-num { background:var(--gold); color:#0B1A0F; border-radius:50%; font-weight:800 }
+.cal-num { font-size:10px; width:20px; height:20px; display:flex; align-items:center; justify-content:center; margin-bottom:2px; color:var(--muted2) }
+.cal-dot {
+  font-size:8px; line-height:1.4; white-space:nowrap; overflow:hidden;
+  text-overflow:ellipsis; border-radius:3px; padding:1px 3px; margin-bottom:1px; font-weight:600;
+}
+.cal-dot.done    { background:var(--pos-dim); color:var(--pos) }
+.cal-dot.planned { background:var(--warn-dim); color:var(--warn) }
+
+.legend { display:flex; gap:12px; flex-wrap:wrap; padding:0 20px 8px }
+.legend-item { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--muted) }
+.leg-dot { width:8px; height:8px; border-radius:3px }
+
+/* ═══ TOAST ══════════════════════════════════════════════ */
+#toast {
+  position:fixed; bottom:24px; left:50%; transform:translate(-50%,10px);
+  background:linear-gradient(135deg,var(--gold),var(--gold-dk));
+  color:#0B1A0F; font-family:'Sora',sans-serif;
+  font-size:13px; font-weight:700; padding:11px 22px; border-radius:24px;
+  z-index:1000; opacity:0; transition:opacity .3s,transform .3s;
+  pointer-events:none; white-space:nowrap;
+  box-shadow:0 4px 20px var(--gold-glow);
+}
+
+select option { background:#162419; color:#fff }
+::-webkit-scrollbar { width:2px }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px }
+</style>
+</head>
+<body>
+
+<!-- ══ TOP NAV ══════════════════════════════════════════ -->
+<nav class="top-nav">
+  <button class="tnb on"  id="tn-home"    onclick="go('home')">    <span class="ticon">🏠</span> בית</button>
+  <button class="tnb"     id="tn-clients" onclick="go('clients')"> <span class="ticon">📅</span> לקוחות</button>
+  <button class="tnb"     id="tn-diary"   onclick="go('diary')">   <span class="ticon">📓</span> יומן</button>
+  <button class="tnb"     id="tn-forecast"onclick="go('forecast')"><span class="ticon">📊</span> תחזית</button>
+  <button class="tnb"     id="tn-cards"   onclick="go('cards')">   <span class="ticon">💳</span> כרטיסי אשראי</button>
+</nav>
+
+<!-- ══ HOME ════════════════════════════════════════════ -->
+<div class="screen active" id="s-home">
+  <div class="hero">
+    <div class="hero-top">
+      <button class="backup-btn" onclick="exportData()">📥 גיבוי</button>
+      <div style="text-align:right">
+        <div class="hero-greeting" id="home-greeting">שלום שני ✨</div>
+        <div class="hero-date"     id="home-date"></div>
+      </div>
+    </div>
+    <div class="hero-lbl">מאזן צפוי — <span id="home-month-name">מאי</span></div>
+    <div class="hero-balance pos" id="home-balance">טוען...</div>
+    <div class="hero-sub"         id="home-sub"></div>
+  </div>
+
+  <div class="alert-wrap" id="home-alert-wrap"></div>
+
+  <div class="mnav">
+    <button class="marrow" onclick="moveHM(-1)">›</button>
+    <div class="mlabel"    id="home-mlbl">מאי 2025</div>
+    <button class="marrow" onclick="moveHM(1)">‹</button>
+  </div>
+
+  <div class="tiles" id="home-tiles"></div>
+
+  <div class="sl">חשבונות וכרטיסים</div>
+  <div class="cards-row" id="home-cc"></div>
+
+  <div class="sl">עדכון יתרות</div>
+  <div class="add-card">
+    <div class="frow">
+      <div class="fld"><label>ויזה ₪</label>   <input type="number" id="bal-visa" placeholder="700"></div>
+      <div class="fld"><label>מאסטר ₪</label>  <input type="number" id="bal-mc"   placeholder="2172"></div>
+      <div class="fld"><label>עו״ש מינוס ₪</label><input type="number" id="bal-bank" placeholder="9141"></div>
+    </div>
+    <div class="frow"><button class="btn-gold" onclick="updCards()">עדכן יתרות</button></div>
+    <div class="toast-line" id="bal-toast"></div>
+  </div>
+
+  <div class="sl">הוצאות אחרונות</div>
+  <div class="lcard" id="home-recent"></div>
+</div>
+
+<!-- ══ CLIENTS ══════════════════════════════════════════ -->
+<div class="screen" id="s-clients">
+  <div style="padding:16px 20px 8px">
+    <div style="font-size:24px;font-weight:800;letter-spacing:-.5px">לקוחות</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:3px" id="cl-sub"></div>
+  </div>
+  <div class="mnav">
+    <button class="marrow" onclick="moveCM(-1)">›</button>
+    <div class="mlabel"    id="cl-lbl">מאי 2025</div>
+    <button class="marrow" onclick="moveCM(1)">‹</button>
+  </div>
+  <div class="tiles" id="cl-tiles"></div>
+  <div class="legend">
+    <span class="legend-item"><span class="leg-dot" style="background:rgba(95,216,122,.5)"></span>בוצע</span>
+    <span class="legend-item"><span class="leg-dot" style="background:rgba(255,179,71,.5)"></span>מתוכנן</span>
+  </div>
+  <div class="cal-wrap">
+    <div class="cal-hdr">
+      <div class="cal-dn">א׳</div><div class="cal-dn">ב׳</div><div class="cal-dn">ג׳</div>
+      <div class="cal-dn">ד׳</div><div class="cal-dn">ה׳</div><div class="cal-dn">ו׳</div><div class="cal-dn">ש׳</div>
+    </div>
+    <div class="cal-grid" id="cl-cal"></div>
+  </div>
+</div>
+
+<!-- ══ DIARY (placeholder) ══════════════════════════════ -->
+<div class="screen" id="s-diary">
+  <div class="placeholder">
+    <div class="ph-icon">📓</div>
+    <div class="ph-title">יומן</div>
+    <div class="ph-sub">רשום הוצאות והכנסות יומיות, הערות וסיכומים שבועיים</div>
+    <div class="ph-badge">בקרוב ✨</div>
+  </div>
+</div>
+
+<!-- ══ FORECAST (placeholder) ════════════════════════════ -->
+<div class="screen" id="s-forecast">
+  <div class="placeholder">
+    <div class="ph-icon">📊</div>
+    <div class="ph-title">תחזית</div>
+    <div class="ph-sub">תחזית חודשית וחצי-שנתית — הכנסות, הוצאות ויעדים</div>
+    <div class="ph-badge">בקרוב ✨</div>
+  </div>
+</div>
+
+<!-- ══ CARDS (placeholder) ═══════════════════════════════ -->
+<div class="screen" id="s-cards">
+  <div class="placeholder">
+    <div class="ph-icon">💳</div>
+    <div class="ph-title">כרטיסי אשראי</div>
+    <div class="ph-sub">ניהול חיובים, תשלומים ומסגרות ויזה ומאסטרקארד</div>
+    <div class="ph-badge">בקרוב ✨</div>
+  </div>
+</div>
+
+<!-- ══ DAY MODAL ═════════════════════════════════════════ -->
+<div class="mbg" id="mbg" onclick="closeMBG(event)">
+  <div class="modal">
+    <div class="modal-title" id="m-title">—</div>
+    <div class="modal-sub">לחצי על סטטוס לשינוי · לחצי ✕ למחיקה</div>
+    <div id="m-clients"></div>
+    <div class="modal-sep"></div>
+    <div class="mi-row">
+      <div class="mfld"><label>שם</label><input type="text"   id="m-name" placeholder="שם לקוחה"></div>
+      <div class="mfld" style="max-width:90px"><label>₪</label><input type="number" id="m-amt" placeholder="800"></div>
+      <div class="mfld" style="max-width:105px">
+        <label>סטטוס</label>
+        <select id="m-status"><option value="planned">מתוכנן</option><option value="done">בוצע</option></select>
+      </div>
+      <button class="madd-btn" onclick="modalAdd()">+</button>
+    </div>
+    <button class="mclose" onclick="closeModal()">סגור</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ══ SCRIPT ════════════════════════════════════════════ -->
+<script>
+// ── CONSTANTS ────────────────────────────────────────────
+const FIXED = 4400;
+const MONTHS = [
+  {key:11,label:'נובמבר',year:2024,days:30},{key:12,label:'דצמבר',year:2024,days:31},
+  {key:1, label:'ינואר', year:2025,days:31},{key:2, label:'פברואר',year:2025,days:28},
+  {key:3, label:'מרץ',   year:2025,days:31},{key:4, label:'אפריל', year:2025,days:30},
+  {key:5, label:'מאי',   year:2025,days:31},{key:6, label:'יוני',  year:2025,days:30},
+  {key:7, label:'יולי',  year:2025,days:31},{key:8, label:'אוגוסט',year:2025,days:31},
+];
+const MAY_IDX = MONTHS.findIndex(m => m.key === 5);
+
+// ── DATA ─────────────────────────────────────────────────
+const RAW = {
+  expense: {
+    5: [
+      {d:'02/05',desc:'שכירות',a:4100},
+      {d:'02/05',desc:'קניות בקיוסק',a:65},
+      {d:'02/05',desc:'טבק וקוטג',a:119},
+      {d:'03/05',desc:'קנאביס שלומי',a:250},
+      {d:'03/05',desc:'קנאביס לי',a:100},
+      {d:'03/05',desc:'קפה ובירה',a:40},
+      {d:'03/05',desc:'קניות סופר ויקטורי',a:183},
+      {d:'04/05',desc:'חידוש רשיון נהיגה',a:587},
+      {d:'04/05',desc:'קניות לבית',a:113},
+      {d:'06/05',desc:'קפה',a:20},
+      {d:'06/05',desc:'חוב לחלי',a:350},
+      {d:'06/05',desc:'מרק בוולט',a:75},
+      {d:'10/05',desc:'חשבון חשמל',a:375},
+      {d:'10/05',desc:'סיעוד ביטוח',a:59.48},
+      {d:'10/05',desc:'קופת חולים',a:161.26},
+      {d:'11/05',desc:'קפה',a:6.50},
+      {d:'11/05',desc:'קנאביס',a:199},
+      {d:'11/05',desc:'יין',a:100},
+      {d:'11/05',desc:'סלט הזמנה בוולט',a:64},
+      {d:'12/05',desc:'בירה וקפה',a:55},
+      {d:'12/05',desc:'ספוטיפיי',a:23},
+      {d:'12/05',desc:'פרטנר',a:60.42},
+      {d:'13/05',desc:'דלק',a:100},
+      {d:'13/05',desc:'קניות לבית',a:146},
+      {d:'14/05',desc:'אייפון תשלום 1/11',a:347,method:'mc'},
+      {d:'14/05',desc:'כיסוי לטלפון',a:103,method:'mc'},
+      {d:'14/05',desc:'קפה',a:15},
+      {d:'15/05',desc:'חיוב ויזה',a:700,method:'visa'},
+      {d:'25/05',desc:'תשלום חניה',a:500}
+    ],
+    6:[{d:'14/06',desc:'אייפון תשלום 2/11',a:347,method:'mc'}],
+    7:[{d:'14/07',desc:'אייפון תשלום 3/11',a:347,method:'mc'}],
+    8:[{d:'14/08',desc:'אייפון תשלום 4/11',a:347,method:'mc'}]
+  },
+  income: {
+    5: [
+      {d:'11/05',desc:'החלקה לנטלי',a:1200},
+      {d:'01/05',desc:'קנאביס מירי',a:963},
+      {d:'01/05',desc:'השתתפות בשכ״ד',a:770},
+      {d:'13/05',desc:'החלקה להילה',a:1200},
+      {d:'01/05',desc:'חידוש שורש לאתי',a:800}
+    ],
+    6:[],7:[],8:[]
+  }
+};
+
+const CLIENTS = {
+  5: [
+    {day:8,  name:'אתי',        amount:800,  status:'done'},
+    {day:11, name:'נטלי ביטון', amount:1200, status:'done'},
+    {day:13, name:'הילה',       amount:1200, status:'done'},
+    {day:16, name:'טל אורגנית', amount:800,  status:'planned'},
+    {day:17, name:'נוף',        amount:1200, status:'planned'},
+    {day:19, name:'שרית',       amount:800,  status:'planned'},
+    {day:29, name:'ספיר פרץ',   amount:800,  status:'planned'},
+  ],
+  6:[],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[],4:[]
+};
+
+const CARDS = { visa:700, mc:2172, bank:9141 };
+
+// ── HELPERS ──────────────────────────────────────────────
+const fmt  = n => Math.round(n).toLocaleString('he-IL');
+const pa   = s => parseFloat(String(s).replace(/,/g,'').replace(/[^\d.]/g,'')) || 0;
+const sumE = m => (RAW.expense[m]||[]).reduce((s,t)=>s+t.a,0);
+const sumI = m => (RAW.income[m]||[]).reduce((s,t)=>s+t.a,0) + FIXED;
+
+// ── PERSIST ──────────────────────────────────────────────
+function save() {
+  try {
+    localStorage.setItem('shani_clients', JSON.stringify(CLIENTS));
+    localStorage.setItem('shani_expense', JSON.stringify(RAW.expense));
+    localStorage.setItem('shani_income',  JSON.stringify(RAW.income));
+    localStorage.setItem('shani_cards',   JSON.stringify(CARDS));
+  } catch(e){}
+}
+function load() {
+  try {
+    // migrate older key names if present
+    ['finance_clients','fin_clients'].forEach(k => {
+      if (localStorage.getItem(k) && !localStorage.getItem('shani_clients'))
+        localStorage.setItem('shani_clients', localStorage.getItem(k));
+    });
+    const c = localStorage.getItem('shani_clients');
+    if (c) { const d=JSON.parse(c); Object.keys(d).forEach(k=>{ CLIENTS[k]=d[k]; }); }
+    const e = localStorage.getItem('shani_expense');
+    if (e) { const d=JSON.parse(e); Object.keys(d).forEach(k=>{ RAW.expense[k]=d[k]; }); }
+    const i = localStorage.getItem('shani_income');
+    if (i) { const d=JSON.parse(i); Object.keys(d).forEach(k=>{ RAW.income[k]=d[k]; }); }
+    const cd = localStorage.getItem('shani_cards');
+    if (cd) Object.assign(CARDS, JSON.parse(cd));
+  } catch(e) { console.warn('load error', e); }
+}
+function exportData() {
+  const blob = new Blob([JSON.stringify({clients:CLIENTS,expense:RAW.expense,income:RAW.income,cards:CARDS},null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'shani-finance-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('📥 גיבוי הורד');
+}
+
+// ── TOAST ────────────────────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.opacity='1'; t.style.transform='translate(-50%,0)';
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translate(-50%,10px)'; }, 2600);
+}
+
+// ── NAVIGATION ───────────────────────────────────────────
+function go(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tnb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('s-'+name).classList.add('active');
+  document.getElementById('tn-'+name).classList.add('on');
+  if (name==='home')    renderHome();
+  if (name==='clients') renderClients();
+}
+
+// ── HOME ─────────────────────────────────────────────────
+let homeMi = MAY_IDX;
+function moveHM(d) { homeMi=Math.max(0,Math.min(MONTHS.length-1,homeMi+d)); renderHome(); }
+
+function renderHome() {
+  const ml = MONTHS[homeMi];
+  const m  = ml.key;
+  document.getElementById('home-mlbl').textContent      = ml.label + ' ' + ml.year;
+  document.getElementById('home-month-name').textContent = ml.label;
+
+  // Greeting
+  const now = new Date();
+  const h   = now.getHours();
+  const gr  = h<5?'לילה טוב':h<12?'בוקר טוב':h<17?'צהריים טובים':'ערב טוב';
+  const days   = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+  const months = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+  document.getElementById('home-greeting').textContent = gr + ' שני ✨';
+  document.getElementById('home-date').textContent     = 'יום ' + days[now.getDay()] + ', ' + now.getDate() + ' ב' + months[now.getMonth()];
+
+  // Numbers
+  const inc       = sumI(m);
+  const exp       = sumE(m);
+  const planned   = (CLIENTS[m]||[]).filter(c=>c.status==='planned').reduce((s,c)=>s+c.amount,0);
+  const upcoming  = CARDS.visa + CARDS.mc + 500;
+  const balNow    = inc - exp;
+  const balFull   = inc + planned - exp - upcoming;
+
+  const bEl = document.getElementById('home-balance');
+  bEl.textContent = (balFull>=0?'+':'') + '₪' + fmt(Math.abs(balFull));
+  bEl.className   = 'hero-balance ' + (balFull>=0?'pos':'neg');
+
+  document.getElementById('home-sub').innerHTML =
+    '<b>עכשיו: ' + (balNow>=0?'+':'') + '₪' + fmt(balNow) + '</b>' +
+    ' · עם צפי לקוחות: <b>+₪' + fmt(planned) + '</b>';
+
+  // Alert
+  const wrap = document.getElementById('home-alert-wrap');
+  const today = new Date(), todayDay = today.getDate(), todayM = today.getMonth()+1;
+  const dMC   = (todayM===m && todayDay<=20) ? 20-todayDay : 999;
+  const bankBal = -CARDS.bank;
+
+  if (dMC <= 3) {
+    const need = CARDS.mc - (bankBal + inc + planned - exp);
+    const cls  = need > 0 ? 'warn' : 'ok';
+    wrap.innerHTML = `<div class="alert-card ${cls}">
+      <div class="alert-icon">${need>0?'⚠️':'✓'}</div>
+      <div class="alert-body">
+        <div class="alert-title">${need>0?'חסר לכיסוי המאסטרקארד':'יש כיסוי למאסטרקארד'}</div>
+        <div class="alert-detail">יורד ${dMC===0?'היום':dMC===1?'מחר':'בעוד '+dMC+' ימים'} · ₪${fmt(CARDS.mc)}</div>
+      </div>
+      <div class="alert-amt">${need>0?'₪'+fmt(need):'₪'+fmt(CARDS.mc)}</div>
+    </div>`;
+  } else if (bankBal < 0) {
+    wrap.innerHTML = `<div class="alert-card danger">
+      <div class="alert-icon">🚨</div>
+      <div class="alert-body">
+        <div class="alert-title">חריגה ממסגרת בעו"ש</div>
+        <div class="alert-detail">מינוס ₪${fmt(Math.abs(bankBal))} · מאסטרקארד בעוד ${dMC} ימים</div>
+      </div>
+      <div class="alert-amt">₪${fmt(Math.abs(bankBal))}</div>
+    </div>`;
+  } else if (balFull < 0) {
+    wrap.innerHTML = `<div class="alert-card warn">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-body">
+        <div class="alert-title">תחזית שלילית לסוף החודש</div>
+        <div class="alert-detail">ויזה ₪${fmt(CARDS.visa)} + מאסטר ₪${fmt(CARDS.mc)} + חניה ₪500</div>
+      </div>
+      <div class="alert-amt">₪${fmt(Math.abs(balFull))}</div>
+    </div>`;
+  } else {
+    wrap.innerHTML = '';
+  }
+
+  // Tiles
+  document.getElementById('home-tiles').innerHTML = `
+    <div class="tile">
+      <div class="tile-icon">💎</div>
+      <div class="tile-val ${balFull>=0?'pos':'neg'}">${(balFull>=0?'+':'')}₪${fmt(balFull)}</div>
+      <div class="tile-lbl">ישאר בסוף החודש</div>
+    </div>
+    <div class="tile">
+      <div class="tile-icon">🧨</div>
+      <div class="tile-val neg">₪${fmt(exp)}</div>
+      <div class="tile-lbl">הוצאות</div>
+    </div>
+    <div class="tile">
+      <div class="tile-icon">💰</div>
+      <div class="tile-val pos">₪${fmt(inc)}</div>
+      <div class="tile-lbl">הכנסות</div>
+    </div>`;
+
+  // Credit cards
+  const bankAfter = -CARDS.bank + inc + planned - exp - upcoming;
+  document.getElementById('home-cc').innerHTML = `
+    <div class="cc mc">
+      <div class="cc-brand">MASTERCARD</div>
+      <div class="cc-lbl">חיוב חודשי</div>
+      <div class="cc-amount">₪${fmt(CARDS.mc)}</div>
+      <div class="cc-due">יורד ב-<b>20</b> לחודש${dMC<=3&&dMC>=0?` · <b style="color:var(--warn)">עוד ${dMC} ימים</b>`:''}</div>
+      ${dMC<=1&&dMC>=0?'<span class="cc-tag">⚡ עוד יום!</span>':''}
+    </div>
+    <div class="cc visa">
+      <div class="cc-brand">VISA</div>
+      <div class="cc-lbl">חיוב חודשי</div>
+      <div class="cc-amount">₪${fmt(CARDS.visa)}</div>
+      <div class="cc-due">יורד ב-<b>15</b> לחודש</div>
+    </div>
+    <div class="cc bank">
+      <div class="cc-brand">עו״ש</div>
+      <div class="cc-lbl">מינוס נוכחי</div>
+      <div class="cc-amount">₪${fmt(CARDS.bank)}</div>
+      <div class="cc-due">אחרי חיובים: <b style="color:${bankAfter>=0?'var(--pos)':'var(--neg)'}">${bankAfter>=0?'+':''}₪${fmt(bankAfter)}</b></div>
+    </div>`;
+
+  // Recent
+  const recent = [...(RAW.expense[m]||[])].sort((a,b)=>parseInt(b.d)-parseInt(a.d)).slice(0,7);
+  document.getElementById('home-recent').innerHTML = recent.length === 0
+    ? '<div class="mempty">אין הוצאות החודש</div>'
+    : recent.map(t => `
+      <div class="lrow">
+        <div style="font-size:11px;color:var(--muted2);min-width:22px;text-align:center;font-weight:700">${t.d.split('/')[0]}</div>
+        <div style="flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.desc}</div>
+        ${t.method&&t.method!=='cash'
+          ? `<span style="font-size:9px;padding:2px 6px;border-radius:5px;background:${t.method==='visa'?'rgba(30,79,160,.3)':'rgba(91,33,182,.3)'};color:${t.method==='visa'?'#7EB3FF':'#C4A6FF'}">${t.method==='visa'?'ויזה':'מאסטר'}</span>`
+          : ''}
+        <div style="font-size:13px;font-weight:700;color:var(--neg);flex-shrink:0">₪${fmt(t.a)}</div>
+      </div>`).join('');
+}
+
+// ── UPDATE CARDS ──────────────────────────────────────────
+function updCards() {
+  const v  = pa(document.getElementById('bal-visa').value);
+  const mc = pa(document.getElementById('bal-mc').value);
+  const b  = pa(document.getElementById('bal-bank').value);
+  if (v)  CARDS.visa = v;
+  if (mc) CARDS.mc   = mc;
+  if (b)  CARDS.bank = b;
+  document.getElementById('bal-visa').value = '';
+  document.getElementById('bal-mc').value   = '';
+  document.getElementById('bal-bank').value = '';
+  save(); renderHome();
+  document.getElementById('bal-toast').textContent = '✓ יתרות עודכנו';
+  toast('✓ יתרות עודכנו');
+}
+
+// ── CLIENTS ──────────────────────────────────────────────
+let curCMi = MAY_IDX;
+function moveCM(d) { curCMi=Math.max(0,Math.min(MONTHS.length-1,curCMi+d)); renderClients(); }
+
+function renderClients() {
+  const ml   = MONTHS[curCMi];
+  const m    = ml.key;
+  const list = CLIENTS[m] || [];
+  document.getElementById('cl-lbl').textContent = ml.label + ' ' + ml.year;
+
+  const done    = list.filter(c=>c.status==='done');
+  const planned = list.filter(c=>c.status==='planned');
+  const doneAmt = done.reduce((s,c)=>s+c.amount,0);
+  const planAmt = planned.reduce((s,c)=>s+c.amount,0);
+
+  document.getElementById('cl-sub').textContent = `${list.length} לקוחות · ₪${fmt(doneAmt+planAmt)}`;
+  document.getElementById('cl-tiles').innerHTML = `
+    <div class="tile">
+      <div class="tile-icon">👤</div>
+      <div class="tile-val gold">${list.length}</div>
+      <div class="tile-lbl">לקוחות</div>
+    </div>
+    <div class="tile">
+      <div class="tile-icon">✅</div>
+      <div class="tile-val pos">₪${fmt(doneAmt)}</div>
+      <div class="tile-lbl">בוצע (${done.length})</div>
+    </div>
+    <div class="tile">
+      <div class="tile-icon">⏳</div>
+      <div class="tile-val" style="color:var(--warn)">₪${fmt(planAmt)}</div>
+      <div class="tile-lbl">צפוי (${planned.length})</div>
+    </div>`;
+
+  // Calendar
+  const grid  = document.getElementById('cl-cal');
+  const byDay = {};
+  list.forEach(c=>{ if(!byDay[c.day]) byDay[c.day]=[]; byDay[c.day].push(c); });
+  const today = new Date();
+  const isNow = (today.getMonth()+1===m && today.getFullYear()===ml.year);
+  const fd    = (new Date(ml.year, m-1, 1).getDay()+1) % 7;
+  let h = '';
+  for (let i=0;i<fd;i++) h += `<div class="cal-cell empty"><div class="cal-num"></div></div>`;
+  for (let d=1;d<=ml.days;d++) {
+    const isT  = isNow && d===today.getDate();
+    const dots = (byDay[d]||[]).map(c=>`<div class="cal-dot ${c.status}">${c.name.split(' ')[0]}</div>`).join('');
+    h += `<div class="cal-cell${isT?' today':''}" onclick="openModal(${d},${curCMi})">
+      <div class="cal-num">${d}</div>${dots}
+    </div>`;
+  }
+  grid.innerHTML = h;
+}
+
+// ── MODAL ────────────────────────────────────────────────
+let modalDay=0, modalMi=MAY_IDX;
+
+function openModal(day, mi) {
+  modalDay=day; modalMi=mi;
+  const ml = MONTHS[mi];
+  const mo = ['','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+  document.getElementById('m-title').textContent = day + ' ב' + mo[ml.key];
+  renderMC();
+  document.getElementById('mbg').classList.add('open');
+}
+function renderMC() {
+  const mk   = MONTHS[modalMi].key;
+  const list = (CLIENTS[mk]||[]).filter(c=>c.day===modalDay);
+  document.getElementById('m-clients').innerHTML = list.length === 0
+    ? '<div class="mempty">אין לקוחות ביום זה</div>'
+    : list.map((c,i) => `
+      <div class="mc-row">
+        <div class="mc-name">${c.name}</div>
+        <button class="sbtn ${c.status}" onclick="toggleC(${i})">${c.status==='done'?'✓ בוצע':'⏳ ממתין'}</button>
+        <div class="mc-amt ${c.status}">₪${fmt(c.amount)}</div>
+        <button class="del-btn" onclick="delC(${i})">✕</button>
+      </div>`).join('');
+}
+function toggleC(idx) {
+  const mk   = MONTHS[modalMi].key;
+  const list = CLIENTS[mk]||[];
+  const day  = list.filter(c=>c.day===modalDay);
+  const ai   = list.indexOf(day[idx]);
+  if (ai>=0) list[ai].status = list[ai].status==='done' ? 'planned' : 'done';
+  save(); renderMC(); renderClients(); renderHome();
+}
+function delC(idx) {
+  const mk   = MONTHS[modalMi].key;
+  const list = CLIENTS[mk]||[];
+  const day  = list.filter(c=>c.day===modalDay);
+  const ai   = list.indexOf(day[idx]);
+  if (ai>=0) list.splice(ai,1);
+  save(); renderMC(); renderClients();
+}
+function modalAdd() {
+  const name = document.getElementById('m-name').value.trim();
+  const amt  = pa(document.getElementById('m-amt').value);
+  const st   = document.getElementById('m-status').value;
+  if (!name||!amt) return;
+  const mk = MONTHS[modalMi].key;
+  CLIENTS[mk] = CLIENTS[mk]||[];
+  CLIENTS[mk].push({day:modalDay, name, amount:amt, status:st});
+  document.getElementById('m-name').value = '';
+  document.getElementById('m-amt').value  = '';
+  save(); renderMC(); renderClients();
+  toast('✓ ' + name + ' נוספה');
+}
+function closeModal() { document.getElementById('mbg').classList.remove('open'); }
+function closeMBG(e)  { if (e.target===document.getElementById('mbg')) closeModal(); }
+
+// ── INIT ─────────────────────────────────────────────────
+load();
+renderHome();
+</script>
+</body>
+</html>
