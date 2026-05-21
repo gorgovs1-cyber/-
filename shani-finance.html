@@ -840,7 +840,7 @@ function renderHome() {
       <div class="cc-brand">MASTERCARD</div>
       <div class="cc-lbl">חיוב ב-20 לחודש</div>
       <div class="cc-amount">₪${fmt(mcBill)}</div>
-      <div class="cc-due">רשום: ₪${fmt(mcData)}${dMC<=3&&dMC>=0?` · <b style="color:var(--warn)">עוד ${dMC} ימים</b>`:''}</div>
+      <div class="cc-due">${dMC<=3&&dMC>=0?`<b style="color:var(--warn)">עוד ${dMC} ימים</b>`:''}</div>
       ${dMC<=1&&dMC>=0?'<span class="cc-tag">⚡ עוד יום!</span>':''}
     </div>
     <div class="cc visa">
