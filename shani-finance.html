@@ -677,10 +677,12 @@ const CLIENTS = {
 const CARDS = { visa:700, mc:2172, bank:9141 };
 
 // ── HELPERS ──────────────────────────────────────────────
-const fmt  = n => Math.round(n).toLocaleString('he-IL');
-const pa   = s => parseFloat(String(s).replace(/,/g,'').replace(/[^\d.]/g,'')) || 0;
-const sumE = m => (RAW.expense[m]||[]).reduce((s,t)=>s+t.a,0);
-const sumI = m => (RAW.income[m]||[]).reduce((s,t)=>s+t.a,0) + FIXED;
+const fmt      = n => Math.round(n).toLocaleString('he-IL');
+const pa       = s => parseFloat(String(s).replace(/,/g,'').replace(/[^\d.]/g,'')) || 0;
+const sumE     = m => (RAW.expense[m]||[]).reduce((s,t)=>s+t.a, 0);
+const sumI     = m => (RAW.income[m]||[]).reduce((s,t)=>s+t.a, 0) + FIXED;
+const sumMC    = m => (RAW.expense[m]||[]).filter(t=>t.method==='mc').reduce((s,t)=>s+t.a, 0);
+const sumVisa  = m => (RAW.expense[m]||[]).filter(t=>t.method==='visa').reduce((s,t)=>s+t.a, 0);
 
 // ── PERSIST ──────────────────────────────────────────────
 function save() {
@@ -757,7 +759,9 @@ function renderHome() {
   const inc       = sumI(m);
   const exp       = sumE(m);
   const planned   = (CLIENTS[m]||[]).filter(c=>c.status==='planned').reduce((s,c)=>s+c.amount,0);
-  const upcoming  = CARDS.visa + CARDS.mc + 500;
+  const mcBill    = sumMC(m);    // מאסטרקארד ב-20 — מחושב מהנתונים
+  const visaBill  = sumVisa(m);  // ויזה ב-15 — מחושב מהנתונים
+  const upcoming  = mcBill + visaBill + 500;  // mc(20) + visa(15) + חניה(25)
   const balNow    = inc - exp;
   const balFull   = inc + planned - exp - upcoming;
 
@@ -776,15 +780,15 @@ function renderHome() {
   const bankBal = -CARDS.bank;
 
   if (dMC <= 3) {
-    const need = CARDS.mc - (bankBal + inc + planned - exp);
+    const need = mcBill - (bankBal + inc + planned - exp);
     const cls  = need > 0 ? 'warn' : 'ok';
     wrap.innerHTML = `<div class="alert-card ${cls}">
       <div class="alert-icon">${need>0?'⚠️':'✓'}</div>
       <div class="alert-body">
         <div class="alert-title">${need>0?'חסר לכיסוי המאסטרקארד':'יש כיסוי למאסטרקארד'}</div>
-        <div class="alert-detail">יורד ${dMC===0?'היום':dMC===1?'מחר':'בעוד '+dMC+' ימים'} · ₪${fmt(CARDS.mc)}</div>
+        <div class="alert-detail">יורד ב-20 לחודש${dMC===0?' — היום':dMC===1?' — מחר':' — עוד '+dMC+' ימים'} · ₪${fmt(mcBill)}</div>
       </div>
-      <div class="alert-amt">${need>0?'₪'+fmt(need):'₪'+fmt(CARDS.mc)}</div>
+      <div class="alert-amt">${need>0?'₪'+fmt(need):'₪'+fmt(mcBill)}</div>
     </div>`;
   } else if (bankBal < 0) {
     wrap.innerHTML = `<div class="alert-card danger">
@@ -800,7 +804,7 @@ function renderHome() {
       <div class="alert-icon">⚠️</div>
       <div class="alert-body">
         <div class="alert-title">תחזית שלילית לסוף החודש</div>
-        <div class="alert-detail">ויזה ₪${fmt(CARDS.visa)} + מאסטר ₪${fmt(CARDS.mc)} + חניה ₪500</div>
+        <div class="alert-detail">מאסטר ₪${fmt(mcBill)} (ב-20) + ויזה ₪${fmt(visaBill)} (ב-15) + חניה ₪500</div>
       </div>
       <div class="alert-amt">₪${fmt(Math.abs(balFull))}</div>
     </div>`;
@@ -826,20 +830,22 @@ function renderHome() {
       <div class="tile-lbl">הכנסות</div>
     </div>`;
 
-  // Credit cards
+  // Credit cards — mc/visa computed from tagged expenses
+  const mcTotal   = sumMC(m);
+  const visaTotal = sumVisa(m);
   const bankAfter = -CARDS.bank + inc + planned - exp - upcoming;
   document.getElementById('home-cc').innerHTML = `
     <div class="cc mc">
       <div class="cc-brand">MASTERCARD</div>
       <div class="cc-lbl">חיוב חודשי</div>
-      <div class="cc-amount">₪${fmt(CARDS.mc)}</div>
+      <div class="cc-amount">₪${fmt(mcTotal)}</div>
       <div class="cc-due">יורד ב-<b>20</b> לחודש${dMC<=3&&dMC>=0?` · <b style="color:var(--warn)">עוד ${dMC} ימים</b>`:''}</div>
       ${dMC<=1&&dMC>=0?'<span class="cc-tag">⚡ עוד יום!</span>':''}
     </div>
     <div class="cc visa">
       <div class="cc-brand">VISA</div>
       <div class="cc-lbl">חיוב חודשי</div>
-      <div class="cc-amount">₪${fmt(CARDS.visa)}</div>
+      <div class="cc-amount">₪${fmt(visaTotal)}</div>
       <div class="cc-due">יורד ב-<b>15</b> לחודש</div>
     </div>
     <div class="cc bank">
