@@ -674,7 +674,7 @@ const CLIENTS = {
   6:[],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[],4:[]
 };
 
-const CARDS = { visa:700, mc:2172, bank:9141 };
+const CARDS = { visa:700, mc:1165, bank:11434 };
 
 // ── HELPERS ──────────────────────────────────────────────
 const fmt      = n => Math.round(n).toLocaleString('he-IL');
@@ -759,9 +759,10 @@ function renderHome() {
   const inc       = sumI(m);
   const exp       = sumE(m);
   const planned   = (CLIENTS[m]||[]).filter(c=>c.status==='planned').reduce((s,c)=>s+c.amount,0);
-  const mcBill    = sumMC(m);    // מאסטרקארד ב-20 — מחושב מהנתונים
-  const visaBill  = sumVisa(m);  // ויזה ב-15 — מחושב מהנתונים
-  const upcoming  = mcBill + visaBill + 500;  // mc(20) + visa(15) + חניה(25)
+  const mcBill    = CARDS.mc;            // מאסטרקארד ב-20 — סכום בפועל (ידני)
+  const mcData    = sumMC(m);            // מה שרשום בנתונים
+  const visaBill  = sumVisa(m) || CARDS.visa;  // ויזה ב-15
+  const upcoming  = mcBill + visaBill + 500;   // mc(20) + visa(15) + חניה(25)
   const balNow    = inc - exp;
   const balFull   = inc + planned - exp - upcoming;
 
@@ -837,9 +838,9 @@ function renderHome() {
   document.getElementById('home-cc').innerHTML = `
     <div class="cc mc">
       <div class="cc-brand">MASTERCARD</div>
-      <div class="cc-lbl">חיוב חודשי</div>
-      <div class="cc-amount">₪${fmt(mcTotal)}</div>
-      <div class="cc-due">יורד ב-<b>20</b> לחודש${dMC<=3&&dMC>=0?` · <b style="color:var(--warn)">עוד ${dMC} ימים</b>`:''}</div>
+      <div class="cc-lbl">חיוב ב-20 לחודש</div>
+      <div class="cc-amount">₪${fmt(mcBill)}</div>
+      <div class="cc-due">רשום: ₪${fmt(mcData)}${dMC<=3&&dMC>=0?` · <b style="color:var(--warn)">עוד ${dMC} ימים</b>`:''}</div>
       ${dMC<=1&&dMC>=0?'<span class="cc-tag">⚡ עוד יום!</span>':''}
     </div>
     <div class="cc visa">
