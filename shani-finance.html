@@ -351,6 +351,61 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
   box-shadow:0 4px 20px rgba(29,233,182,.4);
 }
 
+/* ══ TRENDS ══════════════════════════════════════════════ */
+.trends-wrap{margin:0 16px 14px;background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:14px 16px}
+.trends-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.trends-ttl{font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px;text-transform:uppercase}
+
+/* ══ GOALS ════════════════════════════════════════════════ */
+.goals-grid{display:flex;flex-direction:column;gap:12px;padding:0 16px 16px}
+.goal-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 16px 13px;position:relative;overflow:hidden}
+.goal-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gc,var(--cyan))}
+.goal-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.goal-icon{font-size:26px;flex-shrink:0}
+.goal-info{flex:1;min-width:0}
+.goal-name{font-size:14px;font-weight:700}
+.goal-deadline{font-size:10px;color:var(--muted);margin-top:2px}
+.goal-amounts{text-align:left;flex-shrink:0}
+.goal-saved{font-size:17px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1}
+.goal-target{font-size:10px;color:var(--muted);margin-top:2px}
+.goal-bar-bg{background:rgba(255,255,255,.08);border-radius:20px;height:7px;margin-bottom:9px;overflow:hidden}
+.goal-bar-fill{height:100%;border-radius:20px;transition:width .7s cubic-bezier(.2,1,.3,1)}
+.goal-footer{display:flex;justify-content:space-between;align-items:center}
+.goal-pct{font-size:11px;font-weight:700}
+.goal-monthly{font-size:10px;color:var(--muted)}
+.goal-add-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--text);font-family:'Sora',sans-serif;font-size:11px;font-weight:700;padding:5px 12px;border-radius:10px;cursor:pointer;flex-shrink:0}
+.goal-del{position:absolute;top:10px;left:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 5px}
+.goal-del:hover{color:var(--neg)}
+.add-goal-card{background:rgba(29,233,182,.05);border:1.5px dashed rgba(29,233,182,.28);border-radius:var(--r);padding:18px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer}
+.add-goal-card:active{background:rgba(29,233,182,.1)}
+.add-goal-lbl{font-size:13px;font-weight:700;color:var(--cyan)}
+.goals-sum{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 16px 12px}
+
+/* ══ ADD TRANSACTION ══════════════════════════════════════ */
+.atabs{display:flex;gap:5px;margin-bottom:14px;background:rgba(255,255,255,.05);border-radius:11px;padding:4px}
+.atab{flex:1;font-family:'Sora',sans-serif;font-size:11px;font-weight:700;padding:7px 4px;border:none;background:none;color:var(--muted);border-radius:8px;cursor:pointer;transition:all .13s}
+.atab.on{background:var(--card2);color:var(--text)}
+.parse-area{width:100%;min-height:110px;font-family:'Sora',sans-serif;font-size:13px;padding:11px 12px;border:1.5px solid var(--border2);border-radius:12px;background:rgba(255,255,255,.06);color:var(--text);outline:none;resize:vertical;direction:rtl;line-height:1.65}
+.parse-area:focus{border-color:var(--cyan)}
+.parse-area::placeholder{color:var(--muted2);font-size:11px;line-height:1.8}
+.pp-row{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:9px;background:var(--card);margin-bottom:5px;font-size:12px}
+.pp-del{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:14px;flex-shrink:0;padding:0 2px}
+.type-toggle{display:flex;border-radius:11px;overflow:hidden;border:1.5px solid var(--border2);margin-bottom:12px}
+.ttype{flex:1;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;padding:9px;border:none;background:none;color:var(--muted);cursor:pointer;transition:all .13s}
+.ttype.on.expense{background:rgba(255,107,107,.18);color:var(--neg)}
+.ttype.on.income{background:rgba(0,230,118,.13);color:var(--pos)}
+.method-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.mchip{padding:6px 13px;border-radius:18px;border:1.5px solid var(--border2);background:none;color:var(--muted);font-family:'Sora',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .12s}
+.mchip.on.cash{background:rgba(255,179,71,.3);border-color:#FFB347;color:#FFB347}
+.mchip.on.bank{background:rgba(255,107,107,.2);border-color:var(--neg);color:var(--neg)}
+.mchip.on.visa{background:rgba(107,163,255,.25);border-color:#6BA3FF;color:#6BA3FF}
+.mchip.on.mc{background:rgba(181,123,238,.25);border-color:var(--pur);color:var(--pur)}
+.csv-hint{font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.75;background:rgba(255,255,255,.04);padding:8px 10px;border-radius:9px}
+.import-sum{font-size:11px;color:var(--cyan);font-weight:700}
+.add-panel{display:none}
+.add-panel.active{display:block}
+.pp-preview{margin-top:10px;max-height:200px;overflow-y:auto}
+
 /* ══ CARD DETAIL MODAL ═══════════════════════════════════ */
 .cd-mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);z-index:600;align-items:flex-end;justify-content:center}
 .cd-mbg.open{display:flex}
@@ -421,6 +476,14 @@ select option{background:#111D2C;color:#fff}
   </div>
 
   <div class="tiles" id="home-tiles"></div>
+
+  <div class="trends-wrap">
+    <div class="trends-hdr">
+      <span class="trends-ttl">מגמות חודשיות</span>
+      <span style="font-size:10px;color:var(--muted)" id="trends-sub"></span>
+    </div>
+    <canvas id="trends-chart" height="155"></canvas>
+  </div>
 
   <div class="sec-row">
     <span class="sec-lbl">עדכון יתרות</span>
@@ -541,6 +604,107 @@ select option{background:#111D2C;color:#fff}
   </div>
 </div>
 
+<!-- ══ GOALS ══════════════════════════════════════════════ -->
+<div class="screen" id="s-goals">
+  <div class="page-hdr">
+    <div class="page-title">מטרות חיסכון 🎯</div>
+    <div class="page-sub" id="goals-sub"></div>
+  </div>
+  <div class="goals-sum" id="goals-sum"></div>
+  <div class="goals-grid" id="goals-grid"></div>
+</div>
+
+<!-- ══ ADD TRANSACTION ════════════════════════════════════ -->
+<div class="mbg" id="atxn-mbg" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal" style="max-height:88dvh;overflow-y:auto">
+    <div class="modal-title">הוסף פעולה</div>
+    <div class="type-toggle">
+      <button class="ttype expense on" onclick="setAddType('expense')">הוצאה 💸</button>
+      <button class="ttype income" onclick="setAddType('income')">הכנסה 💰</button>
+    </div>
+    <div class="method-chips">
+      <span style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.4px">אמצעי:</span>
+      <button class="mchip bank on" data-m="bank" onclick="setAddMethod('bank')">עו"ש</button>
+      <button class="mchip cash" data-m="cash" onclick="setAddMethod('cash')">מזומן</button>
+      <button class="mchip visa" data-m="visa" onclick="setAddMethod('visa')">ויזה</button>
+      <button class="mchip mc" data-m="mc" onclick="setAddMethod('mc')">MC</button>
+    </div>
+    <div class="atabs">
+      <button class="atab on" data-t="text" onclick="setAddTab('text')">רשימה חופשית</button>
+      <button class="atab" data-t="form" onclick="setAddTab('form')">טופס</button>
+      <button class="atab" data-t="csv" onclick="setAddTab('csv')">CSV</button>
+    </div>
+    <!-- Free text panel -->
+    <div id="add-panel-text" class="add-panel active">
+      <textarea id="add-text" class="parse-area" placeholder="הכניסי שורה לכל פעולה:
+3.5
+4,100 שכירות
+65 קניות קיוסק mc
+100 קנאביס
+11.5
+1,200 נטלי"></textarea>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <span id="parse-count" class="import-sum"></span>
+        <button onclick="parseTextInput()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Sora',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border-radius:10px;cursor:pointer">נתחי ›</button>
+      </div>
+      <div id="pp-preview" class="pp-preview"></div>
+      <button onclick="importParsed()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:14px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:10px">שמור הכל ✓</button>
+    </div>
+    <!-- Form panel -->
+    <div id="add-panel-form" class="add-panel">
+      <div class="mi-row" style="margin-bottom:10px">
+        <div class="mfld" style="flex:2"><label>תיאור</label><input type="text" id="sf-desc" placeholder="מה הייתה הפעולה?"></div>
+        <div class="mfld" style="max-width:95px"><label>₪</label><input type="number" id="sf-amt" placeholder="0"></div>
+      </div>
+      <div class="mi-row" style="margin-bottom:14px">
+        <div class="mfld"><label>תאריך (אופציונלי)</label><input type="date" id="sf-date"></div>
+      </div>
+      <button onclick="addSingleTxn()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:14px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
+    </div>
+    <!-- CSV panel -->
+    <div id="add-panel-csv" class="add-panel">
+      <div class="csv-hint">עמודות: תאריך, סכום, תיאור, סוג (expense/income), אמצעי (mc/visa/bank/cash)<br>ניתן להדביק ישירות מ-Excel / Google Sheets (Tab מופרד)</div>
+      <textarea id="csv-text" class="parse-area" style="min-height:90px" placeholder="תאריך,סכום,תיאור,סוג,אמצעי&#10;03/05,4100,שכירות,expense,bank&#10;11/05,1200,נטלי,income,cash"></textarea>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <span id="csv-count" class="import-sum"></span>
+        <button onclick="parseCSV()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Sora',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border-radius:10px;cursor:pointer">נתחי ›</button>
+      </div>
+      <button onclick="importParsed()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:14px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:10px">ייבא ✓</button>
+    </div>
+    <button class="mclose" onclick="document.getElementById('atxn-mbg').classList.remove('open')">ביטול</button>
+  </div>
+</div>
+
+<!-- ══ NEW GOAL ════════════════════════════════════════════ -->
+<div class="mbg" id="new-goal-mbg" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-title">מטרת חיסכון חדשה ✨</div>
+    <div class="mi-row" style="margin-bottom:10px">
+      <div class="mfld" style="flex:2"><label>שם המטרה</label><input type="text" id="ng-name" placeholder="חופשה, ציוד חדש, שיפוץ..."></div>
+      <div class="mfld" style="max-width:70px"><label>אייקון</label><input type="text" id="ng-icon" placeholder="✈️" maxlength="2"></div>
+    </div>
+    <div class="mi-row" style="margin-bottom:14px">
+      <div class="mfld"><label>יעד ₪</label><input type="number" id="ng-target" placeholder="5000"></div>
+      <div class="mfld"><label>תאריך יעד</label><input type="date" id="ng-deadline"></div>
+    </div>
+    <button onclick="saveNewGoal()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:14px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">צור מטרה ✓</button>
+    <button class="mclose" onclick="document.getElementById('new-goal-mbg').classList.remove('open')">ביטול</button>
+  </div>
+</div>
+
+<!-- ══ ADD SAVINGS TO GOAL ════════════════════════════════ -->
+<div class="mbg" id="goal-add-mbg" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-title">הוסף חיסכון 💰</div>
+    <div class="modal-sub" id="ga-name" style="font-size:13px;color:var(--cyan);font-weight:700"></div>
+    <div class="mi-row" style="margin:14px 0">
+      <div class="mfld"><label>סכום ₪</label><input type="number" id="ga-amt" placeholder="0"></div>
+    </div>
+    <button onclick="saveGoalAdd()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:14px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
+    <button class="mclose" onclick="document.getElementById('goal-add-mbg').classList.remove('open')">ביטול</button>
+  </div>
+</div>
+
 <!-- ══ CARD DETAIL ════════════════════════════════════════ -->
 <div class="cd-mbg" id="cd-mbg" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="cd-modal">
@@ -555,22 +719,25 @@ select option{background:#111D2C;color:#fff}
 
 <!-- ══ BOTTOM NAV ═════════════════════════════════════════ -->
 <nav class="bnav">
-  <button class="bnb"    id="bn-clients" onclick="go('clients')">
+  <button class="bnb" id="bn-clients" onclick="go('clients')">
     <span class="bnb-icon">📅</span><span class="bnb-lbl">לקוחות</span>
   </button>
-  <button class="bnb on" id="bn-home"    onclick="go('home')">
+  <button class="bnb on" id="bn-home" onclick="go('home')">
     <span class="bnb-icon">🏠</span><span class="bnb-lbl">בית</span>
+  </button>
+  <button class="bnb" id="bn-goals" onclick="go('goals')">
+    <span class="bnb-icon">🎯</span><span class="bnb-lbl">מטרות</span>
   </button>
 </nav>
 
 <!-- ══ FAB ════════════════════════════════════════════════ -->
 <div class="fab-wrap">
-  <button class="fab fab-add" onclick="document.getElementById('qa-mbg').classList.add('open')">+</button>
-  <button class="fab fab-mic" onclick="document.getElementById('qa-mbg').classList.add('open')">🎤</button>
+  <button class="fab fab-add" onclick="openAddTxn()" title="הוסף פעולה">+</button>
 </div>
 
 <div id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 <script>
 'use strict';
 // ── CONSTANTS ────────────────────────────────────────────
@@ -692,6 +859,7 @@ var CLIENTS = {
 };
 
 var CARDS = {visa:700,mc:1165.64,bank:11434};
+var GOALS = [];
 
 // ── HELPERS ──────────────────────────────────────────────
 function fmt(n){ return Math.round(n).toLocaleString('he-IL'); }
@@ -720,12 +888,14 @@ function save(){
     localStorage.setItem('shani_cards',  JSON.stringify(CARDS));
   }catch(e){}
 }
+function saveGoals(){try{localStorage.setItem('shani_goals',JSON.stringify(GOALS));}catch(e){}}
 function load(){
   try{
     var c=localStorage.getItem('shani_clients'); if(c){var d=JSON.parse(c);Object.keys(d).forEach(function(k){CLIENTS[k]=d[k];});}
     var e=localStorage.getItem('shani_expense'); if(e){var d=JSON.parse(e);Object.keys(d).forEach(function(k){RAW.expense[k]=d[k];});}
     var i=localStorage.getItem('shani_income');  if(i){var d=JSON.parse(i);Object.keys(d).forEach(function(k){RAW.income[k]=d[k];});}
     var cd=localStorage.getItem('shani_cards');  if(cd)Object.assign(CARDS,JSON.parse(cd));
+    var g=localStorage.getItem('shani_goals');   if(g)GOALS=JSON.parse(g);
   }catch(e){}
 }
 function exportData(){
@@ -757,6 +927,7 @@ function go(name){
   if(name==='expenses') renderExpenses();
   if(name==='income')   renderIncome();
   if(name==='balance')  renderBalance();
+  if(name==='goals')    renderGoals();
 }
 
 // ── CALC ─────────────────────────────────────────────────
@@ -829,6 +1000,7 @@ function renderHome(){
     '<div class="cc visa" onclick="showCardDetail(\'visa\')" style="cursor:pointer"><div class="cc-top"><div class="cc-brand">VISA</div><div class="cc-toggle"></div></div><div class="cc-sub">חיוב חודשי</div><div class="cc-amt">₪'+fmt(r.vBill)+'</div><div class="cc-due">יורד ב-<b>15</b> לחודש</div>'+(dV<=3?'<span class="cc-tag warn">עוד '+dV+' ימים</span>':'<span class="cc-tag next">חיוב הבא</span>')+'<div class="cc-hint">חיובים החודש: ₪'+fmt(vCharges)+' · לפרטים ›</div></div>';
 
   document.getElementById('bank-val').textContent='-₪'+fmt(CARDS.bank);
+  renderTrends();
 }
 
 // ── EXPENSE DETAIL ────────────────────────────────────────
@@ -1003,6 +1175,256 @@ function saveQA(){
   document.getElementById('qa-name').value='';document.getElementById('qa-amt').value='';
   document.getElementById('qa-mbg').classList.remove('open');
   save();renderClients();renderHome();toast('✓ '+name+' נוספה');
+}
+
+// ── TRENDS CHART ─────────────────────────────────────────
+var trendsChart=null;
+function renderTrends(){
+  var ctx=document.getElementById('trends-chart');
+  if(!ctx||typeof Chart==='undefined')return;
+  var labels=[],incArr=[],expArr=[];
+  var start=Math.max(0,homeMi-4);
+  for(var i=start;i<=homeMi;i++){
+    var ml=MONTHS[i];
+    labels.push(ml.label.slice(0,3)+"'"+String(ml.year).slice(2));
+    var r=calc(i);
+    incArr.push(r.inc+r.doneAmt+r.planAmt);
+    expArr.push(r.exp);
+  }
+  document.getElementById('trends-sub').textContent=MONTHS[start].label+' — '+MONTHS[homeMi].label+' '+MONTHS[homeMi].year;
+  if(trendsChart){
+    trendsChart.data.labels=labels;
+    trendsChart.data.datasets[0].data=incArr;
+    trendsChart.data.datasets[1].data=expArr;
+    trendsChart.update('none');return;
+  }
+  trendsChart=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[
+        {label:'הכנסות',data:incArr,backgroundColor:'rgba(29,233,182,.5)',borderColor:'rgba(29,233,182,.9)',borderWidth:1.5,borderRadius:6,borderSkipped:false},
+        {label:'הוצאות',data:expArr,backgroundColor:'rgba(255,109,53,.45)',borderColor:'rgba(255,109,53,.9)',borderWidth:1.5,borderRadius:6,borderSkipped:false}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{labels:{color:'rgba(255,255,255,.65)',font:{family:'Sora',size:10},boxWidth:10,padding:12}},
+        tooltip:{callbacks:{label:function(c){return c.dataset.label+': ₪'+Math.round(c.raw).toLocaleString('he-IL');}}}
+      },
+      scales:{
+        x:{ticks:{color:'rgba(255,255,255,.5)',font:{family:'Sora',size:9}},grid:{color:'rgba(255,255,255,.04)'}},
+        y:{ticks:{color:'rgba(255,255,255,.5)',font:{family:'Sora',size:9},callback:function(v){return v>=1000?'₪'+(v/1000).toFixed(0)+'k':'₪'+v;}},grid:{color:'rgba(255,255,255,.06)'}}
+      }
+    }
+  });
+}
+
+// ── GOALS ─────────────────────────────────────────────────
+var activeGoalIdx=-1;
+var GOAL_COLORS=['#1DE9B6','#B57BEE','#FFB347','#6BA3FF','#00E676','#FF6B6B','#FF6D35'];
+
+function renderGoals(){
+  var totalT=GOALS.reduce(function(s,g){return s+g.target;},0);
+  var totalS=GOALS.reduce(function(s,g){return s+g.saved;},0);
+  var pctAll=totalT>0?Math.min(100,Math.round(totalS/totalT*100)):0;
+  document.getElementById('goals-sub').textContent=GOALS.length+' מטרות · ₪'+fmt(totalS)+' נחסך';
+  document.getElementById('goals-sum').innerHTML=
+    '<div class="cl-sum-card done-c"><div class="cls-icon">💰</div><div class="cls-title">סה"כ נחסך</div><div class="cls-val pos">₪'+fmt(totalS)+'</div><div class="cls-sub">'+pctAll+'% מהיעד הכולל</div></div>'+
+    '<div class="cl-sum-card plan-c"><div class="cls-icon">🎯</div><div class="cls-title">יעד כולל</div><div class="cls-val amb">₪'+fmt(totalT)+'</div><div class="cls-sub">'+GOALS.length+' מטרות פעילות</div></div>';
+  var h='';
+  GOALS.forEach(function(g,idx){
+    var pct=g.target>0?Math.min(100,Math.round(g.saved/g.target*100)):0;
+    var left=Math.max(0,g.target-g.saved);
+    var monthly='';
+    if(g.deadline){
+      var dl=new Date(g.deadline),now=new Date();
+      var months=Math.max(1,Math.ceil((dl-now)/(1000*60*60*24*30)));
+      if(left>0)monthly='₪'+fmt(Math.ceil(left/months))+'/חודש';
+    }
+    var col=g.color||'var(--cyan)';
+    h+='<div class="goal-card" style="--gc:'+col+'">'+
+      '<button class="goal-del" onclick="deleteGoal('+idx+')">✕</button>'+
+      '<div class="goal-top">'+
+        '<div class="goal-icon">'+(g.icon||'🎯')+'</div>'+
+        '<div class="goal-info"><div class="goal-name">'+g.name+'</div><div class="goal-deadline">'+(g.deadline?new Date(g.deadline).toLocaleDateString('he-IL',{month:'long',year:'numeric'}):'')+(monthly?' · '+monthly:'')+'</div></div>'+
+        '<div class="goal-amounts"><div class="goal-saved" style="color:'+col+'">₪'+fmt(g.saved)+'</div><div class="goal-target">מתוך ₪'+fmt(g.target)+'</div></div>'+
+      '</div>'+
+      '<div class="goal-bar-bg"><div class="goal-bar-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'+
+      '<div class="goal-footer"><span class="goal-pct" style="color:'+col+'">'+pct+'%</span>'+
+        '<span class="goal-monthly">'+(left>0?'נותר: ₪'+fmt(left):'✓ הושג! 🎉')+'</span>'+
+        '<button class="goal-add-btn" onclick="openGoalAdd('+idx+')">+ הוסף חיסכון</button>'+
+      '</div>'+
+    '</div>';
+  });
+  h+='<div class="add-goal-card" onclick="document.getElementById(\'new-goal-mbg\').classList.add(\'open\')"><span style="font-size:22px">➕</span><span class="add-goal-lbl">מטרת חיסכון חדשה</span></div>';
+  document.getElementById('goals-grid').innerHTML=h;
+}
+
+function openGoalAdd(idx){
+  activeGoalIdx=idx;
+  var g=GOALS[idx];
+  document.getElementById('ga-name').textContent=g.icon+' '+g.name+' — נחסך: ₪'+fmt(g.saved);
+  document.getElementById('ga-amt').value='';
+  document.getElementById('goal-add-mbg').classList.add('open');
+}
+function saveGoalAdd(){
+  var amt=pa(document.getElementById('ga-amt').value);
+  if(!amt||activeGoalIdx<0)return;
+  GOALS[activeGoalIdx].saved=Math.max(0,GOALS[activeGoalIdx].saved+amt);
+  document.getElementById('goal-add-mbg').classList.remove('open');
+  saveGoals();renderGoals();
+  toast('✓ ₪'+fmt(amt)+' נוספו ל'+GOALS[activeGoalIdx].name);
+}
+function saveNewGoal(){
+  var name=document.getElementById('ng-name').value.trim();
+  var target=pa(document.getElementById('ng-target').value);
+  var deadline=document.getElementById('ng-deadline').value;
+  var icon=document.getElementById('ng-icon').value.trim()||'🎯';
+  if(!name||!target)return;
+  GOALS.push({id:'g'+Date.now(),name:name,icon:icon,target:target,saved:0,color:GOAL_COLORS[GOALS.length%GOAL_COLORS.length],deadline:deadline});
+  ['ng-name','ng-target','ng-deadline','ng-icon'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('new-goal-mbg').classList.remove('open');
+  saveGoals();renderGoals();toast('✓ מטרה נוצרה: '+name);
+}
+function deleteGoal(idx){
+  if(!confirm('למחוק את "'+GOALS[idx].name+'"?'))return;
+  GOALS.splice(idx,1);saveGoals();renderGoals();
+}
+
+// ── ADD TRANSACTION ───────────────────────────────────────
+var addParsed=[];
+var addType='expense';
+var addMethod='bank';
+
+function openAddTxn(){
+  addParsed=[];
+  document.getElementById('pp-preview').innerHTML='';
+  document.getElementById('parse-count').textContent='';
+  document.getElementById('atxn-mbg').classList.add('open');
+}
+function setAddType(t){
+  addType=t;
+  document.querySelectorAll('.ttype').forEach(function(b){b.classList.remove('on');});
+  document.querySelector('.ttype.'+t).classList.add('on');
+}
+function setAddMethod(m){
+  addMethod=m;
+  document.querySelectorAll('.mchip').forEach(function(c){c.classList.remove('on');});
+  var el=document.querySelector('.mchip[data-m="'+m+'"]');
+  if(el)el.classList.add('on');
+}
+function setAddTab(t){
+  document.querySelectorAll('.atab').forEach(function(b){b.classList.remove('on');});
+  document.querySelectorAll('.add-panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelector('.atab[data-t="'+t+'"]').classList.add('on');
+  document.getElementById('add-panel-'+t).classList.add('active');
+}
+function parseTextInput(){
+  var raw=document.getElementById('add-text').value.trim();
+  if(!raw)return;
+  var lines=raw.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+  var curDate=null;
+  var mo=MONTHS[homeMi];
+  var results=[];
+  lines.forEach(function(line){
+    var dm=line.match(/^(\d{1,2})[./](\d{1,2})$/);
+    if(dm){curDate=String(dm[1]).padStart(2,'0')+'/'+String(dm[2]).padStart(2,'0');return;}
+    var mList=['mc','visa','bank','cash'];
+    var detM=addMethod;
+    var txt=line;
+    mList.forEach(function(mt){
+      var re=new RegExp('\\s+'+mt+'\\s*$','i');
+      if(re.test(txt)){detM=mt;txt=txt.replace(re,'').trim();}
+    });
+    var m=txt.match(/^([\d,]+(?:\.\d+)?)\s+(.+)$/);
+    if(!m)return;
+    var amt=parseFloat(m[1].replace(/,/g,''));
+    var desc=m[2].trim();
+    if(!amt||!desc)return;
+    var useDate=curDate||(String(new Date().getDate()).padStart(2,'0')+'/'+String(mo.key).padStart(2,'0'));
+    results.push({date:useDate,desc:desc,amount:amt,method:detM,type:addType,monthKey:mo.key});
+  });
+  addParsed=results;
+  renderPP();
+}
+function parseCSV(){
+  var raw=document.getElementById('csv-text').value.trim();
+  if(!raw)return;
+  var lines=raw.split('\n').filter(Boolean);
+  var mo=MONTHS[homeMi];
+  var results=[];
+  lines.forEach(function(line,idx){
+    if(idx===0&&/תאריך|date/i.test(line))return;
+    var cols=line.includes('\t')?line.split('\t'):line.split(',');
+    cols=cols.map(function(c){return c.trim().replace(/^"|"$/g,'');});
+    var date=cols[0]||(String(new Date().getDate()).padStart(2,'0')+'/'+String(mo.key).padStart(2,'0'));
+    var amt=pa(cols[1]);var desc=(cols[2]||'').trim();
+    var type=(cols[3]||'').toLowerCase().includes('inc')?'income':'expense';
+    var method=(cols[4]||'').toLowerCase().trim();
+    if(!['mc','visa','bank','cash'].includes(method))method=addMethod;
+    if(!amt||!desc)return;
+    results.push({date:date,desc:desc,amount:amt,method:method,type:type,monthKey:mo.key});
+  });
+  addParsed=results;
+  document.getElementById('csv-count').textContent=results.length+' רשומות זוהו';
+  renderPP();
+}
+function renderPP(){
+  var h='';
+  addParsed.forEach(function(t,i){
+    var mLbl={mc:'MC',visa:'Visa',bank:'עו"ש',cash:'מזומן'}[t.method]||'';
+    var sign=t.type==='income'?'+':'-';
+    var col=t.type==='income'?'var(--pos)':'var(--orange)';
+    h+='<div class="pp-row">'+
+      '<span style="color:var(--muted);font-size:10px;flex-shrink:0">'+t.date+'</span>'+
+      '<span style="flex:1">'+t.desc+'</span>'+
+      (mLbl?'<span style="font-size:9px;color:var(--muted);background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px">'+mLbl+'</span>':'')+
+      '<span style="font-weight:800;color:'+col+'">'+sign+'₪'+fmt(t.amount)+'</span>'+
+      '<button class="pp-del" onclick="removePP('+i+')">✕</button>'+
+    '</div>';
+  });
+  if(!h)h='<div style="font-size:11px;color:var(--muted);padding:8px 0">לחצי "נתחי" לצפייה בתוצאות</div>';
+  document.getElementById('pp-preview').innerHTML=h;
+  document.getElementById('parse-count').textContent=addParsed.length>0?addParsed.length+' רשומות':'';
+}
+function removePP(i){addParsed.splice(i,1);renderPP();}
+function importParsed(){
+  if(!addParsed.length){toast('אין רשומות לייבא');return;}
+  var mo=MONTHS[homeMi];
+  addParsed.forEach(function(t){
+    var entry={d:t.date,desc:t.desc,a:t.amount};
+    if(t.method&&t.method!=='cash'&&t.method!=='bank')entry.method=t.method;
+    if(t.type==='expense'){RAW.expense[mo.key]=RAW.expense[mo.key]||[];RAW.expense[mo.key].push(entry);}
+    else{RAW.income[mo.key]=RAW.income[mo.key]||[];RAW.income[mo.key].push(entry);}
+  });
+  var count=addParsed.length;
+  addParsed=[];
+  save();
+  document.getElementById('atxn-mbg').classList.remove('open');
+  document.getElementById('add-text').value='';
+  document.getElementById('csv-text').value='';
+  renderHome();
+  toast('✓ '+count+' רשומות נוספו');
+}
+function addSingleTxn(){
+  var desc=document.getElementById('sf-desc').value.trim();
+  var amt=pa(document.getElementById('sf-amt').value);
+  var dateVal=document.getElementById('sf-date').value;
+  var mo=MONTHS[homeMi];
+  if(!desc||!amt)return;
+  var d,m2;
+  if(dateVal){var p=dateVal.split('-');d=p[2];m2=p[1];}
+  else{var now=new Date();d=String(now.getDate()).padStart(2,'0');m2=String(mo.key).padStart(2,'0');}
+  var entry={d:d+'/'+m2,desc:desc,a:amt};
+  if(addMethod!=='cash'&&addMethod!=='bank')entry.method=addMethod;
+  if(addType==='expense'){RAW.expense[mo.key]=RAW.expense[mo.key]||[];RAW.expense[mo.key].push(entry);}
+  else{RAW.income[mo.key]=RAW.income[mo.key]||[];RAW.income[mo.key].push(entry);}
+  save();
+  document.getElementById('sf-desc').value='';document.getElementById('sf-amt').value='';
+  document.getElementById('atxn-mbg').classList.remove('open');
+  renderHome();toast('✓ '+desc+' נוסף');
 }
 
 // ── CARD DETAIL ──────────────────────────────────────────
