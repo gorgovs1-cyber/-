@@ -139,7 +139,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .alert-card.ok  .a-title{color:var(--pos)}
 .alert-card.bad .a-title{color:#FF8080}
 .a-sub  {font-size:11px;color:var(--muted);line-height:1.5}
-.a-icon {font-size:26px;flex-shrink:0}
+.a-icon {display:none}
 .a-amt  {font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--pur);flex-shrink:0}
 .alert-card.ok  .a-amt{color:var(--pos)}
 .alert-card.bad .a-amt{color:#FF8080}
@@ -159,15 +159,14 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 16px 16px}
 .tile{
   background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  padding:16px 10px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:14px 10px 13px;display:flex;flex-direction:column;align-items:center;gap:6px;
   cursor:pointer;transition:transform .15s,opacity .15s;
+  position:relative;overflow:hidden;
 }
+.tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--tc,var(--cyan))}
 .tile:active{transform:scale(.95);opacity:.75}
-.tile-ico{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px}
-.tile-ico.teal  {background:rgba(29,233,182,.13)}
-.tile-ico.orange{background:rgba(255,109,53,.15)}
-.tile-ico.green {background:rgba(0,230,118,.11)}
-.tile-val{font-size:16px;font-weight:800;letter-spacing:-.5px;font-variant-numeric:tabular-nums;text-align:center}
+.tile-ico{display:none}
+.tile-val{font-size:15px;font-weight:800;letter-spacing:-.5px;font-variant-numeric:tabular-nums;text-align:center;margin-top:4px}
 .tile-val.pos   {color:var(--cyan)}
 .tile-val.neg   {color:var(--neg)}
 .tile-val.orange{color:var(--orange)}
@@ -232,7 +231,11 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .txn-list{padding:0 16px 16px}
 .txn-group-hdr{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;padding:10px 4px 5px;text-transform:uppercase}
 .txn-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--rs);background:var(--card);border:1px solid var(--border);margin-bottom:7px}
-.txn-icon{font-size:18px;flex-shrink:0;width:28px;text-align:center}
+.txn-icon{
+  flex-shrink:0;width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8.5px;font-weight:800;letter-spacing:.2px;text-align:center;line-height:1.2;
+}
 .txn-body{flex:1}
 .txn-desc{font-size:13px;font-weight:600;line-height:1.3}
 .txn-date{font-size:10px;color:var(--muted);margin-top:2px}
@@ -265,7 +268,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .cl-sum-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:15px 14px 13px}
 .cl-sum-card.done-c{border-color:rgba(0,230,118,.22)}
 .cl-sum-card.plan-c{border-color:rgba(255,179,71,.22)}
-.cls-icon {font-size:22px;margin-bottom:8px}
+.cls-icon {display:none}
 .cls-title{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
 .cls-val  {font-size:22px;font-weight:900;letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1.1}
 .cls-val.pos{color:var(--pos)}.cls-val.amb{color:#FFB347}.cls-val.cyn{color:var(--cyan)}
@@ -327,11 +330,11 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
   display:flex;justify-content:space-around;align-items:stretch;
   padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));z-index:200;
 }
-.bnb{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;cursor:pointer;padding:4px 38px;border-radius:14px;transition:all .15s}
-.bnb-icon{font-size:24px;line-height:1}
-.bnb-lbl {font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.3px}
+.bnb{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px 38px;border-radius:14px;transition:all .15s}
+.bnb-icon{width:20px;height:2px;border-radius:2px;background:transparent;transition:background .15s,box-shadow .15s}
+.bnb-lbl {font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.3px}
 .bnb.on .bnb-lbl {color:var(--cyan)}
-.bnb.on .bnb-icon{filter:drop-shadow(0 0 6px rgba(29,233,182,.7))}
+.bnb.on .bnb-icon{background:var(--cyan);box-shadow:0 0 8px rgba(29,233,182,.6)}
 
 /* ══ FAB ══════════════════════════════════════════════════ */
 .fab-wrap{position:fixed;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:20px;display:flex;gap:10px;z-index:300}
@@ -361,7 +364,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .goal-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 16px 13px;position:relative;overflow:hidden}
 .goal-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gc,var(--cyan))}
 .goal-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.goal-icon{font-size:26px;flex-shrink:0}
+.goal-icon{display:none}
 .goal-info{flex:1;min-width:0}
 .goal-name{font-size:14px;font-weight:700}
 .goal-deadline{font-size:10px;color:var(--muted);margin-top:2px}
@@ -415,7 +418,11 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .cd-title{font-size:18px;font-weight:800}
 .cd-total{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--orange)}
 .cd-item{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:11px;background:var(--card);border:1px solid var(--border);margin-bottom:6px}
-.cd-item-ico{font-size:17px;flex-shrink:0;width:26px;text-align:center}
+.cd-item-ico{
+  flex-shrink:0;width:34px;height:34px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:800;letter-spacing:.2px;text-align:center;line-height:1.2;
+}
 .cd-item-body{flex:1}
 .cd-item-desc{font-size:13px;font-weight:600;line-height:1.3}
 .cd-item-date{font-size:10px;color:var(--muted);margin-top:2px}
@@ -431,24 +438,13 @@ select option{background:#111D2C;color:#fff}
 
 <!-- ══ SPLASH ════════════════════════════════════════════ -->
 <div id="splash">
-  <!-- gold sparkles -->
-  <span class="sp-star" style="top:10%;right:16%;--sz:24px;--dur:1.3s;--dl:.5s;--sz-clr:#FFD700">✦</span>
-  <span class="sp-star" style="top:16%;left:12%;--sz:15px;--dur:1.7s;--dl:.8s;--sz-clr:#FFD700">★</span>
-  <span class="sp-star" style="top:25%;right:8%; --sz:11px;--dur:2.1s;--dl:.3s;--sz-clr:#fff">✦</span>
-  <span class="sp-star" style="top:42%;left:7%; --sz:20px;--dur:1.2s;--dl:1s;--sz-clr:#FFD700">✦</span>
-  <span class="sp-star" style="bottom:30%;right:10%;--sz:17px;--dur:1.9s;--dl:.6s;--sz-clr:#FFD700">★</span>
-  <span class="sp-star" style="bottom:24%;left:14%;--sz:13px;--dur:1.5s;--dl:.9s;--sz-clr:#FFD700">✧</span>
-  <span class="sp-star" style="top:52%;right:5%; --sz:9px; --dur:2.3s;--dl:.4s;--sz-clr:#fff">✦</span>
-  <span class="sp-star" style="top:18%;left:28%;--sz:9px; --dur:2s;  --dl:1.2s;--sz-clr:#FFD700">◆</span>
-  <span class="sp-star" style="bottom:18%;right:24%;--sz:12px;--dur:1.6s;--dl:.7s;--sz-clr:#1DE9B6">✦</span>
-  <span class="sp-star" style="top:35%;right:20%;--sz:7px;--dur:2.4s;--dl:1.4s;--sz-clr:#FFD700">★</span>
   <!-- shekel drops from top -->
   <div class="sp-shekel">₪</div>
   <!-- My Money with layered glow -->
   <div style="position:relative;text-align:center">
     <div class="sp-name">My Money</div>
   </div>
-  <div class="sp-greet" id="sp-greet">ערב טוב שני ✨</div>
+  <div class="sp-greet" id="sp-greet">ערב טוב שני</div>
   <div class="sp-sub">Personal Finance</div>
 </div>
 
@@ -456,7 +452,7 @@ select option{background:#111D2C;color:#fff}
 <div class="screen active" id="s-home">
   <div class="hero">
     <div class="hero-top">
-      <button class="backup-btn" onclick="exportData()">📥 גיבוי</button>
+      <button class="backup-btn" onclick="exportData()">גיבוי</button>
       <div class="hero-right">
         <div class="hero-greet" id="home-greet">ערב טוב שני ✨</div>
         <div class="hero-date"  id="home-date"></div>
@@ -540,7 +536,7 @@ select option{background:#111D2C;color:#fff}
 <!-- ══ CLIENTS ════════════════════════════════════════════ -->
 <div class="screen" id="s-clients">
   <div class="page-hdr">
-    <div class="page-title">לקוחות 💇‍♀️</div>
+    <div class="page-title">לקוחות</div>
     <div class="page-sub" id="cl-sub"></div>
   </div>
   <div class="mnav">
@@ -607,7 +603,7 @@ select option{background:#111D2C;color:#fff}
 <!-- ══ GOALS ══════════════════════════════════════════════ -->
 <div class="screen" id="s-goals">
   <div class="page-hdr">
-    <div class="page-title">מטרות חיסכון 🎯</div>
+    <div class="page-title">מטרות חיסכון</div>
     <div class="page-sub" id="goals-sub"></div>
   </div>
   <div class="goals-sum" id="goals-sum"></div>
@@ -619,8 +615,8 @@ select option{background:#111D2C;color:#fff}
   <div class="modal" style="max-height:88dvh;overflow-y:auto">
     <div class="modal-title">הוסף פעולה</div>
     <div class="type-toggle">
-      <button class="ttype expense on" onclick="setAddType('expense')">הוצאה 💸</button>
-      <button class="ttype income" onclick="setAddType('income')">הכנסה 💰</button>
+      <button class="ttype expense on" onclick="setAddType('expense')">הוצאה</button>
+      <button class="ttype income" onclick="setAddType('income')">הכנסה</button>
     </div>
     <div class="method-chips">
       <span style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.4px">אמצעי:</span>
@@ -678,7 +674,7 @@ select option{background:#111D2C;color:#fff}
 <!-- ══ NEW GOAL ════════════════════════════════════════════ -->
 <div class="mbg" id="new-goal-mbg" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal">
-    <div class="modal-title">מטרת חיסכון חדשה ✨</div>
+    <div class="modal-title">מטרת חיסכון חדשה</div>
     <div class="mi-row" style="margin-bottom:10px">
       <div class="mfld" style="flex:2"><label>שם המטרה</label><input type="text" id="ng-name" placeholder="חופשה, ציוד חדש, שיפוץ..."></div>
       <div class="mfld" style="max-width:70px"><label>אייקון</label><input type="text" id="ng-icon" placeholder="✈️" maxlength="2"></div>
@@ -695,7 +691,7 @@ select option{background:#111D2C;color:#fff}
 <!-- ══ ADD SAVINGS TO GOAL ════════════════════════════════ -->
 <div class="mbg" id="goal-add-mbg" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal">
-    <div class="modal-title">הוסף חיסכון 💰</div>
+    <div class="modal-title">הוסף חיסכון</div>
     <div class="modal-sub" id="ga-name" style="font-size:13px;color:var(--cyan);font-weight:700"></div>
     <div class="mi-row" style="margin:14px 0">
       <div class="mfld"><label>סכום ₪</label><input type="number" id="ga-amt" placeholder="0"></div>
@@ -720,13 +716,13 @@ select option{background:#111D2C;color:#fff}
 <!-- ══ BOTTOM NAV ═════════════════════════════════════════ -->
 <nav class="bnav">
   <button class="bnb" id="bn-clients" onclick="go('clients')">
-    <span class="bnb-icon">📅</span><span class="bnb-lbl">לקוחות</span>
+    <span class="bnb-icon"></span><span class="bnb-lbl">לקוחות</span>
   </button>
   <button class="bnb on" id="bn-home" onclick="go('home')">
-    <span class="bnb-icon">🏠</span><span class="bnb-lbl">בית</span>
+    <span class="bnb-icon"></span><span class="bnb-lbl">בית</span>
   </button>
   <button class="bnb" id="bn-goals" onclick="go('goals')">
-    <span class="bnb-icon">🎯</span><span class="bnb-lbl">מטרות</span>
+    <span class="bnb-icon"></span><span class="bnb-lbl">מטרות</span>
   </button>
 </nav>
 
@@ -741,18 +737,86 @@ select option{background:#111D2C;color:#fff}
 <script>
 'use strict';
 // ── CONSTANTS ────────────────────────────────────────────
-var FIXED = 4400;
+var FIXED = 4588;
 var MONTHS = [
-  {key:11,label:'נובמבר',year:2024,days:30},{key:12,label:'דצמבר',year:2024,days:31},
-  {key:1, label:'ינואר', year:2025,days:31},{key:2, label:'פברואר',year:2025,days:28},
-  {key:3, label:'מרץ',   year:2025,days:31},{key:4, label:'אפריל', year:2025,days:30},
-  {key:5, label:'מאי',   year:2025,days:31},{key:6, label:'יוני',  year:2025,days:30},
-  {key:7, label:'יולי',  year:2025,days:31},{key:8, label:'אוגוסט',year:2025,days:31},
+  {key:11,label:'נובמבר',year:2025,days:30},{key:12,label:'דצמבר',year:2025,days:31},
+  {key:1, label:'ינואר', year:2026,days:31},{key:2, label:'פברואר',year:2026,days:28},
+  {key:3, label:'מרץ',   year:2026,days:31},{key:4, label:'אפריל', year:2026,days:30},
+  {key:5, label:'מאי',   year:2026,days:31},{key:6, label:'יוני',  year:2026,days:30},
+  {key:7, label:'יולי',  year:2026,days:31},{key:8, label:'אוגוסט',year:2026,days:31},
 ];
 var MAY_IDX = 6; // index of May
 
 var RAW = {
   expense:{
+    4:[
+      {d:'01/04',desc:'קניות ביאנגו',a:133},
+      {d:'02/04',desc:'קנאביס',a:250},
+      {d:'03/04',desc:'קניות בויקטורי',a:99},
+      {d:'03/04',desc:'קניות ביאנגו סופר כולל טבק',a:172},
+      {d:'04/04',desc:'יין',a:57},
+      {d:'04/04',desc:'קפה',a:18},
+      {d:'04/04',desc:'קנאביס',a:250},
+      {d:'05/04',desc:'קניות ביאנגו',a:81},
+      {d:'05/04',desc:'קניות סופר וולט',a:151},
+      {d:'06/04',desc:'קפה',a:15},
+      {d:'06/04',desc:'יין',a:28},
+      {d:'06/04',desc:'טבק',a:90},
+      {d:'07/04',desc:'יין',a:90},
+      {d:'08/04',desc:'יין',a:50},
+      {d:'08/04',desc:'קפה',a:18},
+      {d:'08/04',desc:'קנאביס',a:188},
+      {d:'08/04',desc:'פסטה בוולט',a:99},
+      {d:'09/04',desc:'קפה וגזוז',a:30},
+      {d:'09/04',desc:'תפוזים',a:17},
+      {d:'09/04',desc:'סופר ויקטורי וטבק',a:129},
+      {d:'10/04',desc:'קפה',a:14},
+      {d:'10/04',desc:'מונית',a:71},
+      {d:'10/04',desc:'קניות סופר וולט',a:158},
+      {d:'10/04',desc:'סיעוד ביטוח',a:59.48},
+      {d:'10/04',desc:'קופת חולים',a:161.26},
+      {d:'12/04',desc:'קנאביס',a:179},
+      {d:'12/04',desc:'קפה',a:24},
+      {d:'12/04',desc:'ספוטיפיי',a:23},
+      {d:'12/04',desc:'פרטנר סלולר',a:60.42},
+      {d:'13/04',desc:'וולט סופר וטבק',a:201},
+      {d:'14/04',desc:'דלק',a:200},
+      {d:'14/04',desc:'קפה',a:18},
+      {d:'14/04',desc:'יין',a:115},
+      {d:'16/04',desc:'קנאביס',a:195},
+      {d:'16/04',desc:'קפה',a:8},
+      {d:'16/04',desc:'סלט בוולט',a:71},
+      {d:'16/04',desc:'יין',a:110},
+      {d:'16/04',desc:'טבק',a:90},
+      {d:'19/04',desc:'קפה',a:18},
+      {d:'19/04',desc:'וולט מנוי',a:18},
+      {d:'19/04',desc:'קוסקוס וולט משלוח',a:80},
+      {d:'19/04',desc:'שירות אפל',a:11.90},
+      {d:'20/04',desc:'קנאביס',a:179},
+      {d:'20/04',desc:'קפה',a:10},
+      {d:'20/04',desc:'טבק וקניות',a:120},
+      {d:'20/04',desc:'סופר וולט',a:161},
+      {d:'23/04',desc:'קניות בגוד פארם',a:240},
+      {d:'23/04',desc:'תה',a:16},
+      {d:'23/04',desc:'בירה',a:20},
+      {d:'24/04',desc:'יין',a:40},
+      {d:'25/04',desc:'טבק ופילטרים',a:137},
+      {d:'25/04',desc:'קפה',a:18},
+      {d:'25/04',desc:'קנאביס',a:250},
+      {d:'25/04',desc:'חניה',a:500},
+      {d:'26/04',desc:'קפה',a:13},
+      {d:'26/04',desc:'אוכל לליצ׳י',a:28},
+      {d:'26/04',desc:'פרטנר',a:60.42},
+      {d:'27/04',desc:'קפה',a:26},
+      {d:'27/04',desc:'קפה',a:15},
+      {d:'27/04',desc:'יין',a:40},
+      {d:'28/04',desc:'קניות וטבק',a:205},
+      {d:'29/04',desc:'החזר הלוואה לאדם',a:200},
+      {d:'29/04',desc:'קפה',a:18},
+      {d:'29/04',desc:'חשבון מים',a:97},
+      {d:'30/04',desc:'קפה',a:13},
+      {d:'30/04',desc:'סופר ויקטורי',a:171},
+    ],
     5:[
       {d:'02/05',desc:'שכירות',a:4100},
       {d:'02/05',desc:'קניות בקיוסק',a:65},
@@ -829,6 +893,17 @@ var RAW = {
     3:[{d:'14/03',desc:'אייפון תשלום 11/11',a:349,method:'mc'}],
   },
   income:{
+    4:[
+      {d:'01/04',desc:'השתתפות בשכ"ד',a:770},
+      {d:'01/04',desc:'קנאביס',a:320},
+      {d:'01/04',desc:'שורש לשרון',a:800},
+      {d:'01/04',desc:'חידוש שחר',a:800},
+      {d:'01/04',desc:'שיר',a:800},
+      {d:'01/04',desc:'קורל',a:800},
+      {d:'01/04',desc:'שני',a:800},
+      {d:'01/04',desc:'לירז',a:800},
+      {d:'01/04',desc:'שירה',a:1200},
+    ],
     5:[
       {d:'01/05',desc:'קנאביס מירי',a:963},
       {d:'01/05',desc:'השתתפות בשכ"ד',a:770},
@@ -855,7 +930,7 @@ var CLIENTS = {
     {day:28,name:'ליטל',       amount:800,  status:'planned'},
     {day:29,name:'ספיר פרץ',   amount:800,  status:'planned'},
   ],
-  6:[],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[],4:[]
+  4:[],6:[],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[]
 };
 
 var CARDS = {visa:700,mc:1165.64,bank:11434};
@@ -867,11 +942,33 @@ function pa(s){ return parseFloat(String(s).replace(/,/g,'').replace(/[^\d.]/g,'
 function sumE(m){ return (RAW.expense[m]||[]).reduce(function(s,t){return s+t.a;},0); }
 function sumI(m){ return (RAW.income[m]||[]).reduce(function(s,t){return s+t.a;},0)+FIXED; }
 
+// ── CATEGORY BADGE ───────────────────────────────────────
+function cat(d){
+  if(/קנאביס/i.test(d))   return{bg:'rgba(0,200,100,.18)',co:'#00C864',lbl:'קנב'};
+  if(/קפה|תה/i.test(d))   return{bg:'rgba(255,177,60,.18)',co:'#FFB347',lbl:'קפה'};
+  if(/יין|בירה|קוקטייל/i.test(d)) return{bg:'rgba(181,123,238,.18)',co:'#B57BEE',lbl:'בר'};
+  if(/וולט|אוכל|סלט|מרק|פסטה|נודלס|קוסקוס/i.test(d)) return{bg:'rgba(255,109,53,.18)',co:'#FF6D35',lbl:'אוכל'};
+  if(/שכירות/i.test(d))   return{bg:'rgba(29,233,182,.18)',co:'#1DE9B6',lbl:'שכ"ד'};
+  if(/חשמל/i.test(d))     return{bg:'rgba(255,230,100,.18)',co:'#FFE064',lbl:'חשמל'};
+  if(/ביטוח|קופת חולים/i.test(d)) return{bg:'rgba(107,163,255,.18)',co:'#6BA3FF',lbl:'ביטוח'};
+  if(/סופר|קניות/i.test(d)) return{bg:'rgba(29,233,182,.18)',co:'#1DE9B6',lbl:'קניות'};
+  if(/טבק/i.test(d))      return{bg:'rgba(200,150,100,.18)',co:'#C89050',lbl:'טבק'};
+  if(/דלק/i.test(d))      return{bg:'rgba(255,109,53,.18)',co:'#FF6D35',lbl:'דלק'};
+  if(/אייפון|טלפון|כיסוי|מדבקה/i.test(d)) return{bg:'rgba(181,123,238,.18)',co:'#B57BEE',lbl:'טלפון'};
+  if(/מנוי|ספוטיפיי|נטפליקס|קלאוד/i.test(d)) return{bg:'rgba(107,163,255,.18)',co:'#6BA3FF',lbl:'מנוי'};
+  if(/פרטנר/i.test(d))    return{bg:'rgba(107,163,255,.18)',co:'#6BA3FF',lbl:'פרטנר'};
+  if(/טסט/i.test(d))      return{bg:'rgba(255,109,53,.18)',co:'#FF6D35',lbl:'טסט'};
+  if(/מים|חשבון/i.test(d)) return{bg:'rgba(107,163,255,.18)',co:'#6BA3FF',lbl:'חשבון'};
+  if(/מונית/i.test(d))    return{bg:'rgba(255,109,53,.18)',co:'#FF6D35',lbl:'נסיעה'};
+  if(/חניה/i.test(d))     return{bg:'rgba(255,109,53,.18)',co:'#FF6D35',lbl:'חניה'};
+  return{bg:'rgba(255,255,255,.08)',co:'rgba(255,255,255,.5)',lbl:'אחר'};
+}
+
 // ── SPLASH ───────────────────────────────────────────────
 function initSplash(){
   var h=new Date().getHours();
   var gr=h<5?'לילה טוב':h<12?'בוקר טוב':h<17?'צהריים טובים':'ערב טוב';
-  document.getElementById('sp-greet').textContent=gr+' שני ✨';
+  document.getElementById('sp-greet').textContent=gr+' שני';
   setTimeout(function(){
     var sp=document.getElementById('splash');
     sp.classList.add('out');
@@ -904,7 +1001,7 @@ function exportData(){
   a.href=URL.createObjectURL(blob);
   a.download='shani-finance-'+new Date().toISOString().slice(0,10)+'.json';
   a.click();URL.revokeObjectURL(a.href);
-  toast('📥 גיבוי הורד');
+  toast('גיבוי הורד');
 }
 
 // ── TOAST ────────────────────────────────────────────────
@@ -981,7 +1078,7 @@ function renderHome(){
   var gr=h<5?'לילה טוב':h<12?'בוקר טוב':h<17?'צהריים טובים':'ערב טוב';
   var days=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
   var mos=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
-  document.getElementById('home-greet').textContent=gr+' שני ✨';
+  document.getElementById('home-greet').textContent=gr+' שני';
   document.getElementById('home-date').textContent='יום '+days[now.getDay()]+', '+now.getDate()+' ב'+mos[now.getMonth()];
 
   var bEl=document.getElementById('home-bal');
@@ -998,30 +1095,29 @@ function renderHome(){
   var wrap=document.getElementById('home-alert');
   var alertHtml='';
   if(r.isNow&&r.mcDeduct===0&&r.vDeduct===0){
-    // Both already paid this month
     if(r.balFull<0){
-      alertHtml='<div class="alert-card bad"><div class="a-body"><div class="a-title">תחזית שלילית לסוף החודש ⚠️</div><div class="a-sub">ויזה ומאסטרקארד כבר ירדו החודש</div></div><div class="a-icon">🚨</div><div class="a-amt">₪'+fmt(Math.abs(r.balFull))+'</div></div>';
+      alertHtml='<div class="alert-card bad"><div class="a-body"><div class="a-title">תחזית שלילית לסוף החודש</div><div class="a-sub">ויזה ומאסטרקארד כבר ירדו החודש</div></div><div class="a-amt">₪'+fmt(Math.abs(r.balFull))+'</div></div>';
     }else{
-      alertHtml='<div class="alert-card ok"><div class="a-body"><div class="a-title">כל החיובים שולמו החודש ✓</div><div class="a-sub">ויזה ₪'+fmt(r.vBill)+' ב-15 · מאסטרקארד ₪'+fmt(r.mcBill)+' ב-20</div></div><div class="a-icon">✅</div><div class="a-amt">+₪'+fmt(r.balFull)+'</div></div>';
+      alertHtml='<div class="alert-card ok"><div class="a-body"><div class="a-title">כל החיובים שולמו החודש</div><div class="a-sub">ויזה ₪'+fmt(r.vBill)+' ב-15 · מאסטרקארד ₪'+fmt(r.mcBill)+' ב-20</div></div><div class="a-amt">+₪'+fmt(r.balFull)+'</div></div>';
     }
   }else if(dMC>=0&&dMC<=5){
     var short=r.mcBill-(r.inc+r.doneAmt+r.planAmt-r.exp);
     if(short>0){
-      alertHtml='<div class="alert-card"><div class="a-body"><div class="a-title">חסר כיסוי למאסטרקארד ⚠️</div><div class="a-sub">יורד בעוד '+dMC+' ימים · ₪'+fmt(r.mcBill)+'</div></div><div class="a-icon">⚡</div><div class="a-amt">₪'+fmt(short)+'</div></div>';
+      alertHtml='<div class="alert-card"><div class="a-body"><div class="a-title">חסר כיסוי למאסטרקארד</div><div class="a-sub">יורד בעוד '+dMC+' ימים · ₪'+fmt(r.mcBill)+'</div></div><div class="a-amt">₪'+fmt(short)+'</div></div>';
     }else{
-      alertHtml='<div class="alert-card ok"><div class="a-body"><div class="a-title">כיסוי למאסטרקארד ✓</div><div class="a-sub">יורד בעוד '+dMC+' ימים · ₪'+fmt(r.mcBill)+'</div></div><div class="a-amt">₪'+fmt(r.mcBill)+'</div></div>';
+      alertHtml='<div class="alert-card ok"><div class="a-body"><div class="a-title">כיסוי למאסטרקארד</div><div class="a-sub">יורד בעוד '+dMC+' ימים · ₪'+fmt(r.mcBill)+'</div></div><div class="a-amt">₪'+fmt(r.mcBill)+'</div></div>';
     }
   }else if(r.balFull<0){
-    alertHtml='<div class="alert-card bad"><div class="a-body"><div class="a-title">תחזית שלילית לסוף החודש ⚠️</div><div class="a-sub">'+(r.mcDeduct>0?'מאסטרקארד ₪'+fmt(r.mcBill)+' ב-20':'')+' '+(r.vDeduct>0?'· ויזה ₪'+fmt(r.vBill)+' ב-15':'')+'</div></div><div class="a-icon">🚨</div><div class="a-amt">₪'+fmt(Math.abs(r.balFull))+'</div></div>';
+    alertHtml='<div class="alert-card bad"><div class="a-body"><div class="a-title">תחזית שלילית לסוף החודש</div><div class="a-sub">'+(r.mcDeduct>0?'מאסטרקארד ₪'+fmt(r.mcBill)+' ב-20':'')+' '+(r.vDeduct>0?'· ויזה ₪'+fmt(r.vBill)+' ב-15':'')+'</div></div><div class="a-amt">₪'+fmt(Math.abs(r.balFull))+'</div></div>';
   }
   wrap.innerHTML=alertHtml;
 
   // Tiles
   var bCls=r.balFull>=0?'pos':'neg';
   document.getElementById('home-tiles').innerHTML=
-    '<div class="tile" onclick="go(\'income\')"><div class="tile-ico green">💰</div><div class="tile-val pos">₪'+fmt(r.inc+r.doneAmt)+'</div><div class="tile-lbl">הכנסות</div></div>'+
-    '<div class="tile" onclick="go(\'expenses\')"><div class="tile-ico orange">💸</div><div class="tile-val orange">₪'+fmt(r.exp)+'</div><div class="tile-lbl">הוצאות</div></div>'+
-    '<div class="tile" onclick="go(\'balance\')"><div class="tile-ico teal">💎</div><div class="tile-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="tile-lbl">ישאר בסוף החודש</div></div>';
+    '<div class="tile" style="--tc:var(--pos)" onclick="go(\'income\')"><div class="tile-val pos">₪'+fmt(r.inc+r.doneAmt)+'</div><div class="tile-lbl">הכנסות</div></div>'+
+    '<div class="tile" style="--tc:var(--orange)" onclick="go(\'expenses\')"><div class="tile-val orange">₪'+fmt(r.exp)+'</div><div class="tile-lbl">הוצאות</div></div>'+
+    '<div class="tile" style="--tc:var(--cyan)" onclick="go(\'balance\')"><div class="tile-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="tile-lbl">ישאר בסוף החודש</div></div>';
 
   // Cards
   var dV=(todayM===r.m&&todayD<=15)?15-todayD:999;
@@ -1042,24 +1138,13 @@ function renderExpenses(){
   var items=(RAW.expense[r.m]||[]).slice().sort(function(a,b){return parseInt(a.d)-parseInt(b.d);});
   var byDate={};
   items.forEach(function(t){if(!byDate[t.d])byDate[t.d]=[];byDate[t.d].push(t);});
-  function ico(d){
-    if(/קנאביס/i.test(d))return'🌿';if(/קפה/i.test(d))return'☕';
-    if(/יין|בירה|קוקטייל/i.test(d))return'🍷';
-    if(/אוכל|סלט|מרק|וולט/i.test(d))return'🍽️';
-    if(/שכירות/i.test(d))return'🏠';if(/חשמל/i.test(d))return'⚡';
-    if(/ביטוח|קופת חולים/i.test(d))return'🏥';
-    if(/סופר|קניות/i.test(d))return'🛒';if(/דלק/i.test(d))return'⛽';
-    if(/אייפון|טלפון/i.test(d))return'📱';
-    if(/מנוי|ספוטיפיי|נטפליקס|קלאוד/i.test(d))return'📺';
-    if(/פרטנר/i.test(d))return'📡';if(/טסט/i.test(d))return'🚗';
-    return'💳';
-  }
   var h='';
   Object.keys(byDate).sort().forEach(function(dt){
     h+='<div class="txn-group-hdr">'+dt+'</div>';
     byDate[dt].forEach(function(t){
+      var c=cat(t.desc);
       var mt=t.method?'<span class="txn-method '+t.method+'">'+(t.method==='mc'?'MC':'Visa')+'</span>':'';
-      h+='<div class="txn-item"><div class="txn-icon">'+ico(t.desc)+'</div><div class="txn-body"><div class="txn-desc">'+t.desc+mt+'</div><div class="txn-date">'+dt+'</div></div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div></div>';
+      h+='<div class="txn-item"><div class="txn-icon" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="txn-body"><div class="txn-desc">'+t.desc+mt+'</div><div class="txn-date">'+dt+'</div></div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div></div>';
     });
   });
   document.getElementById('exp-list').innerHTML=h;
@@ -1070,18 +1155,18 @@ function renderIncome(){
   var r=calc(homeMi);
   document.getElementById('inc-total').textContent='+₪'+fmt(r.inc+r.doneAmt);
   var items=RAW.income[r.m]||[];
-  var h='<div class="txn-group-hdr">הכנסות קבועות</div><div class="txn-item"><div class="txn-icon">🏛️</div><div class="txn-body"><div class="txn-desc">ביטוח לאומי</div><div class="txn-date">קבוע חודשי</div></div><div class="txn-amt pos">+₪'+fmt(FIXED)+'</div></div>';
+  var h='<div class="txn-group-hdr">הכנסות קבועות</div><div class="txn-item"><div class="txn-icon" style="background:rgba(29,233,182,.18);color:#1DE9B6">לאומי</div><div class="txn-body"><div class="txn-desc">ביטוח לאומי</div><div class="txn-date">קבוע חודשי</div></div><div class="txn-amt pos">+₪'+fmt(FIXED)+'</div></div>';
   if(items.length){
     h+='<div class="txn-group-hdr">הכנסות נוספות</div>';
-    items.forEach(function(t){h+='<div class="txn-item"><div class="txn-icon">💵</div><div class="txn-body"><div class="txn-desc">'+t.desc+'</div><div class="txn-date">'+t.d+'</div></div><div class="txn-amt pos">+₪'+fmt(t.a)+'</div></div>';});
+    items.forEach(function(t){h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(0,230,118,.15);color:#00E676">הכנסה</div><div class="txn-body"><div class="txn-desc">'+t.desc+'</div><div class="txn-date">'+t.d+'</div></div><div class="txn-amt pos">+₪'+fmt(t.a)+'</div></div>';});
   }
   if(r.doneList.length){
-    h+='<div class="txn-group-hdr">לקוחות ✓ בוצע</div>';
-    r.doneList.forEach(function(c){h+='<div class="txn-item"><div class="txn-icon">✂️</div><div class="txn-body"><div class="txn-desc">'+c.name+'</div><div class="txn-date">יום '+c.day+'</div></div><div class="txn-amt pos">+₪'+fmt(c.amount)+'</div></div>';});
+    h+='<div class="txn-group-hdr">לקוחות — בוצע</div>';
+    r.doneList.forEach(function(c){h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(181,123,238,.18);color:#B57BEE">לקוחה</div><div class="txn-body"><div class="txn-desc">'+c.name+'</div><div class="txn-date">יום '+c.day+'</div></div><div class="txn-amt pos">+₪'+fmt(c.amount)+'</div></div>';});
   }
   if(r.planList.length){
-    h+='<div class="txn-group-hdr">לקוחות ⏳ מתוכנן</div>';
-    r.planList.forEach(function(c){h+='<div class="txn-item" style="opacity:.65"><div class="txn-icon">✂️</div><div class="txn-body"><div class="txn-desc">'+c.name+'</div><div class="txn-date">יום '+c.day+'</div></div><div class="txn-amt dim">+₪'+fmt(c.amount)+'</div></div>';});
+    h+='<div class="txn-group-hdr">לקוחות — מתוכנן</div>';
+    r.planList.forEach(function(c){h+='<div class="txn-item" style="opacity:.65"><div class="txn-icon" style="background:rgba(181,123,238,.12);color:#B57BEE">לקוחה</div><div class="txn-body"><div class="txn-desc">'+c.name+'</div><div class="txn-date">יום '+c.day+'</div></div><div class="txn-amt dim">+₪'+fmt(c.amount)+'</div></div>';});
   }
   document.getElementById('inc-list').innerHTML=h;
 }
@@ -1146,8 +1231,8 @@ function renderClients(){
   var bCls=r.balFull>=0?'cyn':'neg';
   var bSign=r.balFull>=0?'+':'';
   document.getElementById('cl-summary').innerHTML=
-    '<div class="cl-sum-card done-c"><div class="cls-icon">✂️</div><div class="cls-title">בוצע</div><div class="cls-val pos">₪'+fmt(doneAmt)+'</div><div class="cls-sub">'+done.length+' לקוחות'+(done.length>0?' · '+done.map(function(c){return c.name.split(' ')[0];}).join(', '):'')+'</div></div>'+
-    '<div class="cl-sum-card plan-c"><div class="cls-icon">📊</div><div class="cls-title">צפי סוף חודש</div><div class="cls-val '+bCls+'">'+bSign+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="cls-sub">'+plan.length+' לקוחות צפויות<br>+₪'+fmt(planAmt)+' נוסף</div></div>';
+    '<div class="cl-sum-card done-c"><div class="cls-title">בוצע</div><div class="cls-val pos">₪'+fmt(doneAmt)+'</div><div class="cls-sub">'+done.length+' לקוחות'+(done.length>0?' · '+done.map(function(c){return c.name.split(' ')[0];}).join(', '):'')+'</div></div>'+
+    '<div class="cl-sum-card plan-c"><div class="cls-title">צפי סוף חודש</div><div class="cls-val '+bCls+'">'+bSign+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="cls-sub">'+plan.length+' לקוחות צפויות<br>+₪'+fmt(planAmt)+' נוסף</div></div>';
   var today=new Date();
   var isNow=today.getMonth()+1===m&&today.getFullYear()===ml.year;
   var byDay={};
@@ -1273,8 +1358,8 @@ function renderGoals(){
   var pctAll=totalT>0?Math.min(100,Math.round(totalS/totalT*100)):0;
   document.getElementById('goals-sub').textContent=GOALS.length+' מטרות · ₪'+fmt(totalS)+' נחסך';
   document.getElementById('goals-sum').innerHTML=
-    '<div class="cl-sum-card done-c"><div class="cls-icon">💰</div><div class="cls-title">סה"כ נחסך</div><div class="cls-val pos">₪'+fmt(totalS)+'</div><div class="cls-sub">'+pctAll+'% מהיעד הכולל</div></div>'+
-    '<div class="cl-sum-card plan-c"><div class="cls-icon">🎯</div><div class="cls-title">יעד כולל</div><div class="cls-val amb">₪'+fmt(totalT)+'</div><div class="cls-sub">'+GOALS.length+' מטרות פעילות</div></div>';
+    '<div class="cl-sum-card done-c"><div class="cls-title">סה"כ נחסך</div><div class="cls-val pos">₪'+fmt(totalS)+'</div><div class="cls-sub">'+pctAll+'% מהיעד הכולל</div></div>'+
+    '<div class="cl-sum-card plan-c"><div class="cls-title">יעד כולל</div><div class="cls-val amb">₪'+fmt(totalT)+'</div><div class="cls-sub">'+GOALS.length+' מטרות פעילות</div></div>';
   var h='';
   GOALS.forEach(function(g,idx){
     var pct=g.target>0?Math.min(100,Math.round(g.saved/g.target*100)):0;
@@ -1295,12 +1380,12 @@ function renderGoals(){
       '</div>'+
       '<div class="goal-bar-bg"><div class="goal-bar-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'+
       '<div class="goal-footer"><span class="goal-pct" style="color:'+col+'">'+pct+'%</span>'+
-        '<span class="goal-monthly">'+(left>0?'נותר: ₪'+fmt(left):'✓ הושג! 🎉')+'</span>'+
+        '<span class="goal-monthly">'+(left>0?'נותר: ₪'+fmt(left):'הושג!')+'</span>'+
         '<button class="goal-add-btn" onclick="openGoalAdd('+idx+')">+ הוסף חיסכון</button>'+
       '</div>'+
     '</div>';
   });
-  h+='<div class="add-goal-card" onclick="document.getElementById(\'new-goal-mbg\').classList.add(\'open\')"><span style="font-size:22px">➕</span><span class="add-goal-lbl">מטרת חיסכון חדשה</span></div>';
+  h+='<div class="add-goal-card" onclick="document.getElementById(\'new-goal-mbg\').classList.add(\'open\')"><span class="add-goal-lbl">+ מטרת חיסכון חדשה</span></div>';
   document.getElementById('goals-grid').innerHTML=h;
 }
 
@@ -1474,24 +1559,13 @@ function showCardDetail(type){
   var r=calc(homeMi);
   var items=(RAW.expense[r.m]||[]).filter(function(t){return t.method===type;});
   var total=items.reduce(function(s,t){return s+t.a;},0);
-  var names={mc:'מאסטרקארד 💜',visa:'ויזה 💙'};
+  var names={mc:'מאסטרקארד',visa:'ויזה'};
   document.getElementById('cd-title').textContent='חיובי '+names[type];
   document.getElementById('cd-total').textContent='-₪'+fmt(total);
-  function ico(d){
-    if(/קנאביס/i.test(d))return'🌿';if(/קפה/i.test(d))return'☕';
-    if(/יין|בירה|קוקטייל/i.test(d))return'🍷';
-    if(/אוכל|סלט|מרק|וולט|פסטה|נודלס/i.test(d))return'🍽️';
-    if(/שכירות/i.test(d))return'🏠';if(/חשמל/i.test(d))return'⚡';
-    if(/ביטוח|קופת חולים/i.test(d))return'🏥';
-    if(/סופר|קניות/i.test(d))return'🛒';if(/דלק/i.test(d))return'⛽';
-    if(/אייפון|טלפון|כיסוי|מדבקה/i.test(d))return'📱';
-    if(/מנוי|ספוטיפיי|נטפליקס|קלאוד/i.test(d))return'📺';
-    if(/פרטנר/i.test(d))return'📡';if(/טסט/i.test(d))return'🚗';
-    return'💳';
-  }
   var h=items.length===0?'<div class="mempty">אין חיובים בכרטיס זה החודש</div>':'';
   items.slice().sort(function(a,b){return a.d.localeCompare(b.d);}).forEach(function(t){
-    h+='<div class="cd-item"><div class="cd-item-ico">'+ico(t.desc)+'</div><div class="cd-item-body"><div class="cd-item-desc">'+t.desc+'</div><div class="cd-item-date">'+t.d+'</div></div><div class="cd-item-amt">-₪'+fmt(t.a)+'</div></div>';
+    var c=cat(t.desc);
+    h+='<div class="cd-item"><div class="cd-item-ico" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="cd-item-body"><div class="cd-item-desc">'+t.desc+'</div><div class="cd-item-date">'+t.d+'</div></div><div class="cd-item-amt">-₪'+fmt(t.a)+'</div></div>';
   });
   document.getElementById('cd-list').innerHTML=h;
   document.getElementById('cd-mbg').classList.add('open');
