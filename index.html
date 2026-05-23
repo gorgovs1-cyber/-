@@ -429,6 +429,37 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .cd-item-amt{font-size:14px;font-weight:800;color:var(--orange);font-variant-numeric:tabular-nums;flex-shrink:0}
 .cc-hint{font-size:9px;color:rgba(255,255,255,.32);margin-top:7px;letter-spacing:.3px}
 
+/* ══ UPCOMING ════════════════════════════════════════════ */
+.upcoming-wrap{padding:0 16px 14px}
+.upc-hdr{font-size:10px;font-weight:700;color:var(--cyan);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;padding:0 2px}
+.upc-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--rs);background:var(--card);border:1px solid var(--border);margin-bottom:7px}
+.upc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.upc-body{flex:1}
+.upc-label{font-size:13px;font-weight:600}
+.upc-date{font-size:10px;color:var(--muted);margin-top:2px}
+.upc-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;flex-shrink:0}
+.upc-amt{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;flex-shrink:0}
+
+/* ══ PAYMENT METHOD GRID ════════════════════════════════ */
+.pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 20px}
+.pm-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:15px 14px 13px;cursor:pointer;transition:transform .15s,opacity .15s;position:relative;overflow:hidden}
+.pm-card:active{transform:scale(.97);opacity:.8}
+.pm-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--pm-c,var(--cyan))}
+.pm-name{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
+.pm-amt{font-size:20px;font-weight:900;letter-spacing:-1px;font-variant-numeric:tabular-nums;margin-bottom:3px}
+.pm-sub{font-size:10px;color:var(--muted);line-height:1.5;margin-top:2px}
+.pm-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;margin-top:6px}
+
+/* ══ SECTION HDR ═════════════════════════════════════════ */
+.s-hdr{display:flex;justify-content:space-between;align-items:center;padding:4px 20px 10px}
+.s-hdr-lbl{font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px;text-transform:uppercase}
+
+/* ══ CD MODAL ADD FORM ═══════════════════════════════════ */
+.cd-add-sep{height:1px;background:var(--border);margin:14px 0}
+.cd-add-ttl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px}
+.cd-file-lbl{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--rs);background:rgba(255,255,255,.04);border:1.5px dashed rgba(29,233,182,.3);cursor:pointer;margin-bottom:6px}
+.cd-file-lbl span{font-size:12px;font-weight:700;color:var(--cyan)}
+
 select option{background:#111D2C;color:#fff}
 ::-webkit-scrollbar{width:2px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
@@ -473,35 +504,13 @@ select option{background:#111D2C;color:#fff}
 
   <div class="tiles" id="home-tiles"></div>
 
-  <div class="trends-wrap">
-    <div class="trends-hdr">
-      <span class="trends-ttl">מגמות חודשיות</span>
-      <span style="font-size:10px;color:var(--muted)" id="trends-sub"></span>
-    </div>
-    <canvas id="trends-chart" height="155"></canvas>
-  </div>
+  <div class="upcoming-wrap" id="home-upcoming"></div>
 
-  <div class="sec-row">
-    <span class="sec-lbl">עדכון יתרות</span>
-    <span class="sec-lbl">חשבונות וכרטיסים</span>
+  <div class="s-hdr">
+    <span class="s-hdr-lbl">אמצעי תשלום</span>
+    <span style="font-size:10px;color:var(--muted)">לחצי לפרטים והוספה</span>
   </div>
-  <div class="cards-scroll" id="home-cc"></div>
-
-  <div class="bank-card" id="home-bank">
-    <div><div class="bank-lbl">עו"ש</div><div class="bank-sub">חריגה ממסגרת</div></div>
-    <div class="bank-amt" id="bank-val">-₪0</div>
-  </div>
-
-  <div class="upd-card">
-    <div class="upd-title">עדכון יתרות</div>
-    <div class="upd-row">
-      <div class="upd-fld"><label>ויזה ₪</label>    <input type="number" id="bal-visa" placeholder="700"></div>
-      <div class="upd-fld"><label>מאסטר ₪</label>   <input type="number" id="bal-mc"   placeholder="1165"></div>
-      <div class="upd-fld"><label>עו״ש מינוס ₪</label><input type="number" id="bal-bank" placeholder="11434"></div>
-    </div>
-    <div class="upd-row"><button class="upd-btn" onclick="updCards()">עדכן</button></div>
-    <div class="toast-line" id="bal-toast"></div>
-  </div>
+  <div class="pm-grid" id="home-pm"></div>
 </div>
 
 <!-- ══ EXPENSES ═══════════════════════════════════════════ -->
@@ -701,14 +710,38 @@ select option{background:#111D2C;color:#fff}
   </div>
 </div>
 
-<!-- ══ CARD DETAIL ════════════════════════════════════════ -->
+<!-- ══ PAYMENT METHOD DETAIL ══════════════════════════════ -->
 <div class="cd-mbg" id="cd-mbg" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="cd-modal">
     <div class="cd-hdr">
-      <div class="cd-title" id="cd-title">חיובי כרטיס</div>
+      <div class="cd-title" id="cd-title">הוצאות</div>
       <div class="cd-total" id="cd-total">₪0</div>
     </div>
     <div id="cd-list"></div>
+
+    <!-- Add expense form -->
+    <div class="cd-add-sep"></div>
+    <div class="cd-add-ttl">הוסף הוצאה</div>
+    <div class="mi-row" style="margin-bottom:9px">
+      <div class="mfld" style="flex:2"><label>תיאור</label><input type="text" id="cd-desc" placeholder="תיאור ההוצאה"></div>
+      <div class="mfld" style="max-width:90px"><label>₪</label><input type="number" id="cd-amt-inp" placeholder="0"></div>
+    </div>
+    <div class="mi-row" style="margin-bottom:12px">
+      <div class="mfld"><label>תאריך (אופציונלי)</label><input type="date" id="cd-date-inp"></div>
+    </div>
+    <button onclick="addFromPM()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:11px;border-radius:12px;border:none;cursor:pointer;margin-bottom:6px">הוסף</button>
+
+    <!-- Bank file import — shown only for עו"ש -->
+    <div id="cd-import-wrap" style="display:none">
+      <div class="cd-add-sep"></div>
+      <div class="cd-add-ttl">ייבוא מהבנק</div>
+      <label class="cd-file-lbl">
+        <span>בחר קובץ CSV מהבנק</span>
+        <input type="file" id="cd-file" accept=".csv,.txt" style="display:none" onchange="importBankFile(this)">
+      </label>
+      <div id="cd-import-status" style="font-size:11px;color:var(--cyan);min-height:16px"></div>
+    </div>
+
     <button class="mclose" onclick="document.getElementById('cd-mbg').classList.remove('open')">סגור</button>
   </div>
 </div>
@@ -1309,7 +1342,7 @@ var CLIENTS = {
   4:[],6:[],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[]
 };
 
-var CARDS = {visa:700,mc:1165.64,bank:11434};
+var CARDS = {visa:700,mc:1165.64,bank:11434,limit:10000};
 var GOALS = [];
 
 // ── HELPERS ──────────────────────────────────────────────
@@ -1367,7 +1400,7 @@ function load(){
     var c=localStorage.getItem('shani_clients'); if(c){var d=JSON.parse(c);Object.keys(d).forEach(function(k){CLIENTS[k]=d[k];});}
     var e=localStorage.getItem('shani_expense'); if(e){var d=JSON.parse(e);Object.keys(d).forEach(function(k){RAW.expense[k]=d[k];});}
     var i=localStorage.getItem('shani_income');  if(i){var d=JSON.parse(i);Object.keys(d).forEach(function(k){RAW.income[k]=d[k];});}
-    var cd=localStorage.getItem('shani_cards');  if(cd)Object.assign(CARDS,JSON.parse(cd));
+    var cd=localStorage.getItem('shani_cards');  if(cd){var cdo=JSON.parse(cd);Object.assign(CARDS,cdo);if(!CARDS.limit)CARDS.limit=10000;}
     var g=localStorage.getItem('shani_goals');   if(g)GOALS=JSON.parse(g);
   }catch(e){}
 }
@@ -1495,16 +1528,179 @@ function renderHome(){
     '<div class="tile" style="--tc:var(--orange)" onclick="go(\'expenses\')"><div class="tile-val orange">₪'+fmt(r.exp)+'</div><div class="tile-lbl">הוצאות</div></div>'+
     '<div class="tile" style="--tc:var(--cyan)" onclick="go(\'balance\')"><div class="tile-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="tile-lbl">ישאר בסוף החודש</div></div>';
 
-  // Cards
-  var dV=(todayM===r.m&&todayD<=15)?15-todayD:999;
-  var mcCharges=(RAW.expense[r.m]||[]).filter(function(t){return t.method==='mc';}).reduce(function(s,t){return s+t.a;},0);
-  var vCharges =(RAW.expense[r.m]||[]).filter(function(t){return t.method==='visa';}).reduce(function(s,t){return s+t.a;},0);
-  document.getElementById('home-cc').innerHTML=
-    '<div class="cc mc" onclick="showCardDetail(\'mc\')" style="cursor:pointer"><div class="cc-top"><div class="cc-brand">MASTERCARD</div><div class="cc-toggle"></div></div><div class="cc-sub">חיוב חודשי</div><div class="cc-amt">₪'+fmt(r.mcBill)+'</div><div class="cc-due">יורד ב-<b>20</b> לחודש</div>'+(dMC<=3?'<span class="cc-tag warn">עוד '+dMC+' ימים</span>':'')+'<div class="cc-hint">חיובים החודש: ₪'+fmt(mcCharges)+' · לפרטים ›</div></div>'+
-    '<div class="cc visa" onclick="showCardDetail(\'visa\')" style="cursor:pointer"><div class="cc-top"><div class="cc-brand">VISA</div><div class="cc-toggle"></div></div><div class="cc-sub">חיוב חודשי</div><div class="cc-amt">₪'+fmt(r.vBill)+'</div><div class="cc-due">יורד ב-<b>15</b> לחודש</div>'+(dV<=3?'<span class="cc-tag warn">עוד '+dV+' ימים</span>':'<span class="cc-tag next">חיוב הבא</span>')+'<div class="cc-hint">חיובים החודש: ₪'+fmt(vCharges)+' · לפרטים ›</div></div>';
+  renderUpcoming(r);
+  renderPMCards(r);
+}
 
-  document.getElementById('bank-val').textContent='-₪'+fmt(CARDS.bank);
-  renderTrends();
+// ── UPCOMING PAYMENTS ────────────────────────────────────
+function renderUpcoming(r){
+  var today=new Date();
+  var tD=today.getDate();
+  var items=[];
+  if(r.isNow){
+    if(tD<20) items.push({label:'מאסטרקארד',date:'20/'+String(r.m).padStart(2,'0'),days:20-tD,amt:r.mcBill,color:'#B57BEE'});
+    if(tD<15) items.push({label:'ויזה',date:'15/'+String(r.m).padStart(2,'0'),days:15-tD,amt:r.vBill,color:'#6BA3FF'});
+    (RAW.expense[r.m]||[]).forEach(function(t){
+      var d=parseInt(t.d.split('/')[0]);
+      if(d>tD) items.push({label:t.desc,date:t.d,days:d-tD,amt:t.a,color:'#FF6D35'});
+    });
+    items.sort(function(a,b){return parseInt(a.date)-parseInt(b.date);});
+  }
+  if(r.isNow&&tD<25) items.push({label:'ביטוח לאומי נכנס',date:'25/'+String(r.m).padStart(2,'0'),days:25-tD,amt:FIXED_MAP[r.m]||FIXED,color:'#1DE9B6',income:true});
+  items.sort(function(a,b){return parseInt(a.date)-parseInt(b.date);});
+  var el=document.getElementById('home-upcoming');
+  if(!items.length){el.innerHTML='';return;}
+  var h='<div class="upc-hdr">קרוב — תשלומים והכנסות</div>';
+  items.forEach(function(item){
+    var dTxt=item.days===0?'היום':item.days===1?'מחר':'עוד '+item.days+'י׳';
+    var sign=item.income?'+':'-';
+    h+='<div class="upc-item">'+
+      '<div class="upc-dot" style="background:'+item.color+'"></div>'+
+      '<div class="upc-body"><div class="upc-label">'+item.label+'</div><div class="upc-date">'+item.date+'</div></div>'+
+      '<div class="upc-badge" style="background:'+item.color+'22;color:'+item.color+'">'+dTxt+'</div>'+
+      '<div class="upc-amt" style="color:'+item.color+'">'+sign+'₪'+fmt(item.amt)+'</div>'+
+    '</div>';
+  });
+  el.innerHTML=h;
+}
+
+// ── PAYMENT METHOD CARDS ──────────────────────────────────
+function renderPMCards(r){
+  var exp=RAW.expense[r.m]||[];
+  function sum(fn){return exp.filter(fn).reduce(function(s,t){return s+t.a;},0);}
+  var bankTotal=sum(function(t){return !t.method||t.method==='bank';});
+  var mcTotal  =sum(function(t){return t.method==='mc';});
+  var visaTotal=sum(function(t){return t.method==='visa';});
+  var cashTotal=sum(function(t){return t.method==='cash';});
+  var today=new Date(),tD=today.getDate();
+  var dMC=r.isNow&&tD<20?20-tD:-1,dV=r.isNow&&tD<15?15-tD:-1;
+  document.getElementById('home-pm').innerHTML=
+    '<div class="pm-card" style="--pm-c:#FF6B6B" onclick="showPMDetail(\'bank\')">'+
+      '<div class="pm-name">עו"ש</div>'+
+      '<div class="pm-amt" style="color:#FF6B6B">₪'+fmt(bankTotal)+'</div>'+
+      '<div class="pm-sub">מינוס: ₪'+fmt(CARDS.bank)+' / מסגרת: ₪'+fmt(CARDS.limit)+'</div>'+
+      (CARDS.bank>CARDS.limit?'<span class="pm-tag" style="background:rgba(255,107,107,.2);color:#FF6B6B">חריגה ₪'+fmt(CARDS.bank-CARDS.limit)+'</span>':'<span class="pm-tag" style="background:rgba(0,230,118,.1);color:var(--pos)">בתוך המסגרת</span>')+
+    '</div>'+
+    '<div class="pm-card" style="--pm-c:#B57BEE" onclick="showPMDetail(\'mc\')">'+
+      '<div class="pm-name">מאסטרקארד</div>'+
+      '<div class="pm-amt" style="color:#B57BEE">₪'+fmt(mcTotal)+'</div>'+
+      '<div class="pm-sub">חיוב: ₪'+fmt(r.mcBill)+' ב-20</div>'+
+      (dMC>=0?'<span class="pm-tag" style="background:rgba(181,123,238,.15);color:#B57BEE">עוד '+dMC+' ימים</span>':'<span class="pm-tag" style="background:rgba(0,230,118,.1);color:var(--pos)">כבר ירד</span>')+
+    '</div>'+
+    '<div class="pm-card" style="--pm-c:#6BA3FF" onclick="showPMDetail(\'visa\')">'+
+      '<div class="pm-name">ויזה</div>'+
+      '<div class="pm-amt" style="color:#6BA3FF">₪'+fmt(visaTotal)+'</div>'+
+      '<div class="pm-sub">חיוב: ₪'+fmt(r.vBill)+' ב-15</div>'+
+      (dV>=0?'<span class="pm-tag" style="background:rgba(107,163,255,.15);color:#6BA3FF">עוד '+dV+' ימים</span>':'<span class="pm-tag" style="background:rgba(0,230,118,.1);color:var(--pos)">כבר ירדה</span>')+
+    '</div>'+
+    '<div class="pm-card" style="--pm-c:#FFB347" onclick="showPMDetail(\'cash\')">'+
+      '<div class="pm-name">מזומן</div>'+
+      '<div class="pm-amt" style="color:#FFB347">₪'+fmt(cashTotal)+'</div>'+
+      '<div class="pm-sub">תשלומים במזומן</div>'+
+      '<span class="pm-tag" style="background:rgba(255,179,71,.15);color:#FFB347">הוצאות החודש</span>'+
+    '</div>';
+}
+
+// ── PAYMENT METHOD DETAIL ─────────────────────────────────
+var curPMMethod='bank';
+function showPMDetail(method){
+  curPMMethod=method;
+  var r=calc(homeMi);
+  var labels={bank:'עו"ש',mc:'מאסטרקארד',visa:'ויזה',cash:'מזומן'};
+  var exp=RAW.expense[r.m]||[];
+  var items=exp.filter(function(t){
+    if(method==='bank') return !t.method||t.method==='bank';
+    if(method==='cash') return t.method==='cash';
+    return t.method===method;
+  });
+  var total=items.reduce(function(s,t){return s+t.a;},0);
+  document.getElementById('cd-title').textContent=labels[method];
+  document.getElementById('cd-total').textContent='-₪'+fmt(total);
+  document.getElementById('cd-import-wrap').style.display=method==='bank'?'block':'none';
+  var h=items.length===0?'<div class="mempty">אין הוצאות בחודש זה</div>':'';
+  items.slice().sort(function(a,b){return a.d.localeCompare(b.d);}).forEach(function(t){
+    var c=cat(t.desc);
+    h+='<div class="cd-item"><div class="cd-item-ico" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="cd-item-body"><div class="cd-item-desc">'+t.desc+'</div><div class="cd-item-date">'+t.d+'</div></div><div class="cd-item-amt">-₪'+fmt(t.a)+'</div></div>';
+  });
+  if(method==='bank'){
+    var over=CARDS.bank-CARDS.limit;
+    h+='<div style="padding:12px 14px;border-radius:var(--rs);background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);margin-top:8px">'+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;font-weight:700;color:var(--muted)">יתרת חוב</span><span style="font-size:16px;font-weight:900;color:var(--neg)">-₪'+fmt(CARDS.bank)+'</span></div>'+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;font-weight:700;color:var(--muted)">מסגרת אשראי</span><span style="font-size:13px;font-weight:700;color:var(--muted)">₪'+fmt(CARDS.limit)+'</span></div>'+
+      (over>0?'<div style="display:flex;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--neg)">חריגה מהמסגרת</span><span style="font-size:14px;font-weight:900;color:var(--neg)">₪'+fmt(over)+'</span></div>':'<div style="font-size:11px;font-weight:700;color:var(--pos)">בתוך המסגרת</div>')+
+    '</div>';
+    h+='<div class="mi-row" style="margin-top:8px">'+
+        '<div class="mfld"><label>יתרת מינוס ₪</label><input type="number" id="pm-bank-val" placeholder="'+CARDS.bank+'"></div>'+
+        '<div class="mfld" style="max-width:110px"><label>מסגרת ₪</label><input type="number" id="pm-bank-lim" placeholder="'+CARDS.limit+'"></div>'+
+        '<button onclick="updBankFromPM()" style="background:rgba(255,255,255,.1);border:1px solid var(--border2);color:var(--text);font-family:Sora,sans-serif;font-size:12px;font-weight:700;padding:10px 14px;border-radius:12px;border:none;cursor:pointer;align-self:flex-end;flex-shrink:0">עדכן</button>'+
+      '</div>';
+  }
+  document.getElementById('cd-list').innerHTML=h;
+  document.getElementById('cd-mbg').classList.add('open');
+}
+function updBankFromPM(){
+  var v=pa(document.getElementById('pm-bank-val').value);
+  var lim=pa(document.getElementById('pm-bank-lim').value);
+  if(v) CARDS.bank=v;
+  if(lim) CARDS.limit=lim;
+  if(v||lim){save();renderHome();showPMDetail('bank');toast('עו"ש עודכן');}
+}
+function addFromPM(){
+  var desc=document.getElementById('cd-desc').value.trim();
+  var amt=pa(document.getElementById('cd-amt-inp').value);
+  var dateVal=document.getElementById('cd-date-inp').value;
+  var r=calc(homeMi);
+  if(!desc||!amt)return;
+  var d,m2;
+  if(dateVal){var p=dateVal.split('-');d=p[2];m2=p[1];}
+  else{var now=new Date();d=String(now.getDate()).padStart(2,'0');m2=String(r.m).padStart(2,'0');}
+  var entry={d:d+'/'+m2,desc:desc,a:amt};
+  if(curPMMethod==='mc'||curPMMethod==='visa') entry.method=curPMMethod;
+  if(curPMMethod==='cash') entry.method='cash';
+  RAW.expense[r.m]=RAW.expense[r.m]||[];
+  RAW.expense[r.m].push(entry);
+  save();
+  document.getElementById('cd-desc').value='';
+  document.getElementById('cd-amt-inp').value='';
+  showPMDetail(curPMMethod);
+  renderHome();
+  toast('✓ '+desc+' נוסף');
+}
+function importBankFile(input){
+  var file=input.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var text=e.target.result;
+    var lines=text.split('\n').filter(Boolean);
+    var r=calc(homeMi);
+    var added=0;
+    lines.forEach(function(line,idx){
+      if(idx===0)return;
+      var cols=line.includes(';')?line.split(';'):line.split(',');
+      cols=cols.map(function(c){return c.trim().replace(/^"|"$/g,'');});
+      if(cols.length<3)return;
+      var date=cols[0]||'';
+      var desc=cols[1]||cols[2]||'';
+      var debit=0;
+      for(var i=2;i<cols.length;i++){
+        var v=parseFloat(cols[i].replace(/[^0-9.-]/g,''));
+        if(v>0){debit=v;break;}
+        if(v<0){debit=Math.abs(v);break;}
+      }
+      if(!debit||!desc.trim())return;
+      var d=date.slice(0,5).replace(/-/g,'/');
+      RAW.expense[r.m]=RAW.expense[r.m]||[];
+      RAW.expense[r.m].push({d:d,desc:desc.trim(),a:debit});
+      added++;
+    });
+    save();
+    document.getElementById('cd-import-status').textContent=added>0?added+' עסקאות יובאו':'לא נמצאו עסקאות — בדקי פורמט';
+    showPMDetail(curPMMethod);
+    renderHome();
+  };
+  reader.readAsText(file,'UTF-8');
+  input.value='';
 }
 
 // ── EXPENSE DETAIL ────────────────────────────────────────
