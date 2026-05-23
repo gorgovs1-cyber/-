@@ -737,7 +737,8 @@ select option{background:#111D2C;color:#fff}
 <script>
 'use strict';
 // ── CONSTANTS ────────────────────────────────────────────
-var FIXED = 4588;
+var FIXED = 4588; // from January 2026
+var FIXED_MAP = {11:4436, 12:4436}; // Nov+Dec 2025 — lower amount
 var MONTHS = [
   {key:11,label:'נובמבר',year:2025,days:30},{key:12,label:'דצמבר',year:2025,days:31},
   {key:1, label:'ינואר', year:2026,days:31},{key:2, label:'פברואר',year:2026,days:28},
@@ -1217,7 +1218,6 @@ var RAW = {
       {d:'01/11',desc:'לקוחה',a:800},
       {d:'01/11',desc:'לקוחה',a:700},
       {d:'01/11',desc:'ספיר',a:800},
-      {d:'01/11',desc:'תיקון ביטוח לאומי נובמבר',a:-152},
     ],
     12:[
       {d:'01/12',desc:'השתתפות בשכ"ד',a:770},
@@ -1231,7 +1231,6 @@ var RAW = {
       {d:'01/12',desc:'הדס קראטין',a:800},
       {d:'01/12',desc:'איב',a:800},
       {d:'01/12',desc:'אמא',a:3000},
-      {d:'01/12',desc:'תיקון ביטוח לאומי דצמבר',a:-152},
     ],
     1:[
       {d:'02/01',desc:'וויד מירי',a:324},
@@ -1317,7 +1316,7 @@ var GOALS = [];
 function fmt(n){ return Math.round(n).toLocaleString('he-IL'); }
 function pa(s){ return parseFloat(String(s).replace(/,/g,'').replace(/[^\d.]/g,''))||0; }
 function sumE(m){ return (RAW.expense[m]||[]).reduce(function(s,t){return s+t.a;},0); }
-function sumI(m){ return (RAW.income[m]||[]).reduce(function(s,t){return s+t.a;},0)+FIXED; }
+function sumI(m){ return (RAW.income[m]||[]).reduce(function(s,t){return s+t.a;},0)+(FIXED_MAP[m]||FIXED); }
 
 // ── CATEGORY BADGE ───────────────────────────────────────
 function cat(d){
@@ -1532,7 +1531,8 @@ function renderIncome(){
   var r=calc(homeMi);
   document.getElementById('inc-total').textContent='+₪'+fmt(r.inc+r.doneAmt);
   var items=RAW.income[r.m]||[];
-  var h='<div class="txn-group-hdr">הכנסות קבועות</div><div class="txn-item"><div class="txn-icon" style="background:rgba(29,233,182,.18);color:#1DE9B6">לאומי</div><div class="txn-body"><div class="txn-desc">ביטוח לאומי</div><div class="txn-date">קבוע חודשי</div></div><div class="txn-amt pos">+₪'+fmt(FIXED)+'</div></div>';
+  var fixedAmt=FIXED_MAP[r.m]||FIXED;
+  var h='<div class="txn-group-hdr">הכנסות קבועות</div><div class="txn-item"><div class="txn-icon" style="background:rgba(29,233,182,.18);color:#1DE9B6">לאומי</div><div class="txn-body"><div class="txn-desc">ביטוח לאומי</div><div class="txn-date">קבוע חודשי</div></div><div class="txn-amt pos">+₪'+fmt(fixedAmt)+'</div></div>';
   if(items.length){
     h+='<div class="txn-group-hdr">הכנסות נוספות</div>';
     items.forEach(function(t){h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(0,230,118,.15);color:#00E676">הכנסה</div><div class="txn-body"><div class="txn-desc">'+t.desc+'</div><div class="txn-date">'+t.d+'</div></div><div class="txn-amt pos">+₪'+fmt(t.a)+'</div></div>';});
