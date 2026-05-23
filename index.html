@@ -1748,9 +1748,12 @@ function renderIncome(){
 function renderBalance(){
   var r=calc(homeMi);
   var bCls=r.balFull>=0?'pos':'neg';
+  var fixedAmt=FIXED_MAP[r.m]||FIXED;
+  var extraInc=(RAW.income[r.m]||[]).reduce(function(s,t){return s+t.a;},0);
   var h='';
   h+='<div class="txn-group-hdr">הכנסות</div>';
-  h+='<div class="bal-row"><span class="bal-row-lbl">ביטוח לאומי + הכנסות</span><span class="bal-row-val pos">+₪'+fmt(r.inc)+'</span></div>';
+  h+='<div class="bal-row"><span class="bal-row-lbl">ביטוח לאומי</span><span class="bal-row-val pos">+₪'+fmt(fixedAmt)+'</span></div>';
+  if(extraInc>0) h+='<div class="bal-row"><span class="bal-row-lbl">הכנסות נוספות</span><span class="bal-row-val pos">+₪'+fmt(extraInc)+'</span></div>';
   h+='<div class="bal-row"><span class="bal-row-lbl">לקוחות שבוצעו</span><span class="bal-row-val pos">+₪'+fmt(r.doneAmt)+'</span></div>';
   h+='<div class="bal-row"><span class="bal-row-lbl">לקוחות מתוכננים</span><span class="bal-row-val amb">+₪'+fmt(r.planAmt)+'</span></div>';
   h+='<div class="txn-group-hdr">הוצאות</div>';
