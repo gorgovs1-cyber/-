@@ -676,7 +676,8 @@ var CLIENTS = {
     {day:8, name:'אתי',        amount:800,  status:'done'},
     {day:11,name:'נטלי ביטון', amount:1200, status:'done'},
     {day:13,name:'הילה',       amount:1200, status:'done'},
-    {day:17,name:'נוף',        amount:1200, status:'planned'},
+    {day:7, name:'מאיה',       amount:250,  status:'done'},
+    {day:17,name:'נוף',        amount:1000, status:'done'},
     {day:24,name:'טל',         amount:800,  status:'planned'},
     {day:25,name:'קארין',      amount:1100, status:'planned'},
     {day:26,name:'שפרינגר',    amount:800,  status:'planned'},
@@ -812,9 +813,9 @@ function renderHome(){
   // Tiles
   var bCls=r.balFull>=0?'pos':'neg';
   document.getElementById('home-tiles').innerHTML=
-    '<div class="tile" onclick="go(\'balance\')"><div class="tile-ico teal">💎</div><div class="tile-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="tile-lbl">ישאר בסוף החודש</div></div>'+
+    '<div class="tile" onclick="go(\'income\')"><div class="tile-ico green">💰</div><div class="tile-val pos">₪'+fmt(r.inc+r.doneAmt)+'</div><div class="tile-lbl">הכנסות</div></div>'+
     '<div class="tile" onclick="go(\'expenses\')"><div class="tile-ico orange">💸</div><div class="tile-val orange">₪'+fmt(r.exp)+'</div><div class="tile-lbl">הוצאות</div></div>'+
-    '<div class="tile" onclick="go(\'income\')"><div class="tile-ico green">💰</div><div class="tile-val pos">₪'+fmt(r.inc+r.doneAmt)+'</div><div class="tile-lbl">הכנסות</div></div>';
+    '<div class="tile" onclick="go(\'balance\')"><div class="tile-ico teal">💎</div><div class="tile-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="tile-lbl">ישאר בסוף החודש</div></div>';
 
   // Cards
   var dV=(todayM===r.m&&todayD<=15)?15-todayD:999;
