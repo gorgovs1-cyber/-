@@ -52,7 +52,8 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 /* ₪ drops from top while rotating */
 .sp-shekel{
   position:relative;z-index:1;
-  font-size:120px;line-height:1;color:var(--cyan);
+  font-size:120px;line-height:1;color:#00FFD4;
+  filter:brightness(1.15);
   animation:spDrop 1.1s cubic-bezier(.25,.85,.4,1) both,
             spPulse 2.2s 1.4s ease-in-out infinite alternate;
 }
@@ -64,20 +65,21 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
   100%{opacity:1;transform:translateY(0)      rotate(360deg) scale(1)}
 }
 @keyframes spPulse{
-  0%  {text-shadow:0 0 30px rgba(29,233,182,.8),0 0 70px rgba(29,233,182,.4),0 0 130px rgba(29,233,182,.2)}
-  100%{text-shadow:0 0 60px rgba(29,233,182,1),0 0 120px rgba(29,233,182,.7),0 0 200px rgba(29,233,182,.35)}
+  0%  {text-shadow:0 0 40px rgba(0,255,212,1),0 0 90px rgba(0,255,212,.7),0 0 160px rgba(0,255,212,.35),0 0 280px rgba(0,255,212,.15)}
+  100%{text-shadow:0 0 70px rgba(0,255,212,1),0 0 140px rgba(0,255,212,.9),0 0 250px rgba(0,255,212,.55),0 0 400px rgba(0,255,212,.25)}
 }
 
 /* "My Money" neon text */
 .sp-name{
   position:relative;z-index:1;
   font-size:56px;font-weight:900;font-style:italic;
-  color:var(--cyan);margin-top:20px;line-height:1.05;letter-spacing:1px;
+  color:#00FFD4;margin-top:20px;line-height:1.05;letter-spacing:1px;
+  filter:brightness(1.1);
   animation:spFade .55s .75s both, spNameGlow 2.5s 1.5s ease-in-out infinite alternate;
 }
 @keyframes spNameGlow{
-  0%  {text-shadow:0 0 20px rgba(29,233,182,.8),0 0 50px rgba(29,233,182,.4)}
-  100%{text-shadow:0 0 40px rgba(29,233,182,1),0 0 90px rgba(29,233,182,.7),0 0 140px rgba(29,233,182,.3)}
+  0%  {text-shadow:0 0 30px rgba(0,255,212,1),0 0 70px rgba(0,255,212,.7),0 0 120px rgba(0,255,212,.35)}
+  100%{text-shadow:0 0 55px rgba(0,255,212,1),0 0 110px rgba(0,255,212,.9),0 0 200px rgba(0,255,212,.5),0 0 320px rgba(0,255,212,.2)}
 }
 .sp-greet{
   position:relative;z-index:1;
@@ -284,9 +286,9 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .cal-cell.empty{cursor:default;background:transparent!important}
 .cal-cell.today .cal-num{background:var(--cyan);color:#0A1520;border-radius:50%;font-weight:800}
 .cal-num{font-size:10px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;margin-bottom:2px;color:var(--muted2)}
-.cal-dot{font-size:8px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:3px;padding:1px 3px;margin-bottom:1px;font-weight:600}
-.cal-dot.done   {background:rgba(0,230,118,.15);color:var(--pos)}
-.cal-dot.planned{background:rgba(255,179,71,.15);color:#FFB347}
+.cal-dot{font-size:9px;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:4px;padding:2px 4px;margin-bottom:2px;font-weight:800;letter-spacing:.2px}
+.cal-dot.done   {background:rgba(0,230,118,.25);color:#00FF88;text-shadow:0 0 8px rgba(0,255,136,.6)}
+.cal-dot.planned{background:rgba(255,179,71,.25);color:#FFD060;text-shadow:0 0 8px rgba(255,208,96,.6)}
 
 /* ══ MODAL ════════════════════════════════════════════════ */
 .mbg {display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:500;align-items:flex-end;justify-content:center}
@@ -638,13 +640,16 @@ var RAW = {
 
 var CLIENTS = {
   5:[
-    {day:8, name:'אתי',        amount:800, status:'done'},
-    {day:11,name:'נטלי ביטון', amount:1200,status:'done'},
-    {day:13,name:'הילה',       amount:1200,status:'done'},
-    {day:16,name:'טל אורגנית', amount:800, status:'planned'},
-    {day:17,name:'נוף',        amount:1200,status:'planned'},
-    {day:19,name:'שרית',       amount:800, status:'planned'},
-    {day:29,name:'ספיר פרץ',   amount:800, status:'planned'},
+    {day:8, name:'אתי',        amount:800,  status:'done'},
+    {day:11,name:'נטלי ביטון', amount:1200, status:'done'},
+    {day:13,name:'הילה',       amount:1200, status:'done'},
+    {day:17,name:'נוף',        amount:1200, status:'planned'},
+    {day:24,name:'טל',         amount:800,  status:'planned'},
+    {day:25,name:'קארין',      amount:1100, status:'planned'},
+    {day:26,name:'שפרינגר',    amount:800,  status:'planned'},
+    {day:27,name:'שרית',       amount:800,  status:'planned'},
+    {day:28,name:'ליטל',       amount:800,  status:'planned'},
+    {day:29,name:'ספיר פרץ',   amount:800,  status:'planned'},
   ],
   6:[],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[],4:[]
 };
