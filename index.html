@@ -935,18 +935,40 @@ var homeMi=MAY_IDX;
 function moveHM(d){homeMi=Math.max(0,Math.min(MONTHS.length-1,homeMi+d));renderHome();}
 
 function calc(mi){
-  var ml=MONTHS[mi], m=ml.key;
-  var inc=sumI(m), exp=sumE(m);
+  var ml=MONTHS[mi],m=ml.key;
+  var inc=sumI(m),exp=sumE(m);
   var all=CLIENTS[m]||[];
   var doneList=all.filter(function(c){return c.status==='done';});
   var planList=all.filter(function(c){return c.status==='planned';});
   var doneAmt=doneList.reduce(function(s,c){return s+c.amount;},0);
   var planAmt=planList.reduce(function(s,c){return s+c.amount;},0);
-  var mcBill=CARDS.mc, vBill=CARDS.visa;
-  var deduct=mcBill+vBill+500;
-  var balNow=inc-exp;
+  var mcBill=CARDS.mc,vBill=CARDS.visa;
+
+  // Smart deduction: only subtract bills that haven't been paid yet this month
+  var today=new Date();
+  var tM=today.getMonth()+1,tD=today.getDate(),tY=today.getFullYear();
+  var isNow=(tM===m&&tY===ml.year);
+  var isPast=(ml.year<tY)||(ml.year===tY&&m<tM);
+
+  var mcDeduct=0,vDeduct=0;
+  if(isPast){
+    // Past month — bills already happened, don't double-deduct on top of individual expenses
+    mcDeduct=0;vDeduct=0;
+  }else if(isNow){
+    // Current month — only deduct if billing date hasn't passed yet
+    if(tD<20)mcDeduct=mcBill;   // MC debited on 20th
+    if(tD<15)vDeduct=vBill;     // Visa debited on 15th
+  }else{
+    // Future month — include both bills in forecast
+    mcDeduct=mcBill;vDeduct=vBill;
+  }
+
+  var deduct=mcDeduct+vDeduct+(isPast?0:500);
+  var balNow=inc+doneAmt-exp;
   var balFull=inc+doneAmt+planAmt-exp-deduct;
-  return {m:m,ml:ml,inc:inc,exp:exp,doneList:doneList,planList:planList,doneAmt:doneAmt,planAmt:planAmt,mcBill:mcBill,vBill:vBill,deduct:deduct,balNow:balNow,balFull:balFull};
+  return {m:m,ml:ml,inc:inc,exp:exp,doneList:doneList,planList:planList,doneAmt:doneAmt,planAmt:planAmt,
+          mcBill:mcBill,vBill:vBill,mcDeduct:mcDeduct,vDeduct:vDeduct,deduct:deduct,
+          balNow:balNow,balFull:balFull,isPast:isPast,isNow:isNow};
 }
 
 // ── HOME ─────────────────────────────────────────────────
@@ -969,20 +991,30 @@ function renderHome(){
     '<b>עכשיו: '+(r.balNow>=0?'+':'')+'₪'+fmt(r.balNow)+'</b>'+
     ' · עם צפי לקוחות: <b>+₪'+fmt(r.planAmt)+'</b>';
 
-  // Alert
-  var todayM=now.getMonth()+1, todayD=now.getDate();
-  var dMC=(todayM===r.m&&todayD<=20)?20-todayD:999;
+  // Alert — only show upcoming bills that haven't been paid yet
+  var todayD2=now.getDate(), todayM2=now.getMonth()+1;
+  var dMC=(r.isNow&&todayD2<20)?20-todayD2:(r.isNow?-1:999);
+  var dV=(r.isNow&&todayD2<15)?15-todayD2:(r.isNow?-1:999);
   var wrap=document.getElementById('home-alert');
-  if(dMC<=5){
+  var alertHtml='';
+  if(r.isNow&&r.mcDeduct===0&&r.vDeduct===0){
+    // Both already paid this month
+    if(r.balFull<0){
+      alertHtml='<div class="alert-card bad"><div class="a-body"><div class="a-title">תחזית שלילית לסוף החודש ⚠️</div><div class="a-sub">ויזה ומאסטרקארד כבר ירדו החודש</div></div><div class="a-icon">🚨</div><div class="a-amt">₪'+fmt(Math.abs(r.balFull))+'</div></div>';
+    }else{
+      alertHtml='<div class="alert-card ok"><div class="a-body"><div class="a-title">כל החיובים שולמו החודש ✓</div><div class="a-sub">ויזה ₪'+fmt(r.vBill)+' ב-15 · מאסטרקארד ₪'+fmt(r.mcBill)+' ב-20</div></div><div class="a-icon">✅</div><div class="a-amt">+₪'+fmt(r.balFull)+'</div></div>';
+    }
+  }else if(dMC>=0&&dMC<=5){
     var short=r.mcBill-(r.inc+r.doneAmt+r.planAmt-r.exp);
     if(short>0){
-      wrap.innerHTML='<div class="alert-card"><div class="a-body"><div class="a-title">חסר במסגרת לכיסוי המאסטרקארד ⚠️</div><div class="a-sub">יורד בעוד '+dMC+' ימים · ב-20/'+String(r.m).padStart(2,'0')+' · ₪'+fmt(r.mcBill)+'</div></div><div class="a-icon">⚡</div><div class="a-amt">₪'+fmt(short)+'</div></div>';
+      alertHtml='<div class="alert-card"><div class="a-body"><div class="a-title">חסר כיסוי למאסטרקארד ⚠️</div><div class="a-sub">יורד בעוד '+dMC+' ימים · ₪'+fmt(r.mcBill)+'</div></div><div class="a-icon">⚡</div><div class="a-amt">₪'+fmt(short)+'</div></div>';
     }else{
-      wrap.innerHTML='<div class="alert-card ok"><div class="a-body"><div class="a-title">כיסוי למאסטרקארד ✓</div><div class="a-sub">יורד בעוד '+dMC+' ימים · ₪'+fmt(r.mcBill)+'</div></div><div class="a-amt">₪'+fmt(r.mcBill)+'</div></div>';
+      alertHtml='<div class="alert-card ok"><div class="a-body"><div class="a-title">כיסוי למאסטרקארד ✓</div><div class="a-sub">יורד בעוד '+dMC+' ימים · ₪'+fmt(r.mcBill)+'</div></div><div class="a-amt">₪'+fmt(r.mcBill)+'</div></div>';
     }
   }else if(r.balFull<0){
-    wrap.innerHTML='<div class="alert-card bad"><div class="a-body"><div class="a-title">תחזית שלילית לסוף החודש ⚠️</div><div class="a-sub">מאסטר ₪'+fmt(r.mcBill)+' ב-20 · ויזה ₪'+fmt(r.vBill)+' ב-15</div></div><div class="a-icon">🚨</div><div class="a-amt">₪'+fmt(Math.abs(r.balFull))+'</div></div>';
-  }else{wrap.innerHTML='';}
+    alertHtml='<div class="alert-card bad"><div class="a-body"><div class="a-title">תחזית שלילית לסוף החודש ⚠️</div><div class="a-sub">'+(r.mcDeduct>0?'מאסטרקארד ₪'+fmt(r.mcBill)+' ב-20':'')+' '+(r.vDeduct>0?'· ויזה ₪'+fmt(r.vBill)+' ב-15':'')+'</div></div><div class="a-icon">🚨</div><div class="a-amt">₪'+fmt(Math.abs(r.balFull))+'</div></div>';
+  }
+  wrap.innerHTML=alertHtml;
 
   // Tiles
   var bCls=r.balFull>=0?'pos':'neg';
@@ -1065,10 +1097,20 @@ function renderBalance(){
   h+='<div class="bal-row"><span class="bal-row-lbl">לקוחות מתוכננים</span><span class="bal-row-val amb">+₪'+fmt(r.planAmt)+'</span></div>';
   h+='<div class="txn-group-hdr">הוצאות</div>';
   h+='<div class="bal-row"><span class="bal-row-lbl">הוצאות '+r.ml.label+'</span><span class="bal-row-val neg">-₪'+fmt(r.exp)+'</span></div>';
-  h+='<div class="txn-group-hdr">חיובים</div>';
-  h+='<div class="bal-row"><span class="bal-row-lbl">מאסטרקארד (ב-20)</span><span class="bal-row-val pur">-₪'+fmt(r.mcBill)+'</span></div>';
-  h+='<div class="bal-row"><span class="bal-row-lbl">ויזה (ב-15)</span><span class="bal-row-val pur">-₪'+fmt(r.vBill)+'</span></div>';
-  h+='<div class="bal-row"><span class="bal-row-lbl">חניה / שונות</span><span class="bal-row-val neg">-₪500</span></div>';
+  h+='<div class="txn-group-hdr">חיובי כרטיסים</div>';
+  if(r.mcDeduct>0){
+    h+='<div class="bal-row"><span class="bal-row-lbl">מאסטרקארד — יורד ב-20</span><span class="bal-row-val pur">-₪'+fmt(r.mcBill)+'</span></div>';
+  }else{
+    h+='<div class="bal-row"><span class="bal-row-lbl">מאסטרקארד ✓ כבר ירד</span><span class="bal-row-val" style="color:var(--muted)">לא נחסר</span></div>';
+  }
+  if(r.vDeduct>0){
+    h+='<div class="bal-row"><span class="bal-row-lbl">ויזה — יורדת ב-15</span><span class="bal-row-val pur">-₪'+fmt(r.vBill)+'</span></div>';
+  }else{
+    h+='<div class="bal-row"><span class="bal-row-lbl">ויזה ✓ כבר ירדה</span><span class="bal-row-val" style="color:var(--muted)">לא נחסר</span></div>';
+  }
+  if(!r.isPast){
+    h+='<div class="bal-row"><span class="bal-row-lbl">שונות / חניה</span><span class="bal-row-val neg">-₪500</span></div>';
+  }
   h+='<div class="bal-div"></div>';
   h+='<div class="bal-total"><span class="bal-total-lbl">ישאר בסוף '+r.ml.label+'</span><span class="bal-total-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</span></div>';
   h+='<div class="bal-row"><span class="bal-row-lbl">עו"ש כרגע</span><span class="bal-row-val red">-₪'+fmt(CARDS.bank)+'</span></div>';
