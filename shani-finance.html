@@ -351,6 +351,22 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
   box-shadow:0 4px 20px rgba(29,233,182,.4);
 }
 
+/* ══ CARD DETAIL MODAL ═══════════════════════════════════ */
+.cd-mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);z-index:600;align-items:flex-end;justify-content:center}
+.cd-mbg.open{display:flex}
+.cd-modal{background:#111D2C;border-radius:26px 26px 0 0;width:100%;max-width:430px;max-height:78dvh;overflow-y:auto;padding:8px 20px calc(30px + env(safe-area-inset-bottom,0px));animation:slideUp .22s ease;border-top:1px solid var(--border2)}
+.cd-modal::before{content:'';display:block;width:36px;height:4px;background:var(--border2);border-radius:2px;margin:14px auto 16px}
+.cd-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.cd-title{font-size:18px;font-weight:800}
+.cd-total{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--orange)}
+.cd-item{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:11px;background:var(--card);border:1px solid var(--border);margin-bottom:6px}
+.cd-item-ico{font-size:17px;flex-shrink:0;width:26px;text-align:center}
+.cd-item-body{flex:1}
+.cd-item-desc{font-size:13px;font-weight:600;line-height:1.3}
+.cd-item-date{font-size:10px;color:var(--muted);margin-top:2px}
+.cd-item-amt{font-size:14px;font-weight:800;color:var(--orange);font-variant-numeric:tabular-nums;flex-shrink:0}
+.cc-hint{font-size:9px;color:rgba(255,255,255,.32);margin-top:7px;letter-spacing:.3px}
+
 select option{background:#111D2C;color:#fff}
 ::-webkit-scrollbar{width:2px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
@@ -525,6 +541,18 @@ select option{background:#111D2C;color:#fff}
   </div>
 </div>
 
+<!-- ══ CARD DETAIL ════════════════════════════════════════ -->
+<div class="cd-mbg" id="cd-mbg" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="cd-modal">
+    <div class="cd-hdr">
+      <div class="cd-title" id="cd-title">חיובי כרטיס</div>
+      <div class="cd-total" id="cd-total">₪0</div>
+    </div>
+    <div id="cd-list"></div>
+    <button class="mclose" onclick="document.getElementById('cd-mbg').classList.remove('open')">סגור</button>
+  </div>
+</div>
+
 <!-- ══ BOTTOM NAV ═════════════════════════════════════════ -->
 <nav class="bnav">
   <button class="bnb"    id="bn-clients" onclick="go('clients')">
@@ -602,6 +630,10 @@ var RAW = {
       {d:'20/05',desc:'קפה',a:20},
       {d:'20/05',desc:'טבק וקניות בסופר',a:196,method:'mc'},
       {d:'21/05',desc:'קפה',a:18,method:'mc'},
+      {d:'21/05',desc:'בירה שליש',a:24.5,method:'mc'},
+      {d:'21/05',desc:'יין',a:47,method:'mc'},
+      {d:'21/05',desc:'ברלין בירה',a:67,method:'mc'},
+      {d:'21/05',desc:'פסטה בוולט',a:79,method:'visa'},
     ],
     6:[
       {d:'07/06',desc:'טסט ישראכרט 1/5',a:268,method:'mc'},
@@ -614,6 +646,7 @@ var RAW = {
       {d:'08/06',desc:'יין',a:164},
       {d:'08/06',desc:'קוקטייל',a:50},
       {d:'14/06',desc:'אייפון תשלום 2/11',a:347,method:'mc'},
+      {d:'22/06',desc:'נודלס וולט',a:86,method:'mc'},
     ],
     7:[{d:'07/07',desc:'טסט ישראכרט 2/5',a:268,method:'mc'},{d:'14/07',desc:'אייפון תשלום 3/11',a:347,method:'mc'}],
     8:[{d:'07/08',desc:'טסט ישראכרט 3/5',a:268,method:'mc'},{d:'14/08',desc:'אייפון תשלום 4/11',a:347,method:'mc'}],
@@ -785,9 +818,11 @@ function renderHome(){
 
   // Cards
   var dV=(todayM===r.m&&todayD<=15)?15-todayD:999;
+  var mcCharges=(RAW.expense[r.m]||[]).filter(function(t){return t.method==='mc';}).reduce(function(s,t){return s+t.a;},0);
+  var vCharges =(RAW.expense[r.m]||[]).filter(function(t){return t.method==='visa';}).reduce(function(s,t){return s+t.a;},0);
   document.getElementById('home-cc').innerHTML=
-    '<div class="cc mc"><div class="cc-top"><div class="cc-brand">MASTERCARD</div><div class="cc-toggle"></div></div><div class="cc-sub">חיוב חודשי</div><div class="cc-amt">₪'+fmt(r.mcBill)+'</div><div class="cc-due">יורד ב-<b>20</b> לחודש</div>'+(dMC<=3?'<span class="cc-tag warn">עוד '+dMC+' ימים</span>':'')+'</div>'+
-    '<div class="cc visa"><div class="cc-top"><div class="cc-brand">VISA</div><div class="cc-toggle"></div></div><div class="cc-sub">חיוב חודשי</div><div class="cc-amt">₪'+fmt(r.vBill)+'</div><div class="cc-due">יורד ב-<b>15</b> לחודש</div>'+(dV<=3?'<span class="cc-tag warn">עוד '+dV+' ימים</span>':'<span class="cc-tag next">חיוב הבא</span>')+'</div>';
+    '<div class="cc mc" onclick="showCardDetail(\'mc\')" style="cursor:pointer"><div class="cc-top"><div class="cc-brand">MASTERCARD</div><div class="cc-toggle"></div></div><div class="cc-sub">חיוב חודשי</div><div class="cc-amt">₪'+fmt(r.mcBill)+'</div><div class="cc-due">יורד ב-<b>20</b> לחודש</div>'+(dMC<=3?'<span class="cc-tag warn">עוד '+dMC+' ימים</span>':'')+'<div class="cc-hint">חיובים החודש: ₪'+fmt(mcCharges)+' · לפרטים ›</div></div>'+
+    '<div class="cc visa" onclick="showCardDetail(\'visa\')" style="cursor:pointer"><div class="cc-top"><div class="cc-brand">VISA</div><div class="cc-toggle"></div></div><div class="cc-sub">חיוב חודשי</div><div class="cc-amt">₪'+fmt(r.vBill)+'</div><div class="cc-due">יורד ב-<b>15</b> לחודש</div>'+(dV<=3?'<span class="cc-tag warn">עוד '+dV+' ימים</span>':'<span class="cc-tag next">חיוב הבא</span>')+'<div class="cc-hint">חיובים החודש: ₪'+fmt(vCharges)+' · לפרטים ›</div></div>';
 
   document.getElementById('bank-val').textContent='-₪'+fmt(CARDS.bank);
 }
@@ -964,6 +999,34 @@ function saveQA(){
   document.getElementById('qa-name').value='';document.getElementById('qa-amt').value='';
   document.getElementById('qa-mbg').classList.remove('open');
   save();renderClients();renderHome();toast('✓ '+name+' נוספה');
+}
+
+// ── CARD DETAIL ──────────────────────────────────────────
+function showCardDetail(type){
+  var r=calc(homeMi);
+  var items=(RAW.expense[r.m]||[]).filter(function(t){return t.method===type;});
+  var total=items.reduce(function(s,t){return s+t.a;},0);
+  var names={mc:'מאסטרקארד 💜',visa:'ויזה 💙'};
+  document.getElementById('cd-title').textContent='חיובי '+names[type];
+  document.getElementById('cd-total').textContent='-₪'+fmt(total);
+  function ico(d){
+    if(/קנאביס/i.test(d))return'🌿';if(/קפה/i.test(d))return'☕';
+    if(/יין|בירה|קוקטייל/i.test(d))return'🍷';
+    if(/אוכל|סלט|מרק|וולט|פסטה|נודלס/i.test(d))return'🍽️';
+    if(/שכירות/i.test(d))return'🏠';if(/חשמל/i.test(d))return'⚡';
+    if(/ביטוח|קופת חולים/i.test(d))return'🏥';
+    if(/סופר|קניות/i.test(d))return'🛒';if(/דלק/i.test(d))return'⛽';
+    if(/אייפון|טלפון|כיסוי|מדבקה/i.test(d))return'📱';
+    if(/מנוי|ספוטיפיי|נטפליקס|קלאוד/i.test(d))return'📺';
+    if(/פרטנר/i.test(d))return'📡';if(/טסט/i.test(d))return'🚗';
+    return'💳';
+  }
+  var h=items.length===0?'<div class="mempty">אין חיובים בכרטיס זה החודש</div>':'';
+  items.slice().sort(function(a,b){return a.d.localeCompare(b.d);}).forEach(function(t){
+    h+='<div class="cd-item"><div class="cd-item-ico">'+ico(t.desc)+'</div><div class="cd-item-body"><div class="cd-item-desc">'+t.desc+'</div><div class="cd-item-date">'+t.d+'</div></div><div class="cd-item-amt">-₪'+fmt(t.a)+'</div></div>';
+  });
+  document.getElementById('cd-list').innerHTML=h;
+  document.getElementById('cd-mbg').classList.add('open');
 }
 
 // ── INIT ─────────────────────────────────────────────────
