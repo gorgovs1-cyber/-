@@ -1472,6 +1472,16 @@ function calc(mi){
   var deduct=mcDeduct+vDeduct+(isPast?0:500);
   var balNow=inc+doneAmt-exp;
   var balFull=inc+doneAmt+planAmt-exp-deduct;
+
+  if(isNow){
+    // Project actual bank account balance at end of month:
+    // start from current real balance, add only future cash flows
+    var futureFixed=(tD<25)?(FIXED_MAP[m]||FIXED):0;
+    var futureRawInc=(RAW.income[m]||[]).filter(function(t){return parseInt(t.d.split('/')[0])>tD;}).reduce(function(s,t){return s+t.a;},0);
+    var futureExpAmt=(RAW.expense[m]||[]).filter(function(t){return parseInt(t.d.split('/')[0])>tD;}).reduce(function(s,t){return s+t.a;},0);
+    balFull=-CARDS.bank+futureFixed+futureRawInc+planAmt-futureExpAmt-mcDeduct-vDeduct;
+  }
+
   return {m:m,ml:ml,inc:inc,exp:exp,doneList:doneList,planList:planList,doneAmt:doneAmt,planAmt:planAmt,
           mcBill:mcBill,vBill:vBill,mcDeduct:mcDeduct,vDeduct:vDeduct,deduct:deduct,
           balNow:balNow,balFull:balFull,isPast:isPast,isNow:isNow};
@@ -1526,7 +1536,7 @@ function renderHome(){
   document.getElementById('home-tiles').innerHTML=
     '<div class="tile" style="--tc:var(--pos)" onclick="go(\'income\')"><div class="tile-val pos">₪'+fmt(r.inc+r.doneAmt)+'</div><div class="tile-lbl">הכנסות</div></div>'+
     '<div class="tile" style="--tc:var(--orange)" onclick="go(\'expenses\')"><div class="tile-val orange">₪'+fmt(r.exp)+'</div><div class="tile-lbl">הוצאות</div></div>'+
-    '<div class="tile" style="--tc:var(--cyan)" onclick="go(\'balance\')"><div class="tile-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="tile-lbl">ישאר בסוף החודש</div></div>';
+    '<div class="tile" style="--tc:var(--cyan)" onclick="go(\'balance\')"><div class="tile-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="tile-lbl">'+(r.isNow?'עו"ש צפוי סוף חודש':'ישאר בסוף החודש')+'</div></div>';
 
   renderUpcoming(r);
   renderPMCards(r);
@@ -1752,30 +1762,53 @@ function renderBalance(){
   var fixedAmt=FIXED_MAP[r.m]||FIXED;
   var extraInc=(RAW.income[r.m]||[]).reduce(function(s,t){return s+t.a;},0);
   var h='';
-  h+='<div class="txn-group-hdr">הכנסות</div>';
-  h+='<div class="bal-row"><span class="bal-row-lbl">ביטוח לאומי</span><span class="bal-row-val pos">+₪'+fmt(fixedAmt)+'</span></div>';
-  if(extraInc>0) h+='<div class="bal-row"><span class="bal-row-lbl">הכנסות נוספות</span><span class="bal-row-val pos">+₪'+fmt(extraInc)+'</span></div>';
-  h+='<div class="bal-row"><span class="bal-row-lbl">לקוחות שבוצעו</span><span class="bal-row-val pos">+₪'+fmt(r.doneAmt)+'</span></div>';
-  h+='<div class="bal-row"><span class="bal-row-lbl">לקוחות מתוכננים</span><span class="bal-row-val amb">+₪'+fmt(r.planAmt)+'</span></div>';
-  h+='<div class="txn-group-hdr">הוצאות</div>';
-  h+='<div class="bal-row"><span class="bal-row-lbl">הוצאות '+r.ml.label+'</span><span class="bal-row-val neg">-₪'+fmt(r.exp)+'</span></div>';
-  h+='<div class="txn-group-hdr">חיובי כרטיסים</div>';
-  if(r.mcDeduct>0){
-    h+='<div class="bal-row"><span class="bal-row-lbl">מאסטרקארד — יורד ב-20</span><span class="bal-row-val pur">-₪'+fmt(r.mcBill)+'</span></div>';
-  }else{
-    h+='<div class="bal-row"><span class="bal-row-lbl">מאסטרקארד ✓ כבר ירד</span><span class="bal-row-val" style="color:var(--muted)">לא נחסר</span></div>';
+
+  if(r.isNow){
+    // Current month: show projection from current bank balance
+    var today=new Date();var tD=today.getDate();
+    var futureFixed=(tD<25)?fixedAmt:0;
+    var futureRawInc=(RAW.income[r.m]||[]).filter(function(t){return parseInt(t.d.split('/')[0])>tD;}).reduce(function(s,t){return s+t.a;},0);
+    var futureExpAmt=(RAW.expense[r.m]||[]).filter(function(t){return parseInt(t.d.split('/')[0])>tD;}).reduce(function(s,t){return s+t.a;},0);
+
+    h+='<div class="txn-group-hdr">נקודת התחלה</div>';
+    h+='<div class="bal-row"><span class="bal-row-lbl">עו"ש עכשיו</span><span class="bal-row-val neg">-₪'+fmt(CARDS.bank)+'</span></div>';
+    h+='<div class="txn-group-hdr">הכנסות צפויות עד סוף החודש</div>';
+    if(futureFixed>0) h+='<div class="bal-row"><span class="bal-row-lbl">ביטוח לאומי — 25/'+String(r.m).padStart(2,'0')+'</span><span class="bal-row-val pos">+₪'+fmt(futureFixed)+'</span></div>';
+    else h+='<div class="bal-row"><span class="bal-row-lbl">ביטוח לאומי ✓ נכנס</span><span class="bal-row-val" style="color:var(--muted)">כבר נכנס</span></div>';
+    if(futureRawInc>0) h+='<div class="bal-row"><span class="bal-row-lbl">הכנסות נוספות</span><span class="bal-row-val pos">+₪'+fmt(futureRawInc)+'</span></div>';
+    if(r.planAmt>0) h+='<div class="bal-row"><span class="bal-row-lbl">לקוחות מתוכננות ('+r.planList.length+')</span><span class="bal-row-val amb">+₪'+fmt(r.planAmt)+'</span></div>';
+    if(futureExpAmt>0){
+      h+='<div class="txn-group-hdr">הוצאות עתידיות</div>';
+      h+='<div class="bal-row"><span class="bal-row-lbl">הוצאות שלא שולמו</span><span class="bal-row-val neg">-₪'+fmt(futureExpAmt)+'</span></div>';
+    }
+    if(r.mcDeduct>0) h+='<div class="bal-row"><span class="bal-row-lbl">מאסטרקארד — יורד ב-20</span><span class="bal-row-val pur">-₪'+fmt(r.mcBill)+'</span></div>';
+    if(r.vDeduct>0)  h+='<div class="bal-row"><span class="bal-row-lbl">ויזה — יורדת ב-15</span><span class="bal-row-val pur">-₪'+fmt(r.vBill)+'</span></div>';
+  } else {
+    h+='<div class="txn-group-hdr">הכנסות</div>';
+    h+='<div class="bal-row"><span class="bal-row-lbl">ביטוח לאומי</span><span class="bal-row-val pos">+₪'+fmt(fixedAmt)+'</span></div>';
+    if(extraInc>0) h+='<div class="bal-row"><span class="bal-row-lbl">הכנסות נוספות</span><span class="bal-row-val pos">+₪'+fmt(extraInc)+'</span></div>';
+    h+='<div class="bal-row"><span class="bal-row-lbl">לקוחות שבוצעו</span><span class="bal-row-val pos">+₪'+fmt(r.doneAmt)+'</span></div>';
+    h+='<div class="bal-row"><span class="bal-row-lbl">לקוחות מתוכננים</span><span class="bal-row-val amb">+₪'+fmt(r.planAmt)+'</span></div>';
+    h+='<div class="txn-group-hdr">הוצאות</div>';
+    h+='<div class="bal-row"><span class="bal-row-lbl">הוצאות '+r.ml.label+'</span><span class="bal-row-val neg">-₪'+fmt(r.exp)+'</span></div>';
+    h+='<div class="txn-group-hdr">חיובי כרטיסים</div>';
+    if(r.mcDeduct>0){
+      h+='<div class="bal-row"><span class="bal-row-lbl">מאסטרקארד — יורד ב-20</span><span class="bal-row-val pur">-₪'+fmt(r.mcBill)+'</span></div>';
+    }else{
+      h+='<div class="bal-row"><span class="bal-row-lbl">מאסטרקארד ✓ כבר ירד</span><span class="bal-row-val" style="color:var(--muted)">לא נחסר</span></div>';
+    }
+    if(r.vDeduct>0){
+      h+='<div class="bal-row"><span class="bal-row-lbl">ויזה — יורדת ב-15</span><span class="bal-row-val pur">-₪'+fmt(r.vBill)+'</span></div>';
+    }else{
+      h+='<div class="bal-row"><span class="bal-row-lbl">ויזה ✓ כבר ירדה</span><span class="bal-row-val" style="color:var(--muted)">לא נחסר</span></div>';
+    }
+    if(!r.isPast){
+      h+='<div class="bal-row"><span class="bal-row-lbl">שונות / חניה</span><span class="bal-row-val neg">-₪500</span></div>';
+    }
   }
-  if(r.vDeduct>0){
-    h+='<div class="bal-row"><span class="bal-row-lbl">ויזה — יורדת ב-15</span><span class="bal-row-val pur">-₪'+fmt(r.vBill)+'</span></div>';
-  }else{
-    h+='<div class="bal-row"><span class="bal-row-lbl">ויזה ✓ כבר ירדה</span><span class="bal-row-val" style="color:var(--muted)">לא נחסר</span></div>';
-  }
-  if(!r.isPast){
-    h+='<div class="bal-row"><span class="bal-row-lbl">שונות / חניה</span><span class="bal-row-val neg">-₪500</span></div>';
-  }
+
   h+='<div class="bal-div"></div>';
-  h+='<div class="bal-total"><span class="bal-total-lbl">ישאר בסוף '+r.ml.label+'</span><span class="bal-total-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</span></div>';
-  h+='<div class="bal-row"><span class="bal-row-lbl">עו"ש כרגע</span><span class="bal-row-val red">-₪'+fmt(CARDS.bank)+'</span></div>';
+  h+='<div class="bal-total"><span class="bal-total-lbl">'+(r.isNow?'עו"ש צפוי סוף '+r.ml.label:'ישאר בסוף '+r.ml.label)+'</span><span class="bal-total-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</span></div>';
   document.getElementById('bal-detail').innerHTML=h;
 }
 
