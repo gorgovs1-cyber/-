@@ -1595,14 +1595,14 @@ function renderPMCards(r){
     '</div>'+
     '<div class="pm-card" style="--pm-c:#B57BEE" onclick="showPMDetail(\'mc\')">'+
       '<div class="pm-name">מאסטרקארד</div>'+
-      '<div class="pm-amt" style="color:#B57BEE">₪'+fmt(mcTotal)+'</div>'+
-      '<div class="pm-sub">חיוב: ₪'+fmt(r.mcBill)+' ב-20</div>'+
+      '<div class="pm-amt" style="color:#B57BEE">₪'+fmt(r.mcBill)+'</div>'+
+      '<div class="pm-sub">הוצאות החודש: ₪'+fmt(mcTotal)+' · חיוב ב-20</div>'+
       (dMC>=0?'<span class="pm-tag" style="background:rgba(181,123,238,.15);color:#B57BEE">עוד '+dMC+' ימים</span>':'<span class="pm-tag" style="background:rgba(0,230,118,.1);color:var(--pos)">כבר ירד</span>')+
     '</div>'+
     '<div class="pm-card" style="--pm-c:#6BA3FF" onclick="showPMDetail(\'visa\')">'+
       '<div class="pm-name">ויזה</div>'+
-      '<div class="pm-amt" style="color:#6BA3FF">₪'+fmt(visaTotal)+'</div>'+
-      '<div class="pm-sub">חיוב: ₪'+fmt(r.vBill)+' ב-15</div>'+
+      '<div class="pm-amt" style="color:#6BA3FF">₪'+fmt(r.vBill)+'</div>'+
+      '<div class="pm-sub">הוצאות החודש: ₪'+fmt(visaTotal)+' · חיוב ב-15</div>'+
       (dV>=0?'<span class="pm-tag" style="background:rgba(107,163,255,.15);color:#6BA3FF">עוד '+dV+' ימים</span>':'<span class="pm-tag" style="background:rgba(0,230,118,.1);color:var(--pos)">כבר ירדה</span>')+
     '</div>'+
     '<div class="pm-card" style="--pm-c:#FFB347" onclick="showPMDetail(\'cash\')">'+
