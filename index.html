@@ -1538,15 +1538,16 @@ function renderUpcoming(r){
   var tD=today.getDate();
   var items=[];
   if(r.isNow){
-    if(tD<20) items.push({label:'מאסטרקארד',date:'20/'+String(r.m).padStart(2,'0'),days:20-tD,amt:r.mcBill,color:'#B57BEE'});
+    if(tD<2)  items.push({label:'שכירות',date:'02/'+String(r.m).padStart(2,'0'),days:2-tD,amt:4100,color:'#FF6B6B'});
     if(tD<15) items.push({label:'ויזה',date:'15/'+String(r.m).padStart(2,'0'),days:15-tD,amt:r.vBill,color:'#6BA3FF'});
+    if(tD<20) items.push({label:'מאסטרקארד',date:'20/'+String(r.m).padStart(2,'0'),days:20-tD,amt:r.mcBill,color:'#B57BEE'});
+    if(tD<25) items.push({label:'ביטוח לאומי נכנס',date:'25/'+String(r.m).padStart(2,'0'),days:25-tD,amt:FIXED_MAP[r.m]||FIXED,color:'#1DE9B6',income:true});
     (RAW.expense[r.m]||[]).forEach(function(t){
       var d=parseInt(t.d.split('/')[0]);
       if(d>tD) items.push({label:t.desc,date:t.d,days:d-tD,amt:t.a,color:'#FF6D35'});
     });
     items.sort(function(a,b){return parseInt(a.date)-parseInt(b.date);});
   }
-  if(r.isNow&&tD<25) items.push({label:'ביטוח לאומי נכנס',date:'25/'+String(r.m).padStart(2,'0'),days:25-tD,amt:FIXED_MAP[r.m]||FIXED,color:'#1DE9B6',income:true});
   items.sort(function(a,b){return parseInt(a.date)-parseInt(b.date);});
   var el=document.getElementById('home-upcoming');
   if(!items.length){el.innerHTML='';return;}
@@ -1813,7 +1814,7 @@ function renderClients(){
   var isNow=today.getMonth()+1===m&&today.getFullYear()===ml.year;
   var byDay={};
   all.forEach(function(c){if(!byDay[c.day])byDay[c.day]=[];byDay[c.day].push(c);});
-  var fd=(new Date(ml.year,m-1,1).getDay()+1)%7;
+  var fd=new Date(ml.year,m-1,1).getDay();
   var h='';
   for(var i=0;i<fd;i++)h+='<div class="cal-cell empty"><div class="cal-num"></div></div>';
   for(var d=1;d<=ml.days;d++){
