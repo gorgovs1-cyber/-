@@ -229,6 +229,8 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .detail-total.neg{color:var(--orange)}
 .detail-total.pos{color:var(--pos)}
 .txn-list{padding:0 16px 16px}
+.cat-grid{display:flex;flex-wrap:wrap;gap:7px;padding:12px 16px 6px;direction:rtl}
+.cat-chip{display:flex;align-items:center;gap:5px;border-radius:20px;padding:5px 11px;font-size:11px;border:1px solid transparent}
 .txn-group-hdr{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;padding:10px 4px 5px;text-transform:uppercase}
 .txn-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--rs);background:var(--card);border:1px solid var(--border);margin-bottom:7px}
 .txn-icon{
@@ -483,11 +485,11 @@ select option{background:#111D2C;color:#fff}
 <div class="screen active" id="s-home">
   <div class="hero">
     <div class="hero-top">
-      <button class="backup-btn" onclick="exportData()">גיבוי</button>
       <div class="hero-right">
         <div class="hero-greet" id="home-greet">ערב טוב שני ✨</div>
         <div class="hero-date"  id="home-date"></div>
       </div>
+      <button class="backup-btn" onclick="exportData()">גיבוי</button>
     </div>
     <div class="hero-lbl">מאזן צפוי — <span id="home-m-name">מאי</span></div>
     <div class="hero-bal pos" id="home-bal">טוען...</div>
@@ -520,6 +522,7 @@ select option{background:#111D2C;color:#fff}
     <div class="detail-title">הוצאות</div>
     <div class="detail-total neg" id="exp-total"></div>
   </div>
+  <div class="cat-grid" id="exp-cats"></div>
   <div class="txn-list" id="exp-list"></div>
 </div>
 
@@ -1720,6 +1723,25 @@ function renderExpenses(){
   var r=calc(homeMi);
   document.getElementById('exp-total').textContent='-₪'+fmt(r.exp);
   var items=(RAW.expense[r.m]||[]).slice().sort(function(a,b){return parseInt(a.d)-parseInt(b.d);});
+
+  // Category summary chips
+  var catTotals={};
+  items.forEach(function(t){
+    var c=cat(t.desc);
+    if(!catTotals[c.lbl])catTotals[c.lbl]={amt:0,bg:c.bg,co:c.co};
+    catTotals[c.lbl].amt+=t.a;
+  });
+  var catArr=Object.keys(catTotals).map(function(k){return{lbl:k,amt:catTotals[k].amt,bg:catTotals[k].bg,co:catTotals[k].co};}).sort(function(a,b){return b.amt-a.amt;});
+  var ch='';
+  catArr.forEach(function(c){
+    ch+='<div class="cat-chip" style="background:'+c.bg+';border-color:'+c.co+'">'
+      +'<span style="font-size:10px;font-weight:700;color:'+c.co+'">'+c.lbl+'</span>'
+      +'<span style="font-size:12px;font-weight:800;color:var(--text)">₪'+fmt(c.amt)+'</span>'
+      +'</div>';
+  });
+  document.getElementById('exp-cats').innerHTML=ch;
+
+  // Transactions by date
   var byDate={};
   items.forEach(function(t){if(!byDate[t.d])byDate[t.d]=[];byDate[t.d].push(t);});
   var h='';
@@ -1727,7 +1749,7 @@ function renderExpenses(){
     h+='<div class="txn-group-hdr">'+dt+'</div>';
     byDate[dt].forEach(function(t){
       var c=cat(t.desc);
-      var mt=t.method?'<span class="txn-method '+t.method+'">'+(t.method==='mc'?'MC':'Visa')+'</span>':'';
+      var mt=t.method?'<span class="txn-method '+t.method+'">'+(t.method==='mc'?'MC':t.method==='bank'?'עוש':'Visa')+'</span>':'';
       h+='<div class="txn-item"><div class="txn-icon" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="txn-body"><div class="txn-desc">'+t.desc+mt+'</div><div class="txn-date">'+dt+'</div></div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div></div>';
     });
   });
