@@ -1592,8 +1592,8 @@ function renderPMCards(r){
   document.getElementById('home-pm').innerHTML=
     '<div class="pm-card" style="--pm-c:#FF6B6B" onclick="showPMDetail(\'bank\')">'+
       '<div class="pm-name">עו"ש</div>'+
-      '<div class="pm-amt" style="color:#FF6B6B">₪'+fmt(bankTotal)+'</div>'+
-      '<div class="pm-sub">מינוס: ₪'+fmt(CARDS.bank)+' / מסגרת: ₪'+fmt(CARDS.limit)+'</div>'+
+      '<div class="pm-amt" style="color:#FF6B6B">₪'+fmt(CARDS.bank)+'</div>'+
+      '<div class="pm-sub">הוצאות החודש: ₪'+fmt(bankTotal)+' · מסגרת: ₪'+fmt(CARDS.limit)+'</div>'+
       (CARDS.bank>CARDS.limit?'<span class="pm-tag" style="background:rgba(255,107,107,.2);color:#FF6B6B">חריגה ₪'+fmt(CARDS.bank-CARDS.limit)+'</span>':'<span class="pm-tag" style="background:rgba(0,230,118,.1);color:var(--pos)">בתוך המסגרת</span>')+
     '</div>'+
     '<div class="pm-card" style="--pm-c:#B57BEE" onclick="showPMDetail(\'mc\')">'+
