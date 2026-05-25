@@ -234,8 +234,25 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .detail-total.neg{color:var(--orange)}
 .detail-total.pos{color:var(--pos)}
 .txn-list{padding:0 16px 16px}
-.cat-grid{display:flex;flex-wrap:wrap;gap:7px;padding:12px 16px 6px;direction:rtl}
-.cat-chip{display:flex;align-items:center;gap:5px;border-radius:20px;padding:5px 11px;font-size:11px;border:1px solid transparent}
+.cat-grid{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px 6px;direction:rtl}
+.cat-chip{display:flex;flex-direction:column;gap:3px;border-radius:14px;padding:6px 11px 5px;font-size:11px;border:1px solid transparent;cursor:pointer;min-width:68px;transition:opacity .15s,transform .15s;-webkit-tap-highlight-color:transparent}
+.cat-chip:active{transform:scale(.96);opacity:.8}
+.cc-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.cc-bar{width:100%;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.cc-fill{height:100%;border-radius:2px;transition:width .5s ease}
+/* Subscriptions */
+.subs-section{margin:2px 16px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.subs-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;cursor:pointer;user-select:none}
+.subs-hdr-lbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase}
+.subs-total{font-size:14px;font-weight:800;color:var(--text)}
+.sub-row{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-top:1px solid var(--border)}
+.sub-name{font-size:12px;font-weight:600;color:var(--text2)}
+.sub-amt{font-size:13px;font-weight:700}
+/* Comparison chart */
+.compare-section{padding:0 16px 10px}
+.compare-toggle{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:9px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;text-align:center;cursor:pointer;display:block}
+.compare-wrap{background:var(--card);border-radius:var(--r);padding:14px 10px 8px;height:240px;display:none;margin-top:8px}
+.compare-wrap.open{display:block}
 .txn-group-hdr{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;padding:10px 4px 5px;text-transform:uppercase}
 .txn-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--rs);background:var(--card);border:1px solid var(--border);margin-bottom:7px}
 .txn-icon{
@@ -528,6 +545,11 @@ select option{background:#111D2C;color:#fff}
     <div class="detail-total neg" id="exp-total"></div>
   </div>
   <div class="cat-grid" id="exp-cats"></div>
+  <div id="exp-subs"></div>
+  <div class="compare-section">
+    <button class="compare-toggle" onclick="toggleCatChart(this)">השוואה חודשית ▾</button>
+    <div class="compare-wrap" id="compare-wrap"><canvas id="cat-chart"></canvas></div>
+  </div>
   <div class="txn-list" id="exp-list"></div>
 </div>
 
@@ -754,6 +776,19 @@ select option{background:#111D2C;color:#fff}
   </div>
 </div>
 
+<!-- ══ BUDGET MODAL ════════════════════════════════════════ -->
+<div class="mbg" id="budget-mbg" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal">
+    <div class="modal-title" id="budget-modal-title">תקציב חודשי</div>
+    <div class="mi-row" style="margin-top:14px">
+      <div class="mfld"><label>סכום מקסימלי ₪</label><input type="number" id="budget-inp" placeholder="0"></div>
+    </div>
+    <div class="mi-row" style="gap:8px;margin-top:12px">
+      <button class="sbtn done" style="flex:1;padding:12px" onclick="saveBudget()">שמרי</button>
+      <button class="sbtn" style="flex:1;padding:12px;background:rgba(255,107,107,.15);color:#FF6B6B" onclick="removeBudget()">הסרי תקציב</button>
+    </div>
+  </div>
+</div>
 <!-- ══ BOTTOM NAV ═════════════════════════════════════════ -->
 <nav class="bnav">
   <button class="bnb" id="bn-clients" onclick="go('clients')">
@@ -1357,6 +1392,9 @@ var CLIENTS = {
 
 var CARDS = {visa:700,mc:1524,bank:6547,limit:10000};
 var GOALS = [];
+var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:700,אוכל:400,קפה:180};
+var _budgetEditLbl='';
+var catChartInst=null;
 
 // ── HELPERS ──────────────────────────────────────────────
 function fmt(n){ return Math.round(n).toLocaleString('he-IL'); }
@@ -1405,6 +1443,7 @@ function save(){
     localStorage.setItem('shani_expense',JSON.stringify(RAW.expense));
     localStorage.setItem('shani_income', JSON.stringify(RAW.income));
     localStorage.setItem('shani_cards',  JSON.stringify(CARDS));
+    localStorage.setItem('shani_budgets',JSON.stringify(BUDGETS));
   }catch(e){}
 }
 function saveGoals(){try{localStorage.setItem('shani_goals',JSON.stringify(GOALS));}catch(e){}}
@@ -1415,6 +1454,7 @@ function load(){
     var i=localStorage.getItem('shani_income');  if(i){var d=JSON.parse(i);Object.keys(d).forEach(function(k){RAW.income[k]=d[k];});}
     var cd=localStorage.getItem('shani_cards');  if(cd){var cdo=JSON.parse(cd);Object.assign(CARDS,cdo);if(!CARDS.limit)CARDS.limit=10000;}
     var g=localStorage.getItem('shani_goals');   if(g)GOALS=JSON.parse(g);
+    var bu=localStorage.getItem('shani_budgets');if(bu){var buo=JSON.parse(bu);Object.assign(BUDGETS,buo);}
   }catch(e){}
 }
 function exportData(){
@@ -1733,24 +1773,53 @@ function renderExpenses(){
   document.getElementById('exp-total').textContent='-₪'+fmt(r.exp);
   var items=(RAW.expense[r.m]||[]).slice().sort(function(a,b){return parseInt(a.d)-parseInt(b.d);});
 
-  // Category summary chips
+  // ── Category chips with budget progress ──
   var catTotals={};
-  items.forEach(function(t){
-    var c=cat(t.desc);
-    if(!catTotals[c.lbl])catTotals[c.lbl]={amt:0,bg:c.bg,co:c.co};
-    catTotals[c.lbl].amt+=t.a;
-  });
+  items.forEach(function(t){var c=cat(t.desc);if(!catTotals[c.lbl])catTotals[c.lbl]={amt:0,bg:c.bg,co:c.co};catTotals[c.lbl].amt+=t.a;});
   var catArr=Object.keys(catTotals).map(function(k){return{lbl:k,amt:catTotals[k].amt,bg:catTotals[k].bg,co:catTotals[k].co};}).sort(function(a,b){return b.amt-a.amt;});
   var ch='';
   catArr.forEach(function(c){
-    ch+='<div class="cat-chip" style="background:'+c.bg+';border-color:'+c.co+'">'
-      +'<span style="font-size:10px;font-weight:700;color:'+c.co+'">'+c.lbl+'</span>'
-      +'<span style="font-size:12px;font-weight:800;color:var(--text)">₪'+fmt(c.amt)+'</span>'
-      +'</div>';
+    var bgt=BUDGETS[c.lbl];
+    var pct=bgt?Math.min(Math.round(c.amt/bgt*100),999):0;
+    var accent=pct>100?'#FF6B6B':pct>80?'#FFB347':c.co;
+    var bg=pct>100?'rgba(255,107,107,.15)':pct>80?'rgba(255,179,71,.15)':c.bg;
+    ch+='<div class="cat-chip" style="background:'+bg+';border-color:'+accent+'" onclick="editBudget(\''+c.lbl+'\')">';
+    ch+='<div class="cc-top"><span style="font-size:10px;font-weight:700;color:'+accent+'">'+c.lbl+'</span>';
+    ch+='<span style="font-size:12px;font-weight:800;color:var(--text)">₪'+fmt(c.amt)+'</span>';
+    if(bgt) ch+='<span style="font-size:9px;font-weight:700;color:'+accent+'">'+pct+'%</span>';
+    else    ch+='<span style="font-size:9px;color:var(--muted)">+תקציב</span>';
+    ch+='</div>';
+    if(bgt) ch+='<div class="cc-bar"><div class="cc-fill" style="width:'+Math.min(pct,100)+'%;background:'+accent+'"></div></div>';
+    ch+='</div>';
   });
   document.getElementById('exp-cats').innerHTML=ch;
 
-  // Transactions by date
+  // ── Subscriptions ──
+  var subPatterns=[
+    {re:/ספוטיפיי/i,lbl:'Spotify',co:'#1DB954'},
+    {re:/נטפליקס/i,lbl:'Netflix',co:'#E50914'},
+    {re:/פרטנר/i,lbl:'פרטנר',co:'#6BA3FF'},
+    {re:/קלאוד|icloud/i,lbl:'iCloud',co:'#6BA3FF'},
+    {re:/אפל|apple/i,lbl:'Apple',co:'rgba(220,220,220,.9)'},
+    {re:/מנוי/i,lbl:'מנוי',co:'var(--gold)'},
+  ];
+  var subs=[];
+  items.forEach(function(t){
+    for(var i=0;i<subPatterns.length;i++){
+      if(subPatterns[i].re.test(t.desc)){subs.push({lbl:subPatterns[i].lbl,amt:t.a,co:subPatterns[i].co});break;}
+    }
+  });
+  var sh='';
+  if(subs.length){
+    var subsTotal=subs.reduce(function(s,x){return s+x.amt;},0);
+    sh='<div class="subs-section">';
+    sh+='<div class="subs-hdr"><span class="subs-hdr-lbl">מנויים חודשיים</span><span class="subs-total">-₪'+fmt(subsTotal)+'</span></div>';
+    subs.forEach(function(s){sh+='<div class="sub-row"><span class="sub-name">'+s.lbl+'</span><span class="sub-amt" style="color:'+s.co+'">-₪'+fmt(s.amt)+'</span></div>';});
+    sh+='</div>';
+  }
+  document.getElementById('exp-subs').innerHTML=sh;
+
+  // ── Transactions by date ──
   var byDate={};
   items.forEach(function(t){if(!byDate[t.d])byDate[t.d]=[];byDate[t.d].push(t);});
   var h='';
@@ -1763,6 +1832,80 @@ function renderExpenses(){
     });
   });
   document.getElementById('exp-list').innerHTML=h;
+}
+
+// ── BUDGET EDIT ───────────────────────────────────────────
+function editBudget(lbl){
+  _budgetEditLbl=lbl;
+  document.getElementById('budget-modal-title').textContent='תקציב — '+lbl;
+  document.getElementById('budget-inp').value=BUDGETS[lbl]||'';
+  var m=document.getElementById('budget-mbg');
+  m.style.display='flex';setTimeout(function(){m.classList.add('open');},10);
+}
+function saveBudget(){
+  var v=parseFloat(document.getElementById('budget-inp').value);
+  if(v>0){BUDGETS[_budgetEditLbl]=v;save();}
+  document.getElementById('budget-mbg').classList.remove('open');
+  document.getElementById('budget-mbg').style.display='none';
+  renderExpenses();
+}
+function removeBudget(){
+  delete BUDGETS[_budgetEditLbl];save();
+  document.getElementById('budget-mbg').classList.remove('open');
+  document.getElementById('budget-mbg').style.display='none';
+  renderExpenses();
+}
+
+// ── COMPARISON CHART ─────────────────────────────────────
+function toggleCatChart(btn){
+  var wrap=document.getElementById('compare-wrap');
+  var isOpen=wrap.classList.toggle('open');
+  btn.textContent=isOpen?'השוואה חודשית ▴':'השוואה חודשית ▾';
+  if(isOpen) renderCatChart();
+}
+function renderCatChart(){
+  var ctx=document.getElementById('cat-chart');
+  if(!ctx||typeof Chart==='undefined')return;
+  // last 3 months relative to current
+  var months=[];
+  for(var i=Math.max(0,homeMi-2);i<=homeMi;i++) months.push(i);
+  var labels=months.map(function(i){return MONTHS[i].label.slice(0,3);});
+  // collect top categories across these months
+  var catSum={};
+  months.forEach(function(mi){
+    (RAW.expense[MONTHS[mi].key]||[]).forEach(function(t){
+      var lbl=cat(t.desc).lbl;
+      catSum[lbl]=(catSum[lbl]||0)+t.a;
+    });
+  });
+  var topCats=Object.keys(catSum).sort(function(a,b){return catSum[b]-catSum[a];}).slice(0,6);
+  var palette=['rgba(0,200,100,.75)','rgba(181,123,238,.75)','rgba(255,179,71,.75)','rgba(29,233,182,.75)','rgba(255,109,53,.75)','rgba(107,163,255,.75)'];
+  var datasets=topCats.map(function(lbl,idx){
+    return{
+      label:lbl,
+      data:months.map(function(mi){
+        return (RAW.expense[MONTHS[mi].key]||[]).filter(function(t){return cat(t.desc).lbl===lbl;}).reduce(function(s,t){return s+t.a;},0);
+      }),
+      backgroundColor:palette[idx%palette.length],
+      borderRadius:4,borderSkipped:false
+    };
+  });
+  if(catChartInst){catChartInst.data.labels=labels;catChartInst.data.datasets=datasets;catChartInst.update('none');return;}
+  catChartInst=new Chart(ctx,{
+    type:'bar',
+    data:{labels:labels,datasets:datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'bottom',labels:{color:'rgba(255,255,255,.6)',font:{family:'Sora',size:9},boxWidth:8,padding:8}},
+        tooltip:{callbacks:{label:function(c){return c.dataset.label+': ₪'+Math.round(c.raw).toLocaleString('he-IL');}}}
+      },
+      scales:{
+        x:{ticks:{color:'rgba(255,255,255,.55)',font:{family:'Sora',size:10}},grid:{color:'rgba(255,255,255,.04)'}},
+        y:{ticks:{color:'rgba(255,255,255,.45)',font:{family:'Sora',size:9},callback:function(v){return v>=1000?'₪'+(v/1000).toFixed(0)+'k':'₪'+v;}},grid:{color:'rgba(255,255,255,.05)'}}
+      }
+    }
+  });
 }
 
 // ── INCOME DETAIL ─────────────────────────────────────────
