@@ -1457,8 +1457,14 @@ function save(){
   }catch(e){}
 }
 function saveGoals(){try{localStorage.setItem('shani_goals',JSON.stringify(GOALS));}catch(e){}}
+var CLIENTS_VERSION=7; // bump to force reload clients from code
 function load(){
   try{
+    var cv=parseInt(localStorage.getItem('shani_cv')||'0');
+    if(cv<CLIENTS_VERSION){
+      localStorage.removeItem('shani_clients');
+      localStorage.setItem('shani_cv',CLIENTS_VERSION);
+    }
     var c=localStorage.getItem('shani_clients'); if(c){var d=JSON.parse(c);Object.keys(d).forEach(function(k){CLIENTS[k]=d[k];});}
     var e=localStorage.getItem('shani_expense'); if(e){var d=JSON.parse(e);Object.keys(d).forEach(function(k){RAW.expense[k]=d[k];});}
     var i=localStorage.getItem('shani_income');  if(i){var d=JSON.parse(i);Object.keys(d).forEach(function(k){RAW.income[k]=d[k];});}
