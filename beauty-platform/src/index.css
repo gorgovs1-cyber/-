@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #ffffff;
+    color: #0a0a0a;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  #root { width: 100%; }
+}
+
+@layer utilities {
+  .font-editorial { font-family: 'Cormorant Garamond', Georgia, serif !important; }
+  .tracking-super { letter-spacing: 0.35em; }
+  .tracking-wider2 { letter-spacing: 0.2em; }
+}
