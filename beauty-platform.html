@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUMIÈRE — Luxury Makeup Artistry</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Design Tokens ──────────────────────────────────────────────────── */
+    :root {
+      --black:   #0a0a0a;
+      --off-black: #111111;
+      --charcoal: #1c1c1c;
+      --mid:     #6b6b6b;
+      --light:   #b8b8b8;
+      --cream:   #f5f2ee;
+      --white:   #ffffff;
+      --gold:    #c9a96e;
+      --gold-lt: #e8d5b0;
+      --rose:    #d4a0a0;
+
+      --ff-editorial: 'Cormorant Garamond', Georgia, serif;
+      --ff-body:      'Inter', system-ui, sans-serif;
+
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out:   cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ─── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--ff-body);
+      background: var(--white);
+      color: var(--black);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; width: 100%; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+    /* ─── Page visibility ────────────────────────────────────────────────── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ─── Navbar ─────────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 3rem;
+      height: 72px;
+      transition: background 0.4s var(--ease-in-out), backdrop-filter 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .nav-logo {
+      font-family: var(--ff-editorial);
+      font-size: 1.5rem;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: var(--white);
+      transition: color 0.4s;
+    }
+    nav.scrolled .nav-logo { color: var(--black); }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      transition: color 0.3s;
+      position: relative;
+    }
+    nav.scrolled .nav-links a { color: var(--mid); }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--gold);
+      transition: width 0.35s var(--ease-out-expo);
+    }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a:hover { color: var(--white); }
+    nav.scrolled .nav-links a:hover { color: var(--black); }
+
+    /* ─── Hero ───────────────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(160deg, #1a1209 0%, #2d1f0e 30%, #0d0d0d 70%, #050505 100%),
+        url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1800&q=80') center/cover no-repeat;
+      background-blend-mode: multiply;
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+    }
+    .hero-model {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=1800&q=80') center 20%/cover no-repeat;
+      opacity: 0.55;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 5rem 7rem;
+      max-width: 680px;
+    }
+    .hero-eyebrow {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.25rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.3s var(--ease-out-expo) forwards;
+    }
+    .hero-title {
+      font-family: var(--ff-editorial);
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: 0.01em;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.5s var(--ease-out-expo) forwards;
+    }
+    .hero-title em { font-style: italic; color: var(--gold-lt); }
+    .hero-sub {
+      font-size: 0.875rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.6);
+      max-width: 420px;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.7s var(--ease-out-expo) forwards;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.9s var(--ease-out-expo) forwards;
+    }
+    .btn-primary {
+      padding: 0.9rem 2.4rem;
+      background: var(--gold);
+      color: var(--black);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: background 0.3s, transform 0.3s var(--ease-out-expo);
+    }
+    .btn-primary:hover { background: var(--gold-lt); transform: translateY(-2px); }
+    .btn-ghost {
+      padding: 0.9rem 2.4rem;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.8);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.8); color: var(--white); }
+
+    /* ─── Section Shared ─────────────────────────────────────────────────── */
+    section { padding: 7rem 5rem; }
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .section-eyebrow {
+      display: block;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.9rem;
+    }
+    .section-title {
+      font-family: var(--ff-editorial);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      color: var(--black);
+      line-height: 1.15;
+    }
+    .section-title em { font-style: italic; }
+    .section-sub {
+      font-size: 0.8rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--mid);
+      max-width: 480px;
+      margin: 1rem auto 0;
+    }
+
+    /* ─── Looks Gallery ──────────────────────────────────────────────────── */
+    #gallery-section { background: var(--cream); }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .look-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--charcoal);
+    }
+    .look-card:first-child { grid-row: span 2; }
+    .look-card-img {
+      width: 100%;
+      height: 340px;
+      object-fit: cover;
+      transition: transform 0.7s var(--ease-out-expo), opacity 0.4s;
+      background: var(--charcoal);
+    }
+    .look-card:first-child .look-card-img { height: 100%; min-height: 600px; }
+    .look-card:hover .look-card-img { transform: scale(1.05); opacity: 0.8; }
+    .look-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2rem;
+      pointer-events: none;
+    }
+    .look-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+    .look-name {
+      font-family: var(--ff-editorial);
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 0.6rem;
+    }
+    .look-hint {
+      font-size: 0.7rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .look-hint::before {
+      content: '';
+      display: inline-block;
+      width: 1.5rem;
+      height: 1px;
+      background: var(--gold);
+    }
+    .look-card-img-placeholder {
+      width: 100%;
+      height: 340px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--ff-editorial);
+      font-size: 3rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.15);
+    }
+    .look-card:first-child .look-card-img-placeholder { min-height: 600px; }
+
+    /* ─── Feature Strip ──────────────────────────────────────────────────── */
+    .feature-strip {
+      padding: 3.5rem 5rem;
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5rem;
+    }
+    .feature-item {
+      text-align: center;
+    }
+    .feature-num {
+      font-family: var(--ff-editorial);
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: var(--gold);
+      display: block;
+    }
+    .feature-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-top: 0.3rem;
+    }
+    .feature-divider {
+      width: 1px;
+      height: 3rem;
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* ─── Look Detail Page ───────────────────────────────────────────────── */
+    #look-detail-page { padding: 0; min-height: 100vh; }
+    .detail-back {
+      position: fixed;
+      top: 88px;
+      left: 3rem;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .detail-back:hover { color: var(--black); }
+    .detail-back::before {
+      content: '←';
+      font-size: 1rem;
+      color: var(--gold);
+    }
+    .detail-hero {
+      position: relative;
+      height: 90vh;
+      min-height: 600px;
+      overflow: hidden;
+    }
+    .detail-hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+      transition: none;
+    }
+    .detail-hero-img-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%);
+      z-index: 1;
+    }
+    .detail-hero-info {
+      position: absolute;
+      bottom: 4rem;
+      left: 5rem;
+      z-index: 2;
+    }
+    .detail-hero-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+    .detail-hero-title {
+      font-family: var(--ff-editorial);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1.05;
+    }
+    .detail-hero-title em { font-style: italic; }
+    .detail-hero-desc {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.55);
+      max-width: 380px;
+      line-height: 1.7;
+    }
+
+    /* ─── Products Section ───────────────────────────────────────────────── */
+    .products-section {
+      padding: 6rem 5rem;
+      background: var(--white);
+    }
+    .products-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 4rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+    }
+    .products-header-left h2 {
+      font-family: var(--ff-editorial);
+      font-size: 2.2rem;
+      font-weight: 300;
+      color: var(--black);
+      margin-bottom: 0.3rem;
+    }
+    .products-header-left p {
+      font-size: 0.78rem;
+      color: var(--mid);
+      font-weight: 300;
+    }
+    .products-count {
+      font-family: var(--ff-editorial);
+      font-size: 3rem;
+      font-weight: 300;
+      color: rgba(0,0,0,0.06);
+      line-height: 1;
+    }
+    .product-category {
+      margin-bottom: 3.5rem;
+    }
+    .category-label {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+    .category-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(0,0,0,0.07);
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+    .product-card {
+      border: 1px solid rgba(0,0,0,0.07);
+      padding: 1.75rem;
+      transition: border-color 0.3s, transform 0.4s var(--ease-out-expo), box-shadow 0.4s;
+      background: var(--white);
+    }
+    .product-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.07);
+    }
+    .product-brand {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-bottom: 0.4rem;
+    }
+    .product-name {
+      font-family: var(--ff-editorial);
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--black);
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+    }
+    .product-shade {
+      font-size: 0.72rem;
+      color: var(--mid);
+      font-weight: 300;
+      margin-bottom: 1.25rem;
+    }
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+    }
+    .product-price {
+      font-family: var(--ff-editorial);
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--black);
+    }
+    .shop-btn {
+      padding: 0.55rem 1.2rem;
+      background: var(--black);
+      color: var(--white);
+      font-size: 0.6rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid var(--black);
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .shop-btn:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--black);
+    }
+
+    /* ─── Footer ─────────────────────────────────────────────────────────── */
+    footer {
+      background: var(--off-black);
+      padding: 4rem 5rem 3rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: start;
+    }
+    .footer-brand {
+      font-family: var(--ff-editorial);
+      font-size: 1.3rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+    .footer-tagline {
+      font-size: 0.75rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.3);
+      line-height: 1.6;
+      max-width: 320px;
+    }
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      text-align: right;
+    }
+    .footer-links a {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.35);
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 2rem;
+      margin-top: 2rem;
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy {
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.1em;
+    }
+    .footer-note {
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.15);
+    }
+
+    /* ─── Animations ─────────────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── Responsive ─────────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 0 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 4rem 1.5rem; }
+      .hero-content { padding: 0 1.5rem 5rem; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .look-card:first-child { grid-column: span 2; grid-row: span 1; }
+      .look-card:first-child .look-card-img-placeholder { min-height: 300px; }
+      .feature-strip { padding: 2.5rem 1.5rem; gap: 2rem; }
+      .products-section { padding: 4rem 1.5rem; }
+      .products-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+      footer { padding: 3rem 1.5rem 2rem; grid-template-columns: 1fr; }
+      .footer-links { text-align: left; }
+      .detail-hero-info { left: 1.5rem; bottom: 2rem; }
+      .detail-back { left: 1.5rem; }
+    }
+    @media (max-width: 600px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+      .look-card:first-child { grid-column: span 1; }
+      .products-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 420px) {
+      .products-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════ NAVIGATION ═══════════ -->
+  <nav id="main-nav">
+    <span class="nav-logo" onclick="showHome()">LUMIÈRE</span>
+    <ul class="nav-links">
+      <li><a href="#gallery-section">The Looks</a></li>
+      <li><a href="#about-section">About</a></li>
+    </ul>
+  </nav>
+
+  <!-- ═══════════ HOME PAGE ═══════════ -->
+  <div id="home-page" class="page active">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-model"></div>
+      <div class="hero-content">
+        <span class="hero-eyebrow">Luxury Makeup Artistry</span>
+        <h1 class="hero-title">The Art of<br/><em>Curated Beauty</em></h1>
+        <p class="hero-sub">
+          Each look is a carefully composed portrait. Discover the products behind every brushstroke — available across Israel.
+        </p>
+        <div class="hero-cta">
+          <a class="btn-primary" href="#gallery-section">Explore the Looks</a>
+          <button class="btn-ghost" onclick="scrollToGallery()">View All Styles</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature Strip -->
+    <div class="feature-strip">
+      <div class="feature-item">
+        <span class="feature-num">12</span>
+        <span class="feature-label">Curated Looks</span>
+      </div>
+      <div class="feature-divider"></div>
+      <div class="feature-item">
+        <span class="feature-num">60+</span>
+        <span class="feature-label">Premium Products</span>
+      </div>
+      <div class="feature-divider"></div>
+      <div class="feature-item">
+        <span class="feature-num">100%</span>
+        <span class="feature-label">Available in Israel</span>
+      </div>
+      <div class="feature-divider"></div>
+      <div class="feature-item">
+        <span class="feature-num">AI</span>
+        <span class="feature-label">Generated Models</span>
+      </div>
+    </div>
+
+    <!-- Gallery -->
+    <section id="gallery-section">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">The Collection</span>
+        <h2 class="section-title">Define Your <em>Signature Look</em></h2>
+        <p class="section-sub">From dramatic evening statements to effortless daylight radiance — every look, entirely shoppable.</p>
+      </div>
+
+      <div class="gallery-grid">
+
+        <div class="look-card reveal" onclick="showLook('evening-glam')" style="--delay:0s">
+          <div class="look-card-img-placeholder" style="background: linear-gradient(135deg, #1a0a0a 0%, #2d1010 50%, #0d0505 100%); color: rgba(201,169,110,0.3); font-size:5rem;">✦</div>
+          <div class="look-card-overlay">
+            <span class="look-tag">Evening</span>
+            <h3 class="look-name">Evening<br/>Glam</h3>
+            <span class="look-hint">8 products</span>
+          </div>
+        </div>
+
+        <div class="look-card reveal" onclick="showLook('natural-glow')" style="--delay:0.1s">
+          <div class="look-card-img-placeholder" style="background: linear-gradient(135deg, #f0e8df 0%, #d4b89a 50%, #c49a70 100%); color: rgba(255,255,255,0.4); font-size:4rem; height:340px;">✦</div>
+          <div class="look-card-overlay">
+            <span class="look-tag">Everyday</span>
+            <h3 class="look-name">Natural<br/>Glow</h3>
+            <span class="look-hint">7 products</span>
+          </div>
+        </div>
+
+        <div class="look-card reveal" onclick="showLook('bridal')" style="--delay:0.2s">
+          <div class="look-card-img-placeholder" style="background: linear-gradient(135deg, #f5f0ea 0%, #e8d5c4 50%, #d4b8a0 100%); color: rgba(150,100,60,0.3); font-size:4rem; height:340px;">✦</div>
+          <div class="look-card-overlay">
+            <span class="look-tag">Occasion</span>
+            <h3 class="look-name">Bridal<br/>Romance</h3>
+            <span class="look-hint">9 products</span>
+          </div>
+        </div>
+
+        <div class="look-card reveal" onclick="showLook('bold-red')" style="--delay:0.3s">
+          <div class="look-card-img-placeholder" style="background: linear-gradient(135deg, #1a0505 0%, #3d0f0f 50%, #1a0808 100%); color: rgba(201,169,110,0.25); font-size:4rem; height:340px;">✦</div>
+          <div class="look-card-overlay">
+            <span class="look-tag">Statement</span>
+            <h3 class="look-name">Bold Red<br/>Lip</h3>
+            <span class="look-hint">6 products</span>
+          </div>
+        </div>
+
+        <div class="look-card reveal" onclick="showLook('smoky-eye')" style="--delay:0.4s">
+          <div class="look-card-img-placeholder" style="background: linear-gradient(135deg, #0a0a0f 0%, #141420 50%, #0a0a0d 100%); color: rgba(201,169,110,0.25); font-size:4rem; height:340px;">✦</div>
+          <div class="look-card-overlay">
+            <span class="look-tag">Dramatic</span>
+            <h3 class="look-name">Smoky<br/>Eye</h3>
+            <span class="look-hint">7 products</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about-section" style="background: var(--black); text-align: center; padding: 8rem 5rem;">
+      <div class="reveal">
+        <span class="section-eyebrow" style="color: var(--gold);">The Philosophy</span>
+        <h2 class="section-title" style="color: var(--white); max-width: 700px; margin: 0 auto 1.5rem;">
+          Beauty is a language.<br/><em>We translate it into products.</em>
+        </h2>
+        <p class="section-sub" style="color: rgba(255,255,255,0.35);">
+          LUMIÈRE curates AI-crafted makeup inspirations and pairs each look with real, purchasable products available in Israel — bridging the gap between inspiration and reality.
+        </p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div>
+        <div class="footer-brand">LUMIÈRE</div>
+        <p class="footer-tagline">A curated luxury beauty platform. Every look, every product, available in Israel.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#gallery-section">The Looks</a>
+        <a href="#">Affiliate Disclosure</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2025 LUMIÈRE. All rights reserved.</span>
+        <span class="footer-note">Links may be affiliate links.</span>
+      </div>
+    </footer>
+
+  </div><!-- /home-page -->
+
+
+  <!-- ═══════════ LOOK DETAIL PAGE ═══════════ -->
+  <div id="look-detail-page" class="page">
+
+    <button class="detail-back" onclick="showHome()">Back to Gallery</button>
+
+    <div class="detail-hero">
+      <div id="detail-hero-bg" style="position:absolute;inset:0;background-size:cover;background-position:center 20%;"></div>
+      <div class="detail-hero-img-bg"></div>
+      <div class="detail-hero-info">
+        <div id="detail-tag" class="detail-hero-tag"></div>
+        <h1 id="detail-title" class="detail-hero-title"></h1>
+        <p id="detail-desc" class="detail-hero-desc"></p>
+      </div>
+    </div>
+
+    <div class="products-section">
+      <div class="products-header">
+        <div class="products-header-left">
+          <h2>Products Used in This Look</h2>
+          <p>All products available at leading retailers across Israel</p>
+        </div>
+        <div id="products-count" class="products-count"></div>
+      </div>
+      <div id="products-container"></div>
+    </div>
+
+    <footer>
+      <div>
+        <div class="footer-brand">LUMIÈRE</div>
+        <p class="footer-tagline">A curated luxury beauty platform.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#" onclick="showHome(); return false;">Back to Gallery</a>
+        <a href="#">Affiliate Disclosure</a>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2025 LUMIÈRE. All rights reserved.</span>
+        <span class="footer-note">Links may be affiliate links.</span>
+      </div>
+    </footer>
+
+  </div><!-- /look-detail-page -->
+
+
+  <!-- ═══════════ DATA & LOGIC ═══════════ -->
+  <script>
+    // ─── Data ────────────────────────────────────────────────────────────────
+    const LOOKS = {
+      'evening-glam': {
+        tag: 'Evening',
+        title: 'Evening<br/><em>Glam</em>',
+        desc: 'A high-drama, luminous look built for golden-hour events and nights that demand to be remembered.',
+        bg: 'linear-gradient(135deg, #1a0a0a 0%, #3d1515 50%, #0d0505 100%)',
+        categories: [
+          {
+            label: 'Face',
+            products: [
+              { brand: 'Giorgio Armani', name: 'Luminous Silk Foundation', shade: 'Shade 5.5 — Natural Beige', price: '₪320', url: 'https://www.ksp.co.il' },
+              { brand: 'Charlotte Tilbury', name: 'Hollywood Flawless Filter', shade: 'Shade 3 — Medium', price: '₪195', url: 'https://www.charlottetilbury.com' },
+              { brand: 'NARS', name: 'Radiant Creamy Concealer', shade: 'Vanilla', price: '₪145', url: 'https://www.narscosmetics.com' },
+            ]
+          },
+          {
+            label: 'Eyes',
+            products: [
+              { brand: 'Charlotte Tilbury', name: 'Luxury Palette — The Golden Queen', shade: 'Gold & Bronze', price: '₪285', url: 'https://www.charlottetilbury.com' },
+              { brand: 'Urban Decay', name: 'All Nighter Liquid Eyeliner', shade: 'Perversion Black', price: '₪115', url: 'https://www.urbanDecay.com' },
+              { brand: 'Lancôme', name: 'Hypnôse Drama Mascara', shade: 'Black', price: '₪130', url: 'https://www.lancome.co.il' },
+            ]
+          },
+          {
+            label: 'Lips',
+            products: [
+              { brand: 'YSL Beauty', name: 'Rouge Pur Couture Lipstick', shade: 'No. 1 Le Rouge', price: '₪185', url: 'https://www.yslbeauty.com' },
+              { brand: 'Charlotte Tilbury', name: 'Lip Liner', shade: 'Pillow Talk', price: '₪125', url: 'https://www.charlottetilbury.com' },
+            ]
+          }
+        ]
+      },
+
+      'natural-glow': {
+        tag: 'Everyday',
+        title: 'Natural<br/><em>Glow</em>',
+        desc: 'Effortless radiance that enhances without concealing. Skin that looks like skin — perfected.',
+        bg: 'linear-gradient(135deg, #f0e8df 0%, #c9a870 50%, #a07040 100%)',
+        categories: [
+          {
+            label: 'Face',
+            products: [
+              { brand: 'NARS', name: 'Tinted Moisturizer', shade: 'Syracuse', price: '₪175', url: 'https://www.narscosmetics.com' },
+              { brand: 'Benefit', name: 'Boi-ing Bright On Concealer', shade: 'No. 3', price: '₪135', url: 'https://www.benefitcosmetics.com' },
+              { brand: 'MAC', name: 'Mineralize Skinfinish Natural', shade: 'Light Plus', price: '₪155', url: 'https://www.maccosmetics.co.il' },
+            ]
+          },
+          {
+            label: 'Eyes',
+            products: [
+              { brand: 'Bobbi Brown', name: 'Long-Wear Cream Shadow', shade: 'Sand Dune', price: '₪140', url: 'https://www.bobbibrowncosmetics.com' },
+              { brand: 'Lancôme', name: 'Cils Booster XL Mascara', shade: 'Noir', price: '₪120', url: 'https://www.lancome.co.il' },
+            ]
+          },
+          {
+            label: 'Lips',
+            products: [
+              { brand: 'Charlotte Tilbury', name: 'Pillow Talk Lipstick', shade: 'Original', price: '₪165', url: 'https://www.charlottetilbury.com' },
+              { brand: 'NARS', name: 'Afterglow Lip Gloss', shade: 'Orgasm', price: '₪125', url: 'https://www.narscosmetics.com' },
+            ]
+          }
+        ]
+      },
+
+      'bridal': {
+        tag: 'Occasion',
+        title: 'Bridal<br/><em>Romance</em>',
+        desc: 'Timeless, luminous, and built to last. A bridal look that photographs beautifully and stays flawless all day.',
+        bg: 'linear-gradient(135deg, #f7f0ea 0%, #e8d0bc 50%, #d4b098 100%)',
+        categories: [
+          {
+            label: 'Face',
+            products: [
+              { brand: 'Giorgio Armani', name: 'Luminous Silk Foundation', shade: 'Shade 4 — Light', price: '₪320', url: 'https://www.ksp.co.il' },
+              { brand: 'Charlotte Tilbury', name: 'Airbrush Flawless Finish', shade: 'Fair', price: '₪210', url: 'https://www.charlottetilbury.com' },
+              { brand: 'NARS', name: 'Orgasm Blush', shade: 'Orgasm', price: '₪155', url: 'https://www.narscosmetics.com' },
+              { brand: 'MAC', name: 'Strobe Cream', shade: 'Pinklite', price: '₪175', url: 'https://www.maccosmetics.co.il' },
+            ]
+          },
+          {
+            label: 'Eyes',
+            products: [
+              { brand: 'Charlotte Tilbury', name: 'Luxury Palette — Pillow Talk', shade: 'Original', price: '₪285', url: 'https://www.charlottetilbury.com' },
+              { brand: 'Urban Decay', name: '24/7 Glide-On Pencil', shade: 'Walk of Shame', price: '₪95', url: 'https://www.urbandecay.com' },
+              { brand: 'Dior', name: 'Diorshow Mascara', shade: 'Black', price: '₪165', url: 'https://www.dior.com' },
+            ]
+          },
+          {
+            label: 'Lips',
+            products: [
+              { brand: 'Charlotte Tilbury', name: 'Matte Revolution Lipstick', shade: 'Pillow Talk', price: '₪165', url: 'https://www.charlottetilbury.com' },
+              { brand: 'YSL Beauty', name: 'Touche Éclat Lip Plumper', shade: 'Clear', price: '₪175', url: 'https://www.yslbeauty.com' },
+            ]
+          }
+        ]
+      },
+
+      'bold-red': {
+        tag: 'Statement',
+        title: 'Bold Red<br/><em>Lip</em>',
+        desc: 'A singular, commanding statement. The eternal language of confidence — updated for a modern era.',
+        bg: 'linear-gradient(135deg, #200808 0%, #4a1010 50%, #1a0505 100%)',
+        categories: [
+          {
+            label: 'Face',
+            products: [
+              { brand: 'MAC', name: 'Studio Fix Fluid Foundation', shade: 'NC25', price: '₪180', url: 'https://www.maccosmetics.co.il' },
+              { brand: 'NARS', name: 'Radiant Creamy Concealer', shade: 'Custard', price: '₪145', url: 'https://www.narscosmetics.com' },
+              { brand: 'Benefit', name: 'Hoola Bronzer', shade: 'Matte Bronzer', price: '₪155', url: 'https://www.benefitcosmetics.com' },
+            ]
+          },
+          {
+            label: 'Eyes',
+            products: [
+              { brand: 'MAC', name: 'Fluidline Eyeliner Gel', shade: 'Blacktrack', price: '₪120', url: 'https://www.maccosmetics.co.il' },
+              { brand: 'Lancôme', name: 'Hypnôse Drama Mascara', shade: 'Black', price: '₪130', url: 'https://www.lancome.co.il' },
+            ]
+          },
+          {
+            label: 'Lips',
+            products: [
+              { brand: 'MAC', name: 'Retro Matte Lipstick', shade: 'Ruby Woo', price: '₪145', url: 'https://www.maccosmetics.co.il' },
+              { brand: 'MAC', name: 'Lip Pencil', shade: 'Brick', price: '₪95', url: 'https://www.maccosmetics.co.il' },
+            ]
+          }
+        ]
+      },
+
+      'smoky-eye': {
+        tag: 'Dramatic',
+        title: 'Smoky<br/><em>Eye</em>',
+        desc: 'Depth, mystery, and allure. A look built on meticulous blending and the mastery of shadow.',
+        bg: 'linear-gradient(135deg, #08080f 0%, #15152a 50%, #0a0a0f 100%)',
+        categories: [
+          {
+            label: 'Face',
+            products: [
+              { brand: 'Giorgio Armani', name: 'Power Fabric Foundation', shade: 'Shade 5', price: '₪340', url: 'https://www.ksp.co.il' },
+              { brand: 'NARS', name: 'Radiant Creamy Concealer', shade: 'Vanilla', price: '₪145', url: 'https://www.narscosmetics.com' },
+            ]
+          },
+          {
+            label: 'Eyes',
+            products: [
+              { brand: 'Urban Decay', name: 'Naked Palette', shade: 'Naked', price: '₪295', url: 'https://www.urbandecay.com' },
+              { brand: 'MAC', name: 'Eyeshadow — Black', shade: 'Carbon', price: '₪90', url: 'https://www.maccosmetics.co.il' },
+              { brand: 'MAC', name: 'Fluidline Eyeliner Gel', shade: 'Blacktrack', price: '₪120', url: 'https://www.maccosmetics.co.il' },
+              { brand: 'Urban Decay', name: '24/7 Glide-On Eye Pencil', shade: 'Zero', price: '₪95', url: 'https://www.urbandecay.com' },
+              { brand: 'Lancôme', name: 'Hypnôse Drama Mascara', shade: 'Black', price: '₪130', url: 'https://www.lancome.co.il' },
+            ]
+          },
+          {
+            label: 'Lips',
+            products: [
+              { brand: 'Charlotte Tilbury', name: 'Pillow Talk Lipstick', shade: 'Original', price: '₪165', url: 'https://www.charlottetilbury.com' },
+              { brand: 'NARS', name: 'Afterglow Lip Gloss', shade: 'Clear', price: '₪115', url: 'https://www.narscosmetics.com' },
+            ]
+          }
+        ]
+      }
+    };
+
+    // ─── Navigation ──────────────────────────────────────────────────────────
+    function showHome() {
+      document.getElementById('home-page').classList.add('active');
+      document.getElementById('look-detail-page').classList.remove('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showLook(slug) {
+      const look = LOOKS[slug];
+      if (!look) return;
+
+      // populate hero
+      document.getElementById('detail-tag').textContent = look.tag;
+      document.getElementById('detail-title').innerHTML = look.title;
+      document.getElementById('detail-desc').textContent = look.desc;
+      document.getElementById('detail-hero-bg').style.background = look.bg;
+
+      // count products
+      const total = look.categories.reduce((n, c) => n + c.products.length, 0);
+      document.getElementById('products-count').textContent = String(total).padStart(2, '0');
+
+      // build products
+      const container = document.getElementById('products-container');
+      container.innerHTML = look.categories.map(cat => `
+        <div class="product-category">
+          <div class="category-label">${cat.label}</div>
+          <div class="products-grid">
+            ${cat.products.map(p => `
+              <div class="product-card">
+                <div class="product-brand">${p.brand}</div>
+                <div class="product-name">${p.name}</div>
+                <div class="product-shade">${p.shade}</div>
+                <div class="product-footer">
+                  <span class="product-price">${p.price}</span>
+                  <a class="shop-btn" href="${p.url}" target="_blank" rel="noopener noreferrer">Shop Now</a>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('home-page').classList.remove('active');
+      document.getElementById('look-detail-page').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    function scrollToGallery() {
+      document.getElementById('gallery-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ─── Navbar scroll effect ────────────────────────────────────────────────
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('main-nav');
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ─── Scroll reveal ───────────────────────────────────────────────────────
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          const delay = entry.target.style.getPropertyValue('--delay') || '0s';
+          setTimeout(() => entry.target.classList.add('visible'), parseFloat(delay) * 1000);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
