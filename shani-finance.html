@@ -1421,7 +1421,7 @@ var CLIENTS = {
   4:[],6:[{day:1,name:'שרית',amount:800,status:'planned'}],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[]
 };
 
-var CARDS = {visa:700,mc:2209,bank:7099,limit:10000};
+var CARDS = {visa:700,mc:2209,bank:10810,cashBal:400,limit:10000};
 var GOALS = [];
 var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:700,אוכל:400,קפה:180};
 var _budgetEditLbl='';
@@ -1479,7 +1479,7 @@ function save(){
 }
 function saveGoals(){try{localStorage.setItem('shani_goals',JSON.stringify(GOALS));}catch(e){}}
 var CLIENTS_VERSION=8;  // bump to force reload clients from code
-var CARDS_VERSION=4;    // bump to force reload cards from code
+var CARDS_VERSION=5;    // bump to force reload cards from code
 function load(){
   try{
     var cv=parseInt(localStorage.getItem('shani_cv')||'0');
@@ -1696,9 +1696,9 @@ function renderPMCards(r){
     '</div>'+
     '<div class="pm-card" style="--pm-c:#FFB347" onclick="showPMDetail(\'cash\')">'+
       '<div class="pm-name">מזומן</div>'+
-      '<div class="pm-amt" style="color:#FFB347">₪'+fmt(cashTotal)+'</div>'+
-      '<div class="pm-sub">תשלומים במזומן</div>'+
-      '<span class="pm-tag" style="background:rgba(255,179,71,.15);color:#FFB347">הוצאות החודש</span>'+
+      '<div class="pm-amt" style="color:#FFB347">₪'+fmt(CARDS.cashBal||0)+'</div>'+
+      '<div class="pm-sub">הוצאות החודש: ₪'+fmt(cashTotal)+'</div>'+
+      '<span class="pm-tag" style="background:rgba(255,179,71,.15);color:#FFB347">יתרה במזומן</span>'+
     '</div>';
 }
 
