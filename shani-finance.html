@@ -824,8 +824,13 @@ var MONTHS = [
 ];
 var NOW_IDX = (function(){
   var d=new Date(),y=d.getFullYear(),m=d.getMonth()+1;
-  for(var i=0;i<MONTHS.length;i++) if(MONTHS[i].key===m&&MONTHS[i].year===y) return i;
-  return MONTHS.length-2; // fallback to last filled month
+  // Find the last month in MONTHS that is <= current real date
+  var best=0;
+  for(var i=0;i<MONTHS.length;i++){
+    var ml=MONTHS[i];
+    if(ml.year<y||(ml.year===y&&ml.key<=m)) best=i;
+  }
+  return best;
 })();
 var MAY_IDX = NOW_IDX; // kept for compatibility
 
@@ -2403,6 +2408,13 @@ function showCardDetail(type){
 
 // ── INIT ─────────────────────────────────────────────────
 load();
+// After load(), recalculate default month — pick last month with income (most recently active)
+(function(){
+  var d=new Date(),y=d.getFullYear(),m=d.getMonth()+1;
+  for(var i=0;i<MONTHS.length;i++) if(MONTHS[i].key===m&&MONTHS[i].year===y){homeMi=curCMi=i;return;}
+  // Fallback: last month with income data
+  for(var i=MONTHS.length-1;i>=0;i--){var mk=MONTHS[i].key;if(RAW.income[mk]&&RAW.income[mk].length){homeMi=curCMi=i;return;}}
+})();
 initSplash();
 renderHome();
 </script>
