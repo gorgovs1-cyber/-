@@ -513,7 +513,7 @@ select option{background:#111D2C;color:#fff}
       </div>
       <button class="backup-btn" onclick="exportData()">גיבוי</button>
     </div>
-    <div class="hero-lbl">מאזן צפוי — <span id="home-m-name">מאי</span></div>
+    <div class="hero-lbl">מאזן צפוי — <span id="home-m-name">יוני</span></div>
     <div class="hero-bal pos" id="home-bal">טוען...</div>
     <div class="hero-sub"     id="home-sub"></div>
   </div>
@@ -522,7 +522,7 @@ select option{background:#111D2C;color:#fff}
 
   <div class="mnav">
     <button class="marrow" onclick="moveHM(-1)">›</button>
-    <div class="mlabel"    id="home-mlbl">מאי 2025</div>
+    <div class="mlabel"    id="home-mlbl">יוני 2026</div>
     <button class="marrow" onclick="moveHM(1)">‹</button>
   </div>
 
@@ -822,7 +822,17 @@ var MONTHS = [
   {key:5, label:'מאי',   year:2026,days:31},{key:6, label:'יוני',  year:2026,days:30},
   {key:7, label:'יולי',  year:2026,days:31},{key:8, label:'אוגוסט',year:2026,days:31},
 ];
-var MAY_IDX = 6; // index of May
+var NOW_IDX = (function(){
+  var d=new Date(),y=d.getFullYear(),m=d.getMonth()+1;
+  // Find the last month in MONTHS that is <= current real date
+  var best=0;
+  for(var i=0;i<MONTHS.length;i++){
+    var ml=MONTHS[i];
+    if(ml.year<y||(ml.year===y&&ml.key<=m)) best=i;
+  }
+  return best;
+})();
+var MAY_IDX = NOW_IDX; // kept for compatibility
 
 var RAW = {
   expense:{
@@ -958,8 +968,24 @@ var RAW = {
       {d:'26/05',desc:'יין',a:42.56,method:'bank'},
       {d:'27/05',desc:'ספגטי וולט',a:63,method:'bank'},
       {d:'27/05',desc:'אוכל וולט',a:57,method:'bank'},
+      {d:'28/05',desc:'טבק',a:107},
+      {d:'28/05',desc:'יין',a:123,method:'mc'},
+      {d:'28/05',desc:'קנאביס',a:250},
+      {d:'29/05',desc:'טבק גבינה וטחינה',a:168,method:'bank'},
+      {d:'30/05',desc:'קניות בוולט',a:148},
+      {d:'31/05',desc:'קפה',a:30,method:'bank'},
+      {d:'31/05',desc:'קפה',a:14,method:'mc'},
+      {d:'31/05',desc:'סודה',a:12,method:'bank'},
+      {d:'31/05',desc:'יין',a:40,method:'bank'},
+      {d:'31/05',desc:'נר וסקווץ לכלים',a:37,method:'bank'},
     ],
     6:[
+      {d:'01/06',desc:'דלק',a:100,method:'bank'},
+      {d:'02/06',desc:'שכירות',a:4100,method:'bank'},
+      {d:'02/06',desc:'קנאביס',a:180,method:'bank'},
+      {d:'02/06',desc:'קפה ובירה',a:50},
+      {d:'02/06',desc:'קניות (טבק, סבון, נייר מטבח, מי קוקוס)',a:183,method:'mc'},
+      {d:'03/06',desc:'קניות וולט מארקט',a:123,method:'mc'},
       {d:'07/06',desc:'טסט ישראכרט 1/5',a:268.2,method:'mc'},
       {d:'20/06',desc:'מעבדת שי סלפי — אייפון 2/11',a:347.18,method:'mc'},
       {d:'20/06',desc:'רשות האכיפה והגבייה המר 1/5',a:274.74,method:'mc'},
@@ -974,6 +1000,7 @@ var RAW = {
       {d:'08/06',desc:'חומר להחלקה',a:520},
       {d:'08/06',desc:'יין',a:164},
       {d:'08/06',desc:'קוקטייל',a:50},
+      {d:'12/06',desc:'פרטנר',a:60.42},
     ],
     7:[{d:'07/07',desc:'טסט ישראכרט 2/5',a:268,method:'mc'},{d:'14/07',desc:'אייפון תשלום 3/11',a:347,method:'mc'},{d:'20/07',desc:'שטיח לסלון 2/2',a:220.5,method:'mc'}],
     8:[{d:'07/08',desc:'טסט ישראכרט 3/5',a:268,method:'mc'},{d:'14/08',desc:'אייפון תשלום 4/11',a:347,method:'mc'}],
@@ -1375,12 +1402,20 @@ var RAW = {
     5:[
       {d:'01/05',desc:'קנאביס מירי',a:963},
       {d:'01/05',desc:'השתתפות בשכ"ד',a:770},
-      {d:'01/05',desc:'חידוש אתי',a:800},
+      {d:'08/05',desc:'אתי',a:800},
+      {d:'07/05',desc:'מאיה',a:250},
       {d:'11/05',desc:'נטלי',a:1200},
       {d:'13/05',desc:'הילה',a:1200},
-      {d:'01/05',desc:'נוף',a:1000},
+      {d:'17/05',desc:'נוף',a:1000},
+      {d:'24/05',desc:'טל',a:800},
+      {d:'27/05',desc:'עדי שפרינגר',a:800},
+      {d:'29/05',desc:'ספיר',a:800},
     ],
-    6:[],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[]
+    6:[
+      {d:'01/06',desc:'שרית',a:800},
+      {d:'02/06',desc:'קנאביס מירי',a:320},
+      {d:'03/06',desc:'השתתפות בשכ"ד',a:770},
+    ],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[]
   }
 };
 
@@ -1396,10 +1431,10 @@ var CLIENTS = {
     {day:28,name:'ליטל',       amount:800,  status:'planned'},
     {day:29,name:'ספיר פרץ',   amount:800,  status:'done'},
   ],
-  4:[],6:[{day:1,name:'שרית',amount:800,status:'planned'}],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[]
+  4:[],6:[{day:1,name:'שרית',amount:800,status:'planned'},{day:5,name:'מאיה',amount:300,status:'planned'},{day:10,name:'קארין',amount:1100,status:'planned'}],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[]
 };
 
-var CARDS = {visa:700,mc:2085,bank:7111,limit:10000};
+var CARDS = {visa:700,mc:2209,bank:10810,cashBal:400,limit:10000};
 var GOALS = [];
 var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:700,אוכל:400,קפה:180};
 var _budgetEditLbl='';
@@ -1456,8 +1491,8 @@ function save(){
   }catch(e){}
 }
 function saveGoals(){try{localStorage.setItem('shani_goals',JSON.stringify(GOALS));}catch(e){}}
-var CLIENTS_VERSION=8;  // bump to force reload clients from code
-var CARDS_VERSION=3;    // bump to force reload cards from code
+var CLIENTS_VERSION=10;  // bump to force reload clients from code
+var CARDS_VERSION=5;    // bump to force reload cards from code
 function load(){
   try{
     var cv=parseInt(localStorage.getItem('shani_cv')||'0');
@@ -1620,9 +1655,9 @@ function renderUpcoming(r){
     if(tD<15) items.push({label:'ויזה',date:'15/'+String(r.m).padStart(2,'0'),days:15-tD,amt:r.vBill,color:'#6BA3FF'});
     if(tD<20) items.push({label:'מאסטרקארד',date:'20/'+String(r.m).padStart(2,'0'),days:20-tD,amt:r.mcBill,color:'#B57BEE'});
     if(tD<25) items.push({label:'ביטוח לאומי נכנס',date:'25/'+String(r.m).padStart(2,'0'),days:25-tD,amt:FIXED_MAP[r.m]||FIXED,color:'#1DE9B6',income:true});
-    (RAW.expense[r.m]||[]).forEach(function(t){
-      var d=parseInt(t.d.split('/')[0]);
-      if(d>tD) items.push({label:t.desc,date:t.d,days:d-tD,amt:t.a,color:'#FF6D35'});
+    r.planList.forEach(function(c){
+      var d=c.day,days=d-tD;
+      if(days>=0) items.push({label:c.name,date:String(d).padStart(2,'0')+'/'+String(r.m).padStart(2,'0'),days:days,amt:c.amount,color:'#1DE9B6',income:true});
     });
     items.sort(function(a,b){return parseInt(a.date)-parseInt(b.date);});
   }
@@ -1674,9 +1709,9 @@ function renderPMCards(r){
     '</div>'+
     '<div class="pm-card" style="--pm-c:#FFB347" onclick="showPMDetail(\'cash\')">'+
       '<div class="pm-name">מזומן</div>'+
-      '<div class="pm-amt" style="color:#FFB347">₪'+fmt(cashTotal)+'</div>'+
-      '<div class="pm-sub">תשלומים במזומן</div>'+
-      '<span class="pm-tag" style="background:rgba(255,179,71,.15);color:#FFB347">הוצאות החודש</span>'+
+      '<div class="pm-amt" style="color:#FFB347">₪'+fmt(CARDS.cashBal||0)+'</div>'+
+      '<div class="pm-sub">הוצאות החודש: ₪'+fmt(cashTotal)+'</div>'+
+      '<span class="pm-tag" style="background:rgba(255,179,71,.15);color:#FFB347">יתרה במזומן</span>'+
     '</div>';
 }
 
@@ -2373,6 +2408,13 @@ function showCardDetail(type){
 
 // ── INIT ─────────────────────────────────────────────────
 load();
+// Default to last month that has income entries (= most recently active month)
+(function(){
+  for(var i=MONTHS.length-1;i>=0;i--){
+    var mk=MONTHS[i].key;
+    if(RAW.income[mk]&&RAW.income[mk].length){homeMi=curCMi=modalMi=i;return;}
+  }
+})();
 initSplash();
 renderHome();
 </script>
