@@ -513,7 +513,7 @@ select option{background:#111D2C;color:#fff}
       </div>
       <button class="backup-btn" onclick="exportData()">גיבוי</button>
     </div>
-    <div class="hero-lbl">מאזן צפוי — <span id="home-m-name">מאי</span></div>
+    <div class="hero-lbl">מאזן צפוי — <span id="home-m-name">יוני</span></div>
     <div class="hero-bal pos" id="home-bal">טוען...</div>
     <div class="hero-sub"     id="home-sub"></div>
   </div>
@@ -522,7 +522,7 @@ select option{background:#111D2C;color:#fff}
 
   <div class="mnav">
     <button class="marrow" onclick="moveHM(-1)">›</button>
-    <div class="mlabel"    id="home-mlbl">מאי 2025</div>
+    <div class="mlabel"    id="home-mlbl">יוני 2026</div>
     <button class="marrow" onclick="moveHM(1)">‹</button>
   </div>
 
@@ -2408,12 +2408,12 @@ function showCardDetail(type){
 
 // ── INIT ─────────────────────────────────────────────────
 load();
-// After load(), recalculate default month — pick last month with income (most recently active)
+// Default to last month that has income entries (= most recently active month)
 (function(){
-  var d=new Date(),y=d.getFullYear(),m=d.getMonth()+1;
-  for(var i=0;i<MONTHS.length;i++) if(MONTHS[i].key===m&&MONTHS[i].year===y){homeMi=curCMi=i;return;}
-  // Fallback: last month with income data
-  for(var i=MONTHS.length-1;i>=0;i--){var mk=MONTHS[i].key;if(RAW.income[mk]&&RAW.income[mk].length){homeMi=curCMi=i;return;}}
+  for(var i=MONTHS.length-1;i>=0;i--){
+    var mk=MONTHS[i].key;
+    if(RAW.income[mk]&&RAW.income[mk].length){homeMi=curCMi=modalMi=i;return;}
+  }
 })();
 initSplash();
 renderHome();
