@@ -319,39 +319,6 @@
     }
 
     /* ══════════════════════════════════════
-       PRODUCT GRID
-    ══════════════════════════════════════ */
-    .grid-section {
-      background: #0a0005; padding: 8rem 4rem;
-    }
-    .grid-eyebrow {
-      text-align: center;
-      font-family: 'Inter', sans-serif;
-      font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
-      color: rgba(227,179,90,0.55); margin-bottom: 5rem; display: block;
-    }
-    .grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 3rem; max-width: 1100px; margin: 0 auto;
-    }
-    .grid-card { text-align: center; }
-    .grid-card img {
-      width: 100%; height: 300px; object-fit: contain;
-      margin-bottom: 1.5rem;
-      filter: drop-shadow(0 16px 48px rgba(227,179,90,0.12));
-    }
-    .grid-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 28px; letter-spacing: 8px; text-transform: uppercase;
-      margin-bottom: 0.5rem; display: block;
-    }
-    .grid-desc {
-      font-family: 'Inter', sans-serif;
-      font-size: 12px; font-weight: 300;
-      color: #c9b896; line-height: 1.7;
-    }
-
-    /* ══════════════════════════════════════
        NEWSLETTER
     ══════════════════════════════════════ */
     .newsletter {
@@ -462,11 +429,6 @@
       /* parallax + sun band */
       .parallax-quote { font-size: 34px; }
       .sun-band-text span { font-size: 30px; }
-
-      /* product grid — one column */
-      .grid-section { padding: 5rem 1.8rem; }
-      .grid { grid-template-columns: 1fr; gap: 4rem; }
-      .grid-card img { height: 260px; }
 
       /* newsletter — stacked form */
       .nl-form { flex-direction: column; gap: 0.8rem; }
@@ -659,30 +621,6 @@
     <div class="sun-band-overlay"></div>
     <div class="sun-band-text"><span class="lux-gold">Born from the sun.</span></div>
   </div>
-
-  <!-- ════════════════════════════
-       PRODUCT GRID
-  ════════════════════════════ -->
-  <section class="grid-section">
-    <span class="grid-eyebrow">The Collection</span>
-    <div class="grid">
-      <div class="grid-card">
-        <img src="dawn-product.png" alt="DAWN">
-        <span class="grid-name lux-gold">DAWN</span>
-        <p class="grid-desc">Morning ritual. Cold-pressed at dawn.</p>
-      </div>
-      <div class="grid-card">
-        <img src="dusk-product.png" alt="DUSK">
-        <span class="grid-name lux-gold">DUSK</span>
-        <p class="grid-desc">Golden hour. Orange at its warmest.</p>
-      </div>
-      <div class="grid-card">
-        <img src="night-product.png" alt="NIGHT">
-        <span class="grid-name lux-gold">NIGHT</span>
-        <p class="grid-desc">Deep restore. While the world sleeps.</p>
-      </div>
-    </div>
-  </section>
 
   <!-- ════════════════════════════
        NEWSLETTER
