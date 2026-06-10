@@ -3,556 +3,409 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SOLIS — Cold-Pressed Orange</title>
+  <title>SOLIS | Cold-Pressed Orange Juice</title>
 
   <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: auto; }
+    body  { background: #000; overflow-x: hidden; }
 
-    :root {
-      --cream:  #f5f0eb;
-      --amber:  #a08060;
-      --orange: #e05c00;
-      --deep:   #7a3500;
-      --black:  #000000;
+    /* ── LUXURY GOLD ── */
+    .lux-gold {
+      background: linear-gradient(135deg,
+        #f9e7c1 0%, #e3b35a 20%, #fff6e0 45%, #c89a3c 70%, #f3d98e 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      animation: goldShimmer 6s ease-in-out infinite alternate;
+    }
+    @keyframes goldShimmer {
+      from { background-position: 0% center; }
+      to   { background-position: 100% center; }
     }
 
-    html { scroll-behavior: auto; }
-    body  { background: var(--black); color: var(--cream); overflow-x: hidden; }
-
-    /* ── NAV ── */
+    /* ── NAV (exactly one) ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 2rem 3rem;
-      pointer-events: none;
+      padding: 2rem 3rem; pointer-events: none;
     }
-    nav span {
+    .nav-brand, .nav-link {
       font-family: 'Cormorant Garamond', serif;
       font-size: 11px; letter-spacing: 5px; text-transform: uppercase;
-      color: var(--cream); pointer-events: auto;
-    }
-    nav a {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 11px; letter-spacing: 5px; text-transform: uppercase;
-      color: var(--cream); text-decoration: none; pointer-events: auto;
+      text-decoration: none; pointer-events: auto;
     }
 
-    /* ── PROGRESS BAR ── */
+    /* ── PROGRESS BAR (exactly one) ── */
     #progress-bar {
       position: fixed; top: 0; right: 0; width: 2px;
-      background: var(--deep); height: 0vh; z-index: 200;
-      transition: height 0.05s linear;
+      background: #7a3500; height: 0; z-index: 200;
     }
 
-    /* ════════════════════════════════════════════
-       HERO — video scrub
-    ════════════════════════════════════════════ */
-    .hero-scroll-track {
-      height: 550vh;
-      position: relative;
-    }
+    /* ══════════════════════════════════════
+       HERO
+    ══════════════════════════════════════ */
+    .hero-scroll-track { height: 550vh; position: relative; }
     .hero-sticky {
       position: sticky; top: 0; height: 100vh; overflow: hidden;
     }
     #source-video {
       width: 100%; height: 100%;
-      object-fit: contain; background: #000;
-      display: block;
+      object-fit: contain; background: #000; display: block;
     }
-
-    /* text overlays inside hero */
     .hero-overlay {
       position: absolute; inset: 0;
       pointer-events: none; z-index: 10;
     }
     .hero-phase {
-      position: absolute;
-      opacity: 0;
+      position: absolute; opacity: 0;
       transition: opacity 0.6s ease;
-      color: var(--cream);
     }
-    /* SOLIS title */
     #phase-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 96px; font-weight: 300; letter-spacing: 20px;
-      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      font-size: clamp(56px, 9vw, 96px); font-weight: 300;
+      letter-spacing: 20px;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
       text-align: center; white-space: nowrap;
     }
-    /* tagline */
     #phase-tagline {
       font-family: 'Cormorant Garamond', serif;
       font-size: 28px; font-style: italic; font-weight: 300;
-      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      color: #c9b896;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
       text-align: center; width: 80%;
     }
-    /* PPP */
     #phase-ppp {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 72px; font-weight: 300; letter-spacing: 12px;
-      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      font-size: clamp(42px, 7vw, 72px); font-weight: 300;
+      letter-spacing: 12px;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
       text-align: center; white-space: nowrap;
     }
-    /* corner label */
     #phase-corner {
       font-family: 'Inter', sans-serif;
-      font-size: 12px; font-weight: 400; letter-spacing: 4px;
-      text-transform: uppercase;
+      font-size: 12px; letter-spacing: 4px; text-transform: uppercase;
+      color: #c9b896;
       top: 10%; left: 8%;
     }
 
-    /* ════════════════════════════════════════════
-       STICKY PRODUCT EXPLAINER
-       Left: sticky image | Right: 3×100vh panels
-    ════════════════════════════════════════════ */
+    /* ══════════════════════════════════════
+       PRODUCT EXPLAINER — sticky left image + scrolling right panels
+    ══════════════════════════════════════ */
     .product-explainer {
       display: flex;
-      position: relative;
       background: #000;
     }
 
-    /* LEFT SIDE — sticky image container */
+    /* LEFT — sticky, must have align-self:flex-start */
     .product-left {
       width: 50%;
       position: sticky;
       top: 0;
-      height: 100vh;          /* matches viewport so sticky works */
-      align-self: flex-start;  /* critical: don't stretch with the right column */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: visible;
+      height: 100vh;
+      align-self: flex-start; /* CRITICAL — without this sticky breaks */
     }
-    .product-left img {
-      width: 75%;
-      max-width: 420px;
-      height: auto;
-      object-fit: contain;
-      transition: opacity 0.5s ease;
+    .product-img-layer {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 72%; max-width: 400px;
+      height: auto; object-fit: contain;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
     }
+    .product-img-layer.is-active { opacity: 1; }
 
-    /* RIGHT SIDE — three scrolling panels */
-    .product-right {
-      width: 50%;
-    }
+    /* RIGHT — three 100vh panels */
+    .product-right { width: 50%; }
     .product-panel {
       height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      display: flex; flex-direction: column; justify-content: center;
       padding: 0 8% 0 6%;
-      position: relative;
-    }
-    .product-panel::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(224,92,0,0.3), transparent);
+      border-top: 1px solid rgba(227,179,90,0.1);
     }
     .product-eyebrow {
       font-family: 'Inter', sans-serif;
-      font-size: 10px; font-weight: 400;
-      letter-spacing: 4px; text-transform: uppercase;
-      color: rgba(245,240,235,0.45);
+      font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+      color: rgba(227,179,90,0.55);
       margin-bottom: 1.2rem;
     }
     .product-name {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(56px, 8vw, 80px);
-      font-weight: 300; letter-spacing: 12px;
-      color: var(--cream);
-      margin-bottom: 1.5rem;
-      text-transform: uppercase;
+      font-size: clamp(56px, 8vw, 80px); font-weight: 300;
+      letter-spacing: 12px; text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      display: block;
     }
     .product-divider {
-      width: 40px; height: 1px;
-      background: var(--orange);
-      margin-bottom: 1.5rem;
+      width: 36px; height: 1px;
+      background: #e3b35a; margin-bottom: 1.4rem;
     }
     .product-headline {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(22px, 3vw, 30px);
-      font-style: italic; font-weight: 300;
-      color: var(--cream);
-      margin-bottom: 1.2rem;
-      line-height: 1.4;
+      font-size: clamp(22px, 3vw, 28px); font-style: italic; font-weight: 300;
+      color: #f0e8d8;
+      margin-bottom: 1.2rem; line-height: 1.4;
     }
     .product-desc {
       font-family: 'Inter', sans-serif;
       font-size: 14px; font-weight: 300;
-      color: var(--amber);
-      line-height: 1.8;
-      max-width: 380px;
-    }
-    .product-cta {
-      display: inline-block;
-      margin-top: 2rem;
-      font-family: 'Inter', sans-serif;
-      font-size: 11px; font-weight: 400;
-      letter-spacing: 3px; text-transform: uppercase;
-      color: var(--cream); text-decoration: none;
-      border-bottom: 1px solid var(--orange);
-      padding-bottom: 4px;
+      color: #c9b896; line-height: 1.8;
+      max-width: 360px;
     }
 
-    /* ════════════════════════════════════════════
+    /* ══════════════════════════════════════
        HORIZONTAL COLLECTION RAIL
-    ════════════════════════════════════════════ */
-    .h-sticky {
-      /* NO height — GSAP pin handles spacing */
-      position: relative;
-    }
+    ══════════════════════════════════════ */
+    /* .h-sticky has NO height — GSAP pin adds it */
     .h-track {
       display: flex;
-      width: 400vw;
-      height: 100vh;
-      will-change: transform;
+      width: 400vw; height: 100vh;
     }
     .h-panel {
       width: 100vw; height: 100vh;
-      flex-shrink: 0;
-      position: relative;
+      flex-shrink: 0; position: relative;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
-    .h-panel-bg {
+    .h-bg {
       position: absolute; inset: 0;
       background-size: cover; background-position: center;
     }
-    .h-panel-overlay {
+    .h-overlay {
       position: absolute; inset: 0;
       background: rgba(0,0,0,0.55);
     }
-    .h-panel-content {
-      position: relative; z-index: 2;
-      text-align: center;
-    }
-    .h-collection-label {
+    .h-panel-content { position: relative; z-index: 2; text-align: center; }
+    .h-eyebrow {
       font-family: 'Inter', sans-serif;
       font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
-      color: rgba(245,240,235,0.45);
-      margin-bottom: 1rem;
+      color: rgba(227,179,90,0.55); margin-bottom: 1rem; display: block;
     }
-    .h-collection-title {
+    .h-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(56px, 8vw, 96px);
-      font-weight: 300; letter-spacing: 16px;
-      color: var(--cream);
+      font-size: clamp(52px, 8vw, 96px); font-weight: 300;
+      letter-spacing: 16px; display: block;
     }
-    /* product panels in rail */
-    .h-product-panel {
+    .h-product {
       width: 100vw; height: 100vh;
-      flex-shrink: 0;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      background: #000;
+      flex-shrink: 0; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      background: #000; overflow: hidden;
     }
-    .h-product-panel img {
-      height: 70vh; width: auto;
-      object-fit: contain;
-      position: relative; z-index: 1;
+    .h-product img {
+      height: 68vh; width: auto;
+      object-fit: contain; position: relative; z-index: 1;
+      filter: drop-shadow(0 20px 60px rgba(227,179,90,0.15));
     }
     .h-product-label {
-      position: absolute;
-      bottom: 3rem; left: 4rem;
-      z-index: 2;
+      position: absolute; bottom: 3rem; left: 4rem; z-index: 2;
     }
-    .h-product-label .h-name {
+    .h-pname {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 14px; letter-spacing: 6px;
-      text-transform: uppercase; color: var(--cream);
+      font-size: 14px; letter-spacing: 6px; text-transform: uppercase;
+      display: block;
     }
-    .h-product-label .h-sub {
+    .h-psub {
       font-family: 'Inter', sans-serif;
-      font-size: 11px; color: var(--amber);
-      margin-top: 4px;
+      font-size: 11px; color: #c9b896; margin-top: 4px;
     }
 
-    /* ════════════════════════════════════════════
-       STACKING RITUAL CARDS
-    ════════════════════════════════════════════ */
+    /* ══════════════════════════════════════
+       RITUAL CARDS
+    ══════════════════════════════════════ */
     .ritual-section {
       padding: 10vh 0 30vh;
-      background: #000;
-      position: relative;
+      background: #000; position: relative;
     }
     .ritual-card {
       width: 70%; max-width: 800px;
-      height: 70vh;
-      margin: 0 auto 2rem;
+      height: 70vh; margin: 0 auto 2rem;
       position: sticky;
-      border: 1px solid rgba(224,92,0,0.25);
-      border-radius: 2px;
-      overflow: hidden;
+      border: 1px solid rgba(227,179,90,0.2);
+      border-radius: 2px; overflow: hidden;
     }
     .ritual-card:nth-child(1) { top: 10vh; }
     .ritual-card:nth-child(2) { top: 15vh; }
     .ritual-card:nth-child(3) { top: 20vh; }
-
-    .ritual-card-video {
+    .ritual-video {
       position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      transform: scale(1.08);
-      animation: cardZoom 4s ease-out forwards;
+      width: 100%; height: 100%; object-fit: cover;
     }
-    @keyframes cardZoom {
-      to { transform: scale(1.0); }
-    }
-    .ritual-card:nth-child(2) .ritual-card-video { animation-delay: 1.3s; }
-    .ritual-card:nth-child(3) .ritual-card-video { animation-delay: 2.6s; }
-
     .ritual-vignette {
       position: absolute; inset: 0;
-      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
+      background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.75) 100%);
       z-index: 1;
     }
-    .ritual-grain {
-      position: absolute; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
-      z-index: 2; opacity: 0.5;
+    .ritual-fade {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      z-index: 2;
     }
-    .ritual-sweep {
-      position: absolute; inset: 0;
-      background: linear-gradient(105deg, transparent 40%, rgba(180,100,0,0.12) 60%, transparent 70%);
-      background-size: 200% 100%;
-      animation: sweep 4s ease-in-out infinite alternate;
-      z-index: 3;
-    }
-    @keyframes sweep {
-      from { background-position: 150% 0; }
-      to   { background-position: -50% 0; }
-    }
-    .ritual-bottom-fade {
-      position: absolute; bottom: 0; left: 0; right: 0; height: 40%;
-      background: linear-gradient(transparent, rgba(0,0,0,0.6));
-      z-index: 4;
-    }
-    .ritual-card-text {
-      position: absolute; inset: 0;
-      z-index: 5;
+    .ritual-text {
+      position: absolute; inset: 0; z-index: 3;
       display: flex; flex-direction: column;
-      justify-content: flex-end;
-      padding: 2.5rem 3rem;
+      justify-content: flex-end; padding: 2.5rem 3rem;
     }
-    .ritual-accent {
-      width: 28px; height: 1px;
-      background: var(--orange); margin-bottom: 0.8rem;
-    }
+    .ritual-accent { width: 28px; height: 1px; background: #e3b35a; margin-bottom: 0.8rem; }
     .ritual-num {
       font-family: 'Inter', sans-serif;
       font-size: 11px; letter-spacing: 3px;
-      color: rgba(245,240,235,0.5);
-      margin-bottom: 0.5rem;
+      color: rgba(227,179,90,0.5); margin-bottom: 0.4rem;
     }
     .ritual-word {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(72px, 10vw, 110px);
-      font-weight: 300; line-height: 0.9;
-      color: var(--cream);
-      margin-bottom: 0.8rem;
+      font-size: clamp(64px, 10vw, 110px); font-weight: 300;
+      line-height: 0.9; margin-bottom: 0.8rem; display: block;
     }
     .ritual-desc {
       font-family: 'Inter', sans-serif;
       font-size: 13px; font-weight: 300;
-      color: var(--amber); line-height: 1.7;
-      max-width: 360px;
+      color: #c9b896; line-height: 1.7; max-width: 360px;
     }
 
-    /* ════════════════════════════════════════════
+    /* ══════════════════════════════════════
        PARALLAX STATEMENT
-    ════════════════════════════════════════════ */
-    .parallax-statement {
-      height: 100vh;
-      position: relative;
+    ══════════════════════════════════════ */
+    .parallax-wrap {
+      height: 100vh; position: relative;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
     .parallax-bg {
       position: absolute; inset: -20%;
       background-size: cover; background-position: center;
-      will-change: transform;
     }
     .parallax-overlay {
-      position: absolute; inset: 0;
-      background: rgba(0,0,0,0.72);
+      position: absolute; inset: 0; background: rgba(0,0,0,0.72);
     }
-    .parallax-content {
-      position: relative; z-index: 2;
-      text-align: center;
-    }
+    .parallax-content { position: relative; z-index: 2; text-align: center; }
     .parallax-quote {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(48px, 6vw, 80px);
-      font-style: italic; font-weight: 300;
-      color: var(--cream); line-height: 1.25;
+      font-size: clamp(44px, 6vw, 80px); font-style: italic; font-weight: 300;
+      line-height: 1.25; display: block;
     }
     .parallax-sub {
       font-family: 'Inter', sans-serif;
-      font-size: 10px; letter-spacing: 4px;
-      text-transform: uppercase;
-      color: rgba(245,240,235,0.45);
-      margin-top: 2rem;
+      font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+      color: rgba(227,179,90,0.55); margin-top: 2rem; display: block;
     }
 
-    /* ════════════════════════════════════════════
+    /* ══════════════════════════════════════
        REVERSE COLUMNS
-    ════════════════════════════════════════════ */
+    ══════════════════════════════════════ */
     .reverse-cols {
-      height: 80vh;
-      display: grid; grid-template-columns: 1fr 1fr 1fr;
-      gap: 1px; overflow: hidden;
-      background: #111;
+      height: 80vh; display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1px; overflow: hidden; background: #111;
     }
-    .reverse-col {
-      position: relative; overflow: hidden;
-    }
-    .reverse-col-bg {
+    .rcol { position: relative; overflow: hidden; }
+    .rcol-bg {
       position: absolute; inset: -20%;
       background-size: cover; background-position: center;
-      will-change: transform;
     }
-    .reverse-col-overlay {
+    .rcol-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); }
+    .rcol-text {
       position: absolute; inset: 0;
-      background: rgba(0,0,0,0.55);
+      display: flex; align-items: center; justify-content: center; z-index: 2;
     }
-    .reverse-col-text {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      z-index: 2;
-    }
-    .reverse-col-text span {
+    .rcol-text span {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(24px, 3vw, 36px);
-      font-style: italic; font-weight: 300;
-      color: var(--cream);
+      font-size: clamp(22px, 2.5vw, 34px); font-style: italic; font-weight: 300;
       text-align: center;
     }
 
-    /* ════════════════════════════════════════════
-       PRODUCT COLLECTION GRID
-    ════════════════════════════════════════════ */
-    .product-grid-section {
-      background: #0a0005;
-      padding: 8rem 4rem;
+    /* ══════════════════════════════════════
+       PRODUCT GRID
+    ══════════════════════════════════════ */
+    .grid-section {
+      background: #0a0005; padding: 8rem 4rem;
     }
-    .product-grid-header {
-      text-align: center; margin-bottom: 5rem;
-    }
-    .product-grid-header span {
-      font-family: 'Inter', sans-serif;
-      font-size: 10px; letter-spacing: 5px;
-      text-transform: uppercase;
-      color: rgba(245,240,235,0.45);
-    }
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 3rem;
-      max-width: 1100px; margin: 0 auto;
-    }
-    .product-card {
+    .grid-eyebrow {
       text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
+      color: rgba(227,179,90,0.55); margin-bottom: 5rem; display: block;
     }
-    .product-card img {
-      width: 100%; height: 320px;
-      object-fit: contain;
+    .grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 3rem; max-width: 1100px; margin: 0 auto;
+    }
+    .grid-card { text-align: center; }
+    .grid-card img {
+      width: 100%; height: 300px; object-fit: contain;
       margin-bottom: 1.5rem;
-      filter: drop-shadow(0 20px 60px rgba(224,92,0,0.15));
+      filter: drop-shadow(0 16px 48px rgba(227,179,90,0.12));
     }
-    .product-card-name {
+    .grid-name {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 28px; letter-spacing: 8px;
-      text-transform: uppercase; color: var(--cream);
-      margin-bottom: 0.5rem;
+      font-size: 28px; letter-spacing: 8px; text-transform: uppercase;
+      margin-bottom: 0.5rem; display: block;
     }
-    .product-card-desc {
+    .grid-desc {
       font-family: 'Inter', sans-serif;
       font-size: 12px; font-weight: 300;
-      color: var(--amber); line-height: 1.7;
+      color: #c9b896; line-height: 1.7;
     }
 
-    /* ════════════════════════════════════════════
+    /* ══════════════════════════════════════
        NEWSLETTER
-    ════════════════════════════════════════════ */
+    ══════════════════════════════════════ */
     .newsletter {
-      position: relative;
-      padding: 8rem 2rem;
+      position: relative; padding: 8rem 2rem;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
-    .newsletter-bg {
+    .nl-bg {
       position: absolute; inset: 0;
       background-size: cover; background-position: center;
     }
-    .newsletter-overlay {
-      position: absolute; inset: 0;
-      background: rgba(0,0,0,0.60);
-    }
-    .newsletter-content {
-      position: relative; z-index: 2;
-      text-align: center; max-width: 560px;
-    }
-    .newsletter-eyebrow {
+    .nl-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.62); }
+    .nl-content { position: relative; z-index: 2; text-align: center; max-width: 540px; }
+    .nl-eyebrow {
       font-family: 'Inter', sans-serif;
       font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
-      color: rgba(245,240,235,0.45);
-      margin-bottom: 1.2rem;
+      color: rgba(227,179,90,0.55); margin-bottom: 1rem; display: block;
     }
-    .newsletter-title {
+    .nl-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(36px, 5vw, 52px);
-      font-weight: 300; color: #fff;
-      margin-bottom: 2rem; line-height: 1.2;
+      font-size: clamp(36px, 5vw, 52px); font-weight: 300;
+      margin-bottom: 2rem; display: block;
     }
-    .newsletter-form {
-      display: flex; gap: 0; max-width: 440px; margin: 0 auto;
+    .nl-form { display: flex; max-width: 420px; margin: 0 auto; }
+    .nl-input {
+      flex: 1; padding: 14px 20px;
+      background: rgba(245,240,235,0.07);
+      border: 1px solid rgba(227,179,90,0.25); border-right: none;
+      color: #f0e8d8; font-family: 'Inter', sans-serif; font-size: 13px; outline: none;
     }
-    .newsletter-input {
-      flex: 1;
-      padding: 14px 20px;
-      background: rgba(245,240,235,0.08);
-      border: 1px solid rgba(245,240,235,0.2);
-      border-right: none;
-      color: var(--cream);
-      font-family: 'Inter', sans-serif;
-      font-size: 13px; outline: none;
+    .nl-input::placeholder { color: rgba(227,179,90,0.35); }
+    .nl-btn {
+      padding: 14px 22px;
+      background: #7a3500; border: 1px solid #7a3500;
+      color: #f0e8d8; font-family: 'Inter', sans-serif;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+      transition: background 0.3s, color 0.3s;
     }
-    .newsletter-input::placeholder { color: rgba(245,240,235,0.4); }
-    .newsletter-btn {
-      padding: 14px 24px;
-      background: var(--deep);
-      border: 1px solid var(--deep);
-      color: var(--cream);
-      font-family: 'Inter', sans-serif;
-      font-size: 11px; letter-spacing: 2px;
-      text-transform: uppercase; cursor: pointer;
-    }
-    .newsletter-btn:hover { background: var(--orange); border-color: var(--orange); }
+    .nl-btn:hover { background: #e3b35a; border-color: #e3b35a; color: #000; }
 
-    /* ════════════════════════════════════════════
+    /* ══════════════════════════════════════
        FOOTER
-    ════════════════════════════════════════════ */
-    footer {
-      background: #000;
-      padding: 4rem 2rem;
-      text-align: center;
-    }
-    .footer-brand {
+    ══════════════════════════════════════ */
+    footer { background: #000; padding: 4rem 2rem; text-align: center; }
+    .ft-brand {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 16px; letter-spacing: 8px;
-      text-transform: uppercase; color: var(--cream);
-      margin-bottom: 1rem;
+      font-size: 16px; letter-spacing: 8px; text-transform: uppercase;
+      margin-bottom: 1rem; display: block;
     }
-    .footer-copy {
-      font-family: 'Inter', sans-serif;
-      font-size: 12px; color: #444;
+    .ft-copy {
+      font-family: 'Inter', sans-serif; font-size: 12px; color: #444;
     }
   </style>
 </head>
@@ -561,318 +414,271 @@
   <!-- PROGRESS BAR -->
   <div id="progress-bar"></div>
 
-  <!-- NAV -->
+  <!-- NAV — exactly one -->
   <nav>
-    <span>SOLIS</span>
-    <a href="#">SHOP</a>
+    <span class="nav-brand lux-gold">SOLIS</span>
+    <a href="#" class="nav-link lux-gold">SHOP</a>
   </nav>
 
-  <!-- ══════════════════════════════════════════
-       HERO — video scrub
-  ══════════════════════════════════════════ -->
-  <div class="hero-scroll-track">
-    <div class="hero-sticky">
+  <!-- ════════════════════════════
+       HERO VIDEO SCRUB
+  ════════════════════════════ -->
+  <div class="hero-scroll-track" style="height:550vh; position:relative;">
+    <div class="hero-sticky" style="position:sticky; top:0; height:100vh; overflow:hidden;">
       <video id="source-video"
         src="orange-story.mp4"
         muted playsinline preload="auto"
-        style="width:100%;height:100%;object-fit:contain;background:#000;display:block;">
+        style="width:100%; height:100%; object-fit:contain; background:#000; display:block;">
       </video>
-
-      <!-- text overlays -->
       <div class="hero-overlay">
-        <div class="hero-phase" id="phase-title">SOLIS</div>
+        <div class="hero-phase lux-gold" id="phase-title">SOLIS</div>
         <div class="hero-phase" id="phase-tagline">Born from sun-drenched groves.</div>
-        <div class="hero-phase" id="phase-ppp">PRESS · POUR · PERFECT</div>
+        <div class="hero-phase lux-gold" id="phase-ppp">PRESS · POUR · PERFECT</div>
         <div class="hero-phase" id="phase-corner">One fruit changed everything.</div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════
+  <!-- ════════════════════════════
        STICKY PRODUCT EXPLAINER
-       Two-column: left sticky image | right 3 panels
-  ══════════════════════════════════════════ -->
+       Left: sticky stacked images
+       Right: 3 × 100vh panels
+  ════════════════════════════ -->
   <section class="product-explainer">
 
-    <!-- LEFT — sticky image -->
     <div class="product-left">
-      <img id="product-img" src="dawn-product.png" alt="DAWN product" />
+      <img class="product-img-layer is-active" data-key="dawn"  src="dawn-product.png"  alt="DAWN">
+      <img class="product-img-layer"           data-key="dusk"  src="dusk-product.png"  alt="DUSK">
+      <img class="product-img-layer"           data-key="night" src="night-product.png" alt="NIGHT">
     </div>
 
-    <!-- RIGHT — three panels -->
     <div class="product-right">
 
-      <!-- DAWN panel — observed to swap image -->
-      <div class="product-panel" data-product="dawn" data-img="dawn-product.png">
-        <p class="product-eyebrow">The Morning Edition</p>
-        <h2 class="product-name">DAWN</h2>
+      <div class="product-panel" data-key="dawn">
+        <span class="product-eyebrow">The Morning Edition</span>
+        <span class="product-name lux-gold">DAWN</span>
         <div class="product-divider"></div>
         <p class="product-headline">Your morning ritual, reimagined.</p>
-        <p class="product-desc">
-          Cold-pressed at first light from Valencia oranges at peak sweetness.
-          Each can captures the exact moment between night and morning —
-          liquid clarity for an unrushed start.
-        </p>
-        <a href="#" class="product-cta">Discover DAWN</a>
+        <p class="product-desc">Cold-pressed at first light from Valencia oranges at peak sweetness. Each can captures the exact moment between night and morning — liquid clarity for an unrushed start.</p>
       </div>
 
-      <!-- DUSK panel -->
-      <div class="product-panel" data-product="dusk" data-img="dusk-product.png">
-        <p class="product-eyebrow">The Evening Edition</p>
-        <h2 class="product-name">DUSK</h2>
+      <div class="product-panel" data-key="dusk">
+        <span class="product-eyebrow">The Evening Edition</span>
+        <span class="product-name lux-gold">DUSK</span>
         <div class="product-divider"></div>
         <p class="product-headline">Golden hour in every drop.</p>
-        <p class="product-desc">
-          Slow-pressed as the sun descends. Deeper, warmer, more complex —
-          the oranges have had an entire day to concentrate their oils
-          into something burnished and unhurried.
-        </p>
-        <a href="#" class="product-cta">Discover DUSK</a>
+        <p class="product-desc">Slow-pressed as the sun descends. Deeper, warmer, more complex — the oranges have had an entire day to concentrate their oils into something burnished and unhurried.</p>
       </div>
 
-      <!-- NIGHT panel -->
-      <div class="product-panel" data-product="night" data-img="night-product.png">
-        <p class="product-eyebrow">The Night Edition</p>
-        <h2 class="product-name">NIGHT</h2>
+      <div class="product-panel" data-key="night">
+        <span class="product-eyebrow">The Night Edition</span>
+        <span class="product-name lux-gold">NIGHT</span>
         <div class="product-divider"></div>
         <p class="product-headline">Cold-pressed while you sleep.</p>
-        <p class="product-desc">
-          Pressed in absolute silence after midnight.
-          The citrus rests, the flavour deepens, the pressure is slow and deliberate.
-          This is restoration in a can.
-        </p>
-        <a href="#" class="product-cta">Discover NIGHT</a>
+        <p class="product-desc">Pressed in absolute silence after midnight. The citrus rests, the flavour deepens, the pressure is slow and deliberate. This is restoration in a can.</p>
       </div>
 
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════
+  <!-- ════════════════════════════
        HORIZONTAL COLLECTION RAIL
-  ══════════════════════════════════════════ -->
+  ════════════════════════════ -->
   <div class="h-sticky">
-    <div class="h-track" id="h-track">
+    <div class="h-track">
 
-      <!-- Panel 0 — THE COLLECTION intro -->
       <div class="h-panel">
-        <div class="h-panel-bg" style="background-image:url('collection-bg.png');"></div>
-        <div class="h-panel-overlay"></div>
+        <div class="h-bg" style="background-image:url('collection-bg.png');"></div>
+        <div class="h-overlay"></div>
         <div class="h-panel-content">
-          <p class="h-collection-label">The Collection</p>
-          <h2 class="h-collection-title">THE COLLECTION</h2>
+          <span class="h-eyebrow">The Collection</span>
+          <span class="h-title lux-gold">THE COLLECTION</span>
         </div>
       </div>
 
-      <!-- Panel 1 — DAWN -->
-      <div class="h-product-panel">
+      <div class="h-product">
         <img src="dawn-product.png" alt="DAWN">
         <div class="h-product-label">
-          <div class="h-name">DAWN</div>
-          <div class="h-sub">Morning ritual</div>
+          <span class="h-pname lux-gold">DAWN</span>
+          <span class="h-psub">Morning ritual</span>
         </div>
       </div>
 
-      <!-- Panel 2 — DUSK -->
-      <div class="h-product-panel">
+      <div class="h-product">
         <img src="dusk-product.png" alt="DUSK">
         <div class="h-product-label">
-          <div class="h-name">DUSK</div>
-          <div class="h-sub">Golden hour</div>
+          <span class="h-pname lux-gold">DUSK</span>
+          <span class="h-psub">Golden hour</span>
         </div>
       </div>
 
-      <!-- Panel 3 — NIGHT -->
-      <div class="h-product-panel">
+      <div class="h-product">
         <img src="night-product.png" alt="NIGHT">
         <div class="h-product-label">
-          <div class="h-name">NIGHT</div>
-          <div class="h-sub">Deep restore</div>
+          <span class="h-pname lux-gold">NIGHT</span>
+          <span class="h-psub">Deep restore</span>
         </div>
       </div>
 
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════
-       STACKING RITUAL CARDS
-  ══════════════════════════════════════════ -->
+  <!-- ════════════════════════════
+       RITUAL CARDS
+       (uses clip-2, clip-4, clip-5 — files that actually exist)
+  ════════════════════════════ -->
   <section class="ritual-section">
 
-    <!-- PRESS -->
     <div class="ritual-card">
-      <video class="ritual-card-video" src="card-press.mp4" autoplay muted loop playsinline></video>
+      <video class="ritual-video" src="clip-2.mp4" autoplay muted loop playsinline></video>
       <div class="ritual-vignette"></div>
-      <div class="ritual-grain"></div>
-      <div class="ritual-sweep"></div>
-      <div class="ritual-bottom-fade"></div>
-      <div class="ritual-card-text">
+      <div class="ritual-fade"></div>
+      <div class="ritual-text">
         <div class="ritual-accent"></div>
-        <div class="ritual-num">01</div>
-        <div class="ritual-word">PRESS</div>
-        <p class="ritual-desc">
-          Each orange meets 2,000 pounds of cold pressure.
-          No heat. No compromise. Just pure extraction.
-        </p>
+        <span class="ritual-num">01</span>
+        <span class="ritual-word lux-gold">PRESS</span>
+        <p class="ritual-desc">Each orange meets 2,000 pounds of cold pressure. No heat. No compromise. Just pure extraction.</p>
       </div>
     </div>
 
-    <!-- POUR -->
     <div class="ritual-card">
-      <video class="ritual-card-video" src="card-pour.mp4" autoplay muted loop playsinline></video>
+      <video class="ritual-video" src="clip-4.mp4" autoplay muted loop playsinline></video>
       <div class="ritual-vignette"></div>
-      <div class="ritual-grain"></div>
-      <div class="ritual-sweep"></div>
-      <div class="ritual-bottom-fade"></div>
-      <div class="ritual-card-text">
+      <div class="ritual-fade"></div>
+      <div class="ritual-text">
         <div class="ritual-accent"></div>
-        <div class="ritual-num">02</div>
-        <div class="ritual-word">POUR</div>
-        <p class="ritual-desc">
-          Sealed within hours of pressing.
-          No air. No additives. Nothing but the fruit and its moment.
-        </p>
+        <span class="ritual-num">02</span>
+        <span class="ritual-word lux-gold">POUR</span>
+        <p class="ritual-desc">Sealed within hours of pressing. No air. No additives. Nothing but the fruit and its moment.</p>
       </div>
     </div>
 
-    <!-- PERFECT -->
     <div class="ritual-card">
-      <video class="ritual-card-video" src="card-perfect.mp4" autoplay muted loop playsinline></video>
+      <video class="ritual-video" src="clip-5.mp4" autoplay muted loop playsinline></video>
       <div class="ritual-vignette"></div>
-      <div class="ritual-grain"></div>
-      <div class="ritual-sweep"></div>
-      <div class="ritual-bottom-fade"></div>
-      <div class="ritual-card-text">
+      <div class="ritual-fade"></div>
+      <div class="ritual-text">
         <div class="ritual-accent"></div>
-        <div class="ritual-num">03</div>
-        <div class="ritual-word">PERFECT</div>
-        <p class="ritual-desc">
-          From grove to glass in under 24 hours.
-          This is what orange juice was always meant to be.
-        </p>
+        <span class="ritual-num">03</span>
+        <span class="ritual-word lux-gold">PERFECT</span>
+        <p class="ritual-desc">From grove to glass in under 24 hours. This is what orange juice was always meant to be.</p>
       </div>
     </div>
 
   </section>
 
-  <!-- ══════════════════════════════════════════
+  <!-- ════════════════════════════
        PARALLAX STATEMENT
-  ══════════════════════════════════════════ -->
-  <div class="parallax-statement">
-    <div class="parallax-bg" id="parallax-bg"
-      style="background-image:url('newsletter-bg.png');"></div>
+  ════════════════════════════ -->
+  <div class="parallax-wrap">
+    <div class="parallax-bg" id="parallax-bg" style="background-image:url('newsletter-bg.png');"></div>
     <div class="parallax-overlay"></div>
     <div class="parallax-content">
-      <p class="parallax-quote">
-        Drink what<br>the sun intended.
-      </p>
-      <p class="parallax-sub">SOLIS — Since the first harvest.</p>
+      <span class="parallax-quote lux-gold">Drink what<br>the sun intended.</span>
+      <span class="parallax-sub">SOLIS — Since the first harvest.</span>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════
+  <!-- ════════════════════════════
        REVERSE COLUMNS
-  ══════════════════════════════════════════ -->
+  ════════════════════════════ -->
   <div class="reverse-cols">
-    <div class="reverse-col" id="col-1">
-      <div class="reverse-col-bg" style="background-image:url('newsletter-bg.png');"></div>
-      <div class="reverse-col-overlay"></div>
-      <div class="reverse-col-text"><span>Born from<br>the sun.</span></div>
+    <div class="rcol" id="rcol-1">
+      <div class="rcol-bg" style="background-image:url('newsletter-bg.png');"></div>
+      <div class="rcol-overlay"></div>
+      <div class="rcol-text"><span class="lux-gold">Born from<br>the sun.</span></div>
     </div>
-    <div class="reverse-col" id="col-2">
-      <div class="reverse-col-bg" style="background-image:url('newsletter-bg.png');background-position:center 30%;"></div>
-      <div class="reverse-col-overlay"></div>
-      <div class="reverse-col-text"><span>Born from<br>the sun.</span></div>
+    <div class="rcol" id="rcol-2">
+      <div class="rcol-bg" style="background-image:url('newsletter-bg.png'); background-position:center 30%;"></div>
+      <div class="rcol-overlay"></div>
+      <div class="rcol-text"><span class="lux-gold">Born from<br>the sun.</span></div>
     </div>
-    <div class="reverse-col" id="col-3">
-      <div class="reverse-col-bg" style="background-image:url('newsletter-bg.png');background-position:right center;"></div>
-      <div class="reverse-col-overlay"></div>
-      <div class="reverse-col-text"><span>Born from<br>the sun.</span></div>
+    <div class="rcol" id="rcol-3">
+      <div class="rcol-bg" style="background-image:url('newsletter-bg.png'); background-position:right center;"></div>
+      <div class="rcol-overlay"></div>
+      <div class="rcol-text"><span class="lux-gold">Born from<br>the sun.</span></div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════
-       PRODUCT COLLECTION GRID
-  ══════════════════════════════════════════ -->
-  <section class="product-grid-section">
-    <div class="product-grid-header">
-      <span>The Collection</span>
-    </div>
-    <div class="product-grid">
-      <div class="product-card">
+  <!-- ════════════════════════════
+       PRODUCT GRID
+  ════════════════════════════ -->
+  <section class="grid-section">
+    <span class="grid-eyebrow">The Collection</span>
+    <div class="grid">
+      <div class="grid-card">
         <img src="dawn-product.png" alt="DAWN">
-        <div class="product-card-name">DAWN</div>
-        <p class="product-card-desc">Morning ritual. Cold-pressed at dawn.</p>
+        <span class="grid-name lux-gold">DAWN</span>
+        <p class="grid-desc">Morning ritual. Cold-pressed at dawn.</p>
       </div>
-      <div class="product-card">
+      <div class="grid-card">
         <img src="dusk-product.png" alt="DUSK">
-        <div class="product-card-name">DUSK</div>
-        <p class="product-card-desc">Golden hour. Orange at its warmest.</p>
+        <span class="grid-name lux-gold">DUSK</span>
+        <p class="grid-desc">Golden hour. Orange at its warmest.</p>
       </div>
-      <div class="product-card">
+      <div class="grid-card">
         <img src="night-product.png" alt="NIGHT">
-        <div class="product-card-name">NIGHT</div>
-        <p class="product-card-desc">Deep restore. While the world sleeps.</p>
+        <span class="grid-name lux-gold">NIGHT</span>
+        <p class="grid-desc">Deep restore. While the world sleeps.</p>
       </div>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════
+  <!-- ════════════════════════════
        NEWSLETTER
-  ══════════════════════════════════════════ -->
+  ════════════════════════════ -->
   <section class="newsletter">
-    <div class="newsletter-bg" style="background-image:url('newsletter-bg.png');"></div>
-    <div class="newsletter-overlay"></div>
-    <div class="newsletter-content">
-      <p class="newsletter-eyebrow">The Inner Circle</p>
-      <h2 class="newsletter-title">JOIN THE RITUAL</h2>
-      <form class="newsletter-form" onsubmit="return false;">
-        <input class="newsletter-input" type="email" placeholder="your@email.com">
-        <button class="newsletter-btn">SUBSCRIBE</button>
+    <div class="nl-bg" style="background-image:url('newsletter-bg.png');"></div>
+    <div class="nl-overlay"></div>
+    <div class="nl-content">
+      <span class="nl-eyebrow">The Inner Circle</span>
+      <span class="nl-title lux-gold">JOIN THE RITUAL</span>
+      <form class="nl-form" onsubmit="return false;">
+        <input class="nl-input" type="email" placeholder="your@email.com">
+        <button class="nl-btn">SUBSCRIBE</button>
       </form>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════
+  <!-- ════════════════════════════
        FOOTER
-  ══════════════════════════════════════════ -->
+  ════════════════════════════ -->
   <footer>
-    <div class="footer-brand">SOLIS</div>
-    <p class="footer-copy">© 2026 SOLIS. All rights reserved.</p>
+    <span class="ft-brand lux-gold">SOLIS</span>
+    <p class="ft-copy">© 2026 SOLIS. All rights reserved.</p>
   </footer>
 
-  <!-- ══════════════════════════════════════════
+  <!-- ════════════════════════════
        SCRIPTS
-  ══════════════════════════════════════════ -->
+  ════════════════════════════ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
-
   <script>
-  // ── LENIS smooth scroll ──────────────────────────────────────────
+
+  /* ── Lenis ─────────────────────────────── */
   const lenis = new Lenis({ lerp: 0.075, smoothWheel: true });
   lenis.on("scroll", ScrollTrigger.update);
   gsap.ticker.add((time) => { lenis.raf(time * 1000); });
   gsap.ticker.lagSmoothing(0);
 
-  // ── PROGRESS BAR ─────────────────────────────────────────────────
+  /* ── Progress bar ───────────────────────── */
   window.addEventListener("scroll", () => {
-    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-    document.getElementById("progress-bar").style.height = (pct * 100) + "vh";
+    const p = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    document.getElementById("progress-bar").style.height = (p * 100) + "vh";
   }, { passive: true });
 
-  // ── VIDEO SCRUB ──────────────────────────────────────────────────
+  /* ── Hero video scrub ────────────────────── */
   (() => {
     const track = document.querySelector(".hero-scroll-track");
     const video = document.getElementById("source-video");
     if (!track || !video) return;
-
     let ticking = false, duration = 0, initialized = false;
     const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
 
     function updatePhases(p) {
       const show = (id, lo, hi) => {
-        document.getElementById(id).style.opacity =
-          (p >= lo && p <= hi) ? "1" : "0";
+        document.getElementById(id).style.opacity = (p >= lo && p <= hi) ? "1" : "0";
       };
       show("phase-title",   0.15, 0.28);
       show("phase-tagline", 0.35, 0.48);
@@ -882,9 +688,9 @@
 
     function update() {
       if (!initialized || !duration || !Number.isFinite(duration)) return;
-      const total  = track.offsetHeight - window.innerHeight;
-      const rect   = track.getBoundingClientRect();
-      const passed = clamp(-rect.top, 0, total);
+      const total    = track.offsetHeight - window.innerHeight;
+      const rect     = track.getBoundingClientRect();
+      const passed   = clamp(-rect.top, 0, total);
       const progress = total > 0 ? passed / total : 0;
       if (video.readyState >= 2)
         video.currentTime = clamp(progress * duration, 0, duration);
@@ -892,17 +698,14 @@
     }
 
     function requestTick() {
-      if (ticking) return;
-      ticking = true;
+      if (ticking) return; ticking = true;
       requestAnimationFrame(() => { update(); ticking = false; });
     }
 
     function initScrub() {
       duration = video.duration;
       if (!duration || !Number.isFinite(duration)) return;
-      video.pause();
-      video.currentTime = 0;
-      initialized = true;
+      video.pause(); video.currentTime = 0; initialized = true;
       window.addEventListener("scroll", requestTick, { passive: true });
       window.addEventListener("resize", requestTick);
       if (typeof lenis !== "undefined") lenis.on("scroll", requestTick);
@@ -917,48 +720,31 @@
     }
   })();
 
-  // ── PRODUCT EXPLAINER — IntersectionObserver image swap ──────────
+  /* ── Product explainer — stacked cross-fade ── */
   (() => {
-    const productImg = document.getElementById("product-img");
-    if (!productImg) return;
-
-    const panels = document.querySelectorAll(".product-panel[data-img]");
-    if (!panels.length) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const newSrc = entry.target.dataset.img;
-          if (productImg.src.indexOf(newSrc) === -1) {
-            productImg.style.opacity = "0";
-            setTimeout(() => {
-              productImg.src = newSrc;
-              productImg.style.opacity = "1";
-            }, 250);
-          }
-        }
+    const layers = document.querySelectorAll(".product-img-layer");
+    const panels = document.querySelectorAll(".product-panel[data-key]");
+    if (!layers.length || !panels.length) return;
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        layers.forEach(l =>
+          l.classList.toggle("is-active", l.dataset.key === e.target.dataset.key));
       });
-    }, {
-      // trigger when 50% of the panel is in view
-      threshold: 0.5,
-      rootMargin: "0px"
-    });
-
-    panels.forEach(p => observer.observe(p));
+    }, { threshold: 0.5 });
+    panels.forEach(p => io.observe(p));
   })();
 
-  // ── HORIZONTAL COLLECTION RAIL ───────────────────────────────────
+  /* ── Horizontal collection rail ─────────── */
   (() => {
-    const track = document.getElementById("h-track");
+    const track = document.querySelector(".h-track");
     if (!track) return;
-
     gsap.to(track, {
       x: () => -(track.scrollWidth - window.innerWidth),
       ease: "none",
       scrollTrigger: {
-        trigger: track.parentElement,
-        pin: true,
-        scrub: 1,
+        trigger: ".h-sticky",
+        pin: true, scrub: 1,
         start: "top top",
         end: () => "+=" + (track.scrollWidth - window.innerWidth),
         invalidateOnRefresh: true,
@@ -966,48 +752,39 @@
     });
   })();
 
-  // ── PARALLAX STATEMENT ───────────────────────────────────────────
+  /* ── Parallax statement ─────────────────── */
   (() => {
     const bg = document.getElementById("parallax-bg");
     if (!bg) return;
     gsap.to(bg, {
-      yPercent: 15,
-      ease: "none",
+      yPercent: 15, ease: "none",
       scrollTrigger: {
-        trigger: bg.parentElement,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true,
+        trigger: ".parallax-wrap",
+        start: "top bottom", end: "bottom top", scrub: true,
       }
     });
   })();
 
-  // ── REVERSE COLUMNS ──────────────────────────────────────────────
-  (() => {
-    const cols = [
-      { el: document.querySelector("#col-1 .reverse-col-bg"), dir:  1 },
-      { el: document.querySelector("#col-2 .reverse-col-bg"), dir: -1 },
-      { el: document.querySelector("#col-3 .reverse-col-bg"), dir:  1 },
-    ];
-    cols.forEach(({ el, dir }) => {
-      if (!el) return;
-      gsap.fromTo(el,
-        { yPercent: dir * -8 },
-        {
-          yPercent: dir *  8,
-          ease: "none",
-          scrollTrigger: {
-            trigger: el.closest(".reverse-cols"),
-            start: "top bottom",
-            end:   "bottom top",
-            scrub: true,
-          }
+  /* ── Reverse columns ────────────────────── */
+  [
+    { id: "rcol-1", dir:  1 },
+    { id: "rcol-2", dir: -1 },
+    { id: "rcol-3", dir:  1 },
+  ].forEach(({ id, dir }) => {
+    const el = document.querySelector(`#${id} .rcol-bg`);
+    if (!el) return;
+    gsap.fromTo(el,
+      { yPercent: dir * -8 },
+      { yPercent: dir *  8, ease: "none",
+        scrollTrigger: {
+          trigger: ".reverse-cols",
+          start: "top bottom", end: "bottom top", scrub: true,
         }
-      );
-    });
-  })();
+      }
+    );
+  });
 
-  // ── END ──────────────────────────────────────────────────────────
+  /* ── END ─────────────────────────────────── */
   ScrollTrigger.refresh();
   </script>
 
