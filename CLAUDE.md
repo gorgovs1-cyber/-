@@ -57,3 +57,12 @@ npx gh-pages -d dist -b gh-pages
 ```
 GitHub Pages must be enabled in repo Settings → Pages → Source: `gh-pages` branch / `(root)`.
 Live URL: `https://gorgovs1-cyber.github.io/-/`
+
+## SOLIS Project
+
+Luxury brand website built by Shani Gorgov (AI Creative Director) as a portfolio piece.
+- **Live URL:** https://solis-orange.netlify.app
+- **Concept:** Cold-pressed orange juice, luxury cinematic experience
+- **Visual signature:** Pure black background + warm amber-gold spotlight from above
+- **Accent color:** `#D4853A` (amber-gold)
+- **Instagram reel workflow:** use `/luxury-web-reel` skill
