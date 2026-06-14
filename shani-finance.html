@@ -1457,7 +1457,7 @@ var CLIENTS = {
     {day:28,name:'ליטל',       amount:800,  status:'planned'},
     {day:29,name:'ספיר פרץ',   amount:800,  status:'done'},
   ],
-  4:[],6:[{day:1,name:'שרית',amount:800,status:'done'},{day:13,name:'רותם',amount:800,status:'done'},{day:14,name:'קארין',amount:1100,status:'planned'},{day:16,name:'אמא',amount:500,status:'planned'}],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[]
+  4:[],6:[{day:1,name:'עדי שפרינגר',amount:800,status:'done'},{day:12,name:'שרית',amount:800,status:'done'},{day:13,name:'רותם',amount:800,status:'done'},{day:14,name:'קארין',amount:1100,status:'planned'},{day:16,name:'אמא',amount:500,status:'planned'}],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[]
 };
 
 var CARDS = {visa:700,mc:3609,bank:9781,cashBal:400,limit:10000};
@@ -1517,7 +1517,7 @@ function save(){
   }catch(e){}
 }
 function saveGoals(){try{localStorage.setItem('shani_goals',JSON.stringify(GOALS));}catch(e){}}
-var CLIENTS_VERSION=14;  // bump to force reload clients from code
+var CLIENTS_VERSION=15;  // bump to force reload clients from code
 var CARDS_VERSION=6;    // bump to force reload cards from code
 function load(){
   try{
