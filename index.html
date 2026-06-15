@@ -520,6 +520,21 @@ select option{background:#111D2C;color:#fff}
 .fp-toggle input:checked+.fp-slider{background:var(--cyan)}
 .fp-toggle input:checked+.fp-slider:before{transform:translateX(18px)}
 
+/* ── ONBOARDING TOUR ── */
+.ob-overlay{position:fixed;inset:0;z-index:9500;animation:fadeIn .3s}
+.ob-spot{position:absolute;border-radius:14px;box-shadow:0 0 0 9999px rgba(5,13,24,.82),0 0 0 3px var(--cyan),0 0 26px rgba(29,233,182,.6);transition:all .4s cubic-bezier(.2,1,.3,1);pointer-events:none}
+.ob-bubble{position:absolute;max-width:282px;background:var(--card2);border:1px solid var(--border2);border-radius:16px;padding:16px 17px;box-shadow:0 14px 44px rgba(0,0,0,.55);z-index:9600;animation:obPop .4s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes obPop{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}
+.ob-emoji{font-size:22px;margin-bottom:6px}
+.ob-title{font-size:14px;font-weight:800;color:var(--cyan);margin-bottom:6px}
+.ob-text{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:15px}
+.ob-actions{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ob-dots{display:flex;gap:5px;align-items:center}
+.ob-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);transition:all .25s}
+.ob-dot.on{background:var(--cyan);width:18px;border-radius:3px}
+.ob-next{background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:9px 18px;border-radius:10px;border:none;cursor:pointer}
+.ob-skip{background:none;border:none;color:var(--muted);font-family:'Sora',sans-serif;font-size:12px;cursor:pointer}
+
 /* ── GMAIL ── */
 .gp-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border2);background:none;color:var(--muted);font-family:'Sora',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
 .gp-btn.on{background:rgba(29,233,182,.15);border-color:rgba(29,233,182,.5);color:var(--cyan)}
@@ -591,7 +606,10 @@ select option{background:#111D2C;color:#fff}
         <div class="hero-greet" id="home-greet">ערב טוב שני ✨</div>
         <div class="hero-date"  id="home-date"></div>
       </div>
-      <button class="backup-btn" onclick="exportData()">גיבוי</button>
+      <div style="display:flex;gap:8px">
+        <button class="backup-btn" onclick="startTour(true)" title="הדרכה">❔ הדרכה</button>
+        <button class="backup-btn" onclick="exportData()">גיבוי</button>
+      </div>
     </div>
     <div class="hero-lbl">מאזן צפוי — <span id="home-m-name">יוני</span></div>
     <div class="hero-bal pos" id="home-bal">טוען...</div>
@@ -979,8 +997,24 @@ select option{background:#111D2C;color:#fff}
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260615;
-if(parseInt(sessionStorage.getItem('av')||'0')<APP_VER){sessionStorage.setItem('av',APP_VER);location.reload(true);}
+var APP_VER=20260616;
+// Robust auto-update: fetch the live file (bypassing cache) and hard-reload past
+// the iOS/CDN cache via a ?v= URL when a newer deploy is detected.
+(function(){
+  if(location.search.indexOf('v=')>-1){ // arrived fresh — tidy the URL
+    try{history.replaceState(null,'',location.pathname);}catch(e){}
+  }
+  function checkVer(){
+    fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'})
+      .then(function(r){return r.text();})
+      .then(function(txt){
+        var m=txt.match(/var APP_VER=(\d+)/);
+        if(m&&parseInt(m[1])>APP_VER){location.replace(location.pathname+'?v='+m[1]);}
+      }).catch(function(){});
+  }
+  checkVer();
+  setInterval(checkVer,60000); // re-check every minute, even as a home-screen app
+})();
 // ── CONSTANTS ────────────────────────────────────────────
 var FIXED = 4588; // from January 2026
 var FIXED_MAP = {11:4436, 12:4436}; // Nov+Dec 2025 — lower amount
@@ -1853,7 +1887,7 @@ function renderHome(){
   var days=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
   var mos=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
   document.getElementById('home-greet').textContent=gr+' שני';
-  document.getElementById('home-date').textContent='יום '+days[now.getDay()]+', '+now.getDate()+' ב'+mos[now.getMonth()];
+  document.getElementById('home-date').innerHTML='יום '+days[now.getDay()]+', '+now.getDate()+' ב'+mos[now.getMonth()]+' <span style="opacity:.4;font-size:9px">· v'+APP_VER+'</span>';
 
   var bEl=document.getElementById('home-bal');
   bEl.className='hero-bal '+(r.balFull>=0?'pos':'neg');
@@ -3077,8 +3111,93 @@ function gmailImportAll(){
   _gmailParsed=[];
 }
 
-// Run advisor 7 seconds after load (after splash)
-setTimeout(runAdvisor, 7000);
+// ── ONBOARDING TOUR ───────────────────────────────────────
+var TOUR_STEPS=[
+  {sel:'#home-bal',   emoji:'💰',title:'המאזן הצפוי שלך',text:'כאן רואים כמה צפוי להישאר בעו"ש בסוף החודש, אחרי כל ההכנסות וההוצאות הצפויות.'},
+  {sel:'.mnav',       emoji:'📅',title:'מעבר בין חודשים',text:'החצים מזיזים אותך בין החודשים. האפליקציה נפתחת תמיד על החודש הנוכחי.'},
+  {sel:'#home-tiles', emoji:'📊',title:'הכנסות · הוצאות · תחזית',text:'לחיצה על כל אריח פותחת פירוט מלא — מי שילם, על מה הוצאת, ומה התחזית.'},
+  {sel:'#home-pm',    emoji:'💳',title:'הכרטיסים והחשבונות',text:'מצב עו"ש, מאסטרקארד, ויזה ומזומן. לחיצה על כרטיס פותחת פירוט והוספת הוצאה ידנית.'},
+  {sel:'.fab-add',    emoji:'➕',title:'הוספה מהירה',text:'הכפתור הירוק מוסיף הוצאה או הכנסה — אפשר גם להדביק רשימה שלמה בבת אחת.'},
+  {sel:'.fab-mic',    emoji:'💡',title:'היועץ הכלכלי',text:'נורת הרעיון נותנת תובנות חכמות על דפוסי ההוצאה שלך ואיך לחסוך.'},
+  {sel:'#bn-gmail',   emoji:'📧',title:'ייבוא מג׳ימייל',text:'מתחברים לגוגל והאפליקציה שולפת חיובים מהמיילים של הבנקים — אוטומטית.'},
+  {sel:'.bnav',       emoji:'🧭',title:'ניווט תחתון',text:'לקוחות · בית · מטרות · תשלומים קבועים · ג׳ימייל. הכל במרחק לחיצה.'}
+];
+var _tourIdx=0;
+
+function startTour(manual){
+  if(!manual && localStorage.getItem('shani_onboarded')) return;
+  _tourIdx=0;
+  // make sure we're on the home screen so targets exist
+  if(document.getElementById('s-home')&&!document.getElementById('s-home').classList.contains('active')) go('home');
+  if(!document.getElementById('ob-overlay')){
+    var ov=document.createElement('div');
+    ov.className='ob-overlay';ov.id='ob-overlay';
+    ov.innerHTML='<div class="ob-spot" id="ob-spot"></div><div class="ob-bubble" id="ob-bubble"></div>';
+    document.body.appendChild(ov);
+  }
+  renderTourStep();
+}
+function renderTourStep(){
+  var step=TOUR_STEPS[_tourIdx];
+  var target=document.querySelector(step.sel);
+  if(!target){ // skip missing targets
+    if(_tourIdx<TOUR_STEPS.length-1){_tourIdx++;renderTourStep();return;}
+    endTour();return;
+  }
+  var r=target.getBoundingClientRect();
+  var pad=8;
+  var spot=document.getElementById('ob-spot');
+  spot.style.left=(r.left-pad)+'px';
+  spot.style.top=(r.top-pad)+'px';
+  spot.style.width=(r.width+pad*2)+'px';
+  spot.style.height=(r.height+pad*2)+'px';
+
+  var dots='';
+  for(var i=0;i<TOUR_STEPS.length;i++)dots+='<span class="ob-dot'+(i===_tourIdx?' on':'')+'"></span>';
+  var last=_tourIdx===TOUR_STEPS.length-1;
+  var bubble=document.getElementById('ob-bubble');
+  bubble.innerHTML=
+    '<div class="ob-emoji">'+step.emoji+'</div>'+
+    '<div class="ob-title">'+step.title+'</div>'+
+    '<div class="ob-text">'+step.text+'</div>'+
+    '<div class="ob-actions">'+
+      '<div class="ob-dots">'+dots+'</div>'+
+      '<div style="display:flex;gap:8px;align-items:center">'+
+        (last?'':'<button class="ob-skip" onclick="endTour()">דלג</button>')+
+        '<button class="ob-next" onclick="tourNext()">'+(last?'סיום ✓':'הבא ›')+'</button>'+
+      '</div>'+
+    '</div>';
+  // position bubble: below target if room, else above
+  bubble.style.visibility='hidden';
+  bubble.style.left='0px';bubble.style.top='0px';
+  requestAnimationFrame(function(){
+    var bw=bubble.offsetWidth,bh=bubble.offsetHeight;
+    var vw=window.innerWidth,vh=window.innerHeight;
+    var left=Math.min(Math.max(r.left+r.width/2-bw/2,12),vw-bw-12);
+    var top;
+    if(r.bottom+bh+18<vh) top=r.bottom+16;          // below
+    else if(r.top-bh-18>0) top=r.top-bh-16;          // above
+    else top=Math.max(12,(vh-bh)/2);                 // center fallback
+    bubble.style.left=left+'px';
+    bubble.style.top=top+'px';
+    bubble.style.visibility='visible';
+  });
+}
+function tourNext(){
+  if(_tourIdx<TOUR_STEPS.length-1){_tourIdx++;renderTourStep();}
+  else endTour();
+}
+function endTour(){
+  var ov=document.getElementById('ob-overlay');if(ov)ov.remove();
+  localStorage.setItem('shani_onboarded','1');
+}
+
+// Run advisor 7 seconds after load (after splash). First-time users get the tour instead.
+if(!localStorage.getItem('shani_onboarded')){
+  setTimeout(function(){startTour(false);},4900);  // right after splash fades
+}else{
+  setTimeout(runAdvisor, 7000);
+}
 </script>
 </body>
 </html>
