@@ -520,6 +520,13 @@ select option{background:#111D2C;color:#fff}
 .fp-toggle input:checked+.fp-slider{background:var(--cyan)}
 .fp-toggle input:checked+.fp-slider:before{transform:translateX(18px)}
 
+/* ── GMAIL ── */
+.gp-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border2);background:none;color:var(--muted);font-family:'Sora',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
+.gp-btn.on{background:rgba(29,233,182,.15);border-color:rgba(29,233,182,.5);color:var(--cyan)}
+.dup-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;margin-right:4px;vertical-align:middle}
+.dup-exact{background:rgba(255,107,107,.2);color:#FF6B6B}
+.dup-close{background:rgba(255,179,71,.2);color:#FFB347}
+
 /* ── 1a. MINPUT ── */
 .minput{
   display:block;width:100%;font-family:'Sora',sans-serif;font-size:14px;
@@ -908,16 +915,32 @@ select option{background:#111D2C;color:#fff}
       <button onclick="saveGmailClientId()" class="modal-btn" style="margin-top:0">שמרי Client ID</button>
     </div>
     <div id="gmail-connect-wrap" style="display:none;text-align:center;padding:10px 0">
-      <button onclick="gmailAuth()" style="background:linear-gradient(135deg,#4285F4,#34A853);color:#fff;font-family:Sora,sans-serif;font-size:15px;font-weight:700;padding:14px 28px;border-radius:14px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(66,133,244,.4)">
+      <button id="gmail-auth-btn" onclick="gmailAuth()" style="background:linear-gradient(135deg,#4285F4,#34A853);color:#fff;font-family:Sora,sans-serif;font-size:15px;font-weight:700;padding:14px 28px;border-radius:14px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(66,133,244,.4)">
         🔗 התחברי עם Google
       </button>
-      <div id="gmail-status" style="font-size:12px;color:var(--muted);margin-top:10px"></div>
+      <!-- Period selector — shown after auth -->
+      <div id="gmail-period-wrap" style="display:none;margin-top:18px">
+        <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;margin-bottom:10px;text-transform:uppercase">תקופה לסריקה</div>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px">
+          <button class="gp-btn on" data-d="30"  onclick="setGmailPeriod(30)">30 יום</button>
+          <button class="gp-btn"    data-d="90"  onclick="setGmailPeriod(90)">3 חודשים</button>
+          <button class="gp-btn"    data-d="180" onclick="setGmailPeriod(180)">6 חודשים</button>
+          <button class="gp-btn"    data-d="365" onclick="setGmailPeriod(365)">שנה</button>
+        </div>
+        <button onclick="gmailFetch(_gmailDays)" style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:14px;font-weight:800;padding:12px 28px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 2px 14px rgba(29,233,182,.3)">
+          סרקי מיילים ›
+        </button>
+      </div>
+      <div id="gmail-status" style="font-size:12px;color:var(--muted);margin-top:12px"></div>
     </div>
   </div>
   <div id="gmail-found" style="display:none;padding:0 16px 16px">
     <div style="display:flex;justify-content:space-between;align-items:center;padding:0 0 10px">
-      <span style="font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px">עסקאות שנמצאו</span>
-      <button onclick="gmailImportAll()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-family:Sora,sans-serif;font-size:12px;font-weight:700;padding:7px 14px;border-radius:10px;cursor:pointer">ייבאי הכל ✓</button>
+      <div>
+        <span style="font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px">עסקאות שנמצאו</span>
+        <div id="gmail-dup-note" style="font-size:10px;color:var(--muted);margin-top:3px"></div>
+      </div>
+      <button onclick="gmailImportAll()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-family:Sora,sans-serif;font-size:12px;font-weight:700;padding:7px 14px;border-radius:10px;cursor:pointer">ייבאי מסומנות ✓</button>
     </div>
     <div id="gmail-txns"></div>
   </div>
@@ -2848,6 +2871,14 @@ function closeAdvisor(){
 // ── GMAIL IMPORT ──────────────────────────────────────────
 var _gmailParsed=[];
 var _gmailToken=null;
+var _gmailDays=30;
+
+function setGmailPeriod(d){
+  _gmailDays=d;
+  document.querySelectorAll('.gp-btn').forEach(function(b){
+    b.classList.toggle('on',parseInt(b.dataset.d)===d);
+  });
+}
 
 function renderGmail(){
   var cid=localStorage.getItem('shani_gmail_cid')||'';
@@ -2856,6 +2887,11 @@ function renderGmail(){
     if(inp)inp.value=cid;
     document.getElementById('gmail-connect-wrap').style.display='block';
     document.getElementById('gmail-status').textContent='לחצי "התחברי" לסנכרון';
+  }
+  // Restore period selection if already authenticated
+  if(_gmailToken){
+    document.getElementById('gmail-auth-btn').textContent='✓ מחוברת לגוגל';
+    document.getElementById('gmail-period-wrap').style.display='block';
   }
 }
 function saveGmailClientId(){
@@ -2876,14 +2912,16 @@ function gmailAuth(){
       client_id:cid,
       scope:'https://www.googleapis.com/auth/gmail.readonly'
     }).then(function(auth2){
+      function onAuth(user){
+        _gmailToken=user.getAuthResponse().access_token;
+        document.getElementById('gmail-auth-btn').textContent='✓ מחוברת לגוגל';
+        document.getElementById('gmail-period-wrap').style.display='block';
+        document.getElementById('gmail-status').textContent='בחרי תקופה וסרקי';
+      }
       if(auth2.isSignedIn.get()){
-        _gmailToken=auth2.currentUser.get().getAuthResponse().access_token;
-        gmailFetch();
+        onAuth(auth2.currentUser.get());
       }else{
-        auth2.signIn().then(function(user){
-          _gmailToken=user.getAuthResponse().access_token;
-          gmailFetch();
-        }).catch(function(e){
+        auth2.signIn().then(onAuth).catch(function(e){
           document.getElementById('gmail-status').textContent='שגיאה: '+(e.error||'התחברות נכשלה');
         });
       }
@@ -2892,8 +2930,24 @@ function gmailAuth(){
     });
   });
 }
+
+// Duplicate detection — returns 'exact' | 'close' | null
+function gmailIsDup(t){
+  var arr=RAW.expense[t.monthKey]||[];
+  var td=parseInt(t.d.split('/')[0]);
+  for(var i=0;i<arr.length;i++){
+    var e=arr[i];
+    if(!e.d)continue;
+    var ed=parseInt(e.d.split('/')[0]);
+    var sameAmt=Math.abs(e.a-t.a)<0.5;
+    if(sameAmt&&e.d===t.d) return 'exact';
+    if(sameAmt&&Math.abs(ed-td)<=2) return 'close';
+  }
+  return null;
+}
+
 function gmailFetch(days){
-  days=days||30;
+  days=days||_gmailDays||30;
   document.getElementById('gmail-status').textContent='מחפש עסקאות...';
   var query='from:(max.co.il OR isracard.co.il OR leumi.co.il OR bankhapoalim.co.il OR cal.co.il) newer_than:'+days+'d';
   fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?q='+encodeURIComponent(query)+'&maxResults=80',{
@@ -2961,24 +3015,44 @@ function parseGmailMsg(msg){
   }
 }
 function renderGmailTxns(){
-  document.getElementById('gmail-status').textContent='נמצאו '+_gmailParsed.length+' עסקאות לסקירה';
   if(!_gmailParsed.length){
+    document.getElementById('gmail-status').textContent='לא נמצאו עסקאות בתקופה זו';
     document.getElementById('gmail-found').style.display='none';
     return;
   }
+  // Mark duplicates
+  var nExact=0,nClose=0;
+  _gmailParsed.forEach(function(t){
+    t._dup=gmailIsDup(t);
+    if(t._dup==='exact')nExact++;
+    else if(t._dup==='close')nClose++;
+  });
+  var nNew=_gmailParsed.length-nExact-nClose;
+  document.getElementById('gmail-status').textContent='נמצאו '+_gmailParsed.length+' עסקאות';
+  var dupNote='';
+  if(nNew)   dupNote+=nNew+' חדשות';
+  if(nClose) dupNote+=(dupNote?' · ':'')+nClose+' ⚠ אולי כפולות';
+  if(nExact) dupNote+=(dupNote?' · ':'')+nExact+' 🚫 קיימות כבר (בוטל ✓)';
+  document.getElementById('gmail-dup-note').textContent=dupNote;
+
   document.getElementById('gmail-found').style.display='block';
   var mLbl={mc:'MC',visa:'ויזה',bank:'עו"ש'};
   var mCol={mc:'#B57BEE',visa:'#6BA3FF',bank:'#FF6B6B'};
   var h='';
   _gmailParsed.forEach(function(t,i){
     var col=mCol[t.method]||'#aaa';
-    h+='<div class="fp-item" style="align-items:flex-start">'+
+    var checked=t._dup!=='exact';  // uncheck exact duplicates
+    var dupBadge='';
+    if(t._dup==='exact') dupBadge='<span class="dup-badge dup-exact">קיים כבר</span>';
+    else if(t._dup==='close') dupBadge='<span class="dup-badge dup-close">אולי כפול</span>';
+    var rowOpacity=t._dup==='exact'?'opacity:.45;':'';
+    h+='<div class="fp-item" style="align-items:flex-start;'+rowOpacity+'">'+
       '<label style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer">'+
-        '<input type="checkbox" id="gt'+i+'" checked style="width:16px;height:16px;accent-color:var(--cyan)">'+
+        '<input type="checkbox" id="gt'+i+'"'+(checked?' checked':'')+' style="width:16px;height:16px;accent-color:var(--cyan)">'+
         '<div>'+
-          '<div style="font-size:13px;font-weight:600">'+t.desc+'</div>'+
+          '<div style="font-size:13px;font-weight:600">'+dupBadge+t.desc+'</div>'+
           '<div style="font-size:10px;color:var(--muted);margin-top:2px">'+t.d+' · <span style="color:'+col+'">'+mLbl[t.method]+'</span></div>'+
-          '<div style="font-size:9px;color:var(--muted2);margin-top:2px;direction:ltr">'+t.raw+'</div>'+
+          '<div style="font-size:9px;color:var(--muted2);margin-top:2px;direction:ltr">'+t.raw.slice(0,70)+'</div>'+
         '</div>'+
       '</label>'+
       '<div style="font-size:15px;font-weight:800;color:var(--orange);flex-shrink:0;padding-top:2px">-₪'+fmt(t.a)+'</div>'+
