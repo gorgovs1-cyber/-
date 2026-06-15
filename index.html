@@ -519,6 +519,47 @@ select option{background:#111D2C;color:#fff}
 .fp-slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
 .fp-toggle input:checked+.fp-slider{background:var(--cyan)}
 .fp-toggle input:checked+.fp-slider:before{transform:translateX(18px)}
+
+/* ── 1a. MINPUT ── */
+.minput{
+  display:block;width:100%;font-family:'Sora',sans-serif;font-size:14px;
+  padding:10px 12px;border:1.5px solid var(--border2);border-radius:12px;
+  background:rgba(255,255,255,.07);color:var(--text);outline:none;
+  margin-bottom:10px;-webkit-appearance:none;
+}
+.minput:focus{border-color:var(--cyan)}
+
+/* ── 1b. MODAL-BTN ── */
+.modal-btn{
+  width:100%;background:var(--cyan);color:#0A1520;
+  font-family:'Sora',sans-serif;font-size:14px;font-weight:800;
+  padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:4px;
+}
+
+/* ── 3. RIPPLE ── */
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.22);transform:scale(0);animation:rippleAnim .55s linear;pointer-events:none;z-index:10;}
+@keyframes rippleAnim{to{transform:scale(4);opacity:0}}
+
+/* ── 4. STAGGER ── */
+@keyframes staggerIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.stagger{animation:staggerIn .38s cubic-bezier(.2,1,.3,1) both;animation-delay:calc(var(--si,0)*.07s)}
+
+/* ── 5. DELETE TXN BTN ── */
+.txn-del{flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--muted2);font-size:13px;padding:4px 6px;transition:color .15s,background .15s;border-radius:6px;}
+.txn-del:active{color:var(--neg);background:rgba(255,107,107,.12);}
+
+/* ── 6. NAV PILL ── */
+.nav-pill{position:absolute;bottom:calc(6px + env(safe-area-inset-bottom,0px));height:3px;background:var(--cyan);border-radius:3px;box-shadow:0 0 10px rgba(29,233,182,.7);transition:left .3s cubic-bezier(.2,1,.3,1),width .3s cubic-bezier(.2,1,.3,1);pointer-events:none;}
+
+/* ── 8. SHIMMER ON CREDIT CARDS ── */
+.cc::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.09) 50%,transparent 80%);background-size:200% 100%;animation:shimmer 4s 2.5s ease-in-out infinite;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── 9. SLIDE TRANSITIONS ── */
+@keyframes slideFromRight{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes slideFromLeft{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+.screen.slide-r{animation:slideFromRight .24s cubic-bezier(.2,1,.3,1) both}
+.screen.slide-l{animation:slideFromLeft .24s cubic-bezier(.2,1,.3,1) both}
 </style>
 </head>
 <body>
@@ -847,6 +888,41 @@ select option{background:#111D2C;color:#fff}
     </div>
   </div>
 </div>
+<!-- ══ GMAIL IMPORT ══════════════════════════════════════════════════ -->
+<div class="screen" id="s-gmail">
+  <div class="page-hdr">
+    <div class="page-title">ייבוא מג׳ימייל</div>
+    <div class="page-sub">שליפת עסקאות מהתראות email</div>
+  </div>
+  <div id="gmail-setup" style="padding:20px 16px">
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:18px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:700;color:var(--cyan);margin-bottom:8px">הגדרה ראשונה (פעם אחת)</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:12px">
+        1. נכנסי ל-<span style="color:var(--cyan)">console.cloud.google.com</span><br>
+        2. צרי פרויקט חדש → APIs → Gmail API → Enable<br>
+        3. Credentials → OAuth 2.0 → Web App<br>
+        4. Authorized origins: <span style="color:var(--cyan)">https://gorgovs1-cyber.github.io</span><br>
+        5. העתיקי את ה-Client ID לכאן:
+      </div>
+      <input class="minput" id="gmail-client-id" placeholder="XXXXXXXX.apps.googleusercontent.com" style="margin-bottom:8px">
+      <button onclick="saveGmailClientId()" class="modal-btn" style="margin-top:0">שמרי Client ID</button>
+    </div>
+    <div id="gmail-connect-wrap" style="display:none;text-align:center;padding:10px 0">
+      <button onclick="gmailAuth()" style="background:linear-gradient(135deg,#4285F4,#34A853);color:#fff;font-family:Sora,sans-serif;font-size:15px;font-weight:700;padding:14px 28px;border-radius:14px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(66,133,244,.4)">
+        🔗 התחברי עם Google
+      </button>
+      <div id="gmail-status" style="font-size:12px;color:var(--muted);margin-top:10px"></div>
+    </div>
+  </div>
+  <div id="gmail-found" style="display:none;padding:0 16px 16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:0 0 10px">
+      <span style="font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px">עסקאות שנמצאו</span>
+      <button onclick="gmailImportAll()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-family:Sora,sans-serif;font-size:12px;font-weight:700;padding:7px 14px;border-radius:10px;cursor:pointer">ייבאי הכל ✓</button>
+    </div>
+    <div id="gmail-txns"></div>
+  </div>
+</div>
+
 <!-- ══ BOTTOM NAV ═════════════════════════════════════════ -->
 <nav class="bnav">
   <button class="bnb" id="bn-clients" onclick="go('clients')">
@@ -861,20 +937,26 @@ select option{background:#111D2C;color:#fff}
   <button class="bnb" id="bn-fixed" onclick="go('fixed')">
     <span class="bnb-icon"></span><span class="bnb-lbl">קבועים</span>
   </button>
+  <button class="bnb" id="bn-gmail" onclick="go('gmail')">
+    <span class="bnb-icon"></span><span class="bnb-lbl">Gmail</span>
+  </button>
+  <div class="nav-pill" id="nav-pill"></div>
 </nav>
 
 <!-- ══ FAB ════════════════════════════════════════════════ -->
 <div class="fab-wrap">
   <button class="fab fab-add" onclick="openAddTxn()" title="הוסף פעולה">+</button>
+  <button class="fab fab-mic" onclick="openAdvisor()" title="יועץ כלכלי">💡</button>
 </div>
 
 <div id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script src="https://apis.google.com/js/api.js" async defer></script>
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260604;
+var APP_VER=20260615;
 if(parseInt(sessionStorage.getItem('av')||'0')<APP_VER){sessionStorage.setItem('av',APP_VER);location.reload(true);}
 // ── CONSTANTS ────────────────────────────────────────────
 var FIXED = 4588; // from January 2026
@@ -1623,13 +1705,39 @@ function toast(msg){
 }
 
 // ── NAVIGATION ───────────────────────────────────────────
+var _prevScreen='home';
+var _screenOrder={clients:0,home:1,goals:2,fixed:3,gmail:4};
+
+function updateNavPill(name){
+  var pill=document.getElementById('nav-pill');
+  var bn=document.getElementById('bn-'+name);
+  if(!pill||!bn)return;
+  var nav=document.querySelector('.bnav');
+  if(!nav)return;
+  var nr=nav.getBoundingClientRect(),br=bn.getBoundingClientRect();
+  pill.style.width=(br.width*.55)+'px';
+  pill.style.left=(br.left-nr.left+br.width*.225)+'px';
+}
+
 function go(name){
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  var prevPos=_screenOrder[_prevScreen],nextPos=_screenOrder[name];
+  var detail=['expenses','income','balance'];
+  var slideDir='';
+  if(prevPos!==undefined&&nextPos!==undefined){
+    slideDir=nextPos>prevPos?'slide-l':'slide-r';
+  }else if(detail.indexOf(name)>=0){
+    slideDir='slide-r';
+  }else if(detail.indexOf(_prevScreen)>=0){
+    slideDir='slide-l';
+  }
+  _prevScreen=name;
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active','slide-r','slide-l');});
   document.querySelectorAll('.bnb').forEach(function(b){b.classList.remove('on');});
   var scr=document.getElementById('s-'+name);
-  if(scr) scr.classList.add('active');
+  if(scr){scr.classList.add('active');if(slideDir)scr.classList.add(slideDir);}
   var bn=document.getElementById('bn-'+name);
   if(bn) bn.classList.add('on');
+  updateNavPill(name);
   if(name==='home')     renderHome();
   if(name==='clients')  renderClients();
   if(name==='expenses') renderExpenses();
@@ -1637,6 +1745,27 @@ function go(name){
   if(name==='balance')  renderBalance();
   if(name==='goals')    renderGoals();
   if(name==='fixed')    renderFixed();
+  if(name==='gmail')    renderGmail();
+}
+
+// ── COUNT-UP ANIMATION ───────────────────────────────────
+function countUp(el,target){
+  var abs=Math.abs(target),isNeg=target<0,st=null,dur=900;
+  requestAnimationFrame(function step(ts){
+    if(!st)st=ts;
+    var p=Math.min((ts-st)/dur,1),e=1-Math.pow(1-p,3);
+    var cur=Math.round(e*abs);
+    el.textContent=(isNeg?'-':'+')+'₪'+cur.toLocaleString('he-IL');
+    if(p<1)requestAnimationFrame(step);
+  });
+}
+
+// ── RIPPLE ───────────────────────────────────────────────
+function addRipple(el,e){
+  var r=el.getBoundingClientRect(),d=Math.max(r.width,r.height)*1.5;
+  var rip=document.createElement('span');rip.className='ripple';
+  rip.style.cssText='width:'+d+'px;height:'+d+'px;left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px';
+  el.appendChild(rip);setTimeout(function(){if(rip.parentNode)rip.remove();},600);
 }
 
 // ── CALC ─────────────────────────────────────────────────
@@ -1704,11 +1833,22 @@ function renderHome(){
   document.getElementById('home-date').textContent='יום '+days[now.getDay()]+', '+now.getDate()+' ב'+mos[now.getMonth()];
 
   var bEl=document.getElementById('home-bal');
-  bEl.textContent=(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull));
   bEl.className='hero-bal '+(r.balFull>=0?'pos':'neg');
+  countUp(bEl,r.balFull);
+
+  // Pace forecast
+  var paceTxt='';
+  if(r.isNow){
+    var today2=new Date(),dayOfMon=today2.getDate();
+    if(dayOfMon>3){
+      var dailyAvg=r.exp/dayOfMon;
+      var projExp=Math.round(dailyAvg*r.ml.days);
+      paceTxt=' · בקצב הנוכחי: <b>-₪'+fmt(projExp)+'</b> הוצאות';
+    }
+  }
   document.getElementById('home-sub').innerHTML=
     '<b>עכשיו: '+(r.balNow>=0?'+':'')+'₪'+fmt(r.balNow)+'</b>'+
-    ' · עם צפי לקוחות: <b>+₪'+fmt(r.planAmt)+'</b>';
+    ' · עם צפי לקוחות: <b>+₪'+fmt(r.planAmt)+'</b>'+paceTxt;
 
   // Alert — only show upcoming bills that haven't been paid yet
   var todayD2=now.getDate(), todayM2=now.getMonth()+1;
@@ -1737,9 +1877,9 @@ function renderHome(){
   // Tiles
   var bCls=r.balFull>=0?'pos':'neg';
   document.getElementById('home-tiles').innerHTML=
-    '<div class="tile" style="--tc:var(--pos)" onclick="go(\'income\')"><div class="tile-val pos">₪'+fmt(r.inc+r.doneAmt)+'</div><div class="tile-lbl">הכנסות</div></div>'+
-    '<div class="tile" style="--tc:var(--orange)" onclick="go(\'expenses\')"><div class="tile-val orange">₪'+fmt(r.exp)+'</div><div class="tile-lbl">הוצאות</div></div>'+
-    '<div class="tile" style="--tc:var(--cyan)" onclick="go(\'balance\')"><div class="tile-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="tile-lbl">'+(r.isNow?'עו"ש צפוי סוף חודש':'ישאר בסוף החודש')+'</div></div>';
+    '<div class="tile stagger" style="--tc:var(--pos);--si:0" onclick="go(\'income\')" onpointerdown="addRipple(this,event)"><div class="tile-val pos">₪'+fmt(r.inc+r.doneAmt)+'</div><div class="tile-lbl">הכנסות</div></div>'+
+    '<div class="tile stagger" style="--tc:var(--orange);--si:1" onclick="go(\'expenses\')" onpointerdown="addRipple(this,event)"><div class="tile-val orange">₪'+fmt(r.exp)+'</div><div class="tile-lbl">הוצאות</div></div>'+
+    '<div class="tile stagger" style="--tc:var(--cyan);--si:2" onclick="go(\'balance\')" onpointerdown="addRipple(this,event)"><div class="tile-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="tile-lbl">'+(r.isNow?'עו"ש צפוי סוף חודש':'ישאר בסוף החודש')+'</div></div>';
 
   renderUpcoming(r);
   renderPMCards(r);
@@ -1972,16 +2112,32 @@ function renderExpenses(){
   // ── Transactions by date ──
   var byDate={};
   items.forEach(function(t){if(!byDate[t.d])byDate[t.d]=[];byDate[t.d].push(t);});
-  var h='';
+  var h='';var ti=0;
   Object.keys(byDate).sort().forEach(function(dt){
     h+='<div class="txn-group-hdr">'+dt+'</div>';
     byDate[dt].forEach(function(t){
       var c=cat(t.desc);
       var mt=t.method?'<span class="txn-method '+t.method+'">'+(t.method==='mc'?'MC':t.method==='bank'?'עוש':'Visa')+'</span>':'';
-      h+='<div class="txn-item"><div class="txn-icon" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="txn-body"><div class="txn-desc">'+t.desc+mt+'</div><div class="txn-date">'+dt+'</div></div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div></div>';
+      var key=encodeURIComponent(t.d+'|'+t.desc+'|'+t.a);
+      h+='<div class="txn-item stagger" style="--si:'+ti+'"><div class="txn-icon" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="txn-body"><div class="txn-desc">'+t.desc+mt+'</div><div class="txn-date">'+dt+'</div></div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div><button class="txn-del" onclick="delExpTxn(\''+key+'\')">✕</button></div>';
+      ti++;
     });
   });
   document.getElementById('exp-list').innerHTML=h;
+}
+
+// ── DELETE EXPENSE ────────────────────────────────────────
+function delExpTxn(key){
+  var parts=decodeURIComponent(key).split('|');
+  var d=parts[0],desc=parts[1],a=parseFloat(parts[2]);
+  var m=MONTHS[homeMi].key;
+  var arr=RAW.expense[m]||[];
+  var idx=-1;
+  for(var i=0;i<arr.length;i++){if(arr[i].d===d&&arr[i].desc===desc&&arr[i].a===a){idx=i;break;}}
+  if(idx<0)return;
+  arr.splice(idx,1);
+  save();renderExpenses();renderHome();
+  toast('נמחק');
 }
 
 // ── BUDGET EDIT ───────────────────────────────────────────
@@ -2517,6 +2673,7 @@ load();
 })();
 initSplash();
 renderHome();
+setTimeout(function(){updateNavPill('home');},100);
 
 // ── FIXED PAYMENTS ───────────────────────────────────────
 function renderFixed(){
@@ -2630,38 +2787,220 @@ function runAdvisor(){
 
   if(!insights.length) return;
 
-  // Show the most important insight
-  var pick=insights[0];
   var lastShown=parseInt(localStorage.getItem('shani_adv_last')||'0');
   var now=Date.now();
   if(now-lastShown<8*60*60*1000) return; // max once per 8 hours
 
   localStorage.setItem('shani_adv_last',now);
-  showAdvisor(pick,insights.length);
+  showAdvisor(insights);
 }
 
-function showAdvisor(insight,total){
-  var el=document.createElement('div');
-  el.className='advisor-overlay';
-  el.id='advisor-overlay';
-  el.innerHTML=
+// Manual trigger — bypasses the 8h throttle (used by the 💡 button)
+function openAdvisor(){
+  var saved=localStorage.getItem('shani_adv_last');
+  localStorage.removeItem('shani_adv_last');
+  runAdvisor();
+  // if nothing surfaced, show a positive default
+  if(!document.getElementById('advisor-overlay')){
+    showAdvisor([{emoji:'✅',msg:'לא זוהו דפוסי הוצאה חריגים החודש. <strong>המשיכי כך!</strong>',tip:'תוכלי לבדוק שוב בכל זמן דרך הכפתור הזה.'}]);
+  }
+}
+
+var _advInsights=[];
+var _advCur=0;
+
+function showAdvisor(insights){
+  _advInsights=insights;_advCur=0;
+  renderAdvisorCard();
+}
+function renderAdvisorCard(){
+  var ins=_advInsights[_advCur];
+  var total=_advInsights.length;
+  var hasPrev=_advCur>0,hasNext=_advCur<total-1;
+  var html='<div class="advisor-overlay" id="advisor-overlay">'+
     '<div class="advisor-card">'+
       '<div class="adv-head">'+
-        '<div class="adv-icon">'+insight.emoji+'</div>'+
-        '<div><div class="adv-title">יועץ כלכלי AI</div><div class="adv-sub">ניתוח חודש נוכחי'+(total>1?' · '+total+' תובנות':' · 1 תובנה')+'</div></div>'+
+        '<div class="adv-icon">'+ins.emoji+'</div>'+
+        '<div><div class="adv-title">יועץ כלכלי AI</div>'+
+        '<div class="adv-sub">תובנה '+(_advCur+1)+' מתוך '+total+'</div></div>'+
       '</div>'+
-      '<div class="adv-msg">'+insight.msg+'<br><br><span style="color:var(--cyan);font-size:13px">💡 '+insight.tip+'</span></div>'+
+      '<div class="adv-msg">'+ins.msg+'<br><br><span style="color:var(--cyan);font-size:13px">💡 '+ins.tip+'</span></div>'+
       '<div class="adv-actions">'+
-        '<button class="adv-btn-ok" onclick="closeAdvisor()">הבנתי, תודה</button>'+
-        '<button class="adv-btn-dismiss" onclick="closeAdvisor()">סגור</button>'+
+        (hasPrev?'<button class="adv-btn-dismiss" onclick="advNav(-1)">‹ קודם</button>':'')+
+        '<button class="adv-btn-ok" onclick="closeAdvisor()">הבנתי ✓</button>'+
+        (hasNext?'<button class="adv-btn-dismiss" onclick="advNav(1)">הבא ›</button>':'')+
       '</div>'+
-    '</div>';
-  document.body.appendChild(el);
+    '</div>'+
+  '</div>';
+  var ex=document.getElementById('advisor-overlay');
+  if(ex)ex.outerHTML=html;
+  else document.body.insertAdjacentHTML('beforeend',html);
 }
-
+function advNav(dir){
+  _advCur=Math.max(0,Math.min(_advInsights.length-1,_advCur+dir));
+  renderAdvisorCard();
+}
 function closeAdvisor(){
   var el=document.getElementById('advisor-overlay');
   if(el) el.remove();
+}
+
+// ── GMAIL IMPORT ──────────────────────────────────────────
+var _gmailParsed=[];
+var _gmailToken=null;
+
+function renderGmail(){
+  var cid=localStorage.getItem('shani_gmail_cid')||'';
+  if(cid){
+    var inp=document.getElementById('gmail-client-id');
+    if(inp)inp.value=cid;
+    document.getElementById('gmail-connect-wrap').style.display='block';
+    document.getElementById('gmail-status').textContent='לחצי "התחברי" לסנכרון';
+  }
+}
+function saveGmailClientId(){
+  var v=document.getElementById('gmail-client-id').value.trim();
+  if(!v){toast('הכניסי Client ID');return;}
+  localStorage.setItem('shani_gmail_cid',v);
+  document.getElementById('gmail-connect-wrap').style.display='block';
+  document.getElementById('gmail-status').textContent='Client ID נשמר ✓';
+  toast('Client ID נשמר');
+}
+function gmailAuth(){
+  var cid=localStorage.getItem('shani_gmail_cid');
+  if(!cid){toast('שמרי Client ID קודם');return;}
+  if(typeof gapi==='undefined'){toast('Google API עוד נטען, נסי שוב');return;}
+  document.getElementById('gmail-status').textContent='מתחבר...';
+  gapi.load('auth2',function(){
+    gapi.auth2.init({
+      client_id:cid,
+      scope:'https://www.googleapis.com/auth/gmail.readonly'
+    }).then(function(auth2){
+      if(auth2.isSignedIn.get()){
+        _gmailToken=auth2.currentUser.get().getAuthResponse().access_token;
+        gmailFetch();
+      }else{
+        auth2.signIn().then(function(user){
+          _gmailToken=user.getAuthResponse().access_token;
+          gmailFetch();
+        }).catch(function(e){
+          document.getElementById('gmail-status').textContent='שגיאה: '+(e.error||'התחברות נכשלה');
+        });
+      }
+    }).catch(function(e){
+      document.getElementById('gmail-status').textContent='שגיאה באתחול — בדקי את ה-Client ID';
+    });
+  });
+}
+function gmailFetch(days){
+  days=days||30;
+  document.getElementById('gmail-status').textContent='מחפש עסקאות...';
+  var query='from:(max.co.il OR isracard.co.il OR leumi.co.il OR bankhapoalim.co.il OR cal.co.il) newer_than:'+days+'d';
+  fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?q='+encodeURIComponent(query)+'&maxResults=80',{
+    headers:{Authorization:'Bearer '+_gmailToken}
+  }).then(function(r){return r.json();}).then(function(data){
+    var msgs=data.messages||[];
+    document.getElementById('gmail-status').textContent='נמצאו '+msgs.length+' מיילים, מנתח...';
+    var fetches=msgs.slice(0,60).map(function(m){
+      return fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/'+m.id+'?format=metadata&metadataHeaders=Subject',{
+        headers:{Authorization:'Bearer '+_gmailToken}
+      }).then(function(r){return r.json();});
+    });
+    Promise.all(fetches).then(function(results){
+      _gmailParsed=[];
+      results.forEach(function(msg){parseGmailMsg(msg);});
+      renderGmailTxns();
+    });
+  }).catch(function(e){
+    document.getElementById('gmail-status').textContent='שגיאה בגישה לג׳ימייל';
+  });
+}
+// Parse common Israeli bank/card email formats
+function parseGmailMsg(msg){
+  var snip=msg.snippet||'';
+  // include subject header text in the searchable string
+  var subj='';
+  if(msg.payload&&msg.payload.headers){
+    msg.payload.headers.forEach(function(h){if(h.name==='Subject')subj=h.value;});
+  }
+  var text=subj+' '+snip;
+  var date=msg.internalDate?new Date(parseInt(msg.internalDate)):new Date();
+  var d=String(date.getDate()).padStart(2,'0')+'/'+String(date.getMonth()+1).padStart(2,'0');
+  var mo=date.getMonth()+1,yr=date.getFullYear();
+
+  var m2=text.match(/([\d,]+(?:\.\d+)?)\s*[₪]\s*.*?(?:ב-|ב )(\d{1,2})[./](\d{1,2})/);
+  var m1=text.match(/חיוב\s+(?:של\s+)?([\d,]+(?:\.\d+)?)\s*[₪]/);
+  var m3=text.match(/(?:עסקה|פעולה|חויב|חוייב).*?([\d,]+(?:\.\d+)?)\s*[₪]/);
+  var m4=text.match(/([\d,]+(?:\.\d+)?)\s*[₪]\s+(?:ב-?|ב)([^\d,]{3,30})/);
+
+  var amt=0,desc='';
+  if(m2){
+    amt=parseFloat(m2[1].replace(/,/g,''));
+    var biz=text.match(/(?:ב-?|ב )([^\d,₪\n]{3,25})(?:\s|$)/);
+    desc=biz?biz[1].trim():'חיוב מכרטיס';
+    d=String(parseInt(m2[2])).padStart(2,'0')+'/'+String(parseInt(m2[3])).padStart(2,'0');
+    mo=parseInt(m2[3]);
+  }else if(m1){
+    amt=parseFloat(m1[1].replace(/,/g,''));
+    var biz2=text.match(/(?:ב-?|ב )([^\d,₪\n]{3,25})/);
+    desc=biz2?biz2[1].trim():'חיוב מכרטיס';
+  }else if(m3){
+    amt=parseFloat(m3[1].replace(/,/g,''));
+    desc='פעולת כרטיס';
+  }else if(m4){
+    amt=parseFloat(m4[1].replace(/,/g,''));
+    desc=m4[2].trim();
+  }
+
+  var method='mc';
+  if(/visa|ויזה/i.test(text))method='visa';
+  else if(/leumi|לאומי|הפועלים|דיסקונט|עו"ש|עוש/i.test(text))method='bank';
+
+  if(amt>5&&amt<50000&&desc){
+    _gmailParsed.push({d:d,desc:desc,a:amt,method:method,monthKey:mo,year:yr,raw:text.slice(0,90)});
+  }
+}
+function renderGmailTxns(){
+  document.getElementById('gmail-status').textContent='נמצאו '+_gmailParsed.length+' עסקאות לסקירה';
+  if(!_gmailParsed.length){
+    document.getElementById('gmail-found').style.display='none';
+    return;
+  }
+  document.getElementById('gmail-found').style.display='block';
+  var mLbl={mc:'MC',visa:'ויזה',bank:'עו"ש'};
+  var mCol={mc:'#B57BEE',visa:'#6BA3FF',bank:'#FF6B6B'};
+  var h='';
+  _gmailParsed.forEach(function(t,i){
+    var col=mCol[t.method]||'#aaa';
+    h+='<div class="fp-item" style="align-items:flex-start">'+
+      '<label style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer">'+
+        '<input type="checkbox" id="gt'+i+'" checked style="width:16px;height:16px;accent-color:var(--cyan)">'+
+        '<div>'+
+          '<div style="font-size:13px;font-weight:600">'+t.desc+'</div>'+
+          '<div style="font-size:10px;color:var(--muted);margin-top:2px">'+t.d+' · <span style="color:'+col+'">'+mLbl[t.method]+'</span></div>'+
+          '<div style="font-size:9px;color:var(--muted2);margin-top:2px;direction:ltr">'+t.raw+'</div>'+
+        '</div>'+
+      '</label>'+
+      '<div style="font-size:15px;font-weight:800;color:var(--orange);flex-shrink:0;padding-top:2px">-₪'+fmt(t.a)+'</div>'+
+    '</div>';
+  });
+  document.getElementById('gmail-txns').innerHTML=h;
+}
+function gmailImportAll(){
+  var added=0;
+  _gmailParsed.forEach(function(t,i){
+    var cb=document.getElementById('gt'+i);
+    if(!cb||!cb.checked)return;
+    var key=t.monthKey;
+    RAW.expense[key]=RAW.expense[key]||[];
+    var entry={d:t.d,desc:t.desc,a:t.a};
+    if(t.method&&t.method!=='bank')entry.method=t.method;
+    RAW.expense[key].push(entry);
+    added++;
+  });
+  if(added){save();renderHome();toast('✓ '+added+' עסקאות יובאו');}
+  document.getElementById('gmail-found').style.display='none';
+  _gmailParsed=[];
 }
 
 // Run advisor 7 seconds after load (after splash)
