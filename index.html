@@ -1460,7 +1460,7 @@ var CLIENTS = {
   4:[],6:[{day:1,name:'שרית',amount:800,status:'done'},{day:13,name:'רותם',amount:800,status:'done'},{day:14,name:'קארין',amount:1100,status:'done'},{day:16,name:'אמא',amount:500,status:'planned'},{day:17,name:'הילה',amount:800,status:'planned'},{day:18,name:'נועם',amount:900,status:'planned'}],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[]
 };
 
-var CARDS = {visa:700,mc:3609,bank:10481,cashBal:400,limit:10000};
+var CARDS = {visa:700,mc:3609,bank:8681,cashBal:400,limit:10000};
 var GOALS = [];
 var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:700,אוכל:400,קפה:180};
 var _budgetEditLbl='';
@@ -1518,7 +1518,7 @@ function save(){
 }
 function saveGoals(){try{localStorage.setItem('shani_goals',JSON.stringify(GOALS));}catch(e){}}
 var CLIENTS_VERSION=20;  // bump to force reload clients from code
-var CARDS_VERSION=7;    // bump to force reload cards from code
+var CARDS_VERSION=8;    // bump to force reload cards from code
 function load(){
   try{
     var cv=parseInt(localStorage.getItem('shani_cv')||'0');
