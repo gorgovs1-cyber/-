@@ -490,6 +490,35 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 select option{background:#111D2C;color:#fff}
 ::-webkit-scrollbar{width:2px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* ── AI ADVISOR ── */
+.advisor-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9000;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .3s}
+.advisor-card{background:var(--card2);border:1px solid var(--border2);border-radius:var(--r-xl,22px);padding:24px 20px;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6);position:relative}
+.advisor-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#1DE9B6,#B57BEE);border-radius:var(--r-xl,22px) var(--r-xl,22px) 0 0}
+.adv-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.adv-icon{width:44px;height:44px;border-radius:50%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.adv-title{font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:.5px}
+.adv-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.adv-msg{font-size:14px;line-height:1.7;color:var(--text2);margin-bottom:18px}
+.adv-msg strong{color:var(--text);font-weight:700}
+.adv-actions{display:flex;gap:10px}
+.adv-btn-ok{flex:1;padding:11px;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);border-radius:var(--r);color:var(--cyan);font-size:13px;font-weight:700;cursor:pointer}
+.adv-btn-dismiss{padding:11px 14px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:var(--r);color:var(--muted);font-size:12px;cursor:pointer}
+
+.fp-add-btn{display:block;width:calc(100% - 32px);margin:12px 16px;padding:14px;background:rgba(29,233,182,.1);border:1px dashed rgba(29,233,182,.35);border-radius:var(--r);color:var(--cyan);font-size:15px;font-weight:600;cursor:pointer;text-align:center;}
+.fp-item{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin:8px 16px;padding:14px;}
+.fp-item-left{flex:1}
+.fp-name{font-size:15px;font-weight:600;color:var(--text)}
+.fp-meta{font-size:12px;color:var(--muted);margin-top:3px}
+.fp-item-right{display:flex;align-items:center;gap:10px}
+.fp-amt{font-size:16px;font-weight:700;color:var(--orange)}
+.fp-edit-btn,.fp-del-btn{background:none;border:none;cursor:pointer;font-size:15px;padding:4px;}
+.fp-toggle{position:relative;display:inline-block;width:40px;height:22px}
+.fp-toggle input{opacity:0;width:0;height:0}
+.fp-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--border2);border-radius:22px;transition:.3s}
+.fp-slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.fp-toggle input:checked+.fp-slider{background:var(--cyan)}
+.fp-toggle input:checked+.fp-slider:before{transform:translateX(18px)}
 </style>
 </head>
 <body>
@@ -652,6 +681,32 @@ select option{background:#111D2C;color:#fff}
   <div class="goals-grid" id="goals-grid"></div>
 </div>
 
+<!-- ══ FIXED PAYMENTS ══════════════════════════════════ -->
+<div class="screen" id="s-fixed">
+  <div class="page-hdr">
+    <div class="page-title">תשלומים קבועים</div>
+    <div class="page-sub" id="fp-sub"></div>
+  </div>
+  <div class="fixed-list" id="fp-list"></div>
+  <button class="fp-add-btn" onclick="openFPModal()">+ הוסף תשלום קבוע</button>
+  <!-- inline modal for add/edit -->
+  <div class="mbg" id="fp-mbg" onclick="if(event.target===this)closeFPModal()">
+    <div class="modal" style="max-height:80dvh;overflow-y:auto" id="fp-modal">
+      <div class="modal-title" id="fp-modal-title">תשלום קבוע חדש</div>
+      <input class="minput" id="fp-name" placeholder="שם (שכירות, נטפליקס...)" />
+      <input class="minput" type="number" id="fp-amount" placeholder="סכום ₪" />
+      <input class="minput" type="number" id="fp-day" placeholder="יום בחודש (1-31)" min="1" max="31"/>
+      <div class="method-chips" style="margin:8px 0">
+        <span style="font-size:10px;color:var(--muted);font-weight:700">אמצעי:</span>
+        <button class="mchip bank on" data-m="bank" onclick="setFPMethod('bank')">עו"ש</button>
+        <button class="mchip mc"   data-m="mc"   onclick="setFPMethod('mc')">MC</button>
+        <button class="mchip visa" data-m="visa" onclick="setFPMethod('visa')">ויזה</button>
+      </div>
+      <button class="modal-btn" onclick="saveFP()">שמור</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ ADD TRANSACTION ════════════════════════════════════ -->
 <div class="mbg" id="atxn-mbg" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal" style="max-height:88dvh;overflow-y:auto">
@@ -802,6 +857,9 @@ select option{background:#111D2C;color:#fff}
   </button>
   <button class="bnb" id="bn-goals" onclick="go('goals')">
     <span class="bnb-icon"></span><span class="bnb-lbl">מטרות</span>
+  </button>
+  <button class="bnb" id="bn-fixed" onclick="go('fixed')">
+    <span class="bnb-icon"></span><span class="bnb-lbl">קבועים</span>
   </button>
 </nav>
 
@@ -1463,6 +1521,18 @@ var CLIENTS = {
 
 var CARDS = {visa:700,mc:3609,bank:9381,cashBal:0,limit:10000};
 var GOALS = [];
+var FIXED_PAYMENTS = [
+  {id:1,name:'שכירות',amount:4100,day:2,method:'bank',active:true},
+  {id:2,name:'פרטנר',amount:60.42,day:12,method:'bank',active:true},
+  {id:3,name:'נטפליקס',amount:32.90,day:7,method:'bank',active:true},
+  {id:4,name:'ספוטיפיי',amount:23,day:12,method:'bank',active:true},
+  {id:5,name:'ביטוח סיעודי',amount:60.52,day:10,method:'bank',active:true},
+  {id:6,name:'קופת חולים',amount:161.26,day:10,method:'bank',active:true},
+  {id:7,name:'הייגספילד',amount:151.29,day:10,method:'mc',active:true},
+  {id:8,name:'Claude Pro',amount:74,day:14,method:'visa',active:true},
+];
+var _fpEditId=null;
+var _fpMethod='bank';
 var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:700,אוכל:400,קפה:180};
 var _budgetEditLbl='';
 var catChartInst=null;
@@ -1515,6 +1585,7 @@ function save(){
     localStorage.setItem('shani_income', JSON.stringify(RAW.income));
     localStorage.setItem('shani_cards',  JSON.stringify(CARDS));
     localStorage.setItem('shani_budgets',JSON.stringify(BUDGETS));
+    localStorage.setItem('shani_fp', JSON.stringify(FIXED_PAYMENTS));
   }catch(e){}
 }
 function saveGoals(){try{localStorage.setItem('shani_goals',JSON.stringify(GOALS));}catch(e){}}
@@ -1532,6 +1603,7 @@ function load(){
     var cd=localStorage.getItem('shani_cards');  if(cd){var cdo=JSON.parse(cd);Object.assign(CARDS,cdo);if(!CARDS.limit)CARDS.limit=10000;}
     var g=localStorage.getItem('shani_goals');   if(g)GOALS=JSON.parse(g);
     var bu=localStorage.getItem('shani_budgets');if(bu){var buo=JSON.parse(bu);Object.assign(BUDGETS,buo);}
+    var fp=localStorage.getItem('shani_fp'); if(fp)FIXED_PAYMENTS=JSON.parse(fp);
   }catch(e){}
 }
 function exportData(){
@@ -1564,6 +1636,7 @@ function go(name){
   if(name==='income')   renderIncome();
   if(name==='balance')  renderBalance();
   if(name==='goals')    renderGoals();
+  if(name==='fixed')    renderFixed();
 }
 
 // ── CALC ─────────────────────────────────────────────────
@@ -2444,6 +2517,155 @@ load();
 })();
 initSplash();
 renderHome();
+
+// ── FIXED PAYMENTS ───────────────────────────────────────
+function renderFixed(){
+  var active=FIXED_PAYMENTS.filter(function(p){return p.active;});
+  var total=active.reduce(function(s,p){return s+p.amount;},0);
+  document.getElementById('fp-sub').textContent=active.length+' פעילים · ₪'+fmt(total)+' לחודש';
+  var mLbl={bank:'עו"ש',mc:'MC',visa:'ויזה'};
+  var mCol={bank:'#FF6B6B',mc:'#B57BEE',visa:'#6BA3FF'};
+  var h='';
+  FIXED_PAYMENTS.forEach(function(p){
+    var col=mCol[p.method]||'#aaa';
+    h+='<div class="fp-item" style="opacity:'+(p.active?1:.45)+'">';
+    h+='<div class="fp-item-left">';
+    h+='<div class="fp-name">'+p.name+'</div>';
+    h+='<div class="fp-meta">יום '+p.day+' · <span style="color:'+col+'">'+mLbl[p.method]+'</span></div>';
+    h+='</div>';
+    h+='<div class="fp-item-right">';
+    h+='<div class="fp-amt">₪'+fmt(p.amount)+'</div>';
+    h+='<label class="fp-toggle"><input type="checkbox"'+(p.active?' checked':'')+' onchange="toggleFP('+p.id+',this.checked)"><span class="fp-slider"></span></label>';
+    h+='<button class="fp-edit-btn" onclick="openFPModal('+p.id+')">✏️</button>';
+    h+='<button class="fp-del-btn" onclick="deleteFP('+p.id+')">🗑</button>';
+    h+='</div>';
+    h+='</div>';
+  });
+  if(!FIXED_PAYMENTS.length) h='<div style="text-align:center;color:var(--muted);padding:40px">אין תשלומים קבועים</div>';
+  document.getElementById('fp-list').innerHTML=h;
+}
+function toggleFP(id,val){
+  var p=FIXED_PAYMENTS.find(function(x){return x.id===id;});
+  if(p){p.active=val;save();renderFixed();}
+}
+function deleteFP(id){
+  FIXED_PAYMENTS=FIXED_PAYMENTS.filter(function(x){return x.id!==id;});
+  save();renderFixed();
+}
+function setFPMethod(m){
+  _fpMethod=m;
+  document.querySelectorAll('#fp-modal .mchip').forEach(function(b){
+    b.classList.toggle('on',b.dataset.m===m);
+  });
+}
+function openFPModal(id){
+  _fpEditId=id||null;
+  var p=id?FIXED_PAYMENTS.find(function(x){return x.id===id;}):null;
+  document.getElementById('fp-modal-title').textContent=p?'עריכת תשלום':'תשלום קבוע חדש';
+  document.getElementById('fp-name').value=p?p.name:'';
+  document.getElementById('fp-amount').value=p?p.amount:'';
+  document.getElementById('fp-day').value=p?p.day:'';
+  setFPMethod(p?p.method:'bank');
+  document.getElementById('fp-mbg').classList.add('open');
+}
+function closeFPModal(){document.getElementById('fp-mbg').classList.remove('open');}
+function saveFP(){
+  var name=document.getElementById('fp-name').value.trim();
+  var amount=parseFloat(document.getElementById('fp-amount').value)||0;
+  var day=parseInt(document.getElementById('fp-day').value)||1;
+  if(!name||!amount)return;
+  if(_fpEditId){
+    var p=FIXED_PAYMENTS.find(function(x){return x.id===_fpEditId;});
+    if(p){p.name=name;p.amount=amount;p.day=day;p.method=_fpMethod;}
+  }else{
+    var newId=Date.now();
+    FIXED_PAYMENTS.push({id:newId,name:name,amount:amount,day:day,method:_fpMethod,active:true});
+  }
+  save();closeFPModal();renderFixed();
+}
+
+// ── AI FINANCIAL ADVISOR ──────────────────────────────
+function runAdvisor(){
+  var r=typeof calc==='function'?calc(homeMi):{};
+  var exp=RAW.expense[r.m]||[];
+  var inc=r.inc||0;
+  var totalExp=r.exp||0;
+
+  // Aggregate by category keywords
+  function sumKw(kws){return exp.filter(function(t){return kws.some(function(k){return t.desc.indexOf(k)>-1;});}).reduce(function(s,t){return s+t.a;},0);}
+  var wolt   =sumKw(['וולט','משלוח','delivery']);
+  var cannabis=sumKw(['קנאביס','קנב']);
+  var alcohol =sumKw(['יין','בירה','קוקטייל','ברלין']);
+  var tobacco =sumKw(['טבק','סיגריה']);
+  var coffee  =sumKw(['קפה']);
+  var food    =sumKw(['אוכל','סלט','פסטה','נודלס','ספגטי','מרק','חומוס','מעורב']);
+  var taxis   =sumKw(['מונית','פנגו','taxi']);
+
+  var insights=[];
+
+  // Wolt / deliveries
+  if(wolt>300) insights.push({emoji:'🛵',msg:'שילמת כבר <strong>₪'+Math.round(wolt)+'</strong> על משלוחי וולט החודש. בממוצע משלוח עולה ₪80 — בישול ביתי יכול לחסוך לך מעל <strong>₪'+(Math.round(wolt*0.7))+'</strong> לחודש.',tip:'שקלי להכין ב-3 ימים בשבוע ולחסוך.'});
+  else if(wolt>150) insights.push({emoji:'🛵',msg:'הוצאת <strong>₪'+Math.round(wolt)+'</strong> על משלוחים עד כה. עדיין ב-track סביר, אבל שימי לב שלא יצא מהיד.',tip:'יעד טוב: מתחת ל-₪300 בחודש.'});
+
+  // Cannabis
+  if(cannabis>500) insights.push({emoji:'🌿',msg:'ההוצאה על קנאביס החודש: <strong>₪'+Math.round(cannabis)+'</strong>. זה <strong>'+Math.round(cannabis/totalExp*100)+'%</strong> מסך ההוצאות שלך.',tip:'הפחתה של 30% תחסוך לך ₪'+(Math.round(cannabis*0.3))+' בחודש — כ-₪'+(Math.round(cannabis*0.3*12))+' בשנה.'});
+
+  // Alcohol
+  if(alcohol>400) insights.push({emoji:'🍷',msg:'אלכוהול החודש: <strong>₪'+Math.round(alcohol)+'</strong>. יין ובירה הם הוצאה שקטה שמצטברת מהר.',tip:'שקלי להגדיר "ימי שתייה" קבועים ולצמצם לסוף שבוע בלבד.'});
+
+  // Tobacco
+  if(tobacco>200) insights.push({emoji:'🚬',msg:'טבק: <strong>₪'+Math.round(tobacco)+'</strong> החודש — <strong>₪'+Math.round(tobacco*12)+'</strong> בשנה.',tip:'הפחתה של מחצית תשאיר לך ₪'+(Math.round(tobacco*6))+' נוספים בשנה.'});
+
+  // Coffee
+  if(coffee>150) insights.push({emoji:'☕',msg:'קפות בחוץ: <strong>₪'+Math.round(coffee)+'</strong> החודש.',tip:'מכונת קפה ביתית מחזירה את עצמה תוך 2 חודשים.'});
+
+  // Taxis
+  if(taxis>300) insights.push({emoji:'🚖',msg:'מוניות ופנגו: <strong>₪'+Math.round(taxis)+'</strong> החודש.',tip:'שקלי תחבורה ציבורית לנסיעות קבועות.'});
+
+  // Overall deficit
+  if(r.balFull<0 && r.isNow) insights.push({emoji:'⚠️',msg:'התחזית לסוף החודש היא <strong>גרעון של ₪'+Math.round(Math.abs(r.balFull))+'</strong>.',tip:'עצרי הוצאות לא הכרחיות עד סוף החודש.'});
+
+  // Great month
+  if(r.balFull>2000 && r.isNow && insights.length===0) insights.push({emoji:'✅',msg:'הכל נראה טוב החודש! תחזית חיובית של <strong>₪'+Math.round(r.balFull)+'</strong> לסוף החודש.',tip:'שקלי להעביר חלק לחסכון או להשקעה.'});
+
+  if(!insights.length) return;
+
+  // Show the most important insight
+  var pick=insights[0];
+  var lastShown=parseInt(localStorage.getItem('shani_adv_last')||'0');
+  var now=Date.now();
+  if(now-lastShown<8*60*60*1000) return; // max once per 8 hours
+
+  localStorage.setItem('shani_adv_last',now);
+  showAdvisor(pick,insights.length);
+}
+
+function showAdvisor(insight,total){
+  var el=document.createElement('div');
+  el.className='advisor-overlay';
+  el.id='advisor-overlay';
+  el.innerHTML=
+    '<div class="advisor-card">'+
+      '<div class="adv-head">'+
+        '<div class="adv-icon">'+insight.emoji+'</div>'+
+        '<div><div class="adv-title">יועץ כלכלי AI</div><div class="adv-sub">ניתוח חודש נוכחי'+(total>1?' · '+total+' תובנות':' · 1 תובנה')+'</div></div>'+
+      '</div>'+
+      '<div class="adv-msg">'+insight.msg+'<br><br><span style="color:var(--cyan);font-size:13px">💡 '+insight.tip+'</span></div>'+
+      '<div class="adv-actions">'+
+        '<button class="adv-btn-ok" onclick="closeAdvisor()">הבנתי, תודה</button>'+
+        '<button class="adv-btn-dismiss" onclick="closeAdvisor()">סגור</button>'+
+      '</div>'+
+    '</div>';
+  document.body.appendChild(el);
+}
+
+function closeAdvisor(){
+  var el=document.getElementById('advisor-overlay');
+  if(el) el.remove();
+}
+
+// Run advisor 7 seconds after load (after splash)
+setTimeout(runAdvisor, 7000);
 </script>
 </body>
 </html>
