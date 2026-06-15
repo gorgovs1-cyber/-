@@ -534,6 +534,7 @@ select option{background:#111D2C;color:#fff}
 .ob-dot.on{background:var(--cyan);width:18px;border-radius:3px}
 .ob-next{background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:9px 18px;border-radius:10px;border:none;cursor:pointer}
 .ob-skip{background:none;border:none;color:var(--muted);font-family:'Sora',sans-serif;font-size:12px;cursor:pointer}
+.ob-close{position:fixed;top:max(env(safe-area-inset-top,12px),12px);left:12px;z-index:9700;background:rgba(255,255,255,.14);border:1px solid var(--border2);color:#fff;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;padding:9px 15px;border-radius:20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 
 /* ── GMAIL ── */
 .gp-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border2);background:none;color:var(--muted);font-family:'Sora',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
@@ -997,7 +998,7 @@ select option{background:#111D2C;color:#fff}
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260616;
+var APP_VER=20260617;
 // Robust auto-update: fetch the live file (bypassing cache) and hard-reload past
 // the iOS/CDN cache via a ?v= URL when a newer deploy is detected.
 (function(){
@@ -3129,11 +3130,18 @@ function startTour(manual){
   _tourIdx=0;
   // make sure we're on the home screen so targets exist
   if(document.getElementById('s-home')&&!document.getElementById('s-home').classList.contains('active')) go('home');
-  if(!document.getElementById('ob-overlay')){
-    var ov=document.createElement('div');
+  var ov=document.getElementById('ob-overlay');
+  if(!ov){
+    ov=document.createElement('div');
     ov.className='ob-overlay';ov.id='ob-overlay';
-    ov.innerHTML='<div class="ob-spot" id="ob-spot"></div><div class="ob-bubble" id="ob-bubble"></div>';
+    ov.innerHTML='<div class="ob-spot" id="ob-spot"></div>'+
+      '<button class="ob-close" id="ob-close" onclick="endTour()">✕ דלג על ההדרכה</button>'+
+      '<div class="ob-bubble" id="ob-bubble"></div>';
     document.body.appendChild(ov);
+    // tapping the dark area (not the bubble) advances to the next step
+    ov.addEventListener('click',function(e){
+      if(e.target===ov||e.target.id==='ob-spot') tourNext();
+    });
   }
   renderTourStep();
 }
@@ -3144,9 +3152,18 @@ function renderTourStep(){
     if(_tourIdx<TOUR_STEPS.length-1){_tourIdx++;renderTourStep();return;}
     endTour();return;
   }
+  // bring the target into the middle of the screen first, then position once settled
+  try{target.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){try{target.scrollIntoView();}catch(e2){}}
+  var bubble=document.getElementById('ob-bubble');
+  if(bubble)bubble.style.visibility='hidden';
+  setTimeout(function(){positionTourStep(step,target);},340);
+}
+function positionTourStep(step,target){
   var r=target.getBoundingClientRect();
   var pad=8;
   var spot=document.getElementById('ob-spot');
+  var bubble=document.getElementById('ob-bubble');
+  if(!spot||!bubble)return;
   spot.style.left=(r.left-pad)+'px';
   spot.style.top=(r.top-pad)+'px';
   spot.style.width=(r.width+pad*2)+'px';
@@ -3155,7 +3172,6 @@ function renderTourStep(){
   var dots='';
   for(var i=0;i<TOUR_STEPS.length;i++)dots+='<span class="ob-dot'+(i===_tourIdx?' on':'')+'"></span>';
   var last=_tourIdx===TOUR_STEPS.length-1;
-  var bubble=document.getElementById('ob-bubble');
   bubble.innerHTML=
     '<div class="ob-emoji">'+step.emoji+'</div>'+
     '<div class="ob-title">'+step.title+'</div>'+
@@ -3167,17 +3183,18 @@ function renderTourStep(){
         '<button class="ob-next" onclick="tourNext()">'+(last?'סיום ✓':'הבא ›')+'</button>'+
       '</div>'+
     '</div>';
-  // position bubble: below target if room, else above
+  // position bubble — always fully on-screen (both axes clamped)
   bubble.style.visibility='hidden';
   bubble.style.left='0px';bubble.style.top='0px';
   requestAnimationFrame(function(){
     var bw=bubble.offsetWidth,bh=bubble.offsetHeight;
-    var vw=window.innerWidth,vh=window.innerHeight;
-    var left=Math.min(Math.max(r.left+r.width/2-bw/2,12),vw-bw-12);
+    var vw=window.innerWidth,vh=window.innerHeight,M=12;
+    var left=Math.min(Math.max(r.left+r.width/2-bw/2,M),vw-bw-M);
     var top;
-    if(r.bottom+bh+18<vh) top=r.bottom+16;          // below
-    else if(r.top-bh-18>0) top=r.top-bh-16;          // above
-    else top=Math.max(12,(vh-bh)/2);                 // center fallback
+    if(r.bottom+bh+18<=vh-M) top=r.bottom+16;       // below target
+    else if(r.top-bh-18>=M) top=r.top-bh-16;         // above target
+    else top=(vh-bh)/2;                              // center fallback
+    top=Math.min(Math.max(top,M),Math.max(M,vh-bh-M)); // final clamp — never off-screen
     bubble.style.left=left+'px';
     bubble.style.top=top+'px';
     bubble.style.visibility='visible';
