@@ -106,7 +106,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 @keyframes spFade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 /* ══ SCREENS ═════════════════════════════════════════════ */
-.screen{display:none;padding-top:calc(env(safe-area-inset-top,0px) + 62px);padding-bottom:24px;animation:fadeUp .22s ease both}
+.screen{display:none;padding-top:calc(env(safe-area-inset-top,0px) + 62px);padding-bottom:calc(78px + env(safe-area-inset-bottom,0px));animation:fadeUp .22s ease both}
 .screen.active{display:block}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
@@ -414,7 +414,29 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .drw-item.active .di-icon svg { stroke:var(--cyan); }
 
 /* ══ FAB ══════════════════════════════════════════════════ */
-.fab-wrap{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:20px;display:flex;gap:10px;z-index:300}
+.fab-wrap{position:fixed;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:20px;display:flex;gap:10px;z-index:300}
+
+/* ══ BOTTOM TAB BAR ══════════════════════════════════════ */
+.btm-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;z-index:250;
+  display:flex;justify-content:space-around;align-items:stretch;
+  background:rgba(9,16,26,.92);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border-top:1px solid var(--border);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.btm-item{
+  flex:1;background:none;border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:9px 0 7px;position:relative;color:var(--muted);
+  font-family:'Sora',sans-serif;font-size:10px;font-weight:600;
+  transition:color .18s;
+}
+.btm-item svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s}
+.btm-item.active{color:var(--cyan)}
+.btm-item.active svg{transform:translateY(-1px)}
+.btm-item.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:2.5px;border-radius:0 0 3px 3px;background:var(--cyan)}
+.btm-item:active{transform:scale(.92)}
 .fab{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;transition:transform .15s}
 .fab:active{transform:scale(.92)}
 .fab-add{background:var(--cyan);color:#0A1520;font-size:28px;font-weight:700;box-shadow:0 6px 22px -6px rgba(29,233,182,.45)}
@@ -654,7 +676,8 @@ html.theme-light .drw-panel { background:#112438; }
 .modal-close { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; }
 .inp { display:block; width:100%; font-family:'Sora',sans-serif; font-size:13px; padding:10px 12px; border:1.5px solid var(--border2); border-radius:12px; background:rgba(255,255,255,.07); color:var(--text); outline:none; }
 .inp:focus { border-color:var(--cyan); }
-.btn-primary { width:100%; background:var(--cyan); color:#0A1520; font-family:'Sora',sans-serif; font-size:14px; font-weight:800; padding:12px; border-radius:12px; border:none; cursor:pointer; }
+.btn-primary { width:100%; background:linear-gradient(135deg,#2AF0C2,#1DE9B6); color:#0A1520; font-family:'Sora',sans-serif; font-size:14px; font-weight:800; padding:12px; border-radius:12px; border:none; cursor:pointer; box-shadow:0 6px 18px -8px rgba(29,233,182,.5); transition:transform .12s,filter .12s; }
+.btn-primary:active { transform:scale(.97); filter:brightness(.94); }
 
 /* accessibility: respect reduced-motion preference */
 @media (prefers-reduced-motion: reduce){
@@ -1146,6 +1169,22 @@ html.theme-light .drw-panel { background:#112438; }
   <button class="fab fab-mic" onclick="openAdvisor()" title="יועץ כלכלי">💡</button>
 </div>
 
+<!-- BOTTOM TAB BAR -->
+<nav class="btm-nav" id="btm-nav">
+  <button class="btm-item" data-page="home" onclick="go('home')" aria-label="בית">
+    <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-5.5h5V20"/></svg><span>בית</span>
+  </button>
+  <button class="btm-item" data-page="clients" onclick="go('clients')" aria-label="לקוחות">
+    <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 5.6"/><path d="M16.2 13.4a5.5 5.5 0 0 1 4.3 6.1"/></svg><span>לקוחות</span>
+  </button>
+  <button class="btm-item" data-page="expenses" onclick="go('expenses')" aria-label="הוצאות">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V16"/><path d="m8.5 12.5 3.5 3.5 3.5-3.5"/></svg><span>הוצאות</span>
+  </button>
+  <button class="btm-item" data-page="balance" onclick="go('balance')" aria-label="מאזן">
+    <svg viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><rect x="5" y="10" width="3.4" height="8" rx="1"/><rect x="10.3" y="5.5" width="3.4" height="12.5" rx="1"/><rect x="15.6" y="13" width="3.4" height="5" rx="1"/></svg><span>מאזן</span>
+  </button>
+</nav>
+
 <div id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
@@ -1153,7 +1192,7 @@ html.theme-light .drw-panel { background:#112438; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260631;
+var APP_VER=20260632;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Robust auto-update: fetch the live file (bypassing cache) and hard-reload past
 // the iOS/CDN cache via a ?v= URL when a newer deploy is detected.
@@ -1948,6 +1987,7 @@ function go(name){
   var scr=document.getElementById('s-'+name);
   if(scr){scr.classList.add('active');if(slideDir)scr.classList.add(slideDir);}
   updateDrawerActive();
+  updateBottomNav(name);
   if(name==='home')     renderHome();
   if(name==='clients')  renderClients();
   if(name==='expenses') renderExpenses();
@@ -2713,7 +2753,7 @@ function renderGoals(){
         '<div class="goal-info"><div class="goal-name">'+esc(g.name)+'</div><div class="goal-deadline">'+(g.deadline?new Date(g.deadline).toLocaleDateString('he-IL',{month:'long',year:'numeric'}):'')+(monthly?' · '+monthly:'')+'</div></div>'+
         '<div class="goal-amounts"><div class="goal-saved" style="color:'+col+'">₪'+fmt(g.saved)+'</div><div class="goal-target">מתוך ₪'+fmt(g.target)+'</div></div>'+
       '</div>'+
-      '<div class="goal-bar-bg"><div class="goal-bar-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'+
+      '<div class="goal-bar-bg"><div class="goal-bar-fill" data-pct="'+pct+'" style="width:0%;background:'+col+'"></div></div>'+
       '<div class="goal-footer"><span class="goal-pct" style="color:'+col+'">'+pct+'%</span>'+
         '<span class="goal-monthly">'+(left>0?'נותר: ₪'+fmt(left):'הושג!')+'</span>'+
         '<button class="goal-add-btn" onclick="openGoalAdd('+idx+')">+ הוסף חיסכון</button>'+
@@ -2722,6 +2762,10 @@ function renderGoals(){
   });
   h+='<div class="add-goal-card" onclick="document.getElementById(\'new-goal-mbg\').classList.add(\'open\')"><span class="add-goal-lbl">+ מטרת חיסכון חדשה</span></div>';
   document.getElementById('goals-grid').innerHTML=h;
+  requestAnimationFrame(function(){
+    var bars=document.querySelectorAll('#goals-grid .goal-bar-fill');
+    for(var i=0;i<bars.length;i++){ bars[i].style.width=bars[i].getAttribute('data-pct')+'%'; }
+  });
 }
 
 function openGoalAdd(idx){
@@ -2918,6 +2962,7 @@ load();
 initSplash();
 applyTheme();
 renderHome();
+updateBottomNav('home');
 
 // ── FIXED PAYMENTS ───────────────────────────────────────
 function renderFixed(){
@@ -3416,6 +3461,11 @@ function closeDrawer() { document.getElementById('drw-bg').classList.remove('ope
 function updateDrawerActive() {
   document.querySelectorAll('.drw-item').forEach(function(el) {
     el.classList.toggle('active', el.dataset.page === _prevScreen);
+  });
+}
+function updateBottomNav(name) {
+  document.querySelectorAll('.btm-item').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.page === name);
   });
 }
 
