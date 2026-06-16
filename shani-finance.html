@@ -1879,6 +1879,7 @@ function go(name){
   if(name==='goals')    renderGoals();
   if(name==='fixed')    renderFixed();
   if(name==='gmail')    renderGmail();
+  if(name==='gcal')     renderGcal();
 }
 
 // ── COUNT-UP ANIMATION ───────────────────────────────────
@@ -2995,6 +2996,8 @@ function setGmailPeriod(d){
     b.classList.toggle('on',parseInt(b.dataset.d)===d);
   });
 }
+
+function renderGcal(){ /* screen is static; connect button drives data */ }
 
 function renderGmail(){
   var cid=localStorage.getItem('shani_gmail_cid')||'';
