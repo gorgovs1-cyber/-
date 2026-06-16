@@ -103,13 +103,13 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 @keyframes spFade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 /* ══ SCREENS ═════════════════════════════════════════════ */
-.screen{display:none;padding-bottom:92px;animation:fadeUp .22s ease both}
+.screen{display:none;padding-top:calc(env(safe-area-inset-top,0px) + 62px);padding-bottom:24px;animation:fadeUp .22s ease both}
 .screen.active{display:block}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
 /* ══ HERO ════════════════════════════════════════════════ */
 .hero{
-  padding:max(env(safe-area-inset-top,16px),16px) 20px 24px;
+  padding:16px 20px 24px;
   background:linear-gradient(170deg,#0C1E30 0%,#0B1520 100%);
 }
 .hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
@@ -229,7 +229,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .toast-line{font-size:12px;font-weight:600;margin-top:8px;min-height:16px;color:var(--cyan)}
 
 /* ══ DETAIL SCREENS ══════════════════════════════════════ */
-.detail-hdr{display:flex;align-items:center;gap:12px;padding:max(env(safe-area-inset-top,16px),16px) 20px 14px;background:linear-gradient(180deg,#0C1D30,#0B1520)}
+.detail-hdr{display:flex;align-items:center;gap:12px;padding:16px 20px 14px;background:linear-gradient(180deg,#0C1D30,#0B1520)}
 .back-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);color:var(--text2);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .back-btn:active{opacity:.6}
 .detail-title{font-size:22px;font-weight:800;flex:1}
@@ -287,7 +287,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .bal-total-val.pos{color:var(--cyan)}.bal-total-val.neg{color:var(--neg)}
 
 /* ══ CLIENTS ══════════════════════════════════════════════ */
-.page-hdr{padding:max(env(safe-area-inset-top,0px),16px) 20px 6px;background:linear-gradient(170deg,#0C1E30,#0B1520)}
+.page-hdr{padding:16px 20px 6px;background:linear-gradient(170deg,#0C1E30,#0B1520)}
 .page-title{font-size:24px;font-weight:800;letter-spacing:-.5px}
 .page-sub  {font-size:12px;color:var(--muted);margin-top:3px}
 
@@ -348,23 +348,40 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .mclose{display:block;width:100%;text-align:center;font-size:13px;color:var(--muted);margin-top:16px;background:none;border:none;font-family:'Sora',sans-serif;cursor:pointer}
 .mempty{font-size:13px;color:var(--muted);text-align:center;padding:12px 0}
 
-/* ══ BOTTOM NAV ══════════════════════════════════════════ */
-.bnav{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  width:100%;max-width:430px;
-  background:rgba(9,16,26,.96);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
-  border-top:1px solid var(--border);
-  display:flex;justify-content:space-around;align-items:stretch;
-  padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));z-index:200;
+/* ══ TOP HEADER ═══════════════════════════════════════════ */
+.top-hdr {
+  position:fixed; top:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:430px;
+  background:rgba(9,16,26,.96); backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:calc(env(safe-area-inset-top,0px) + 12px) 20px 12px;
+  z-index:200;
 }
-.bnb{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px 38px;border-radius:14px;transition:all .15s}
-.bnb-icon{width:20px;height:2px;border-radius:2px;background:transparent;transition:background .15s,box-shadow .15s}
-.bnb-lbl {font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.3px}
-.bnb.on .bnb-lbl {color:var(--cyan)}
-.bnb.on .bnb-icon{background:var(--cyan);box-shadow:0 0 8px rgba(29,233,182,.6)}
+.hdr-logo { font-size:18px; font-weight:900; color:var(--cyan); letter-spacing:-.3px; }
+.hdr-ham { background:none; border:none; cursor:pointer; padding:6px; display:flex; flex-direction:column; gap:5px; }
+.hdr-ham span { display:block; width:22px; height:2px; background:var(--text2); border-radius:2px; transition:all .2s; }
+
+/* DRAWER */
+.drw-bg { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:400; opacity:0; pointer-events:none; transition:opacity .25s; }
+.drw-bg.open { opacity:1; pointer-events:auto; }
+.drw-panel {
+  position:fixed; top:0; right:0; width:260px; height:100%;
+  background:#0D1C2C; z-index:401;
+  padding:calc(env(safe-area-inset-top,0px) + 20px) 0 20px;
+  transform:translateX(100%); transition:transform .3s cubic-bezier(.2,1,.3,1);
+  border-left:1px solid var(--border);
+  overflow-y:auto;
+}
+.drw-bg.open .drw-panel { transform:translateX(0); }
+.drw-logo { font-size:22px; font-weight:900; color:var(--cyan); padding:0 20px 20px; border-bottom:1px solid var(--border); margin-bottom:8px; }
+.drw-item { display:flex; align-items:center; gap:12px; padding:14px 20px; cursor:pointer; transition:background .15s; color:var(--text2); font-size:15px; font-weight:600; }
+.drw-item:hover { background:rgba(255,255,255,.05); }
+.drw-item.active { color:var(--cyan); background:rgba(29,233,182,.08); }
+.drw-item .di-emoji { font-size:20px; width:28px; text-align:center; }
 
 /* ══ FAB ══════════════════════════════════════════════════ */
-.fab-wrap{position:fixed;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:20px;display:flex;gap:10px;z-index:300}
+.fab-wrap{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:20px;display:flex;gap:10px;z-index:300}
 .fab{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;transition:transform .15s}
 .fab:active{transform:scale(.92)}
 .fab-add{background:var(--cyan);color:#0A1520;font-size:28px;font-weight:700;box-shadow:0 4px 24px rgba(29,233,182,.5)}
@@ -534,7 +551,7 @@ select option{background:#111D2C;color:#fff}
 .ob-dot.on{background:var(--cyan);width:18px;border-radius:3px}
 .ob-next{background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:9px 18px;border-radius:10px;border:none;cursor:pointer}
 .ob-skip{background:none;border:none;color:var(--muted);font-family:'Sora',sans-serif;font-size:12px;cursor:pointer}
-.ob-close{position:fixed;top:max(env(safe-area-inset-top,12px),12px);left:12px;z-index:9700;background:rgba(255,255,255,.14);border:1px solid var(--border2);color:#fff;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;padding:9px 15px;border-radius:20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.ob-close{position:fixed;bottom:calc(env(safe-area-inset-bottom,12px) + 12px);left:50%;transform:translateX(-50%);z-index:9700;background:rgba(255,255,255,.14);border:1px solid var(--border2);color:#fff;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;padding:9px 20px;border-radius:20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 
 /* ── GMAIL ── */
 .gp-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border2);background:none;color:var(--muted);font-family:'Sora',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
@@ -571,8 +588,7 @@ select option{background:#111D2C;color:#fff}
 .txn-del{flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--muted2);font-size:13px;padding:4px 6px;transition:color .15s,background .15s;border-radius:6px;}
 .txn-del:active{color:var(--neg);background:rgba(255,107,107,.12);}
 
-/* ── 6. NAV PILL ── */
-.nav-pill{position:absolute;bottom:calc(6px + env(safe-area-inset-bottom,0px));height:3px;background:var(--cyan);border-radius:3px;box-shadow:0 0 10px rgba(29,233,182,.7);transition:left .3s cubic-bezier(.2,1,.3,1),width .3s cubic-bezier(.2,1,.3,1);pointer-events:none;}
+/* ── 6. NAV PILL (legacy, kept for compat) ── */
 
 /* ── 8. SHIMMER ON CREDIT CARDS ── */
 .cc::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.09) 50%,transparent 80%);background-size:200% 100%;animation:shimmer 4s 2.5s ease-in-out infinite;}
@@ -583,9 +599,61 @@ select option{background:#111D2C;color:#fff}
 @keyframes slideFromLeft{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
 .screen.slide-r{animation:slideFromRight .24s cubic-bezier(.2,1,.3,1) both}
 .screen.slide-l{animation:slideFromLeft .24s cubic-bezier(.2,1,.3,1) both}
+
+/* ── LIGHT THEME ── */
+html.theme-light {
+  --bg:#F5F7FA; --bg2:#EEF0F4; --card:#FFFFFF; --card2:#F0F2F6;
+  --border:rgba(0,0,0,.08); --border2:rgba(0,0,0,.14);
+  --text:#1A2030; --text2:rgba(26,32,48,.75); --muted:rgba(26,32,48,.45); --muted2:rgba(26,32,48,.22);
+}
+html.theme-light body { background: linear-gradient(180deg, #0B1520 0px, #0B1520 200px, #F5F7FA 400px, #F5F7FA 100%); }
+html.theme-light .top-hdr { background:rgba(9,16,26,.96); }
+html.theme-light .hero { background:linear-gradient(170deg,#0C1E30 0%,#0B1520 100%); }
+html.theme-light .page-hdr { background:transparent; }
+html.theme-light .card { background:var(--card); box-shadow:0 2px 12px rgba(0,0,0,.08); }
+html.theme-light .drw-panel { background:#FFFFFF; border-left:1px solid rgba(0,0,0,.08); }
+html.theme-light .drw-item { color:rgba(26,32,48,.75); }
+html.theme-light .drw-logo { color:var(--cyan); }
+
+/* ── SETTINGS MODAL ── */
+.modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:700; align-items:center; justify-content:center; padding:24px; }
+.modal-bg.open { display:flex; }
+.modal-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.modal-title { font-size:17px; font-weight:800; }
+.modal-close { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; }
+.inp { display:block; width:100%; font-family:'Sora',sans-serif; font-size:13px; padding:10px 12px; border:1.5px solid var(--border2); border-radius:12px; background:rgba(255,255,255,.07); color:var(--text); outline:none; }
+.inp:focus { border-color:var(--cyan); }
+.btn-primary { width:100%; background:var(--cyan); color:#0A1520; font-family:'Sora',sans-serif; font-size:14px; font-weight:800; padding:12px; border-radius:12px; border:none; cursor:pointer; }
 </style>
 </head>
 <body>
+
+<!-- TOP HEADER -->
+<header class="top-hdr">
+  <span class="hdr-logo">💰 My Money</span>
+  <button class="hdr-ham" onclick="openDrawer()" aria-label="תפריט">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- DRAWER -->
+<div class="drw-bg" id="drw-bg" onclick="closeDrawer()">
+  <nav class="drw-panel" onclick="event.stopPropagation()">
+    <div class="drw-logo">💰 My Money</div>
+    <div class="drw-item" data-page="home" onclick="go('home');closeDrawer()"><span class="di-emoji">🏠</span><span>בית</span></div>
+    <div class="drw-item" data-page="clients" onclick="go('clients');closeDrawer()"><span class="di-emoji">👥</span><span>לקוחות</span></div>
+    <div class="drw-item" data-page="goals" onclick="go('goals');closeDrawer()"><span class="di-emoji">🎯</span><span>מטרות</span></div>
+    <div class="drw-item" data-page="fixed" onclick="go('fixed');closeDrawer()"><span class="di-emoji">💳</span><span>תשלומים קבועים</span></div>
+    <div class="drw-item" data-page="gmail" onclick="go('gmail');closeDrawer()"><span class="di-emoji">📧</span><span>Gmail</span></div>
+    <div class="drw-item" data-page="income" onclick="go('income');closeDrawer()"><span class="di-emoji">💰</span><span>הכנסות</span></div>
+    <div class="drw-item" data-page="expenses" onclick="go('expenses');closeDrawer()"><span class="di-emoji">💸</span><span>הוצאות</span></div>
+    <div class="drw-item" data-page="balance" onclick="go('balance');closeDrawer()"><span class="di-emoji">📊</span><span>מאזן</span></div>
+    <div class="drw-item" data-page="gcal" onclick="go('gcal');closeDrawer()"><span class="di-emoji">📅</span><span>יומן גוגל</span></div>
+    <div style="border-top:1px solid var(--border);margin:8px 0"></div>
+    <div class="drw-item" onclick="openSettings()"><span class="di-emoji">⚙️</span><span>הגדרות</span></div>
+    <div class="drw-item" onclick="toggleTheme()"><span class="di-emoji" id="theme-emoji">☀️</span><span id="theme-lbl">מצב בהיר</span></div>
+  </nav>
+</div>
 
 <!-- ══ SPLASH ════════════════════════════════════════════ -->
 <div id="splash">
@@ -965,25 +1033,46 @@ select option{background:#111D2C;color:#fff}
   </div>
 </div>
 
-<!-- ══ BOTTOM NAV ═════════════════════════════════════════ -->
-<nav class="bnav">
-  <button class="bnb" id="bn-clients" onclick="go('clients')">
-    <span class="bnb-icon"></span><span class="bnb-lbl">לקוחות</span>
-  </button>
-  <button class="bnb on" id="bn-home" onclick="go('home')">
-    <span class="bnb-icon"></span><span class="bnb-lbl">בית</span>
-  </button>
-  <button class="bnb" id="bn-goals" onclick="go('goals')">
-    <span class="bnb-icon"></span><span class="bnb-lbl">מטרות</span>
-  </button>
-  <button class="bnb" id="bn-fixed" onclick="go('fixed')">
-    <span class="bnb-icon"></span><span class="bnb-lbl">קבועים</span>
-  </button>
-  <button class="bnb" id="bn-gmail" onclick="go('gmail')">
-    <span class="bnb-icon"></span><span class="bnb-lbl">Gmail</span>
-  </button>
-  <div class="nav-pill" id="nav-pill"></div>
-</nav>
+
+<!-- GOOGLE CALENDAR SCREEN -->
+<div class="screen" id="s-gcal">
+  <div class="page-hdr">
+    <div class="page-title">יומן גוגל</div>
+    <div class="page-sub">תורים מהיומן</div>
+  </div>
+  <div style="padding:16px">
+    <div id="gcal-connect-area">
+      <button onclick="gcalConnect()" style="width:100%;padding:16px;background:var(--card2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">📅 התחבר ל-Google Calendar</button>
+    </div>
+    <div id="gcal-events" style="display:none;margin-top:16px"></div>
+    <div style="margin-top:16px;padding:14px;background:rgba(255,255,255,.04);border-radius:14px;font-size:12px;color:var(--muted)">
+      <div style="font-weight:700;margin-bottom:6px">כיצד להשתמש:</div>
+      <div>1. צבעי לקוחות ביומן — הגדר <span style="color:#e74c3c">אדום (Tomato)</span> לתורי לקוחות</div>
+      <div style="margin-top:4px">2. לחץ "התחבר" והמערכת תשלוף תורים אוטומטית</div>
+      <div style="margin-top:4px">3. התורים יוכנסו ללקוחות בתאריכים המתאימים</div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settings-modal-bg" style="display:none">
+  <div class="modal" style="max-height:85vh;overflow-y:auto;border-radius:var(--r);padding:20px">
+    <div class="modal-hdr">
+      <span class="modal-title">⚙️ הגדרות</span>
+      <button class="modal-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:13px;font-weight:700;color:var(--cyan);margin-bottom:4px">📱 Twilio SMS</div>
+      <input id="set-twilio-sid" class="inp" placeholder="Twilio Account SID" oninput="SETTINGS.twilioSid=this.value;saveSettings()">
+      <input id="set-twilio-token" class="inp" placeholder="Twilio Auth Token" type="password" oninput="SETTINGS.twilioToken=this.value;saveSettings()">
+      <input id="set-twilio-from" class="inp" placeholder="מספר שולח Twilio (+1...)" oninput="SETTINGS.twilioFrom=this.value;saveSettings()">
+      <div style="font-size:13px;font-weight:700;color:var(--cyan);margin-top:8px;margin-bottom:4px">🧾 Morning חשבוניות</div>
+      <input id="set-morning-token" class="inp" placeholder="Morning API Token" oninput="SETTINGS.morningToken=this.value;saveSettings()">
+      <input id="set-biz-name" class="inp" placeholder="שם העסק" oninput="SETTINGS.bizName=this.value;saveSettings()">
+      <button class="btn-primary" style="margin-top:8px" onclick="closeSettings()">שמור וסגור</button>
+    </div>
+  </div>
+</div>
 
 <!-- ══ FAB ════════════════════════════════════════════════ -->
 <div class="fab-wrap">
@@ -998,7 +1087,7 @@ select option{background:#111D2C;color:#fff}
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260617;
+var APP_VER=20260619;
 // Robust auto-update: fetch the live file (bypassing cache) and hard-reload past
 // the iOS/CDN cache via a ?v= URL when a newer deploy is detected.
 (function(){
@@ -1766,17 +1855,6 @@ function toast(msg){
 var _prevScreen='home';
 var _screenOrder={clients:0,home:1,goals:2,fixed:3,gmail:4};
 
-function updateNavPill(name){
-  var pill=document.getElementById('nav-pill');
-  var bn=document.getElementById('bn-'+name);
-  if(!pill||!bn)return;
-  var nav=document.querySelector('.bnav');
-  if(!nav)return;
-  var nr=nav.getBoundingClientRect(),br=bn.getBoundingClientRect();
-  pill.style.width=(br.width*.55)+'px';
-  pill.style.left=(br.left-nr.left+br.width*.225)+'px';
-}
-
 function go(name){
   var prevPos=_screenOrder[_prevScreen],nextPos=_screenOrder[name];
   var detail=['expenses','income','balance'];
@@ -1790,12 +1868,9 @@ function go(name){
   }
   _prevScreen=name;
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active','slide-r','slide-l');});
-  document.querySelectorAll('.bnb').forEach(function(b){b.classList.remove('on');});
   var scr=document.getElementById('s-'+name);
   if(scr){scr.classList.add('active');if(slideDir)scr.classList.add(slideDir);}
-  var bn=document.getElementById('bn-'+name);
-  if(bn) bn.classList.add('on');
-  updateNavPill(name);
+  updateDrawerActive();
   if(name==='home')     renderHome();
   if(name==='clients')  renderClients();
   if(name==='expenses') renderExpenses();
@@ -1804,6 +1879,7 @@ function go(name){
   if(name==='goals')    renderGoals();
   if(name==='fixed')    renderFixed();
   if(name==='gmail')    renderGmail();
+  if(name==='gcal')     renderGcal();
 }
 
 // ── COUNT-UP ANIMATION ───────────────────────────────────
@@ -2416,7 +2492,13 @@ function renderMC(){
 function toggleC(idx){
   var mk=MONTHS[modalMi].key,list=CLIENTS[mk]||[];
   var day=list.filter(function(c){return c.day===modalDay;}),ai=list.indexOf(day[idx]);
-  if(ai>=0)list[ai].status=list[ai].status==='done'?'planned':'done';
+  if(ai>=0){
+    list[ai].status=list[ai].status==='done'?'planned':'done';
+    if(list[ai].status==='done'){
+      sendSMSOnDone(list[ai]);
+      sendInvoiceOnDone(list[ai]);
+    }
+  }
   save();renderMC();renderClients();renderHome();
 }
 function delC(idx){
@@ -2730,8 +2812,8 @@ load();
   }
 })();
 initSplash();
+applyTheme();
 renderHome();
-setTimeout(function(){updateNavPill('home');},100);
 
 // ── FIXED PAYMENTS ───────────────────────────────────────
 function renderFixed(){
@@ -2914,6 +2996,8 @@ function setGmailPeriod(d){
     b.classList.toggle('on',parseInt(b.dataset.d)===d);
   });
 }
+
+function renderGcal(){ /* screen is static; connect button drives data */ }
 
 function renderGmail(){
   var cid=localStorage.getItem('shani_gmail_cid')||'';
@@ -3121,7 +3205,7 @@ var TOUR_STEPS=[
   {sel:'.fab-add',    emoji:'➕',title:'הוספה מהירה',text:'הכפתור הירוק מוסיף הוצאה או הכנסה — אפשר גם להדביק רשימה שלמה בבת אחת.'},
   {sel:'.fab-mic',    emoji:'💡',title:'היועץ הכלכלי',text:'נורת הרעיון נותנת תובנות חכמות על דפוסי ההוצאה שלך ואיך לחסוך.'},
   {sel:'#bn-gmail',   emoji:'📧',title:'ייבוא מג׳ימייל',text:'מתחברים לגוגל והאפליקציה שולפת חיובים מהמיילים של הבנקים — אוטומטית.'},
-  {sel:'.bnav',       emoji:'🧭',title:'ניווט תחתון',text:'לקוחות · בית · מטרות · תשלומים קבועים · ג׳ימייל. הכל במרחק לחיצה.'}
+  {sel:'.bnav',       emoji:'🧭',title:'ניווט עליון',text:'לקוחות · בית · מטרות · תשלומים קבועים · ג׳ימייל. הכל במרחק לחיצה.'}
 ];
 var _tourIdx=0;
 
@@ -3214,6 +3298,145 @@ if(!localStorage.getItem('shani_onboarded')){
   setTimeout(function(){startTour(false);},4900);  // right after splash fades
 }else{
   setTimeout(runAdvisor, 7000);
+}
+
+// ── DRAWER ───────────────────────────────────────────────
+function openDrawer() { document.getElementById('drw-bg').classList.add('open'); updateDrawerActive(); }
+function closeDrawer() { document.getElementById('drw-bg').classList.remove('open'); }
+function updateDrawerActive() {
+  document.querySelectorAll('.drw-item').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.page === _prevScreen);
+  });
+}
+
+// ── CLIENT PROFILES ──────────────────────────────────────
+var CLIENT_PROFILES = JSON.parse(localStorage.getItem('shani_cp')||'{}');
+function saveCPs() { localStorage.setItem('shani_cp', JSON.stringify(CLIENT_PROFILES)); }
+
+// ── SETTINGS ─────────────────────────────────────────────
+var SETTINGS = JSON.parse(localStorage.getItem('shani_settings')||'{}');
+function saveSettings() { localStorage.setItem('shani_settings', JSON.stringify(SETTINGS)); }
+function openSettings() {
+  closeDrawer();
+  var m = document.getElementById('settings-modal-bg');
+  m.style.display = 'flex';
+  document.getElementById('set-twilio-sid').value = SETTINGS.twilioSid||'';
+  document.getElementById('set-twilio-token').value = SETTINGS.twilioToken||'';
+  document.getElementById('set-twilio-from').value = SETTINGS.twilioFrom||'';
+  document.getElementById('set-morning-token').value = SETTINGS.morningToken||'';
+  document.getElementById('set-biz-name').value = SETTINGS.bizName||'';
+}
+function closeSettings() { document.getElementById('settings-modal-bg').style.display='none'; }
+
+// ── SMS ON DONE ───────────────────────────────────────────
+function sendSMSOnDone(client) {
+  if(!SETTINGS.twilioSid||!SETTINGS.twilioToken||!SETTINGS.twilioFrom) return;
+  var profile = CLIENT_PROFILES[client.name]||{};
+  if(!profile.phone) return;
+  var phone = profile.phone.replace(/[-\s]/g,'');
+  if(phone.charAt(0)==='0') phone = '+972'+phone.slice(1);
+  var msg = 'שלום '+client.name.split(' ')[0]+', תודה על הביקור! הטיפול שלך בוצע. סכום: ₪'+client.amount+'. - שני';
+  var url = 'https://api.twilio.com/2010-04-01/Accounts/'+SETTINGS.twilioSid+'/Messages.json';
+  var body = new URLSearchParams({To:phone,From:SETTINGS.twilioFrom,Body:msg});
+  fetch(url,{
+    method:'POST',
+    headers:{'Authorization':'Basic '+btoa(SETTINGS.twilioSid+':'+SETTINGS.twilioToken),'Content-Type':'application/x-www-form-urlencoded'},
+    body:body.toString()
+  }).then(function(){toast('📱 SMS נשלח ל-'+client.name);}).catch(function(){toast('שגיאה בשליחת SMS');});
+}
+
+// ── INVOICE ON DONE ───────────────────────────────────────
+function sendInvoiceOnDone(client) {
+  if(!SETTINGS.morningToken||!SETTINGS.bizName) return;
+  var profile = CLIENT_PROFILES[client.name]||{};
+  var payload = {
+    description:'טיפול יופי',
+    income:[{catalogNum:'1',description:'טיפול',quantity:1,price:client.amount,taxAmount:0}],
+    client:{name:client.name,phone:profile.phone||'',address:profile.address||''},
+    type:'receipt',
+    lang:'he',
+    currency:'ILS'
+  };
+  fetch('https://api.morning.co.il/v1/documents',{
+    method:'POST',
+    headers:{'Authorization':'Bearer '+SETTINGS.morningToken,'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  }).then(function(r){return r.json();})
+  .then(function(d){toast('🧾 חשבונית נוצרה: #'+(d.id||''));})
+  .catch(function(){toast('שגיאה ביצירת חשבונית');});
+}
+
+// ── GOOGLE CALENDAR ───────────────────────────────────────
+function gcalConnect(){
+  if(typeof gapi==='undefined'){toast('Google API לא נטען');return;}
+  gapi.auth2.getAuthInstance().signIn({scope:'https://www.googleapis.com/auth/calendar.readonly'})
+    .then(function(user){ gcalFetchEvents(); })
+    .catch(function(e){ toast('שגיאת חיבור: '+(e.error||e)); });
+}
+
+function gcalFetchEvents(){
+  var now=new Date();
+  var start=new Date(now.getFullYear(),now.getMonth(),1).toISOString();
+  var end=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString();
+  gapi.client.request({
+    path:'https://www.googleapis.com/calendar/v3/calendars/primary/events',
+    params:{
+      timeMin:start, timeMax:end,
+      singleEvents:true, orderBy:'startTime',
+      colorId:'11'
+    }
+  }).then(function(resp){
+    renderGCalEvents(resp.result.items||[]);
+  }).catch(function(){ toast('שגיאה בשליפה'); });
+}
+
+function renderGCalEvents(events){
+  var area=document.getElementById('gcal-events');
+  if(!events.length){
+    area.innerHTML='<div style="text-align:center;color:var(--muted);padding:32px">אין תורים אדומים החודש</div>';
+    area.style.display='block';
+    return;
+  }
+  var h='<div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text2)">נמצאו '+events.length+' תורים</div>';
+  for(var i=0;i<events.length;i++){
+    var ev=events[i];
+    var dt=new Date(ev.start.dateTime||ev.start.date);
+    var day=dt.getDate();
+    var timeStr=ev.start.dateTime?(dt.getHours()+':'+String(dt.getMinutes()).padStart(2,'0')):'כל היום';
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--card);border-radius:12px;margin-bottom:8px">';
+    h+='<div><div style="font-weight:600;font-size:14px">'+ev.summary+'</div><div style="font-size:12px;color:var(--muted);margin-top:2px">'+day+' בחודש · '+timeStr+'</div></div>';
+    h+='<button onclick="importGCalEvent('+JSON.stringify(JSON.stringify(ev))+')" style="background:var(--cyan);color:#000;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">ייבא ✓</button>';
+    h+='</div>';
+  }
+  area.innerHTML=h;
+  area.style.display='block';
+}
+
+function importGCalEvent(evJson){
+  var ev=JSON.parse(evJson);
+  var dt=new Date(ev.start.dateTime||ev.start.date);
+  var day=dt.getDate();
+  var name=ev.summary||'לקוחה';
+  var mk=MONTHS[homeMi]?MONTHS[homeMi].key:(new Date().getMonth()+1);
+  CLIENTS[mk]=CLIENTS[mk]||[];
+  CLIENTS[mk].push({day:day,name:name,amount:0,status:'planned'});
+  save();
+  toast('✓ '+name+' נוסף ליומן');
+}
+
+// ── LIGHT/DARK THEME ──────────────────────────────────────
+var _theme = localStorage.getItem('shani_theme')||'dark';
+function applyTheme() {
+  document.documentElement.classList.toggle('theme-light', _theme==='light');
+  var el = document.getElementById('theme-emoji');
+  var lb = document.getElementById('theme-lbl');
+  if(el) el.textContent = _theme==='light'?'🌙':'☀️';
+  if(lb) lb.textContent = _theme==='light'?'מצב כהה':'מצב בהיר';
+}
+function toggleTheme() {
+  _theme = _theme==='light'?'dark':'light';
+  localStorage.setItem('shani_theme', _theme);
+  applyTheme();
 }
 </script>
 </body>
