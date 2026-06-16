@@ -9,6 +9,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>My Money</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B1520'/%3E%3Ctext x='32' y='50' font-family='Arial,sans-serif' font-size='44' font-weight='900' fill='%2300FFD4' text-anchor='middle'%3E%E2%82%AA%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230B1520'/%3E%3Ctext x='90' y='138' font-family='Arial,sans-serif' font-size='124' font-weight='900' fill='%2300FFD4' text-anchor='middle'%3E%E2%82%AA%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1016,9 +1018,9 @@ html.theme-light .drw-panel { background:#112438; }
       <div id="gmail-pre-auth">
         <div style="font-size:22px;font-weight:800;margin-bottom:8px;color:var(--text)">כניסה עם Google</div>
         <div style="font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6">לסריקת חיובי כרטיסים אוטומטית<br>מהמיילים של הבנקים שלך</div>
-        <button id="gmail-auth-btn" onclick="gmailAuth()" style="display:inline-flex;align-items:center;gap:12px;background:#fff;color:#3c4043;font-family:'Sora',sans-serif;font-size:15px;font-weight:600;padding:13px 28px;border-radius:24px;border:none;cursor:pointer;box-shadow:0 2px 18px rgba(0,0,0,.35);width:100%;max-width:280px;justify-content:center">
-          <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>
-          המשך עם Google
+        <button id="gmail-auth-btn" onclick="gmailAuth()" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--cyan),#00BCD4);color:#08141E;font-family:'Sora',sans-serif;font-size:15px;font-weight:800;padding:15px 32px;border-radius:16px;border:none;cursor:pointer;box-shadow:0 4px 28px rgba(29,233,182,.35);width:100%;max-width:300px;justify-content:center">
+          <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#08141E" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>
+          התחברי עם Google
         </button>
         <div id="gmail-status" style="font-size:12px;color:var(--neg);margin-top:16px;min-height:18px"></div>
       </div>
@@ -1065,14 +1067,14 @@ html.theme-light .drw-panel { background:#112438; }
       <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px">כדי להשתמש ביומן גוגל<br>יש לחבר תחילה את Gmail</div>
       <button onclick="go('gmail');closeDrawer&&closeDrawer()" style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:14px;font-weight:800;padding:12px 24px;border-radius:12px;border:none;cursor:pointer">עברי לחיבור Gmail ›</button>
     </div>
-    <div id="gcal-connect-area" style="text-align:center;padding-top:32px">
+    <div id="gcal-connect-area" style="text-align:center;padding-top:40px">
       <!-- Google logo -->
-      <svg width="48" height="48" viewBox="0 0 48 48" style="margin-bottom:20px"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.2l6.8-6.8C35.7 2.2 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.1C12.5 13 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8C43.8 37.3 46.5 31.3 46.5 24.5z"/><path fill="#FBBC05" d="M10.5 28.6A14.7 14.7 0 0 1 9.5 24c0-1.6.3-3.1.7-4.6l-7.9-6.1A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2.1 1.4-4.7 2.3-7.7 2.3-6.2 0-11.5-4.2-13.4-9.8l-7.9 6.1C6.5 42.5 14.6 48 24 48z"/></svg>
-      <div style="font-size:22px;font-weight:800;margin-bottom:8px">כניסה עם Google</div>
-      <div style="font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6">ייבוא תורים מהיומן שלך<br>ישירות לרשימת הלקוחות</div>
-      <button id="gcal-connect-btn" onclick="gcalConnect()" style="display:inline-flex;align-items:center;gap:12px;background:#fff;color:#3c4043;font-family:'Sora',sans-serif;font-size:15px;font-weight:600;padding:13px 28px;border-radius:24px;border:none;cursor:pointer;box-shadow:0 2px 18px rgba(0,0,0,.35);width:100%;max-width:280px;justify-content:center">
-        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>
-        המשך עם Google
+      <svg width="52" height="52" viewBox="0 0 48 48" style="margin-bottom:22px;filter:drop-shadow(0 0 18px rgba(66,133,244,.4))"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.2l6.8-6.8C35.7 2.2 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.1C12.5 13 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8C43.8 37.3 46.5 31.3 46.5 24.5z"/><path fill="#FBBC05" d="M10.5 28.6A14.7 14.7 0 0 1 9.5 24c0-1.6.3-3.1.7-4.6l-7.9-6.1A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2.1 1.4-4.7 2.3-7.7 2.3-6.2 0-11.5-4.2-13.4-9.8l-7.9 6.1C6.5 42.5 14.6 48 24 48z"/></svg>
+      <div style="font-size:22px;font-weight:800;margin-bottom:8px">חיבור יומן Google</div>
+      <div style="font-size:14px;color:var(--muted);margin-bottom:36px;line-height:1.7">מייבאת תורים מהיומן שלך<br>לחודש הנוכחי ולאחור</div>
+      <button id="gcal-connect-btn" onclick="gcalConnect()" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--cyan),#00BCD4);color:#08141E;font-family:'Sora',sans-serif;font-size:15px;font-weight:800;padding:15px 32px;border-radius:16px;border:none;cursor:pointer;box-shadow:0 4px 28px rgba(29,233,182,.35);width:100%;max-width:300px;justify-content:center">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#08141E" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>
+        התחברי עם Google
       </button>
       <div id="gcal-status" style="margin-top:16px;font-size:13px;color:var(--neg);text-align:center;min-height:18px"></div>
     </div>
@@ -1113,7 +1115,7 @@ html.theme-light .drw-panel { background:#112438; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260628;
+var APP_VER=20260629;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Robust auto-update: fetch the live file (bypassing cache) and hard-reload past
 // the iOS/CDN cache via a ?v= URL when a newer deploy is detected.
@@ -3435,16 +3437,19 @@ function gcalConnect(){
 
 function gcalFetchEvents(){
   var now=new Date();
-  var start=new Date(now.getFullYear(),now.getMonth(),1).toISOString();
+  var start=new Date(now.getFullYear(),now.getMonth()-1,1).toISOString();
   var end=new Date(now.getFullYear(),now.getMonth()+1,0,23,59,59).toISOString();
   var url='https://www.googleapis.com/calendar/v3/calendars/primary/events?'+
     'timeMin='+encodeURIComponent(start)+'&timeMax='+encodeURIComponent(end)+
-    '&singleEvents=true&orderBy=startTime&maxResults=50';
+    '&singleEvents=true&orderBy=startTime&maxResults=200';
   fetch(url,{headers:{Authorization:'Bearer '+_gcalToken}})
     .then(function(r){return r.json();})
     .then(function(d){
       if(d.error){gcalStatus('שגיאה: '+d.error.message,'var(--neg)');return;}
-      renderGCalEvents(d.items||[]);
+      var all=d.items||[];
+      // filter red events (colorId 11=Tomato, 4=Flamingo) — show all if none red
+      var red=all.filter(function(e){return e.colorId==='11'||e.colorId==='4';});
+      renderGCalEvents(red.length?red:all);
     })
     .catch(function(){gcalStatus('שגיאה בשליפת תורים','var(--neg)');});
 }
@@ -3452,35 +3457,63 @@ function gcalFetchEvents(){
 function renderGCalEvents(events){
   var area=document.getElementById('gcal-events');
   if(!events.length){
-    area.innerHTML='<div style="text-align:center;color:var(--muted);padding:32px">אין תורים אדומים החודש</div>';
+    area.innerHTML='<div style="text-align:center;color:var(--muted);padding:32px">אין תורים ביומן</div>';
     area.style.display='block';
     return;
   }
-  var h='<div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text2)">נמצאו '+events.length+' תורים</div>';
+  var mon=['ינו','פבר','מרץ','אפר','מאי','יוני','יולי','אוג','ספט','אוק','נוב','דצמ'];
+  var h='<div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-bottom:12px">'+events.length+' תורים — לחצי על תור לייבוא</div>';
   for(var i=0;i<events.length;i++){
     var ev=events[i];
     var dt=new Date(ev.start.dateTime||ev.start.date);
     var day=dt.getDate();
-    var timeStr=ev.start.dateTime?(dt.getHours()+':'+String(dt.getMinutes()).padStart(2,'0')):'כל היום';
-    h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--card);border-radius:12px;margin-bottom:8px">';
-    h+='<div><div style="font-weight:600;font-size:14px">'+ev.summary+'</div><div style="font-size:12px;color:var(--muted);margin-top:2px">'+day+' בחודש · '+timeStr+'</div></div>';
-    h+='<button onclick="importGCalEvent('+JSON.stringify(JSON.stringify(ev))+')" style="background:var(--cyan);color:#000;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">ייבא ✓</button>';
+    var mo=mon[dt.getMonth()];
+    var timeStr=ev.start.dateTime?(dt.getHours()+':'+String(dt.getMinutes()).padStart(2,'0')):'';
+    var evId='gcalev'+i;
+    var evJson=JSON.stringify(JSON.stringify(ev));
+    h+='<div id="'+evId+'" style="background:var(--card);border-radius:14px;margin-bottom:8px;overflow:hidden">';
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer" onclick="gcalToggleForm(\''+evId+'\')">';
+    h+='<div><div style="font-weight:700;font-size:14px">'+ev.summary+'</div>';
+    h+='<div style="font-size:12px;color:var(--muted);margin-top:2px">'+day+' '+mo+(timeStr?' · '+timeStr:'')+'</div></div>';
+    h+='<span style="color:var(--cyan);font-size:18px;line-height:1">›</span>';
+    h+='</div>';
+    h+='<div id="'+evId+'-form" style="display:none;padding:0 14px 14px;border-top:1px solid var(--border)">';
+    h+='<div style="display:flex;gap:8px;margin-top:10px">';
+    h+='<input id="'+evId+'-amt" placeholder="מחיר ₪" type="number" style="flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:9px 11px;color:var(--text);font-family:Sora,sans-serif;font-size:13px;outline:none">';
+    h+='<input id="'+evId+'-treat" placeholder="סוג טיפול" style="flex:2;background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:9px 11px;color:var(--text);font-family:Sora,sans-serif;font-size:13px;outline:none">';
+    h+='</div>';
+    h+='<button onclick="importGCalEvent('+evJson+',\''+evId+'\')" style="margin-top:10px;width:100%;background:var(--cyan);color:#08141E;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:Sora,sans-serif">+ הוסיפי ללקוחות</button>';
+    h+='</div>';
     h+='</div>';
   }
   area.innerHTML=h;
   area.style.display='block';
+  gcalStatus('✓ '+events.length+' תורים נטענו','var(--pos)');
 }
 
-function importGCalEvent(evJson){
+function gcalToggleForm(id){
+  var f=document.getElementById(id+'-form');
+  if(f)f.style.display=f.style.display==='none'?'block':'none';
+}
+
+function importGCalEvent(evJson,evId){
   var ev=JSON.parse(evJson);
   var dt=new Date(ev.start.dateTime||ev.start.date);
   var day=dt.getDate();
+  var mk=dt.getMonth()+1;
   var name=ev.summary||'לקוחה';
-  var mk=MONTHS[homeMi]?MONTHS[homeMi].key:(new Date().getMonth()+1);
+  var amt=0,treat='';
+  if(evId){
+    var amtEl=document.getElementById(evId+'-amt');
+    var treatEl=document.getElementById(evId+'-treat');
+    if(amtEl)amt=parseFloat(amtEl.value)||0;
+    if(treatEl)treat=treatEl.value.trim();
+  }
   CLIENTS[mk]=CLIENTS[mk]||[];
-  CLIENTS[mk].push({day:day,name:name,amount:0,status:'planned'});
+  CLIENTS[mk].push({day:day,name:name,amount:amt,status:'planned',treat:treat});
   save();
-  toast('✓ '+name+' נוסף ליומן');
+  if(evId){var el=document.getElementById(evId);if(el)el.style.opacity='.4';}
+  toast('✓ '+name+' נוספה — '+mk+'/'+day+(treat?' · '+treat:''));
 }
 
 // ── LIGHT/DARK THEME ──────────────────────────────────────
