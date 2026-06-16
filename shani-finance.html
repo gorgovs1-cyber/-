@@ -348,20 +348,37 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .mclose{display:block;width:100%;text-align:center;font-size:13px;color:var(--muted);margin-top:16px;background:none;border:none;font-family:'Sora',sans-serif;cursor:pointer}
 .mempty{font-size:13px;color:var(--muted);text-align:center;padding:12px 0}
 
-/* ══ TOP NAV ══════════════════════════════════════════════ */
-.bnav{
-  position:fixed;top:0;left:50%;transform:translateX(-50%);
-  width:100%;max-width:430px;
-  background:rgba(9,16,26,.96);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+/* ══ TOP HEADER ═══════════════════════════════════════════ */
+.top-hdr {
+  position:fixed; top:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:430px;
+  background:rgba(9,16,26,.96); backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px);
   border-bottom:1px solid var(--border);
-  display:flex;justify-content:space-around;align-items:stretch;
-  padding:calc(env(safe-area-inset-top,0px) + 8px) 0 8px;z-index:200;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:calc(env(safe-area-inset-top,0px) + 12px) 20px 12px;
+  z-index:200;
 }
-.bnb{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;cursor:pointer;flex:1;padding:6px 4px;border-radius:10px;transition:all .15s}
-.bnb-icon{width:20px;height:2px;border-radius:2px;background:transparent;transition:background .15s,box-shadow .15s}
-.bnb-lbl {font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.3px}
-.bnb.on .bnb-lbl {color:var(--cyan)}
-.bnb.on .bnb-icon{background:var(--cyan);box-shadow:0 0 8px rgba(29,233,182,.6)}
+.hdr-logo { font-size:18px; font-weight:900; color:var(--cyan); letter-spacing:-.3px; }
+.hdr-ham { background:none; border:none; cursor:pointer; padding:6px; display:flex; flex-direction:column; gap:5px; }
+.hdr-ham span { display:block; width:22px; height:2px; background:var(--text2); border-radius:2px; transition:all .2s; }
+
+/* DRAWER */
+.drw-bg { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:400; opacity:0; pointer-events:none; transition:opacity .25s; }
+.drw-bg.open { opacity:1; pointer-events:auto; }
+.drw-panel {
+  position:fixed; top:0; right:0; width:260px; height:100%;
+  background:#0D1C2C; z-index:401;
+  padding:calc(env(safe-area-inset-top,0px) + 20px) 0 20px;
+  transform:translateX(100%); transition:transform .3s cubic-bezier(.2,1,.3,1);
+  border-left:1px solid var(--border);
+  overflow-y:auto;
+}
+.drw-bg.open .drw-panel { transform:translateX(0); }
+.drw-logo { font-size:22px; font-weight:900; color:var(--cyan); padding:0 20px 20px; border-bottom:1px solid var(--border); margin-bottom:8px; }
+.drw-item { display:flex; align-items:center; gap:12px; padding:14px 20px; cursor:pointer; transition:background .15s; color:var(--text2); font-size:15px; font-weight:600; }
+.drw-item:hover { background:rgba(255,255,255,.05); }
+.drw-item.active { color:var(--cyan); background:rgba(29,233,182,.08); }
+.drw-item .di-emoji { font-size:20px; width:28px; text-align:center; }
 
 /* ══ FAB ══════════════════════════════════════════════════ */
 .fab-wrap{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:20px;display:flex;gap:10px;z-index:300}
@@ -571,8 +588,7 @@ select option{background:#111D2C;color:#fff}
 .txn-del{flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--muted2);font-size:13px;padding:4px 6px;transition:color .15s,background .15s;border-radius:6px;}
 .txn-del:active{color:var(--neg);background:rgba(255,107,107,.12);}
 
-/* ── 6. NAV PILL ── */
-.nav-pill{position:absolute;bottom:0;height:3px;background:var(--cyan);border-radius:3px;box-shadow:0 0 10px rgba(29,233,182,.7);transition:left .3s cubic-bezier(.2,1,.3,1),width .3s cubic-bezier(.2,1,.3,1);pointer-events:none;}
+/* ── 6. NAV PILL (legacy, kept for compat) ── */
 
 /* ── 8. SHIMMER ON CREDIT CARDS ── */
 .cc::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.09) 50%,transparent 80%);background-size:200% 100%;animation:shimmer 4s 2.5s ease-in-out infinite;}
@@ -583,6 +599,31 @@ select option{background:#111D2C;color:#fff}
 @keyframes slideFromLeft{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
 .screen.slide-r{animation:slideFromRight .24s cubic-bezier(.2,1,.3,1) both}
 .screen.slide-l{animation:slideFromLeft .24s cubic-bezier(.2,1,.3,1) both}
+
+/* ── LIGHT THEME ── */
+html.theme-light {
+  --bg:#F5F7FA; --bg2:#EEF0F4; --card:#FFFFFF; --card2:#F0F2F6;
+  --border:rgba(0,0,0,.08); --border2:rgba(0,0,0,.14);
+  --text:#1A2030; --text2:rgba(26,32,48,.75); --muted:rgba(26,32,48,.45); --muted2:rgba(26,32,48,.22);
+}
+html.theme-light body { background: linear-gradient(180deg, #0B1520 0px, #0B1520 200px, #F5F7FA 400px, #F5F7FA 100%); }
+html.theme-light .top-hdr { background:rgba(9,16,26,.96); }
+html.theme-light .hero { background:linear-gradient(170deg,#0C1E30 0%,#0B1520 100%); }
+html.theme-light .page-hdr { background:transparent; }
+html.theme-light .card { background:var(--card); box-shadow:0 2px 12px rgba(0,0,0,.08); }
+html.theme-light .drw-panel { background:#FFFFFF; border-left:1px solid rgba(0,0,0,.08); }
+html.theme-light .drw-item { color:rgba(26,32,48,.75); }
+html.theme-light .drw-logo { color:var(--cyan); }
+
+/* ── SETTINGS MODAL ── */
+.modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:700; align-items:center; justify-content:center; padding:24px; }
+.modal-bg.open { display:flex; }
+.modal-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.modal-title { font-size:17px; font-weight:800; }
+.modal-close { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; }
+.inp { display:block; width:100%; font-family:'Sora',sans-serif; font-size:13px; padding:10px 12px; border:1.5px solid var(--border2); border-radius:12px; background:rgba(255,255,255,.07); color:var(--text); outline:none; }
+.inp:focus { border-color:var(--cyan); }
+.btn-primary { width:100%; background:var(--cyan); color:#0A1520; font-family:'Sora',sans-serif; font-size:14px; font-weight:800; padding:12px; border-radius:12px; border:none; cursor:pointer; }
 </style>
 </head>
 <body>
