@@ -1207,7 +1207,8 @@ html.mode-private .biz-only{ display:none!important; }
           <button class="gp-btn"    data-d="365" onclick="setGmailPeriod(365)">שנה</button>
         </div>
         <button onclick="gmailFetch(_gmailDays)" style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:14px;font-weight:800;padding:12px 28px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 2px 14px rgba(29,233,182,.3)">סרקי מיילים ›</button>
-        <div style="margin-top:16px"><button onclick="resetGmailSetup()" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;font-family:Sora,sans-serif;text-decoration:underline">התנתקי</button></div>
+        <div id="gmail-status2" style="font-size:13px;color:var(--cyan);margin-top:16px;min-height:18px;font-weight:600"></div>
+        <div style="margin-top:8px"><button onclick="resetGmailSetup()" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;font-family:Sora,sans-serif;text-decoration:underline">התנתקי</button></div>
       </div>
     </div>
 
@@ -1306,7 +1307,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260703;
+var APP_VER=20260704;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -3297,7 +3298,7 @@ function resetGmailSetup(){
   var pre=document.getElementById('gmail-pre-auth');
   if(pre)pre.style.display='block';
   document.getElementById('gmail-period-wrap').style.display='none';
-  document.getElementById('gmail-status').textContent='';
+  gmStatus('');
   toast('התנתקת מגוגל');
 }
 
@@ -3347,77 +3348,147 @@ function gmailIsDup(t){
   return null;
 }
 
+// Status helper — writes to whichever status element is visible
+function gmStatus(txt,isErr){
+  var ids=['gmail-status','gmail-status2'];
+  for(var i=0;i<ids.length;i++){
+    var el=document.getElementById(ids[i]);
+    if(el){el.textContent=txt;el.style.color=isErr?'var(--neg)':'var(--cyan)';}
+  }
+}
+// base64url → UTF-8 string
+function b64uDecode(s){
+  try{
+    s=s.replace(/-/g,'+').replace(/_/g,'/');
+    while(s.length%4)s+='=';
+    var bin=atob(s),bytes=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  }catch(e){return '';}
+}
+// Walk a message payload and collect all text (plain + stripped HTML)
+function gmailBodyText(payload){
+  if(!payload)return '';
+  var out='';
+  function walk(p){
+    if(!p)return;
+    if(p.body&&p.body.data){
+      var t=b64uDecode(p.body.data);
+      if((p.mimeType||'').indexOf('html')>=0){
+        t=t.replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<script[\s\S]*?<\/script>/gi,' ')
+           .replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&')
+           .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#8362;/g,'₪').replace(/&#?\w+;/g,' ');
+      }
+      out+=' '+t;
+    }
+    if(p.parts)p.parts.forEach(walk);
+  }
+  walk(payload);
+  return out.replace(/\s+/g,' ');
+}
+
 function gmailFetch(days){
   days=days||_gmailDays||30;
-  document.getElementById('gmail-status').textContent='מחפש עסקאות...';
-  var query='from:(max.co.il OR isracard.co.il OR leumi.co.il OR bankhapoalim.co.il OR cal.co.il) newer_than:'+days+'d';
-  fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?q='+encodeURIComponent(query)+'&maxResults=80',{
+  if(!_gmailToken){gmStatus('צריך להתחבר שוב לגוגל',true);return;}
+  gmStatus('מחפש עסקאות...');
+  document.getElementById('gmail-found').style.display='none';
+  var query='from:(max.co.il OR isracard.co.il OR leumi.co.il OR bankhapoalim.co.il OR cal.co.il OR mizrahi-tefahot.co.il OR discountbank.co.il OR pepper.co.il OR onezero.co.il) newer_than:'+days+'d';
+  fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?q='+encodeURIComponent(query)+'&maxResults=120',{
     headers:{Authorization:'Bearer '+_gmailToken}
-  }).then(function(r){return r.json();}).then(function(data){
+  }).then(function(r){
+    if(r.status===401||r.status===403){gmStatus('ההרשאה פגה — התחברי שוב לגוגל',true);_gmailToken=null;throw new Error('auth');}
+    return r.json();
+  }).then(function(data){
     var msgs=data.messages||[];
-    document.getElementById('gmail-status').textContent='נמצאו '+msgs.length+' מיילים, מנתח...';
-    var fetches=msgs.slice(0,60).map(function(m){
-      return fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/'+m.id+'?format=metadata&metadataHeaders=Subject',{
+    if(!msgs.length){gmStatus('לא נמצאו מיילים מהבנקים בתקופה זו',true);return;}
+    gmStatus('נמצאו '+msgs.length+' מיילים, קורא ומנתח...');
+    var slice=msgs.slice(0,100);
+    var done=0;
+    var fetches=slice.map(function(m){
+      return fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/'+m.id+'?format=full',{
         headers:{Authorization:'Bearer '+_gmailToken}
-      }).then(function(r){return r.json();});
+      }).then(function(r){return r.json();}).then(function(j){
+        done++;if(done%10===0)gmStatus('מנתח... '+done+'/'+slice.length);
+        return j;
+      }).catch(function(){return null;});
     });
     Promise.all(fetches).then(function(results){
       _gmailParsed=[];
-      results.forEach(function(msg){parseGmailMsg(msg);});
+      results.forEach(function(msg){if(msg)parseGmailMsg(msg);});
+      dedupeParsed();
       renderGmailTxns();
     });
   }).catch(function(e){
-    document.getElementById('gmail-status').textContent='שגיאה בגישה לג׳ימייל';
+    if(e&&e.message==='auth')return;
+    gmStatus('שגיאה בגישה לג׳ימייל — נסי שוב',true);
   });
 }
-// Parse common Israeli bank/card email formats
+// Remove duplicate transactions found within the same scan (same amount+date+desc)
+function dedupeParsed(){
+  var seen={},out=[];
+  _gmailParsed.forEach(function(t){
+    var k=t.a+'|'+t.d+'|'+(t.desc||'').slice(0,12);
+    if(seen[k])return;
+    seen[k]=1;out.push(t);
+  });
+  _gmailParsed=out;
+}
+// Parse common Israeli bank/card email formats — now reads the FULL email body
 function parseGmailMsg(msg){
-  var snip=msg.snippet||'';
-  // include subject header text in the searchable string
-  var subj='';
+  var subj='',from='';
   if(msg.payload&&msg.payload.headers){
-    msg.payload.headers.forEach(function(h){if(h.name==='Subject')subj=h.value;});
+    msg.payload.headers.forEach(function(h){
+      if(h.name==='Subject')subj=h.value;
+      if(h.name==='From')from=h.value;
+    });
   }
-  var text=subj+' '+snip;
+  var body=gmailBodyText(msg.payload);
+  var text=subj+' '+ (msg.snippet||'') +' '+body;
   var date=msg.internalDate?new Date(parseInt(msg.internalDate)):new Date();
-  var d=String(date.getDate()).padStart(2,'0')+'/'+String(date.getMonth()+1).padStart(2,'0');
-  var mo=date.getMonth()+1,yr=date.getFullYear();
+  var emailMo=date.getMonth()+1,yr=date.getFullYear();
+  var emailD=String(date.getDate()).padStart(2,'0')+'/'+String(date.getMonth()+1).padStart(2,'0');
 
-  var m2=text.match(/([\d,]+(?:\.\d+)?)\s*[₪]\s*.*?(?:ב-|ב )(\d{1,2})[./](\d{1,2})/);
-  var m1=text.match(/חיוב\s+(?:של\s+)?([\d,]+(?:\.\d+)?)\s*[₪]/);
-  var m3=text.match(/(?:עסקה|פעולה|חויב|חוייב).*?([\d,]+(?:\.\d+)?)\s*[₪]/);
-  var m4=text.match(/([\d,]+(?:\.\d+)?)\s*[₪]\s+(?:ב-?|ב)([^\d,]{3,30})/);
-
-  var amt=0,desc='';
-  if(m2){
-    amt=parseFloat(m2[1].replace(/,/g,''));
-    var biz=text.match(/(?:ב-?|ב )([^\d,₪\n]{3,25})(?:\s|$)/);
-    desc=biz?biz[1].trim():'חיוב מכרטיס';
-    d=String(parseInt(m2[2])).padStart(2,'0')+'/'+String(parseInt(m2[3])).padStart(2,'0');
-    mo=parseInt(m2[3]);
-  }else if(m1){
-    amt=parseFloat(m1[1].replace(/,/g,''));
-    var biz2=text.match(/(?:ב-?|ב )([^\d,₪\n]{3,25})/);
-    desc=biz2?biz2[1].trim():'חיוב מכרטיס';
-  }else if(m3){
-    amt=parseFloat(m3[1].replace(/,/g,''));
-    desc='פעולת כרטיס';
-  }else if(m4){
-    amt=parseFloat(m4[1].replace(/,/g,''));
-    desc=m4[2].trim();
-  }
-
+  // payment method from sender / text
   var method='mc';
-  if(/visa|ויזה/i.test(text))method='visa';
-  else if(/leumi|לאומי|הפועלים|דיסקונט|עו"ש|עוש/i.test(text))method='bank';
+  if(/visa|ויזה|cal\.co\.il|כאל/i.test(text+from))method='visa';
+  else if(/leumi|לאומי|הפועלים|hapoalim|דיסקונט|discount|מזרחי|mizrahi|עו"ש|עוש|pepper|onezero|ביט/i.test(text+from))method='bank';
 
-  if(amt>5&&amt<50000&&desc){
-    _gmailParsed.push({d:d,desc:desc,a:amt,method:method,monthKey:mo,year:yr,raw:text.slice(0,90)});
+  // amount: number followed/preceded by ₪ or ש"ח, possibly with "בסך"/"בסכום של"/"חיוב"
+  var amtRe=/(?:בסך(?:\s+של)?|בסכום(?:\s+של)?|חיוב(?:\s+של)?|ע"ס|בעלות|סכום:?)\s*₪?\s*([\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?)\s*(?:₪|ש"ח|ש״ח|שקל)?/g;
+  var altRe=/₪\s*([\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?)|([\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?)\s*(?:₪|ש"ח|ש״ח)/g;
+
+  // try to find a transaction date inside the body (DD/MM or DD.MM)
+  var dm=text.match(/(?:בתאריך|ב-?)\s*(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/);
+  var txnD=emailD,txnMo=emailMo;
+  if(dm){
+    txnD=String(parseInt(dm[1])).padStart(2,'0')+'/'+String(parseInt(dm[2])).padStart(2,'0');
+    txnMo=parseInt(dm[2]);
   }
+
+  // business / description: text after "בבית עסק" / "ב-" / "אצל"
+  function findDesc(){
+    var bm=text.match(/(?:בבית\s*עסק|בית\s*העסק|אצל|ב-)\s*[:\-]?\s*([^\d₪\n,.]{2,30}?)(?:\s*(?:בסך|בסכום|בתאריך|ב-?\d|₪|\.|,|$))/);
+    if(bm&&bm[1].trim().length>1)return bm[1].trim();
+    if(/הוראת\s*קבע|הו"ק/.test(text))return 'הוראת קבע';
+    if(/משיכת\s*מזומן/.test(text))return 'משיכת מזומן';
+    return subj?subj.slice(0,28):'חיוב מהבנק';
+  }
+
+  var found={},mm;
+  while((mm=amtRe.exec(text))){var a=parseFloat(mm[1].replace(/,/g,''));if(a>3&&a<200000)found[a]=1;}
+  if(!Object.keys(found).length){while((mm=altRe.exec(text))){var a2=parseFloat((mm[1]||mm[2]).replace(/,/g,''));if(a2>3&&a2<200000)found[a2]=1;}}
+
+  var amts=Object.keys(found).map(parseFloat);
+  if(!amts.length)return;
+  // use the largest plausible amount as the charge (avoids picking minutiae like fees)
+  var amt=Math.max.apply(null,amts);
+  var desc=findDesc();
+
+  _gmailParsed.push({d:txnD,desc:desc,a:amt,method:method,monthKey:txnMo,year:yr,raw:(subj+' · '+body.slice(0,80)).slice(0,110)});
 }
 function renderGmailTxns(){
   if(!_gmailParsed.length){
-    document.getElementById('gmail-status').textContent='לא נמצאו עסקאות בתקופה זו';
+    gmStatus('לא זוהו עסקאות במיילים שנסרקו',true);
     document.getElementById('gmail-found').style.display='none';
     return;
   }
@@ -3429,7 +3500,7 @@ function renderGmailTxns(){
     else if(t._dup==='close')nClose++;
   });
   var nNew=_gmailParsed.length-nExact-nClose;
-  document.getElementById('gmail-status').textContent='נמצאו '+_gmailParsed.length+' עסקאות';
+  gmStatus('נמצאו '+_gmailParsed.length+' עסקאות');
   var dupNote='';
   if(nNew)   dupNote+=nNew+' חדשות';
   if(nClose) dupNote+=(dupNote?' · ':'')+nClose+' ⚠ אולי כפולות';
