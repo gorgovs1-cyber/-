@@ -987,8 +987,8 @@ html.theme-light .drw-panel { background:#112438; }
   </div>
   <div style="padding:20px 16px">
 
-    <!-- STATE A: No Client ID → friendly 3-step setup -->
-    <div id="gmail-setup">
+    <!-- STATE A: hidden — Client ID is hardcoded -->
+    <div id="gmail-setup" style="display:none">
       <div style="text-align:center;margin-bottom:24px">
         <div style="font-size:40px;margin-bottom:10px">📧</div>
         <div style="font-size:17px;font-weight:800;margin-bottom:8px">חיבור Gmail</div>
@@ -1008,8 +1008,8 @@ html.theme-light .drw-panel { background:#112438; }
       <div style="text-align:center;font-size:11px;color:var(--muted)">רק פעם אחת — לאחר מכן כפתור אחד יחפש עסקאות</div>
     </div>
 
-    <!-- STATE B: Has Client ID → big Google button -->
-    <div id="gmail-connect-wrap" style="display:none;text-align:center">
+    <!-- STATE B: always visible — Client ID hardcoded -->
+    <div id="gmail-connect-wrap" style="display:block;text-align:center">
       <div style="font-size:40px;margin-bottom:10px">📧</div>
       <div style="font-size:17px;font-weight:800;margin-bottom:6px">Gmail מחובר</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:24px">לחצי להתחברות ולסריקת עסקאות</div>
@@ -1029,7 +1029,7 @@ html.theme-light .drw-panel { background:#112438; }
         <button onclick="gmailFetch(_gmailDays)" style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:14px;font-weight:800;padding:12px 28px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 2px 14px rgba(29,233,182,.3)">סרקי מיילים ›</button>
       </div>
       <div id="gmail-status" style="font-size:12px;color:var(--muted);margin-top:14px;min-height:18px"></div>
-      <button onclick="resetGmailSetup()" style="margin-top:16px;background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;font-family:Sora,sans-serif;text-decoration:underline">שנה חשבון</button>
+      <button onclick="resetGmailSetup()" style="margin-top:16px;background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;font-family:Sora,sans-serif;text-decoration:underline">התנתקי</button>
     </div>
 
   </div>
@@ -1112,7 +1112,8 @@ html.theme-light .drw-panel { background:#112438; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260625;
+var APP_VER=20260626;
+var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Robust auto-update: fetch the live file (bypassing cache) and hard-reload past
 // the iOS/CDN cache via a ?v= URL when a newer deploy is detected.
 (function(){
@@ -3027,38 +3028,28 @@ function setGmailPeriod(d){
 }
 
 function renderGcal(){
-  var cid=localStorage.getItem('shani_gmail_cid')||'';
   var noCid=document.getElementById('gcal-no-cid');
   var area=document.getElementById('gcal-connect-area');
-  if(!cid){if(noCid)noCid.style.display='block';if(area)area.style.display='none';}
-  else{if(noCid)noCid.style.display='none';if(area)area.style.display='block';}
+  if(noCid)noCid.style.display='none';
+  if(area)area.style.display='block';
 }
 
 function renderGmail(){
-  var cid=localStorage.getItem('shani_gmail_cid')||'';
   var setup=document.getElementById('gmail-setup');
   var wrap=document.getElementById('gmail-connect-wrap');
-  if(cid){
-    if(setup)setup.style.display='none';
-    if(wrap)wrap.style.display='block';
-    if(_gmailToken){
-      var btn=document.getElementById('gmail-auth-btn');
-      if(btn){btn.innerHTML='<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#fff" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg> ✓ מחוברת לגוגל';}
-      document.getElementById('gmail-period-wrap').style.display='block';
-    }
-  } else {
-    if(setup)setup.style.display='block';
-    if(wrap)wrap.style.display='none';
-    var inp=document.getElementById('gmail-client-id');
-    if(inp)inp.value='';
+  if(setup)setup.style.display='none';
+  if(wrap)wrap.style.display='block';
+  if(_gmailToken){
+    var btn=document.getElementById('gmail-auth-btn');
+    if(btn){btn.innerHTML='<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#fff" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg> ✓ מחוברת לגוגל';}
+    document.getElementById('gmail-period-wrap').style.display='block';
   }
 }
 
 function resetGmailSetup(){
-  localStorage.removeItem('shani_gmail_cid');
   _gmailToken=null;
   renderGmail();
-  toast('אפס — הכניסי Client ID חדש');
+  toast('התנתקת מגוגל');
 }
 
 function saveGmailClientId(){
@@ -3070,8 +3061,7 @@ function saveGmailClientId(){
   toast('✓ נשמר — כעת לחצי כניסה עם Google');
 }
 function gmailAuth(){
-  var cid=localStorage.getItem('shani_gmail_cid');
-  if(!cid){toast('שמרי Client ID קודם');return;}
+  var cid=GMAIL_CID;
   if(typeof gapi==='undefined'){toast('Google API עוד נטען, נסי שוב');return;}
   document.getElementById('gmail-status').textContent='מתחבר...';
   gapi.load('auth2',function(){
@@ -3425,11 +3415,7 @@ function gcalStatus(msg,col){
 }
 
 function gcalConnect(){
-  var cid=localStorage.getItem('shani_gmail_cid');
-  if(!cid){
-    gcalStatus('קודם הגדירי Client ID בטאב Gmail','var(--neg)');
-    return;
-  }
+  var cid=GMAIL_CID;
   if(typeof gapi==='undefined'){
     gcalStatus('Google API עוד נטען — נסי שוב','var(--neg)');
     return;
