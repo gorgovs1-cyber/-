@@ -679,6 +679,14 @@ html.theme-light .drw-panel { background:#112438; }
 .btn-primary { width:100%; background:linear-gradient(135deg,#2AF0C2,#1DE9B6); color:#0A1520; font-family:'Sora',sans-serif; font-size:14px; font-weight:800; padding:12px; border-radius:12px; border:none; cursor:pointer; box-shadow:0 6px 18px -8px rgba(29,233,182,.5); transition:transform .12s,filter .12s; }
 .btn-primary:active { transform:scale(.97); filter:brightness(.94); }
 
+/* private/business mode: hide client UI in private mode */
+html.mode-private .biz-only{ display:none!important; }
+
+/* mode pill in drawer */
+.mode-switch{ display:flex; gap:6px; margin:10px 20px 4px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:4px; }
+.mode-opt{ flex:1; text-align:center; padding:8px 0; border-radius:9px; font-family:'Sora',sans-serif; font-size:12px; font-weight:700; color:var(--muted); cursor:pointer; border:none; background:none; transition:all .18s; }
+.mode-opt.on{ background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; }
+
 /* accessibility: respect reduced-motion preference */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{ animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; }
@@ -699,15 +707,19 @@ html.theme-light .drw-panel { background:#112438; }
 <div class="drw-bg" id="drw-bg" onclick="closeDrawer()">
   <nav class="drw-panel" onclick="event.stopPropagation()">
     <div class="drw-logo"><span class="drw-logo-mark">₪</span> My Money</div>
+    <div class="mode-switch">
+      <button class="mode-opt" id="mode-biz" onclick="setMode('business')">עסקי</button>
+      <button class="mode-opt" id="mode-priv" onclick="setMode('private')">פרטי</button>
+    </div>
     <div class="drw-item" data-page="home" onclick="go('home');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-5.5h5V20"/></svg></span><span>בית</span></div>
-    <div class="drw-item" data-page="clients" onclick="go('clients');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 5.6"/><path d="M16.2 13.4a5.5 5.5 0 0 1 4.3 6.1"/></svg></span><span>לקוחות</span></div>
+    <div class="drw-item biz-only" data-page="clients" onclick="go('clients');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 5.6"/><path d="M16.2 13.4a5.5 5.5 0 0 1 4.3 6.1"/></svg></span><span>לקוחות</span></div>
     <div class="drw-item" data-page="goals" onclick="go('goals');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg></span><span>מטרות</span></div>
     <div class="drw-item" data-page="fixed" onclick="go('fixed');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/><path d="M6 14.5h4"/></svg></span><span>תשלומים קבועים</span></div>
     <div class="drw-item" data-page="gmail" onclick="go('gmail');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></span><span>Gmail</span></div>
     <div class="drw-item" data-page="income" onclick="go('income');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 16.5V8"/><path d="m8.5 11.5 3.5-3.5 3.5 3.5"/></svg></span><span>הכנסות</span></div>
     <div class="drw-item" data-page="expenses" onclick="go('expenses');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V16"/><path d="m8.5 12.5 3.5 3.5 3.5-3.5"/></svg></span><span>הוצאות</span></div>
     <div class="drw-item" data-page="balance" onclick="go('balance');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><rect x="5" y="10" width="3.4" height="8" rx="1"/><rect x="10.3" y="5.5" width="3.4" height="12.5" rx="1"/><rect x="15.6" y="13" width="3.4" height="5" rx="1"/></svg></span><span>מאזן</span></div>
-    <div class="drw-item" data-page="gcal" onclick="go('gcal');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M8 3v4"/><path d="M16 3v4"/></svg></span><span>יומן גוגל</span></div>
+    <div class="drw-item biz-only" data-page="gcal" onclick="go('gcal');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M8 3v4"/><path d="M16 3v4"/></svg></span><span>יומן גוגל</span></div>
     <div style="border-top:1px solid var(--border);margin:8px 0"></div>
     <div class="drw-item" onclick="openSettings()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M5 7h8"/><circle cx="16.5" cy="7" r="2.3"/><path d="M19 17h-8"/><circle cx="7.5" cy="17" r="2.3"/></svg></span><span>הגדרות</span></div>
     <div class="drw-item" onclick="toggleTheme()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></span><span id="theme-lbl">מצב ים</span></div>
@@ -1174,7 +1186,7 @@ html.theme-light .drw-panel { background:#112438; }
   <button class="btm-item" data-page="home" onclick="go('home')" aria-label="בית">
     <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-5.5h5V20"/></svg><span>בית</span>
   </button>
-  <button class="btm-item" data-page="clients" onclick="go('clients')" aria-label="לקוחות">
+  <button class="btm-item biz-only" data-page="clients" onclick="go('clients')" aria-label="לקוחות">
     <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 5.6"/><path d="M16.2 13.4a5.5 5.5 0 0 1 4.3 6.1"/></svg><span>לקוחות</span>
   </button>
   <button class="btm-item" data-page="expenses" onclick="go('expenses')" aria-label="הוצאות">
@@ -1192,7 +1204,7 @@ html.theme-light .drw-panel { background:#112438; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260632;
+var APP_VER=20260633;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Robust auto-update: fetch the live file (bypassing cache) and hard-reload past
 // the iOS/CDN cache via a ?v= URL when a newer deploy is detected.
@@ -2111,7 +2123,7 @@ function renderHome(){
   }
   document.getElementById('home-sub').innerHTML=
     '<b>עכשיו: '+(r.balNow>=0?'+':'')+'₪'+fmt(r.balNow)+'</b>'+
-    ' · עם צפי לקוחות: <b>+₪'+fmt(r.planAmt)+'</b>'+paceTxt;
+    (APP_MODE==='business'?' · עם צפי לקוחות: <b>+₪'+fmt(r.planAmt)+'</b>':'')+paceTxt;
 
   // Alert — only show upcoming bills that haven't been paid yet
   var todayD2=now.getDate(), todayM2=now.getMonth()+1;
@@ -2158,7 +2170,7 @@ function renderUpcoming(r){
     if(tD<15) items.push({label:'ויזה',date:'15/'+String(r.m).padStart(2,'0'),days:15-tD,amt:r.vBill,color:'#6BA3FF'});
     if(tD<20) items.push({label:'מאסטרקארד',date:'20/'+String(r.m).padStart(2,'0'),days:20-tD,amt:r.mcBill,color:'#B57BEE'});
     if(tD<25) items.push({label:'ביטוח לאומי נכנס',date:'25/'+String(r.m).padStart(2,'0'),days:25-tD,amt:FIXED_MAP[r.m]||FIXED,color:'#1DE9B6',income:true});
-    r.planList.forEach(function(c){
+    if(APP_MODE==='business') r.planList.forEach(function(c){
       var d=c.day,days=d-tD;
       if(days>=0) items.push({label:c.name,date:String(d).padStart(2,'0')+'/'+String(r.m).padStart(2,'0'),days:days,amt:c.amount,color:'#1DE9B6',income:true});
     });
@@ -3651,6 +3663,26 @@ function toggleTheme() {
   localStorage.setItem('shani_theme', _theme);
   applyTheme();
 }
+
+// ── PRIVATE / BUSINESS MODE ──────────────────────────────
+var APP_MODE = localStorage.getItem('shani_mode')||'business';
+function applyMode() {
+  document.documentElement.classList.toggle('mode-private', APP_MODE==='private');
+  var b=document.getElementById('mode-biz'), p=document.getElementById('mode-priv');
+  if(b)b.classList.toggle('on', APP_MODE==='business');
+  if(p)p.classList.toggle('on', APP_MODE==='private');
+}
+function setMode(m) {
+  APP_MODE=m;
+  localStorage.setItem('shani_mode', m);
+  applyMode();
+  // if currently on a business-only screen in private mode, bounce home
+  if(m==='private' && (_prevScreen==='clients'||_prevScreen==='gcal')) go('home');
+  else renderHome();
+  closeDrawer();
+  toast(m==='private'?'מצב פרטי':'מצב עסקי');
+}
+applyMode();
 </script>
 </body>
 </html>
