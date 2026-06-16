@@ -105,6 +105,65 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 }
 @keyframes spFade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
+/* ══ AUTH (login / signup) ═══════════════════════════════ */
+#auth-screen{
+  position:fixed;inset:0;z-index:9000;display:none;
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:24px calc(20px + env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) calc(20px + env(safe-area-inset-left,0px));
+  background:radial-gradient(120% 80% at 50% 0%,#0E2436 0%,#0A1422 55%,#070F1A 100%);
+  overflow-y:auto;
+}
+#auth-screen.show{display:flex;animation:spFade .4s ease both}
+.auth-card{width:100%;max-width:380px;text-align:center}
+.auth-logo{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:6px}
+.auth-mark{
+  font-size:38px;font-weight:900;color:#00FFD4;line-height:1;
+  text-shadow:0 0 26px rgba(0,255,212,.7),0 0 60px rgba(0,255,212,.3);
+}
+.auth-title{font-size:30px;font-weight:900;font-style:italic;color:#00FFD4;letter-spacing:.5px}
+.auth-sub{font-size:13px;color:var(--text2);margin-bottom:26px;line-height:1.5}
+.auth-google{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+  background:#fff;color:#1F2937;font-family:'Sora',sans-serif;font-size:15px;font-weight:700;
+  padding:13px 16px;border:none;border-radius:14px;cursor:pointer;
+  box-shadow:0 4px 18px -6px rgba(0,0,0,.5);transition:transform .12s ease,box-shadow .12s ease;
+}
+.auth-google:active{transform:scale(.98)}
+.auth-google svg{width:20px;height:20px;flex:none}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:11px;font-weight:600}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border2)}
+.auth-fields{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.auth-fields input{
+  width:100%;font-family:'Sora',sans-serif;font-size:15px;text-align:right;
+  padding:13px 15px;border:1.5px solid var(--border2);border-radius:13px;
+  background:rgba(255,255,255,.06);color:var(--text);outline:none;
+}
+.auth-fields input:focus{border-color:var(--cyan);background:rgba(29,233,182,.06)}
+.auth-mode{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 2px 0}
+.auth-mode>span{font-size:12px;color:var(--text2);font-weight:600}
+.auth-mode-switch{display:flex;background:rgba(255,255,255,.06);border:1px solid var(--border2);border-radius:11px;padding:3px;gap:3px}
+.auth-mode-switch button{
+  font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:var(--muted);
+  background:transparent;border:none;padding:7px 16px;border-radius:8px;cursor:pointer;transition:all .15s ease;
+}
+.auth-mode-switch button.on{background:var(--cyan);color:#08131F;box-shadow:0 2px 10px rgba(29,233,182,.3)}
+.auth-primary{
+  width:100%;background:var(--cyan);color:#08131F;font-family:'Sora',sans-serif;
+  font-size:16px;font-weight:800;padding:14px;border:none;border-radius:14px;cursor:pointer;
+  box-shadow:0 4px 20px -4px rgba(29,233,182,.45);transition:transform .12s ease;
+}
+.auth-primary:active{transform:scale(.98)}
+.auth-primary:disabled{opacity:.6;cursor:default}
+.auth-err{min-height:18px;font-size:12.5px;font-weight:600;color:var(--neg);margin-top:11px}
+.auth-toggle{margin-top:16px;font-size:13px;color:var(--text2);cursor:pointer}
+.auth-toggle b{color:var(--cyan);font-weight:700}
+.drw-account{font-size:11px;color:var(--muted);padding:6px 16px 2px;word-break:break-all;display:flex;align-items:center;gap:6px}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:none}
+.sync-dot.ok{background:var(--pos);box-shadow:0 0 8px rgba(0,230,118,.6)}
+.sync-dot.err{background:var(--neg)}
+.sync-dot.busy{background:#FFB347;animation:syncPulse 1s ease-in-out infinite}
+@keyframes syncPulse{50%{opacity:.4}}
+
 /* ══ SCREENS ═════════════════════════════════════════════ */
 .screen{display:none;padding-top:calc(env(safe-area-inset-top,0px) + 62px);padding-bottom:calc(78px + env(safe-area-inset-bottom,0px));animation:fadeUp .22s ease both}
 .screen.active{display:block}
@@ -729,6 +788,8 @@ html.mode-private .biz-only{ display:none!important; }
     <div style="border-top:1px solid var(--border);margin:8px 0"></div>
     <div class="drw-item" onclick="openSettings()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M5 7h8"/><circle cx="16.5" cy="7" r="2.3"/><path d="M19 17h-8"/><circle cx="7.5" cy="17" r="2.3"/></svg></span><span>הגדרות</span></div>
     <div class="drw-item" onclick="toggleTheme()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></span><span id="theme-lbl">מצב ים</span></div>
+    <div class="drw-item" id="drw-logout" style="display:none" onclick="authLogout()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M14 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H14"/><path d="M18 15.5 21.5 12 18 8.5"/><path d="M21 12h-10"/></svg></span><span>התנתקות</span></div>
+    <div class="drw-account" id="drw-account" style="display:none"><span class="sync-dot" id="sync-dot"></span><span id="drw-account-email"></span></div>
   </nav>
 </div>
 
@@ -742,6 +803,37 @@ html.mode-private .biz-only{ display:none!important; }
   </div>
   <div class="sp-greet" id="sp-greet">ערב טוב שני</div>
   <div class="sp-sub">Personal Finance</div>
+</div>
+
+<!-- ══ AUTH (login / signup) ═════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo"><span class="auth-mark">₪</span><span class="auth-title">My Money</span></div>
+    <div class="auth-sub" id="auth-sub">התחברי כדי לסנכרן את הנתונים בכל המכשירים</div>
+
+    <button class="auth-google" onclick="authGoogle()">
+      <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.5-2.1 14.3-5.6l-6.6-5.6C29.6 34.6 26.9 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.6 5.1C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.4l6.6 5.6C39.9 41.4 44 36.3 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
+      המשך עם Google
+    </button>
+
+    <div class="auth-divider"><span>או</span></div>
+
+    <div class="auth-fields">
+      <input id="auth-email" type="email" inputmode="email" placeholder="אימייל" autocomplete="email">
+      <input id="auth-pass" type="password" placeholder="סיסמה" autocomplete="current-password">
+      <div class="auth-mode" id="auth-mode-wrap" style="display:none">
+        <span>סוג חשבון</span>
+        <div class="auth-mode-switch">
+          <button id="auth-mode-biz" class="on" onclick="authPickMode('business')">עסקי</button>
+          <button id="auth-mode-priv" onclick="authPickMode('private')">פרטי</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="auth-primary" id="auth-primary-btn" onclick="authSubmit()">התחברי</button>
+    <div class="auth-err" id="auth-err"></div>
+    <div class="auth-toggle" id="auth-toggle" onclick="authToggleMode()">אין לך חשבון? <b>הרשמי</b></div>
+  </div>
 </div>
 
 <!-- ══ HOME ══════════════════════════════════════════════ -->
@@ -1207,11 +1299,26 @@ html.mode-private .biz-only{ display:none!important; }
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<!-- Firebase (compat build — works without bundler, ES5-friendly) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260634;
+var APP_VER=20260701;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
+// Firebase config (web API key is public by design — security is enforced by
+// Firestore rules + Auth, not by hiding this key).
+var firebaseConfig={
+  apiKey:"AIzaSyAKS7Y4rxWqwGvwhxB2RL-jaf8tMZuV-as",
+  authDomain:"my-money-a8eb7.firebaseapp.com",
+  projectId:"my-money-a8eb7",
+  storageBucket:"my-money-a8eb7.firebasestorage.app",
+  messagingSenderId:"191495526763",
+  appId:"1:191495526763:web:f467d2352e5c5fd78a142e",
+  measurementId:"G-8MXLWSJ8WJ"
+};
 // Robust auto-update: fetch the live file (bypassing cache) and hard-reload past
 // the iOS/CDN cache via a ?v= URL when a newer deploy is detected.
 (function(){
@@ -1945,8 +2052,9 @@ function save(){
     localStorage.setItem('shani_budgets',JSON.stringify(BUDGETS));
     localStorage.setItem('shani_fp', JSON.stringify(FIXED_PAYMENTS));
   }catch(e){}
+  cloudPush();
 }
-function saveGoals(){try{localStorage.setItem('shani_goals',JSON.stringify(GOALS));}catch(e){}}
+function saveGoals(){try{localStorage.setItem('shani_goals',JSON.stringify(GOALS));}catch(e){}cloudPush();}
 var CLIENTS_VERSION=20;  // bump to force reload clients from code
 var CARDS_VERSION=10;    // bump to force reload cards from code
 function load(){
@@ -3385,6 +3493,9 @@ var _tourIdx=0;
 
 function startTour(manual){
   if(!manual && localStorage.getItem('shani_onboarded')) return;
+  // don't pop the tour over the login screen — it will show after sign-in
+  var as=document.getElementById('auth-screen');
+  if(!manual && as && as.classList.contains('show')) return;
   _tourIdx=0;
   // make sure we're on the home screen so targets exist
   if(document.getElementById('s-home')&&!document.getElementById('s-home').classList.contains('active')) go('home');
@@ -3490,11 +3601,11 @@ function updateBottomNav(name) {
 
 // ── CLIENT PROFILES ──────────────────────────────────────
 var CLIENT_PROFILES = JSON.parse(localStorage.getItem('shani_cp')||'{}');
-function saveCPs() { localStorage.setItem('shani_cp', JSON.stringify(CLIENT_PROFILES)); }
+function saveCPs() { localStorage.setItem('shani_cp', JSON.stringify(CLIENT_PROFILES)); cloudPush(); }
 
 // ── SETTINGS ─────────────────────────────────────────────
 var SETTINGS = JSON.parse(localStorage.getItem('shani_settings')||'{}');
-function saveSettings() { localStorage.setItem('shani_settings', JSON.stringify(SETTINGS)); }
+function saveSettings() { localStorage.setItem('shani_settings', JSON.stringify(SETTINGS)); cloudPush(); }
 function openSettings() {
   closeDrawer();
   var m = document.getElementById('settings-modal-bg');
@@ -3669,6 +3780,7 @@ function toggleTheme() {
   _theme = _theme==='light'?'dark':'light';
   localStorage.setItem('shani_theme', _theme);
   applyTheme();
+  cloudPush();
 }
 
 // ── PRIVATE / BUSINESS MODE ──────────────────────────────
@@ -3688,8 +3800,192 @@ function setMode(m) {
   else renderHome();
   closeDrawer();
   toast(m==='private'?'מצב פרטי':'מצב עסקי');
+  cloudPush();
 }
 applyMode();
+
+// ══ FIREBASE — AUTH + CLOUD SYNC ═══════════════════════════
+var fbAuth=null, fbDb=null, FB_UID=null, _syncTimer=null;
+var _authMode='login', _authPickedMode='business';
+
+// Replace an object's contents in-place (keeps the live reference others hold)
+function _replaceObj(target, src){ if(!src||typeof src!=='object') return; Object.keys(target).forEach(function(k){delete target[k];}); Object.keys(src).forEach(function(k){target[k]=src[k];}); }
+
+// Build a full snapshot of every persisted structure
+function cloudSnapshot(){
+  return {
+    clients:CLIENTS, expense:RAW.expense, income:RAW.income,
+    cards:CARDS, budgets:BUDGETS, fp:FIXED_PAYMENTS, goals:GOALS,
+    cp:CLIENT_PROFILES, settings:SETTINGS,
+    mode:APP_MODE, theme:_theme, ver:APP_VER, updatedAt:Date.now()
+  };
+}
+
+// Apply a cloud snapshot to the live app + mirror into localStorage
+function applyCloud(d){
+  if(!d) return;
+  _replaceObj(CLIENTS, d.clients);
+  _replaceObj(RAW.expense, d.expense);
+  _replaceObj(RAW.income, d.income);
+  _replaceObj(CARDS, d.cards); if(!CARDS.limit)CARDS.limit=10000;
+  _replaceObj(BUDGETS, d.budgets);
+  _replaceObj(CLIENT_PROFILES, d.cp);
+  _replaceObj(SETTINGS, d.settings);
+  if(Array.isArray(d.goals)) GOALS=d.goals;
+  if(Array.isArray(d.fp))    FIXED_PAYMENTS=d.fp;
+  if(d.mode){ APP_MODE=d.mode; localStorage.setItem('shani_mode',APP_MODE); applyMode(); }
+  if(d.theme){ _theme=d.theme; localStorage.setItem('shani_theme',_theme); applyTheme(); }
+  // mirror to localStorage without re-triggering a cloud push
+  try{
+    localStorage.setItem('shani_clients',JSON.stringify(CLIENTS));
+    localStorage.setItem('shani_expense',JSON.stringify(RAW.expense));
+    localStorage.setItem('shani_income', JSON.stringify(RAW.income));
+    localStorage.setItem('shani_cards',  JSON.stringify(CARDS));
+    localStorage.setItem('shani_budgets',JSON.stringify(BUDGETS));
+    localStorage.setItem('shani_fp',     JSON.stringify(FIXED_PAYMENTS));
+    localStorage.setItem('shani_goals',  JSON.stringify(GOALS));
+    localStorage.setItem('shani_cp',     JSON.stringify(CLIENT_PROFILES));
+    localStorage.setItem('shani_settings',JSON.stringify(SETTINGS));
+    localStorage.setItem('shani_synced_at', String(d.updatedAt||Date.now()));
+  }catch(e){}
+  // re-render whatever is on screen
+  renderHome();
+  if(_prevScreen==='clients')  try{renderClients();}catch(e){}
+  if(_prevScreen==='expenses') try{renderExpenses();}catch(e){}
+  if(_prevScreen==='income')   try{renderIncome();}catch(e){}
+  if(_prevScreen==='balance')  try{renderBalance();}catch(e){}
+  if(_prevScreen==='goals')    try{renderGoals();}catch(e){}
+}
+
+function setSyncDot(state){ var d=document.getElementById('sync-dot'); if(d) d.className='sync-dot '+(state||''); }
+
+// Debounced push of the full snapshot to Firestore
+function cloudPush(){
+  if(!FB_UID||!fbDb) return;
+  setSyncDot('busy');
+  clearTimeout(_syncTimer);
+  _syncTimer=setTimeout(_cloudPushNow, 1200);
+}
+function _cloudPushNow(){
+  if(!FB_UID||!fbDb) return;
+  var snap=cloudSnapshot();
+  fbDb.collection('users').doc(FB_UID).set(snap).then(function(){
+    try{localStorage.setItem('shani_synced_at', String(snap.updatedAt));}catch(e){}
+    setSyncDot('ok');
+  }).catch(function(){ setSyncDot('err'); });
+}
+
+// ── Auth screen UI ──────────────────────────────────────
+function showAuthScreen(){ var a=document.getElementById('auth-screen'); if(a)a.classList.add('show'); }
+function hideAuthScreen(){ var a=document.getElementById('auth-screen'); if(a)a.classList.remove('show'); }
+function authToggleMode(){
+  _authMode = _authMode==='login'?'signup':'login';
+  var su=_authMode==='signup';
+  document.getElementById('auth-primary-btn').textContent = su?'הרשמה':'התחברי';
+  document.getElementById('auth-toggle').innerHTML = su?'יש לך חשבון? <b>התחברי</b>':'אין לך חשבון? <b>הרשמי</b>';
+  document.getElementById('auth-sub').textContent = su?'צרי חשבון חדש לסנכרון מאובטח בענן':'התחברי כדי לסנכרן את הנתונים בכל המכשירים';
+  document.getElementById('auth-mode-wrap').style.display = su?'flex':'none';
+  document.getElementById('auth-pass').setAttribute('autocomplete', su?'new-password':'current-password');
+  authErr('');
+}
+function authPickMode(m){
+  _authPickedMode=m;
+  document.getElementById('auth-mode-biz').classList.toggle('on', m==='business');
+  document.getElementById('auth-mode-priv').classList.toggle('on', m==='private');
+}
+function authErr(msg){ var e=document.getElementById('auth-err'); if(e)e.textContent=msg||''; }
+function authMsg(e){
+  var c=(e&&e.code)||'';
+  if(c==='auth/invalid-email')         return 'כתובת אימייל לא תקינה';
+  if(c==='auth/email-already-in-use')  return 'האימייל כבר רשום — התחברי במקום';
+  if(c==='auth/weak-password')         return 'הסיסמה חלשה מדי (6 תווים לפחות)';
+  if(c==='auth/wrong-password'||c==='auth/invalid-credential') return 'אימייל או סיסמה שגויים';
+  if(c==='auth/user-not-found')        return 'לא נמצא חשבון כזה — הרשמי';
+  if(c==='auth/too-many-requests')     return 'יותר מדי ניסיונות — נסי שוב בעוד רגע';
+  if(c==='auth/network-request-failed')return 'אין חיבור לאינטרנט';
+  if(c==='auth/popup-closed-by-user')  return '';
+  return 'שגיאה: '+((e&&e.message)||c);
+}
+function authSubmit(){
+  if(!fbAuth){ authErr('שירות ההתחברות עוד נטען — נסי שוב'); return; }
+  var email=(document.getElementById('auth-email').value||'').trim();
+  var pass=document.getElementById('auth-pass').value||'';
+  if(!email||!pass){ authErr('יש למלא אימייל וסיסמה'); return; }
+  var btn=document.getElementById('auth-primary-btn'); btn.disabled=true;
+  var done=function(){ btn.disabled=false; };
+  if(_authMode==='signup'){
+    if(pass.length<6){ authErr('הסיסמה חייבת לפחות 6 תווים'); done(); return; }
+    // remember chosen mode so onSignedIn can apply it for a brand-new account
+    APP_MODE=_authPickedMode; localStorage.setItem('shani_mode',APP_MODE); applyMode();
+    fbAuth.createUserWithEmailAndPassword(email,pass)
+      .then(function(){ authErr(''); }).catch(function(e){ authErr(authMsg(e)); }).then(done);
+  } else {
+    fbAuth.signInWithEmailAndPassword(email,pass)
+      .then(function(){ authErr(''); }).catch(function(e){ authErr(authMsg(e)); }).then(done);
+  }
+}
+function authGoogle(){
+  if(!fbAuth){ authErr('שירות ההתחברות עוד נטען — נסי שוב'); return; }
+  var prov=new firebase.auth.GoogleAuthProvider();
+  fbAuth.signInWithPopup(prov).catch(function(e){
+    if(e&&(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'||e.code==='auth/cancelled-popup-request')){
+      fbAuth.signInWithRedirect(prov);
+    } else { authErr(authMsg(e)); }
+  });
+}
+function authLogout(){
+  if(fbAuth) fbAuth.signOut();
+  closeDrawer();
+}
+function updateAccountUI(user){
+  var lo=document.getElementById('drw-logout'); if(lo) lo.style.display=user?'flex':'none';
+  var ac=document.getElementById('drw-account'); if(ac) ac.style.display=user?'flex':'none';
+  var em=document.getElementById('drw-account-email'); if(em) em.textContent=user?(user.email||user.displayName||'מחוברת'):'';
+}
+
+function onSignedIn(user){
+  FB_UID=user.uid;
+  hideAuthScreen();
+  updateAccountUI(user);
+  setSyncDot('busy');
+  // show the onboarding tour once, after a fresh login (guarded by shani_onboarded)
+  if(!localStorage.getItem('shani_onboarded')){ setTimeout(function(){startTour(false);}, 800); }
+  fbDb.collection('users').doc(FB_UID).get().then(function(doc){
+    if(doc.exists){
+      var data=doc.data();
+      var localAt=parseInt(localStorage.getItem('shani_synced_at')||'0');
+      if((data.updatedAt||0) > localAt){
+        applyCloud(data);
+        setSyncDot('ok');
+        toast('✓ סונכרן מהענן');
+      } else {
+        _cloudPushNow();      // local is newer/equal → push our copy up
+      }
+    } else {
+      _cloudPushNow();        // first sign-in → seed cloud with local data
+      toast('✓ מחוברת — גיבוי בענן פעיל');
+    }
+  }).catch(function(){ setSyncDot('err'); });
+}
+
+(function initFirebase(){
+  if(typeof firebase==='undefined' || !firebaseConfig.apiKey){
+    // SDK failed to load (offline / blocked) → run as local-only app
+    hideAuthScreen(); return;
+  }
+  try{
+    firebase.initializeApp(firebaseConfig);
+    fbAuth=firebase.auth();
+    fbDb=firebase.firestore();
+    try{ fbDb.enablePersistence({synchronizeTabs:true}).catch(function(){}); }catch(e){}
+    // complete any pending redirect-based Google sign-in
+    fbAuth.getRedirectResult().catch(function(){});
+    fbAuth.onAuthStateChanged(function(user){
+      if(user){ onSignedIn(user); }
+      else { FB_UID=null; updateAccountUI(null); setSyncDot(''); showAuthScreen(); }
+    });
+  }catch(e){ hideAuthScreen(); }
+})();
 </script>
 </body>
 </html>
