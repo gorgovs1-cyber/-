@@ -349,6 +349,10 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .modal{background:#111D2C;border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:8px 20px calc(36px + env(safe-area-inset-bottom,0px));animation:slideUp .22s ease;border-top:1px solid var(--border2)}
 .modal::before{content:'';display:block;width:36px;height:4px;background:var(--border2);border-radius:2px;margin:14px auto 18px}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mbg.closing,.cd-mbg.closing{animation:fadeOut .2s ease both}
+.mbg.closing .modal,.cd-mbg.closing .cd-modal{animation:slideDown .2s ease both}
+@keyframes slideDown{from{transform:translateY(0)}to{transform:translateY(100%)}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
 .modal-title{font-size:19px;font-weight:800;margin-bottom:4px}
 .modal-sub  {font-size:12px;color:var(--muted);margin-bottom:16px}
 .mc-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.07)}
@@ -369,7 +373,9 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .mfld input:focus{border-color:var(--cyan)}
 .madd-btn{background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:15px;font-weight:800;padding:10px 16px;border-radius:12px;border:none;cursor:pointer}
 .mclose{display:block;width:100%;text-align:center;font-size:13px;color:var(--muted);margin-top:16px;background:none;border:none;font-family:'Sora',sans-serif;cursor:pointer}
-.mempty{font-size:13px;color:var(--muted);text-align:center;padding:12px 0}
+.mempty{font-size:13px;color:var(--muted);text-align:center;padding:26px 0;animation:fadeUp .4s ease both}
+.mempty::before{content:'✦';display:block;font-size:26px;color:var(--border2);margin-bottom:8px;animation:floatY 3s ease-in-out infinite}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 
 /* ══ TOP HEADER ═══════════════════════════════════════════ */
 .top-hdr {
@@ -857,7 +863,7 @@ html.mode-private .biz-only{ display:none!important; }
 </div>
 
 <!-- ══ QUICK-ADD ══════════════════════════════════════════ -->
-<div class="mbg" id="qa-mbg" onclick="if(event.target===this)this.classList.remove('open')">
+<div class="mbg" id="qa-mbg" onclick="if(event.target===this)closeMbg(this.id)">
   <div class="modal">
     <div class="modal-title">הוסף לקוחה</div>
     <div class="mi-row" style="margin-bottom:10px">
@@ -874,7 +880,7 @@ html.mode-private .biz-only{ display:none!important; }
       </div>
     </div>
     <button style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:14px;font-weight:800;padding:13px;border-radius:12px;border:none;cursor:pointer" onclick="saveQA()">שמור</button>
-    <button class="mclose" onclick="document.getElementById('qa-mbg').classList.remove('open')">ביטול</button>
+    <button class="mclose" onclick="closeMbg('qa-mbg')">ביטול</button>
   </div>
 </div>
 
@@ -915,7 +921,7 @@ html.mode-private .biz-only{ display:none!important; }
 </div>
 
 <!-- ══ ADD TRANSACTION ════════════════════════════════════ -->
-<div class="mbg" id="atxn-mbg" onclick="if(event.target===this)this.classList.remove('open')">
+<div class="mbg" id="atxn-mbg" onclick="if(event.target===this)closeMbg(this.id)">
   <div class="modal" style="max-height:88dvh;overflow-y:auto">
     <div class="modal-title">הוסף פעולה</div>
     <div class="type-toggle">
@@ -971,12 +977,12 @@ html.mode-private .biz-only{ display:none!important; }
       </div>
       <button onclick="importParsed()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:14px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:10px">ייבא ✓</button>
     </div>
-    <button class="mclose" onclick="document.getElementById('atxn-mbg').classList.remove('open')">ביטול</button>
+    <button class="mclose" onclick="closeMbg('atxn-mbg')">ביטול</button>
   </div>
 </div>
 
 <!-- ══ NEW GOAL ════════════════════════════════════════════ -->
-<div class="mbg" id="new-goal-mbg" onclick="if(event.target===this)this.classList.remove('open')">
+<div class="mbg" id="new-goal-mbg" onclick="if(event.target===this)closeMbg(this.id)">
   <div class="modal">
     <div class="modal-title">מטרת חיסכון חדשה</div>
     <div class="mi-row" style="margin-bottom:10px">
@@ -988,12 +994,12 @@ html.mode-private .biz-only{ display:none!important; }
       <div class="mfld"><label>תאריך יעד</label><input type="date" id="ng-deadline"></div>
     </div>
     <button onclick="saveNewGoal()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:14px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">צור מטרה ✓</button>
-    <button class="mclose" onclick="document.getElementById('new-goal-mbg').classList.remove('open')">ביטול</button>
+    <button class="mclose" onclick="closeMbg('new-goal-mbg')">ביטול</button>
   </div>
 </div>
 
 <!-- ══ ADD SAVINGS TO GOAL ════════════════════════════════ -->
-<div class="mbg" id="goal-add-mbg" onclick="if(event.target===this)this.classList.remove('open')">
+<div class="mbg" id="goal-add-mbg" onclick="if(event.target===this)closeMbg(this.id)">
   <div class="modal">
     <div class="modal-title">הוסף חיסכון</div>
     <div class="modal-sub" id="ga-name" style="font-size:13px;color:var(--cyan);font-weight:700"></div>
@@ -1001,12 +1007,12 @@ html.mode-private .biz-only{ display:none!important; }
       <div class="mfld"><label>סכום ₪</label><input type="number" id="ga-amt" placeholder="0"></div>
     </div>
     <button onclick="saveGoalAdd()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:14px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
-    <button class="mclose" onclick="document.getElementById('goal-add-mbg').classList.remove('open')">ביטול</button>
+    <button class="mclose" onclick="closeMbg('goal-add-mbg')">ביטול</button>
   </div>
 </div>
 
 <!-- ══ PAYMENT METHOD DETAIL ══════════════════════════════ -->
-<div class="cd-mbg" id="cd-mbg" onclick="if(event.target===this)this.classList.remove('open')">
+<div class="cd-mbg" id="cd-mbg" onclick="if(event.target===this)closeMbg(this.id)">
   <div class="cd-modal">
     <div class="cd-hdr">
       <div class="cd-title" id="cd-title">הוצאות</div>
@@ -1037,7 +1043,7 @@ html.mode-private .biz-only{ display:none!important; }
       <div id="cd-import-status" style="font-size:11px;color:var(--cyan);min-height:16px"></div>
     </div>
 
-    <button class="mclose" onclick="document.getElementById('cd-mbg').classList.remove('open')">סגור</button>
+    <button class="mclose" onclick="closeMbg('cd-mbg')">סגור</button>
   </div>
 </div>
 
@@ -1204,7 +1210,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260633;
+var APP_VER=20260634;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Robust auto-update: fetch the live file (bypassing cache) and hard-reload past
 // the iOS/CDN cache via a ?v= URL when a newer deploy is detected.
@@ -2441,13 +2447,13 @@ function editBudget(lbl){
 function saveBudget(){
   var v=parseFloat(document.getElementById('budget-inp').value);
   if(v>0){BUDGETS[_budgetEditLbl]=v;save();}
-  document.getElementById('budget-mbg').classList.remove('open');
+  closeMbg('budget-mbg');
   document.getElementById('budget-mbg').style.display='none';
   renderExpenses();
 }
 function removeBudget(){
   delete BUDGETS[_budgetEditLbl];save();
-  document.getElementById('budget-mbg').classList.remove('open');
+  closeMbg('budget-mbg');
   document.getElementById('budget-mbg').style.display='none';
   renderExpenses();
 }
@@ -2674,7 +2680,8 @@ function modalAdd(){
   document.getElementById('m-name').value='';document.getElementById('m-amt').value='';
   save();renderMC();renderClients();toast('✓ '+name+' נוספה');
 }
-function closeModal(){document.getElementById('mbg').classList.remove('open');}
+function closeMbg(id){var bg=document.getElementById(id);if(!bg)return;bg.classList.add('closing');setTimeout(function(){bg.classList.remove('open','closing');},195);}
+function closeModal(){closeMbg('mbg');}
 function closeMBG(e){if(e.target===document.getElementById('mbg'))closeModal();}
 
 function saveQA(){
@@ -2687,7 +2694,7 @@ function saveQA(){
   CLIENTS[m]=CLIENTS[m]||[];
   CLIENTS[m].push({day:day,name:name,amount:amt,status:st});
   document.getElementById('qa-name').value='';document.getElementById('qa-amt').value='';
-  document.getElementById('qa-mbg').classList.remove('open');
+  closeMbg('qa-mbg');
   save();renderClients();renderHome();toast('✓ '+name+' נוספה');
 }
 
@@ -2791,7 +2798,7 @@ function saveGoalAdd(){
   var amt=pa(document.getElementById('ga-amt').value);
   if(!amt||activeGoalIdx<0)return;
   GOALS[activeGoalIdx].saved=Math.max(0,GOALS[activeGoalIdx].saved+amt);
-  document.getElementById('goal-add-mbg').classList.remove('open');
+  closeMbg('goal-add-mbg');
   saveGoals();renderGoals();
   toast('✓ ₪'+fmt(amt)+' נוספו ל'+GOALS[activeGoalIdx].name);
 }
@@ -2803,7 +2810,7 @@ function saveNewGoal(){
   if(!name||!target)return;
   GOALS.push({id:'g'+Date.now(),name:name,icon:icon,target:target,saved:0,color:GOAL_COLORS[GOALS.length%GOAL_COLORS.length],deadline:deadline});
   ['ng-name','ng-target','ng-deadline','ng-icon'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('new-goal-mbg').classList.remove('open');
+  closeMbg('new-goal-mbg');
   saveGoals();renderGoals();toast('✓ מטרה נוצרה: '+name);
 }
 function deleteGoal(idx){
@@ -2920,7 +2927,7 @@ function importParsed(){
   var count=addParsed.length;
   addParsed=[];
   save();
-  document.getElementById('atxn-mbg').classList.remove('open');
+  closeMbg('atxn-mbg');
   document.getElementById('add-text').value='';
   document.getElementById('csv-text').value='';
   renderHome();
@@ -2941,7 +2948,7 @@ function addSingleTxn(){
   else{RAW.income[mo.key]=RAW.income[mo.key]||[];RAW.income[mo.key].push(entry);}
   save();
   document.getElementById('sf-desc').value='';document.getElementById('sf-amt').value='';
-  document.getElementById('atxn-mbg').classList.remove('open');
+  closeMbg('atxn-mbg');
   renderHome();toast('✓ '+desc+' נוסף');
 }
 
@@ -3026,7 +3033,7 @@ function openFPModal(id){
   setFPMethod(p?p.method:'bank');
   document.getElementById('fp-mbg').classList.add('open');
 }
-function closeFPModal(){document.getElementById('fp-mbg').classList.remove('open');}
+function closeFPModal(){closeMbg('fp-mbg');}
 function saveFP(){
   var name=document.getElementById('fp-name').value.trim();
   var amount=parseFloat(document.getElementById('fp-amount').value)||0;
