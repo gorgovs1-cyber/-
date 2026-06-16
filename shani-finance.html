@@ -628,6 +628,33 @@ html.theme-light .drw-logo { color:var(--cyan); }
 </head>
 <body>
 
+<!-- TOP HEADER -->
+<header class="top-hdr">
+  <span class="hdr-logo">💰 My Money</span>
+  <button class="hdr-ham" onclick="openDrawer()" aria-label="תפריט">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- DRAWER -->
+<div class="drw-bg" id="drw-bg" onclick="closeDrawer()">
+  <nav class="drw-panel" onclick="event.stopPropagation()">
+    <div class="drw-logo">💰 My Money</div>
+    <div class="drw-item" data-page="home" onclick="go('home');closeDrawer()"><span class="di-emoji">🏠</span><span>בית</span></div>
+    <div class="drw-item" data-page="clients" onclick="go('clients');closeDrawer()"><span class="di-emoji">👥</span><span>לקוחות</span></div>
+    <div class="drw-item" data-page="goals" onclick="go('goals');closeDrawer()"><span class="di-emoji">🎯</span><span>מטרות</span></div>
+    <div class="drw-item" data-page="fixed" onclick="go('fixed');closeDrawer()"><span class="di-emoji">💳</span><span>תשלומים קבועים</span></div>
+    <div class="drw-item" data-page="gmail" onclick="go('gmail');closeDrawer()"><span class="di-emoji">📧</span><span>Gmail</span></div>
+    <div class="drw-item" data-page="income" onclick="go('income');closeDrawer()"><span class="di-emoji">💰</span><span>הכנסות</span></div>
+    <div class="drw-item" data-page="expenses" onclick="go('expenses');closeDrawer()"><span class="di-emoji">💸</span><span>הוצאות</span></div>
+    <div class="drw-item" data-page="balance" onclick="go('balance');closeDrawer()"><span class="di-emoji">📊</span><span>מאזן</span></div>
+    <div class="drw-item" data-page="gcal" onclick="go('gcal');closeDrawer()"><span class="di-emoji">📅</span><span>יומן גוגל</span></div>
+    <div style="border-top:1px solid var(--border);margin:8px 0"></div>
+    <div class="drw-item" onclick="openSettings()"><span class="di-emoji">⚙️</span><span>הגדרות</span></div>
+    <div class="drw-item" onclick="toggleTheme()"><span class="di-emoji" id="theme-emoji">☀️</span><span id="theme-lbl">מצב בהיר</span></div>
+  </nav>
+</div>
+
 <!-- ══ SPLASH ════════════════════════════════════════════ -->
 <div id="splash">
   <!-- shekel drops from top -->
@@ -1006,25 +1033,46 @@ html.theme-light .drw-logo { color:var(--cyan); }
   </div>
 </div>
 
-<!-- ══ BOTTOM NAV ═════════════════════════════════════════ -->
-<nav class="bnav">
-  <button class="bnb" id="bn-clients" onclick="go('clients')">
-    <span class="bnb-icon"></span><span class="bnb-lbl">לקוחות</span>
-  </button>
-  <button class="bnb on" id="bn-home" onclick="go('home')">
-    <span class="bnb-icon"></span><span class="bnb-lbl">בית</span>
-  </button>
-  <button class="bnb" id="bn-goals" onclick="go('goals')">
-    <span class="bnb-icon"></span><span class="bnb-lbl">מטרות</span>
-  </button>
-  <button class="bnb" id="bn-fixed" onclick="go('fixed')">
-    <span class="bnb-icon"></span><span class="bnb-lbl">קבועים</span>
-  </button>
-  <button class="bnb" id="bn-gmail" onclick="go('gmail')">
-    <span class="bnb-icon"></span><span class="bnb-lbl">Gmail</span>
-  </button>
-  <div class="nav-pill" id="nav-pill"></div>
-</nav>
+
+<!-- GOOGLE CALENDAR SCREEN -->
+<div class="screen" id="s-gcal">
+  <div class="page-hdr">
+    <div class="page-title">יומן גוגל</div>
+    <div class="page-sub">תורים מהיומן</div>
+  </div>
+  <div style="padding:16px">
+    <div id="gcal-connect-area">
+      <button onclick="gcalConnect()" style="width:100%;padding:16px;background:var(--card2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">📅 התחבר ל-Google Calendar</button>
+    </div>
+    <div id="gcal-events" style="display:none;margin-top:16px"></div>
+    <div style="margin-top:16px;padding:14px;background:rgba(255,255,255,.04);border-radius:14px;font-size:12px;color:var(--muted)">
+      <div style="font-weight:700;margin-bottom:6px">כיצד להשתמש:</div>
+      <div>1. צבעי לקוחות ביומן — הגדר <span style="color:#e74c3c">אדום (Tomato)</span> לתורי לקוחות</div>
+      <div style="margin-top:4px">2. לחץ "התחבר" והמערכת תשלוף תורים אוטומטית</div>
+      <div style="margin-top:4px">3. התורים יוכנסו ללקוחות בתאריכים המתאימים</div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settings-modal-bg" style="display:none">
+  <div class="modal" style="max-height:85vh;overflow-y:auto;border-radius:var(--r);padding:20px">
+    <div class="modal-hdr">
+      <span class="modal-title">⚙️ הגדרות</span>
+      <button class="modal-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:13px;font-weight:700;color:var(--cyan);margin-bottom:4px">📱 Twilio SMS</div>
+      <input id="set-twilio-sid" class="inp" placeholder="Twilio Account SID" oninput="SETTINGS.twilioSid=this.value;saveSettings()">
+      <input id="set-twilio-token" class="inp" placeholder="Twilio Auth Token" type="password" oninput="SETTINGS.twilioToken=this.value;saveSettings()">
+      <input id="set-twilio-from" class="inp" placeholder="מספר שולח Twilio (+1...)" oninput="SETTINGS.twilioFrom=this.value;saveSettings()">
+      <div style="font-size:13px;font-weight:700;color:var(--cyan);margin-top:8px;margin-bottom:4px">🧾 Morning חשבוניות</div>
+      <input id="set-morning-token" class="inp" placeholder="Morning API Token" oninput="SETTINGS.morningToken=this.value;saveSettings()">
+      <input id="set-biz-name" class="inp" placeholder="שם העסק" oninput="SETTINGS.bizName=this.value;saveSettings()">
+      <button class="btn-primary" style="margin-top:8px" onclick="closeSettings()">שמור וסגור</button>
+    </div>
+  </div>
+</div>
 
 <!-- ══ FAB ════════════════════════════════════════════════ -->
 <div class="fab-wrap">
@@ -1039,7 +1087,7 @@ html.theme-light .drw-logo { color:var(--cyan); }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260618;
+var APP_VER=20260619;
 // Robust auto-update: fetch the live file (bypassing cache) and hard-reload past
 // the iOS/CDN cache via a ?v= URL when a newer deploy is detected.
 (function(){
@@ -1807,17 +1855,6 @@ function toast(msg){
 var _prevScreen='home';
 var _screenOrder={clients:0,home:1,goals:2,fixed:3,gmail:4};
 
-function updateNavPill(name){
-  var pill=document.getElementById('nav-pill');
-  var bn=document.getElementById('bn-'+name);
-  if(!pill||!bn)return;
-  var nav=document.querySelector('.bnav');
-  if(!nav)return;
-  var nr=nav.getBoundingClientRect(),br=bn.getBoundingClientRect();
-  pill.style.width=(br.width*.55)+'px';
-  pill.style.left=(br.left-nr.left+br.width*.225)+'px';
-}
-
 function go(name){
   var prevPos=_screenOrder[_prevScreen],nextPos=_screenOrder[name];
   var detail=['expenses','income','balance'];
@@ -1831,12 +1868,9 @@ function go(name){
   }
   _prevScreen=name;
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active','slide-r','slide-l');});
-  document.querySelectorAll('.bnb').forEach(function(b){b.classList.remove('on');});
   var scr=document.getElementById('s-'+name);
   if(scr){scr.classList.add('active');if(slideDir)scr.classList.add(slideDir);}
-  var bn=document.getElementById('bn-'+name);
-  if(bn) bn.classList.add('on');
-  updateNavPill(name);
+  updateDrawerActive();
   if(name==='home')     renderHome();
   if(name==='clients')  renderClients();
   if(name==='expenses') renderExpenses();
@@ -2457,7 +2491,13 @@ function renderMC(){
 function toggleC(idx){
   var mk=MONTHS[modalMi].key,list=CLIENTS[mk]||[];
   var day=list.filter(function(c){return c.day===modalDay;}),ai=list.indexOf(day[idx]);
-  if(ai>=0)list[ai].status=list[ai].status==='done'?'planned':'done';
+  if(ai>=0){
+    list[ai].status=list[ai].status==='done'?'planned':'done';
+    if(list[ai].status==='done'){
+      sendSMSOnDone(list[ai]);
+      sendInvoiceOnDone(list[ai]);
+    }
+  }
   save();renderMC();renderClients();renderHome();
 }
 function delC(idx){
@@ -2771,8 +2811,8 @@ load();
   }
 })();
 initSplash();
+applyTheme();
 renderHome();
-setTimeout(function(){updateNavPill('home');},100);
 
 // ── FIXED PAYMENTS ───────────────────────────────────────
 function renderFixed(){
@@ -3255,6 +3295,145 @@ if(!localStorage.getItem('shani_onboarded')){
   setTimeout(function(){startTour(false);},4900);  // right after splash fades
 }else{
   setTimeout(runAdvisor, 7000);
+}
+
+// ── DRAWER ───────────────────────────────────────────────
+function openDrawer() { document.getElementById('drw-bg').classList.add('open'); updateDrawerActive(); }
+function closeDrawer() { document.getElementById('drw-bg').classList.remove('open'); }
+function updateDrawerActive() {
+  document.querySelectorAll('.drw-item').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.page === _prevScreen);
+  });
+}
+
+// ── CLIENT PROFILES ──────────────────────────────────────
+var CLIENT_PROFILES = JSON.parse(localStorage.getItem('shani_cp')||'{}');
+function saveCPs() { localStorage.setItem('shani_cp', JSON.stringify(CLIENT_PROFILES)); }
+
+// ── SETTINGS ─────────────────────────────────────────────
+var SETTINGS = JSON.parse(localStorage.getItem('shani_settings')||'{}');
+function saveSettings() { localStorage.setItem('shani_settings', JSON.stringify(SETTINGS)); }
+function openSettings() {
+  closeDrawer();
+  var m = document.getElementById('settings-modal-bg');
+  m.style.display = 'flex';
+  document.getElementById('set-twilio-sid').value = SETTINGS.twilioSid||'';
+  document.getElementById('set-twilio-token').value = SETTINGS.twilioToken||'';
+  document.getElementById('set-twilio-from').value = SETTINGS.twilioFrom||'';
+  document.getElementById('set-morning-token').value = SETTINGS.morningToken||'';
+  document.getElementById('set-biz-name').value = SETTINGS.bizName||'';
+}
+function closeSettings() { document.getElementById('settings-modal-bg').style.display='none'; }
+
+// ── SMS ON DONE ───────────────────────────────────────────
+function sendSMSOnDone(client) {
+  if(!SETTINGS.twilioSid||!SETTINGS.twilioToken||!SETTINGS.twilioFrom) return;
+  var profile = CLIENT_PROFILES[client.name]||{};
+  if(!profile.phone) return;
+  var phone = profile.phone.replace(/[-\s]/g,'');
+  if(phone.charAt(0)==='0') phone = '+972'+phone.slice(1);
+  var msg = 'שלום '+client.name.split(' ')[0]+', תודה על הביקור! הטיפול שלך בוצע. סכום: ₪'+client.amount+'. - שני';
+  var url = 'https://api.twilio.com/2010-04-01/Accounts/'+SETTINGS.twilioSid+'/Messages.json';
+  var body = new URLSearchParams({To:phone,From:SETTINGS.twilioFrom,Body:msg});
+  fetch(url,{
+    method:'POST',
+    headers:{'Authorization':'Basic '+btoa(SETTINGS.twilioSid+':'+SETTINGS.twilioToken),'Content-Type':'application/x-www-form-urlencoded'},
+    body:body.toString()
+  }).then(function(){toast('📱 SMS נשלח ל-'+client.name);}).catch(function(){toast('שגיאה בשליחת SMS');});
+}
+
+// ── INVOICE ON DONE ───────────────────────────────────────
+function sendInvoiceOnDone(client) {
+  if(!SETTINGS.morningToken||!SETTINGS.bizName) return;
+  var profile = CLIENT_PROFILES[client.name]||{};
+  var payload = {
+    description:'טיפול יופי',
+    income:[{catalogNum:'1',description:'טיפול',quantity:1,price:client.amount,taxAmount:0}],
+    client:{name:client.name,phone:profile.phone||'',address:profile.address||''},
+    type:'receipt',
+    lang:'he',
+    currency:'ILS'
+  };
+  fetch('https://api.morning.co.il/v1/documents',{
+    method:'POST',
+    headers:{'Authorization':'Bearer '+SETTINGS.morningToken,'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  }).then(function(r){return r.json();})
+  .then(function(d){toast('🧾 חשבונית נוצרה: #'+(d.id||''));})
+  .catch(function(){toast('שגיאה ביצירת חשבונית');});
+}
+
+// ── GOOGLE CALENDAR ───────────────────────────────────────
+function gcalConnect(){
+  if(typeof gapi==='undefined'){toast('Google API לא נטען');return;}
+  gapi.auth2.getAuthInstance().signIn({scope:'https://www.googleapis.com/auth/calendar.readonly'})
+    .then(function(user){ gcalFetchEvents(); })
+    .catch(function(e){ toast('שגיאת חיבור: '+(e.error||e)); });
+}
+
+function gcalFetchEvents(){
+  var now=new Date();
+  var start=new Date(now.getFullYear(),now.getMonth(),1).toISOString();
+  var end=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString();
+  gapi.client.request({
+    path:'https://www.googleapis.com/calendar/v3/calendars/primary/events',
+    params:{
+      timeMin:start, timeMax:end,
+      singleEvents:true, orderBy:'startTime',
+      colorId:'11'
+    }
+  }).then(function(resp){
+    renderGCalEvents(resp.result.items||[]);
+  }).catch(function(){ toast('שגיאה בשליפה'); });
+}
+
+function renderGCalEvents(events){
+  var area=document.getElementById('gcal-events');
+  if(!events.length){
+    area.innerHTML='<div style="text-align:center;color:var(--muted);padding:32px">אין תורים אדומים החודש</div>';
+    area.style.display='block';
+    return;
+  }
+  var h='<div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text2)">נמצאו '+events.length+' תורים</div>';
+  for(var i=0;i<events.length;i++){
+    var ev=events[i];
+    var dt=new Date(ev.start.dateTime||ev.start.date);
+    var day=dt.getDate();
+    var timeStr=ev.start.dateTime?(dt.getHours()+':'+String(dt.getMinutes()).padStart(2,'0')):'כל היום';
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--card);border-radius:12px;margin-bottom:8px">';
+    h+='<div><div style="font-weight:600;font-size:14px">'+ev.summary+'</div><div style="font-size:12px;color:var(--muted);margin-top:2px">'+day+' בחודש · '+timeStr+'</div></div>';
+    h+='<button onclick="importGCalEvent('+JSON.stringify(JSON.stringify(ev))+')" style="background:var(--cyan);color:#000;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">ייבא ✓</button>';
+    h+='</div>';
+  }
+  area.innerHTML=h;
+  area.style.display='block';
+}
+
+function importGCalEvent(evJson){
+  var ev=JSON.parse(evJson);
+  var dt=new Date(ev.start.dateTime||ev.start.date);
+  var day=dt.getDate();
+  var name=ev.summary||'לקוחה';
+  var mk=MONTHS[homeMi]?MONTHS[homeMi].key:(new Date().getMonth()+1);
+  CLIENTS[mk]=CLIENTS[mk]||[];
+  CLIENTS[mk].push({day:day,name:name,amount:0,status:'planned'});
+  save();
+  toast('✓ '+name+' נוסף ליומן');
+}
+
+// ── LIGHT/DARK THEME ──────────────────────────────────────
+var _theme = localStorage.getItem('shani_theme')||'dark';
+function applyTheme() {
+  document.documentElement.classList.toggle('theme-light', _theme==='light');
+  var el = document.getElementById('theme-emoji');
+  var lb = document.getElementById('theme-lbl');
+  if(el) el.textContent = _theme==='light'?'🌙':'☀️';
+  if(lb) lb.textContent = _theme==='light'?'מצב כהה':'מצב בהיר';
+}
+function toggleTheme() {
+  _theme = _theme==='light'?'dark':'light';
+  localStorage.setItem('shani_theme', _theme);
+  applyTheme();
 }
 </script>
 </body>
