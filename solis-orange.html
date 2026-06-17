@@ -36,7 +36,7 @@
       padding: 2rem 3rem; pointer-events: none;
     }
     .nav-brand, .nav-link {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Inter', sans-serif;
       font-size: 11px; letter-spacing: 5px; text-transform: uppercase;
       text-decoration: none; pointer-events: auto;
     }
@@ -44,7 +44,7 @@
     /* ── PROGRESS BAR (exactly one) ── */
     #progress-bar {
       position: fixed; top: 0; right: 0; width: 2px;
-      background: #7a3500; height: 0; z-index: 200;
+      background: #e3b35a; height: 0; z-index: 200;
     }
 
     /* ══════════════════════════════════════
@@ -119,6 +119,7 @@
       opacity: 0;
       transition: opacity 0.6s ease;
       pointer-events: none;
+      filter: drop-shadow(0 24px 80px rgba(227,179,90,0.35));
     }
     .product-img-layer.is-active { opacity: 1; }
 
@@ -202,7 +203,7 @@
     .h-product img {
       height: 68vh; width: auto;
       object-fit: contain; position: relative; z-index: 1;
-      filter: drop-shadow(0 20px 60px rgba(227,179,90,0.15));
+      filter: drop-shadow(0 24px 80px rgba(227,179,90,0.35));
     }
     .h-product-label {
       position: absolute; bottom: 3rem; left: 4rem; z-index: 2;
@@ -352,12 +353,13 @@
     .nl-input::placeholder { color: rgba(227,179,90,0.35); }
     .nl-btn {
       padding: 14px 22px;
-      background: #7a3500; border: 1px solid #7a3500;
-      color: #f0e8d8; font-family: 'Inter', sans-serif;
+      background: #D4853A; border: 1px solid #D4853A;
+      color: #000; font-family: 'Inter', sans-serif;
       font-size: 11px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
-      transition: background 0.3s, color 0.3s;
+      transition: background 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
+      box-shadow: 0 0 18px rgba(212,133,58,0.35);
     }
-    .nl-btn:hover { background: #e3b35a; border-color: #e3b35a; color: #000; }
+    .nl-btn:hover { background: #e3b35a; border-color: #e3b35a; color: #000; box-shadow: 0 0 28px rgba(227,179,90,0.55); }
 
     /* per-panel inline image — mobile only */
     .panel-mobile-img {
@@ -377,7 +379,7 @@
       margin-bottom: 1rem; display: block;
     }
     .ft-copy {
-      font-family: 'Inter', sans-serif; font-size: 12px; color: #444;
+      font-family: 'Inter', sans-serif; font-size: 12px; color: #666;
     }
     .ft-credit {
       font-family: 'Inter', sans-serif;
@@ -385,6 +387,39 @@
       color: #c9b896; margin-top: 1.5rem;
     }
     .ft-credit .lux-gold { font-family: 'Cormorant Garamond', serif; font-size: 14px; letter-spacing: 3px; }
+
+    /* ── SCROLL HINT ── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 20;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+    .scroll-hint-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, rgba(227,179,90,0.8), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    .scroll-hint-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      letter-spacing: 4px;
+      color: rgba(227,179,90,0.6);
+      text-transform: uppercase;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
 
     /* ══════════════════════════════════════
        MOBILE — everything below 768px
@@ -467,6 +502,10 @@
         <div class="hero-phase lux-gold" id="phase-ppp">PRESS · POUR · PERFECT</div>
         <div class="hero-phase" id="phase-corner">One fruit changed everything.</div>
       </div>
+      <div class="scroll-hint" id="scroll-hint">
+        <span class="scroll-hint-line"></span>
+        <span class="scroll-hint-text">SCROLL</span>
+      </div>
     </div>
   </div>
 
@@ -525,7 +564,6 @@
         <div class="h-bg" style="background-image:url('collection-bg.png');"></div>
         <div class="h-overlay"></div>
         <div class="h-panel-content">
-          <span class="h-eyebrow">The Collection</span>
           <span class="h-title lux-gold">THE COLLECTION</span>
         </div>
       </div>
@@ -605,7 +643,7 @@
        PARALLAX STATEMENT
   ════════════════════════════ -->
   <div class="parallax-wrap">
-    <div class="parallax-bg" id="parallax-bg" style="background-image:url('newsletter-bg.png');"></div>
+    <div class="parallax-bg" id="parallax-bg" style="background-image:url('collection-bg.png');"></div>
     <div class="parallax-overlay"></div>
     <div class="parallax-content">
       <span class="parallax-quote lux-gold">Drink what<br>the sun intended.</span>
@@ -672,6 +710,17 @@
     const p = window.scrollY / (document.body.scrollHeight - window.innerHeight);
     document.getElementById("progress-bar").style.height = (p * 100) + "vh";
   }, { passive: true });
+
+  /* ── Hide scroll hint after first scroll ── */
+  const scrollHint = document.getElementById("scroll-hint");
+  if (scrollHint) {
+    window.addEventListener("scroll", function hideHint() {
+      if (window.scrollY > 50) {
+        scrollHint.style.opacity = "0";
+        window.removeEventListener("scroll", hideHint);
+      }
+    }, { passive: true });
+  }
 
   /* ── Hero video scrub ────────────────────── */
   (() => {
@@ -784,6 +833,27 @@
       }
     );
   })();
+
+  /* ── Text entrance animations ── */
+  const fadeUpEls = document.querySelectorAll(
+    '.product-eyebrow, .product-name, .product-headline, .product-desc, .product-divider, ' +
+    '.ritual-num, .ritual-word, .ritual-desc, .ritual-accent, ' +
+    '.parallax-quote, .parallax-sub, .nl-eyebrow, .nl-title'
+  );
+  fadeUpEls.forEach(el => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 28 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.9, ease: "power2.out",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 88%",
+          toggleActions: "play none none none",
+        }
+      }
+    );
+  });
 
   /* ── END ─────────────────────────────────── */
   ScrollTrigger.refresh();
