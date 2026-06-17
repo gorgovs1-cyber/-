@@ -1307,7 +1307,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260704;
+var APP_VER=20260705;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -3392,7 +3392,8 @@ function gmailFetch(days){
   if(!_gmailToken){gmStatus('צריך להתחבר שוב לגוגל',true);return;}
   gmStatus('מחפש עסקאות...');
   document.getElementById('gmail-found').style.display='none';
-  var query='from:(max.co.il OR isracard.co.il OR leumi.co.il OR bankhapoalim.co.il OR cal.co.il OR mizrahi-tefahot.co.il OR discountbank.co.il OR pepper.co.il OR onezero.co.il) newer_than:'+days+'d';
+  // broad query: banks + card companies + any mail containing ILS/₪/receipt keywords
+  var query='newer_than:'+days+'d (from:(max.co.il OR isracard.co.il OR leumi.co.il OR bankhapoalim.co.il OR cal.co.il OR mizrahi-tefahot.co.il OR discountbank.co.il OR pepper.co.il OR onezero.co.il OR wolt.com OR noreply.payments OR paybox) OR subject:(קבלה OR חשבונית OR אישור OR receipt OR invoice OR חיוב OR ILS) OR ILS)';
   fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?q='+encodeURIComponent(query)+'&maxResults=120',{
     headers:{Authorization:'Bearer '+_gmailToken}
   }).then(function(r){
@@ -3448,39 +3449,63 @@ function parseGmailMsg(msg){
   var emailMo=date.getMonth()+1,yr=date.getFullYear();
   var emailD=String(date.getDate()).padStart(2,'0')+'/'+String(date.getMonth()+1).padStart(2,'0');
 
-  // payment method from sender / text
+  // payment method detection
+  var fromDomain=(from.match(/@([\w.-]+)/)||[])[1]||'';
   var method='mc';
   if(/visa|ויזה|cal\.co\.il|כאל/i.test(text+from))method='visa';
   else if(/leumi|לאומי|הפועלים|hapoalim|דיסקונט|discount|מזרחי|mizrahi|עו"ש|עוש|pepper|onezero|ביט/i.test(text+from))method='bank';
 
-  // amount: number followed/preceded by ₪ or ש"ח, possibly with "בסך"/"בסכום של"/"חיוב"
-  var amtRe=/(?:בסך(?:\s+של)?|בסכום(?:\s+של)?|חיוב(?:\s+של)?|ע"ס|בעלות|סכום:?)\s*₪?\s*([\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?)\s*(?:₪|ש"ח|ש״ח|שקל)?/g;
+  // amount patterns: ₪/ש"ח AND "ILS 65.10" style receipts (Wolt, etc.)
+  var amtRe=/(?:בסך(?:\s+של)?|בסכום(?:\s+של)?|חיוב(?:\s+של)?|ע"ס|בעלות|סכום:?|total:?|סה"כ:?)\s*(?:ILS|₪)?\s*([\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?)\s*(?:₪|ש"ח|ש״ח|ILS)?/gi;
+  var ilsRe=/\bILS\s+([\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?)/g;
   var altRe=/₪\s*([\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?)|([\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?)\s*(?:₪|ש"ח|ש״ח)/g;
 
-  // try to find a transaction date inside the body (DD/MM or DD.MM)
-  var dm=text.match(/(?:בתאריך|ב-?)\s*(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/);
+  // try to find a transaction date inside the body: DD/MM, DD.MM, or "יוני 16, 2026"
+  var HEB_MONTHS={ינואר:1,פברואר:2,מרץ:3,אפריל:4,מאי:5,יוני:6,יולי:7,אוגוסט:8,ספטמבר:9,אוקטובר:10,נובמבר:11,דצמבר:12};
   var txnD=emailD,txnMo=emailMo;
+  var dm=text.match(/(?:בתאריך|ב-?)\s*(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/);
   if(dm){
     txnD=String(parseInt(dm[1])).padStart(2,'0')+'/'+String(parseInt(dm[2])).padStart(2,'0');
     txnMo=parseInt(dm[2]);
+  } else {
+    var hm=text.match(/(ינואר|פברואר|מרץ|אפריל|מאי|יוני|יולי|אוגוסט|ספטמבר|אוקטובר|נובמבר|דצמבר)\s+(\d{1,2})[,،]\s*(\d{4})/);
+    if(!hm)hm=text.match(/(\d{1,2})\s+(ינואר|פברואר|מרץ|אפריל|מאי|יוני|יולי|אוגוסט|ספטמבר|אוקטובר|נובמבר|דצמבר)\s*,?\s*(\d{4})/);
+    if(hm){
+      var mo2=HEB_MONTHS[hm[1]]||HEB_MONTHS[hm[2]]||emailMo;
+      var day2=hm[1]in HEB_MONTHS?parseInt(hm[2]):parseInt(hm[1]);
+      txnD=String(day2).padStart(2,'0')+'/'+String(mo2).padStart(2,'0');
+      txnMo=mo2;
+    }
   }
 
-  // business / description: text after "בבית עסק" / "ב-" / "אצל"
+  // description: name of merchant/business
   function findDesc(){
+    // bank / card style emails
     var bm=text.match(/(?:בבית\s*עסק|בית\s*העסק|אצל|ב-)\s*[:\-]?\s*([^\d₪\n,.]{2,30}?)(?:\s*(?:בסך|בסכום|בתאריך|ב-?\d|₪|\.|,|$))/);
     if(bm&&bm[1].trim().length>1)return bm[1].trim();
+    // Wolt-style: "הנה הקבלה שלך: <BIZ NAME>"
+    var wm=text.match(/(?:הנה הקבלה שלך|הזמנה מ-?|ordered from)[:\s-]*([^\d\n,]{2,35}?)(?:\s*(?:\d|₪|ILS|\n|$))/i);
+    if(wm&&wm[1].trim().length>1)return wm[1].trim();
+    // subject as fallback (e.g. "קבלה עבור אבולעפיה | נחלת בנימין")
+    var sm=subj.match(/(?:קבלה עבור|receipt for|order at|הזמנה ב-?)\s*(.+)/i);
+    if(sm)return sm[1].trim().slice(0,35);
     if(/הוראת\s*קבע|הו"ק/.test(text))return 'הוראת קבע';
     if(/משיכת\s*מזומן/.test(text))return 'משיכת מזומן';
-    return subj?subj.slice(0,28):'חיוב מהבנק';
+    // use sender domain name (e.g. "wolt.com" → "Wolt")
+    if(fromDomain){
+      var dn=fromDomain.split('.')[0];
+      return dn.charAt(0).toUpperCase()+dn.slice(1);
+    }
+    return subj?subj.slice(0,35):'חיוב';
   }
 
-  var found={},mm;
-  while((mm=amtRe.exec(text))){var a=parseFloat(mm[1].replace(/,/g,''));if(a>3&&a<200000)found[a]=1;}
-  if(!Object.keys(found).length){while((mm=altRe.exec(text))){var a2=parseFloat((mm[1]||mm[2]).replace(/,/g,''));if(a2>3&&a2<200000)found[a2]=1;}}
+  var found={},mm2;
+  while((mm2=amtRe.exec(text))){var a=parseFloat(mm2[1].replace(/,/g,''));if(a>3&&a<200000)found[a]=1;}
+  while((mm2=ilsRe.exec(text))){var a2=parseFloat(mm2[1].replace(/,/g,''));if(a2>3&&a2<200000)found[a2]=1;}
+  if(!Object.keys(found).length){var mm3;while((mm3=altRe.exec(text))){var a3=parseFloat((mm3[1]||mm3[2]).replace(/,/g,''));if(a3>3&&a3<200000)found[a3]=1;}}
 
   var amts=Object.keys(found).map(parseFloat);
   if(!amts.length)return;
-  // use the largest plausible amount as the charge (avoids picking minutiae like fees)
   var amt=Math.max.apply(null,amts);
   var desc=findDesc();
 
