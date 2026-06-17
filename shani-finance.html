@@ -854,6 +854,14 @@ html.mode-private .biz-only{ display:none!important; }
       <button onclick="dismissRecurring()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:12px;font-weight:600;padding:5px 14px;border-radius:10px;cursor:pointer">התעלם</button>
     </div>
   </div>
+  <!-- Recurring income suggestion banner -->
+  <div id="income-recurring-banner" style="display:none;background:rgba(255,213,79,.10);border-bottom:1px solid rgba(255,213,79,.28);padding:10px 16px;font-size:13px;font-weight:600;color:var(--gold);line-height:1.5;direction:rtl">
+    <div id="income-recurring-banner-text" style="margin-bottom:8px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="addRecurringToFixedIncome()" style="background:rgba(255,213,79,.22);border:1px solid rgba(255,213,79,.45);color:var(--gold);font-family:Sora,sans-serif;font-size:12px;font-weight:700;padding:5px 14px;border-radius:10px;cursor:pointer">כן, הוסף</button>
+      <button onclick="dismissRecurringIncome()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:12px;font-weight:600;padding:5px 14px;border-radius:10px;cursor:pointer">לא עכשיו</button>
+    </div>
+  </div>
   <div class="hero">
     <div class="hero-top">
       <div class="hero-right">
@@ -921,6 +929,17 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="detail-total pos" id="inc-total"></div>
   </div>
   <div class="txn-list" id="inc-list"></div>
+  <button class="fp-add-btn" onclick="openFIModal()" style="margin:12px 16px 8px">+ הוסף הכנסה קבועה</button>
+  <!-- Fixed income add/edit modal -->
+  <div class="mbg" id="fi-mbg" onclick="if(event.target===this)closeFIModal()">
+    <div class="modal" style="max-height:80dvh;overflow-y:auto" id="fi-modal">
+      <div class="modal-title" id="fi-modal-title">הכנסה קבועה חדשה</div>
+      <input class="minput" id="fi-name" placeholder="שם (משכורת, קצבה...)" />
+      <input class="minput" type="number" id="fi-amount" placeholder="סכום חודשי ₪" />
+      <input class="minput" type="number" id="fi-day" placeholder="יום בחודש (1-31)" min="1" max="31"/>
+      <button class="modal-btn" onclick="saveFI()">שמור</button>
+    </div>
+  </div>
 </div>
 
 <!-- ══ BALANCE ════════════════════════════════════════════ -->
@@ -1534,7 +1553,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260720;
+var APP_VER=20260721;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2231,6 +2250,9 @@ var FIXED_PAYMENTS = [
 var _fpEditId=null;
 var _fpMethod='bank';
 var RECURRING_DISMISSED=[];
+var FIXED_INCOME=[];
+var INCOME_DISMISSED=[];
+var _fiEditId=null;
 var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:1200,אוכל:800,קפה:300,דלק:400,נסיעה:300,חניה:200,ביטוח:500,חשמל:350,חשבון:300,מנוי:200,טלפון:150,פרטנר:250};
 var _budgetEditLbl='';
 var catChartInst=null;
@@ -2454,6 +2476,7 @@ function saveAnnual(){try{localStorage.setItem('pf_annual',JSON.stringify(ANNUAL
 function saveAssets(){try{localStorage.setItem('pf_assets',JSON.stringify(ASSETS));localStorage.setItem('pf_networth_hist',JSON.stringify(NW_HIST));}catch(e){}}
 function saveSuppliers(){try{localStorage.setItem('pf_suppliers',JSON.stringify(SUPPLIERS));}catch(e){}}
 function saveOrders(){try{localStorage.setItem('pf_orders',JSON.stringify(ORDERS));}catch(e){}}
+function saveFixedIncome(){try{localStorage.setItem('pf_fixed_income',JSON.stringify(FIXED_INCOME));}catch(e){}}
 var CLIENTS_VERSION=20;  // bump to force reload clients from code
 var CARDS_VERSION=10;    // bump to force reload cards from code
 function load(){
@@ -2475,6 +2498,8 @@ function load(){
     var sups=localStorage.getItem('pf_suppliers'); if(sups){try{SUPPLIERS=JSON.parse(sups);}catch(ex){SUPPLIERS=[];}}
     var ords=localStorage.getItem('pf_orders'); if(ords){try{ORDERS=JSON.parse(ords);}catch(ex){ORDERS=[];}}
     var rcd=localStorage.getItem('pf_recurring_dismissed'); if(rcd){try{RECURRING_DISMISSED=JSON.parse(rcd);}catch(ex){RECURRING_DISMISSED=[];}}
+    var fi=localStorage.getItem('pf_fixed_income'); if(fi){try{FIXED_INCOME=JSON.parse(fi);}catch(ex){FIXED_INCOME=[];}}
+    var iid=localStorage.getItem('pf_income_dismissed'); if(iid){try{INCOME_DISMISSED=JSON.parse(iid);}catch(ex){INCOME_DISMISSED=[];}}
   }catch(e){}
 }
 function exportData(){
@@ -2680,6 +2705,7 @@ function renderHome(){
   renderUpcoming(r);
   renderPMCards(r);
   renderNetWorth();
+  showRecurringIncomeSuggestion();
 }
 
 // ── UPCOMING PAYMENTS ────────────────────────────────────
@@ -3057,7 +3083,11 @@ function renderIncome(){
   document.getElementById('inc-total').textContent='+₪'+fmt(r.inc+r.doneAmt);
   var items=RAW.income[r.m]||[];
   var fixedAmt=FIXED_MAP[r.m]||FIXED;
-  var h='<div class="txn-group-hdr">הכנסות קבועות</div><div class="txn-item"><div class="txn-icon" style="background:rgba(29,233,182,.18);color:#1DE9B6">לאומי</div><div class="txn-body"><div class="txn-desc">ביטוח לאומי</div><div class="txn-date">קבוע חודשי</div></div><div class="txn-amt pos">+₪'+fmt(fixedAmt)+'</div></div>';
+  var h='<div class="txn-group-hdr">הכנסות קבועות</div>';
+  h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(29,233,182,.18);color:#1DE9B6">לאומי</div><div class="txn-body"><div class="txn-desc">ביטוח לאומי</div><div class="txn-date">קבוע חודשי</div></div><div class="txn-amt pos">+₪'+fmt(fixedAmt)+'</div></div>';
+  FIXED_INCOME.filter(function(fi){return fi.active!==false;}).forEach(function(fi){
+    h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(255,213,79,.18);color:var(--gold)">קבועה</div><div class="txn-body"><div class="txn-desc">'+esc(fi.name)+'</div><div class="txn-date">יום '+fi.day+' · קבוע חודשי</div></div><div class="txn-amt pos">+₪'+fmt(fi.amount)+'</div><button onclick="deleteFI('+fi.id+')" style="background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:0 4px">🗑</button><button onclick="openFIModal('+fi.id+')" style="background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:0 4px">✏️</button></div>';
+  });
   if(items.length){
     h+='<div class="txn-group-hdr">הכנסות נוספות</div>';
     items.forEach(function(t){h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(0,230,118,.15);color:#00E676">הכנסה</div><div class="txn-body"><div class="txn-desc">'+esc(t.desc)+'</div><div class="txn-date">'+esc(t.d)+'</div></div><div class="txn-amt pos">+₪'+fmt(t.a)+'</div></div>';});
@@ -3651,6 +3681,40 @@ function saveFP(){
     FIXED_PAYMENTS.push({id:newId,name:name,amount:amount,day:day,method:_fpMethod,active:true});
   }
   save();closeFPModal();renderFixed();
+}
+
+// ── FIXED INCOME ─────────────────────────────────────────
+function openFIModal(id){
+  _fiEditId=id||null;
+  var fi=id?FIXED_INCOME.find(function(x){return x.id===id;}):null;
+  document.getElementById('fi-modal-title').textContent=fi?'עריכת הכנסה קבועה':'הכנסה קבועה חדשה';
+  document.getElementById('fi-name').value=fi?fi.name:'';
+  document.getElementById('fi-amount').value=fi?fi.amount:'';
+  document.getElementById('fi-day').value=fi?fi.day:'';
+  document.getElementById('fi-mbg').classList.add('open');
+}
+function closeFIModal(){closeMbg('fi-mbg');}
+function saveFI(){
+  var name=document.getElementById('fi-name').value.trim();
+  var amount=parseFloat(document.getElementById('fi-amount').value)||0;
+  var day=parseInt(document.getElementById('fi-day').value)||1;
+  if(!name||!amount){toast('נא למלא שם וסכום');return;}
+  if(_fiEditId){
+    var fi=FIXED_INCOME.find(function(x){return x.id===_fiEditId;});
+    if(fi){fi.name=name;fi.amount=amount;fi.day=day;}
+  }else{
+    FIXED_INCOME.push({id:Date.now(),name:name,amount:amount,day:day,active:true});
+  }
+  saveFixedIncome();
+  closeFIModal();
+  renderIncome();
+  toast('✓ הכנסה קבועה נשמרה');
+}
+function deleteFI(id){
+  FIXED_INCOME=FIXED_INCOME.filter(function(x){return x.id!==id;});
+  saveFixedIncome();
+  renderIncome();
+  toast('נמחק');
 }
 
 // ── ANNUAL EXPENSES ───────────────────────────────────
@@ -4446,6 +4510,106 @@ function dismissRecurring(){
   var el=document.getElementById('recurring-banner');
   if(el)el.style.display='none';
   _recurringCandidate=null;
+}
+
+// ── RECURRING INCOME DETECTION ───────────────────────────
+var _incomeCandidate=null;
+
+// Detect recurring income from RAW.income over the last 3 months.
+// Groups by normalized description, requires 2+ distinct months,
+// amounts within ±10% of average, and avg >= 100.
+// Excludes items already in FIXED_INCOME list.
+function detectRecurringIncome(){
+  var monthKeys=[];
+  for(var mi=NOW_IDX;mi>=0&&monthKeys.length<3;mi--){
+    monthKeys.push(MONTHS[mi].key);
+  }
+  if(monthKeys.length<2)return null;
+
+  // Build normalized set of already-known fixed income names
+  var knownNorms={};
+  knownNorms[normDesc('ביטוח לאומי')]=true;
+  FIXED_INCOME.forEach(function(fi){knownNorms[normDesc(fi.name)]=true;});
+
+  // Group RAW.income entries by normalized description
+  var groups={};
+  monthKeys.forEach(function(mk){
+    var entries=RAW.income[mk]||[];
+    entries.forEach(function(t){
+      var nk=normDesc(t.desc);
+      if(!nk||nk.length<2)return;
+      if(!groups[nk])groups[nk]={nk:nk,origDesc:t.desc,months:{},amounts:[]};
+      if(!groups[nk].months[mk])groups[nk].months[mk]=[];
+      groups[nk].months[mk].push(t.a);
+      groups[nk].amounts.push(t.a);
+    });
+  });
+
+  var candidates=[];
+  var keys=Object.keys(groups);
+  for(var gi=0;gi<keys.length;gi++){
+    var nk=keys[gi];
+    var g=groups[nk];
+    var distinctMonths=Object.keys(g.months).length;
+    if(distinctMonths<2)continue;
+    if(knownNorms[nk])continue;
+    // check if dismissed
+    var dismissed=false;
+    for(var di=0;di<INCOME_DISMISSED.length;di++){
+      if(INCOME_DISMISSED[di]===nk){dismissed=true;break;}
+    }
+    if(dismissed)continue;
+    // check amount similarity: all amounts within ±10% of mean
+    var sum=0;
+    for(var ai=0;ai<g.amounts.length;ai++)sum+=g.amounts[ai];
+    var avg=sum/g.amounts.length;
+    if(avg<100)continue;
+    var similar=true;
+    for(var ai2=0;ai2<g.amounts.length;ai2++){
+      if(Math.abs(g.amounts[ai2]-avg)/avg>0.10){similar=false;break;}
+    }
+    if(!similar)continue;
+    candidates.push({nk:nk,origDesc:g.origDesc,avg:avg,months:distinctMonths});
+  }
+  if(!candidates.length)return null;
+  // Sort: more months first, then higher amount
+  candidates.sort(function(a,b){
+    if(b.months!==a.months)return b.months-a.months;
+    return b.avg-a.avg;
+  });
+  return candidates[0];
+}
+
+function showRecurringIncomeSuggestion(){
+  var el=document.getElementById('income-recurring-banner');
+  if(!el)return;
+  var candidate=detectRecurringIncome();
+  _incomeCandidate=candidate;
+  if(!candidate){el.style.display='none';return;}
+  var amtStr='₪'+fmt(Math.round(candidate.avg));
+  var textEl=document.getElementById('income-recurring-banner-text');
+  if(textEl)textEl.innerHTML='זיהינו הכנסה חוזרת מ-\'<strong>'+esc(candidate.origDesc)+'</strong>\' ~'+amtStr+' — לסמן כהכנסה קבועה?';
+  el.style.display='block';
+}
+
+function addRecurringToFixedIncome(){
+  if(!_incomeCandidate)return;
+  var c=_incomeCandidate;
+  FIXED_INCOME.push({id:Date.now(),name:c.origDesc,amount:Math.round(c.avg),day:1,active:true});
+  saveFixedIncome();
+  var el=document.getElementById('income-recurring-banner');
+  if(el)el.style.display='none';
+  _incomeCandidate=null;
+  toast('✓ נוסף להכנסות קבועות');
+}
+
+function dismissRecurringIncome(){
+  if(!_incomeCandidate)return;
+  INCOME_DISMISSED.push(_incomeCandidate.nk);
+  try{localStorage.setItem('pf_income_dismissed',JSON.stringify(INCOME_DISMISSED));}catch(e){}
+  var el=document.getElementById('income-recurring-banner');
+  if(el)el.style.display='none';
+  _incomeCandidate=null;
 }
 
 // ── SUPPLIERS & ORDERS MODULE ─────────────────────────────
