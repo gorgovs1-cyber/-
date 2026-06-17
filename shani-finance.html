@@ -3281,6 +3281,8 @@ function closeModal(){closeMbg('mbg');}
 function closeMBG(e){if(e.target===document.getElementById('mbg'))closeModal();}
 
 var _moveIdx=-1;
+var _lastMovedName='';
+var _lastMovedDateStr='';
 function startMove(idx){
   var mk=MONTHS[modalMi].key;
   var list=(CLIENTS[mk]||[]).filter(function(c){return c.day===modalDay;});
@@ -3299,6 +3301,14 @@ function startMove(idx){
 function cancelMove(){
   _moveIdx=-1;
   document.getElementById('move-panel').style.display='none';
+}
+function doneWhoCancel(byBusiness){
+  if(_lastMovedName){
+    recordCancellation(_lastMovedName, byBusiness, _lastMovedDateStr);
+  }
+  document.getElementById('move-panel').style.display='none';
+  _lastMovedName='';
+  _lastMovedDateStr='';
 }
 function confirmMove(){
   if(_moveIdx<0)return;
@@ -3322,6 +3332,12 @@ function confirmMove(){
   var client=dayList[_moveIdx];
   if(!client)return;
   var ai=allList.indexOf(client);
+  // store old date info before moving
+  var oldDd=modalDay<10?'0'+modalDay:String(modalDay);
+  var oldMm=mk<10?'0'+mk:String(mk);
+  var oldYr=MONTHS[modalMi].year;
+  _lastMovedName=client.name;
+  _lastMovedDateStr=oldDd+'/'+oldMm+'/'+oldYr;
   // move: remove from old slot
   allList.splice(ai,1);
   // add to new slot (may be different month)
@@ -3330,8 +3346,17 @@ function confirmMove(){
   var moved=Object.assign({},client,{day:newDay});
   CLIENTS[newMk].push(moved);
   save();renderMC();renderClients();renderHome();
-  cancelMove();
+  _moveIdx=-1;
   toast('✓ '+esc(client.name)+' הועברה ל-'+newDay+'/'+MONTHS[newMi].key);
+  // show who-cancelled sub-section
+  var panel=document.getElementById('move-panel');
+  panel.style.display='block';
+  panel.innerHTML='<div style="font-size:12px;color:var(--muted);margin-bottom:10px">מי ביטל את התור המקורי?</div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<button onclick="doneWhoCancel(true)" style="flex:1;background:rgba(255,107,107,.15);color:var(--neg);font-family:\'Sora\',sans-serif;font-size:12px;font-weight:700;padding:10px;border-radius:10px;border:1px solid rgba(255,107,107,.25);cursor:pointer">ביטלתי אני (העסק)</button>'
+    +'<button onclick="doneWhoCancel(false)" style="flex:1;background:rgba(255,179,71,.12);color:#FFB347;font-family:\'Sora\',sans-serif;font-size:12px;font-weight:700;padding:10px;border-radius:10px;border:1px solid rgba(255,179,71,.25);cursor:pointer">ביטלה הלקוחה</button>'
+    +'</div>'
+    +'<button onclick="cancelMove()" style="display:block;width:100%;text-align:center;font-size:12px;color:var(--muted);margin-top:10px;background:none;border:none;font-family:\'Sora\',sans-serif;cursor:pointer">דלג / לא רלוונטי</button>';
 }
 
 function saveQA(){
