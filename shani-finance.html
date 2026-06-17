@@ -486,7 +486,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .drw-item.active .di-icon svg { stroke:var(--cyan); }
 
 /* ══ FAB ══════════════════════════════════════════════════ */
-.fab-wrap{position:fixed;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:20px;z-index:300}
+.fab-wrap{position:fixed;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:20px;z-index:300;display:flex;flex-direction:column;align-items:center;gap:10px}
 
 /* ══ BOTTOM TAB BAR ══════════════════════════════════════ */
 .btm-nav{
@@ -509,9 +509,10 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .btm-item.active svg{transform:translateY(-1px)}
 .btm-item.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:2.5px;border-radius:0 0 3px 3px;background:var(--cyan)}
 .btm-item:active{transform:scale(.92)}
-.fab{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:transform .15s;position:relative}
+.fab{border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s;position:relative}
 .fab:active{transform:scale(.92)}
-.fab-add{background:var(--cyan);color:#0A1520;font-size:28px;font-weight:500;box-shadow:0 4px 16px -6px rgba(0,0,0,.4)}
+.fab-add{width:52px;height:52px;background:var(--cyan);color:#0A1520;font-size:26px;font-weight:400;box-shadow:0 4px 16px -6px rgba(0,0,0,.4)}
+.fab-adv{width:38px;height:38px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18)!important;color:var(--text2);font-size:18px;box-shadow:0 2px 10px rgba(0,0,0,.3)}
 
 /* ══ TOAST ════════════════════════════════════════════════ */
 #toast{
@@ -794,6 +795,9 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="drw-item" data-page="balance" onclick="go('balance');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><rect x="5" y="10" width="3.4" height="8" rx="1"/><rect x="10.3" y="5.5" width="3.4" height="12.5" rx="1"/><rect x="15.6" y="13" width="3.4" height="5" rx="1"/></svg></span><span>מאזן</span></div>
     <div class="drw-item biz-only" data-page="gcal" onclick="go('gcal');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M8 3v4"/><path d="M16 3v4"/></svg></span><span>יומן גוגל</span></div>
     <div style="border-top:1px solid var(--border);margin:8px 0"></div>
+    <div class="drw-item" onclick="openAdvisor();closeDrawer()"><span class="di-emoji">💡</span><span>יועצת כלכלית</span></div>
+    <div class="drw-item" data-page="guide" onclick="go('guide');closeDrawer()"><span class="di-emoji">📖</span><span>מדריך ועזרה</span></div>
+    <div class="drw-item" onclick="exportData();closeDrawer()"><span class="di-emoji">📥</span><span>גיבוי נתונים</span></div>
     <div class="drw-item" onclick="openSettings()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M5 7h8"/><circle cx="16.5" cy="7" r="2.3"/><path d="M19 17h-8"/><circle cx="7.5" cy="17" r="2.3"/></svg></span><span>הגדרות</span></div>
     <div class="drw-item" onclick="toggleTheme()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></span><span id="theme-lbl">מצב ים</span></div>
     <div class="drw-item" id="drw-logout" style="display:none" onclick="authLogout()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M14 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H14"/><path d="M18 15.5 21.5 12 18 8.5"/><path d="M21 12h-10"/></svg></span><span>התנתקות</span></div>
@@ -871,10 +875,7 @@ html.mode-private .biz-only{ display:none!important; }
         <div class="hero-greet" id="home-greet">ערב טוב שני ✨</div>
         <div class="hero-date"  id="home-date"></div>
       </div>
-      <div style="display:flex;gap:8px">
-        <button class="backup-btn" onclick="startTour(true)" title="הדרכה">❔ הדרכה</button>
-        <button class="backup-btn" onclick="exportData()">גיבוי</button>
-      </div>
+      <div></div>
     </div>
     <div class="hero-lbl">מאזן צפוי — <span id="home-m-name">יוני</span></div>
     <div class="hero-bal pos" id="home-bal">טוען...</div>
@@ -1530,11 +1531,83 @@ html.mode-private .biz-only{ display:none!important; }
   </div>
 </div>
 
+<!-- ══ GUIDE SCREEN ══════════════════════════════════════ -->
+<div class="screen" id="s-guide">
+  <div class="detail-hdr">
+    <button class="back-btn" onclick="go('home')">‹</button>
+    <div class="detail-title">מדריך ועזרה</div>
+  </div>
+  <div style="padding:20px 20px 80px;direction:rtl">
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:500;margin-bottom:10px;color:var(--cyan)">💰 מה זה My Money?</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.8">אפליקציה לניהול כספי אישי ועסקי בעברית. כל ההכנסות וההוצאות שלך במקום אחד, עם סנכרון ענן אוטומטי ויועצת כלכלית AI שמנתחת את ההתנהלות שלך.</div>
+    </div>
+
+    <div style="font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;padding:0 4px;margin-bottom:10px">פיצ'רים עיקריים</div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:22px;flex-shrink:0">📊</div>
+        <div><div style="font-size:13px;font-weight:500;margin-bottom:3px">מאזן חודשי חכם</div><div style="font-size:12px;color:var(--muted);line-height:1.5">מחשב כמה צפוי להישאר בסוף החודש אחרי כל ההכנסות, ההוצאות והתשלומים הקבועים.</div></div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:22px;flex-shrink:0">📧</div>
+        <div><div style="font-size:13px;font-weight:500;margin-bottom:3px">ייבוא מ-Gmail</div><div style="font-size:12px;color:var(--muted);line-height:1.5">מתחברים לגוגל והאפליקציה שולפת חיובי כרטיסים ועסקאות מהמיילים של הבנקים — אוטומטית.</div></div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:22px;flex-shrink:0">💳</div>
+        <div><div style="font-size:13px;font-weight:500;margin-bottom:3px">ניהול כרטיסי אשראי</div><div style="font-size:12px;color:var(--muted);line-height:1.5">מאסטרקארד, ויזה ועו"ש — כל חיוב עם תאריך ופירוט. תראי בדיוק כמה ירד ומתי.</div></div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:22px;flex-shrink:0">🔄</div>
+        <div><div style="font-size:13px;font-weight:500;margin-bottom:3px">תשלומים קבועים</div><div style="font-size:12px;color:var(--muted);line-height:1.5">הגדירי ספוטיפיי, ביטוח, שכר דירה ועוד — האפליקציה תכניס אותם אוטומטית לחישוב כל חודש.</div></div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:22px;flex-shrink:0">🎯</div>
+        <div><div style="font-size:13px;font-weight:500;margin-bottom:3px">מטרות חיסכון</div><div style="font-size:12px;color:var(--muted);line-height:1.5">הגדירי יעד (חופשה, רכב, חירום) והאפליקציה עוקבת אחר ההתקדמות שלך.</div></div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:22px;flex-shrink:0">💡</div>
+        <div><div style="font-size:13px;font-weight:500;margin-bottom:3px">יועצת כלכלית AI</div><div style="font-size:12px;color:var(--muted);line-height:1.5">לוחצים על כפתור ה-💡 בפינה השמאלית התחתונה לקבלת תובנות על ההוצאות שלך — מנתחת דפוסים ונותנת טיפים אישיים.</div></div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;padding:0 4px;margin-bottom:10px">שאלות נפוצות</div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+        <div style="font-size:13px;font-weight:500;margin-bottom:6px">כיצד מוסיפים עסקה?</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">לוחצים על כפתור ה-+ הירוק בפינה השמאלית התחתונה. ניתן להוסיף הכנסה, הוצאה, או לייבא מ-Gmail.</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+        <div style="font-size:13px;font-weight:500;margin-bottom:6px">איך הנתונים מסונכרנים?</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">בכניסה עם גוגל, כל הנתונים מסונכרנים אוטומטית לענן. תוכלי להיכנס מכל מכשיר ולמצוא הכל.</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+        <div style="font-size:13px;font-weight:500;margin-bottom:6px">מה ההבדל בין מצב עסקי לפרטי?</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">מצב עסקי מציג את לוח הלקוחות ויומן הגוגל. מצב פרטי מסתיר אותם ומציג רק את הניהול הפיננסי האישי.</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+        <div style="font-size:13px;font-weight:500;margin-bottom:6px">איך גיבוי הנתונים?</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">בתפריט ← "גיבוי נתונים" — מוריד קובץ JSON עם כל הנתונים. שמרי אותו כגיבוי חיצוני.</div>
+      </div>
+    </div>
+
+    <div style="background:rgba(29,233,182,.08);border:1px solid rgba(29,233,182,.2);border-radius:12px;padding:16px;text-align:center">
+      <div style="font-size:13px;color:var(--cyan);margin-bottom:8px;font-weight:500">רוצה לקבל טיפ כלכלי אישי?</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5">היועצת מנתחת את ההוצאות שלך ומציעה תובנות לפי ההתנהלות האמיתית שלך.</div>
+      <button onclick="openAdvisor();go('home')" style="background:var(--cyan);color:#0A1520;border:none;border-radius:10px;padding:10px 24px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Rubik',sans-serif">💡 פתחי יועצת כלכלית</button>
+    </div>
+
+  </div>
+</div>
+
 <!-- ══ FAB ════════════════════════════════════════════════ -->
 <div class="fab-wrap">
-  <button class="fab fab-add" id="main-fab" onclick="openAddTxn()" title="הוסף פעולה / לחצי לחיצה ארוכה ליועץ">
+  <button class="fab fab-adv" id="adv-fab" onclick="openAdvisor()" title="יועצת כלכלית">💡</button>
+  <button class="fab fab-add" id="main-fab" onclick="openAddTxn()" title="הוסף פעולה">
     <span id="fab-icon">+</span>
-    <span style="position:absolute;top:2px;right:2px;font-size:9px;line-height:1;opacity:.7">💡</span>
   </button>
 </div>
 
@@ -1565,7 +1638,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260728;
+var APP_VER=20260729;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2568,6 +2641,7 @@ function go(name){
   if(name==='gcal')     renderGcal();
   if(name==='annual')   renderAnnual();
   if(name==='suppliers') renderSuppliers();
+  // guide is static HTML — no render function needed
 }
 
 // ── COUNT-UP ANIMATION ───────────────────────────────────
@@ -3997,20 +4071,10 @@ function runAdvisor(){
   showAdvisor(insights);
 }
 
-// Long-press on main FAB → open advisor
+// Haptic feedback on advisor FAB tap
 (function(){
-  var fab=document.getElementById('main-fab');
-  if(!fab)return;
-  var t=null;
-  fab.addEventListener('touchstart',function(e){
-    t=setTimeout(function(){
-      t=null;
-      if(navigator.vibrate)navigator.vibrate(40);
-      openAdvisor();
-    },600);
-  },{passive:true});
-  fab.addEventListener('touchend',function(){if(t){clearTimeout(t);t=null;}});
-  fab.addEventListener('touchmove',function(){if(t){clearTimeout(t);t=null;}});
+  var btn=document.getElementById('adv-fab');
+  if(btn) btn.addEventListener('touchstart',function(){if(navigator.vibrate)navigator.vibrate(15);},{passive:true});
 })();
 
 // Manual trigger — bypasses the 8h throttle (used by the 💡 button)
