@@ -844,6 +844,14 @@ html.mode-private .biz-only{ display:none!important; }
 <div class="screen active" id="s-home">
   <!-- Subscription renewal alert bar (hidden until a sub is near expiry) -->
   <div id="subs-alert-bar" style="display:none;background:rgba(255,160,0,.13);border-bottom:1px solid rgba(255,160,0,.25);padding:8px 16px;font-size:13px;font-weight:600;color:var(--gold);line-height:1.6;cursor:pointer" onclick="go('gmail')"></div>
+  <!-- Recurring expense suggestion banner (hidden until a candidate is detected) -->
+  <div id="recurring-banner" style="display:none;background:rgba(29,233,182,.10);border-bottom:1px solid rgba(29,233,182,.22);padding:10px 16px;font-size:13px;font-weight:600;color:var(--cyan);line-height:1.5;direction:rtl">
+    <div id="recurring-banner-text" style="margin-bottom:8px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button id="recurring-yes-btn" onclick="addRecurringToFixed()" style="background:rgba(29,233,182,.22);border:1px solid rgba(29,233,182,.4);color:var(--cyan);font-family:Sora,sans-serif;font-size:12px;font-weight:700;padding:5px 14px;border-radius:10px;cursor:pointer">כן, הוסף</button>
+      <button onclick="dismissRecurring()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:12px;font-weight:600;padding:5px 14px;border-radius:10px;cursor:pointer">התעלם</button>
+    </div>
+  </div>
   <div class="hero">
     <div class="hero-top">
       <div class="hero-right">
@@ -1408,7 +1416,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260716;
+var APP_VER=20260717;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2102,6 +2110,7 @@ var FIXED_PAYMENTS = [
 ];
 var _fpEditId=null;
 var _fpMethod='bank';
+var RECURRING_DISMISSED=[];
 var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:1200,אוכל:800,קפה:300,דלק:400,נסיעה:300,חניה:200,ביטוח:500,חשמל:350,חשבון:300,מנוי:200,טלפון:150,פרטנר:250};
 var _budgetEditLbl='';
 var catChartInst=null;
@@ -2341,6 +2350,7 @@ function load(){
     var an=localStorage.getItem('pf_annual'); if(an){try{ANNUAL=JSON.parse(an);}catch(ex){ANNUAL=[];}}
     var ast=localStorage.getItem('pf_assets'); if(ast){try{ASSETS=JSON.parse(ast);}catch(ex){ASSETS=[];}}
     var nwh=localStorage.getItem('pf_networth_hist'); if(nwh){try{NW_HIST=JSON.parse(nwh);}catch(ex){NW_HIST={};}}
+    var rcd=localStorage.getItem('pf_recurring_dismissed'); if(rcd){try{RECURRING_DISMISSED=JSON.parse(rcd);}catch(ex){RECURRING_DISMISSED=[];}}
   }catch(e){}
 }
 function exportData(){
@@ -3385,6 +3395,7 @@ function importParsed(){
   document.getElementById('csv-text').value='';
   renderHome();
   toast('✓ '+count+' רשומות נוספו');
+  showRecurringSuggestion();
 }
 function addSingleTxn(){
   var desc=document.getElementById('sf-desc').value.trim();
@@ -3406,6 +3417,7 @@ function addSingleTxn(){
   document.getElementById('sf-desc').value='';document.getElementById('sf-amt').value='';document.getElementById('sf-tags').value='';
   closeMbg('atxn-mbg');
   renderHome();toast('✓ '+desc+' נוסף');
+  showRecurringSuggestion();
 }
 
 // ── CARD DETAIL ──────────────────────────────────────────
@@ -4160,7 +4172,7 @@ function gmailImportAll(){
     RAW.expense[key].push(entry);
     added++;
   });
-  if(added){save();renderHome();toast('✓ '+added+' עסקאות יובאו');}
+  if(added){save();renderHome();toast('✓ '+added+' עסקאות יובאו');showRecurringSuggestion();}
   document.getElementById('gmail-found').style.display='none';
   _gmailParsed=[];_gmailSubs=[];
 }
@@ -4184,6 +4196,123 @@ function gmailImportSubs(){
     showSubsAlerts();
   }
 }
+// ── RECURRING EXPENSE DETECTION ──────────────────────────
+// Candidate stored between detect and confirm steps
+var _recurringCandidate=null;
+
+// Normalize a description to a fuzzy match key:
+// lowercase, remove digits, remove common punctuation, collapse spaces.
+function normDesc(desc){
+  if(!desc)return '';
+  return String(desc).toLowerCase()
+    .replace(/[\d.,\/#!$%\^&\*;:{}=\-_`~()@"']/g,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+// Return the best recurring-expense candidate, or null if none found.
+// Scans the last 3 months of RAW.expense, groups by normalized desc,
+// requires appearances in 2+ distinct months with amounts within ±5% of each other.
+function detectRecurring(){
+  // Build list of last 3 month keys (from current month backward)
+  var monthKeys=[];
+  for(var mi=NOW_IDX;mi>=0&&monthKeys.length<3;mi--){
+    monthKeys.push(MONTHS[mi].key);
+  }
+  if(monthKeys.length<2)return null;
+
+  // Build set of normalized names already in FIXED_PAYMENTS (active or not)
+  var fixedNorms={};
+  FIXED_PAYMENTS.forEach(function(p){fixedNorms[normDesc(p.name)]=true;});
+
+  // Group transactions by normalized description, tracking per-month appearances
+  var groups={};
+  monthKeys.forEach(function(mk){
+    var entries=RAW.expense[mk]||[];
+    entries.forEach(function(t){
+      var nk=normDesc(t.desc);
+      if(!nk||nk.length<2)return;
+      if(!groups[nk])groups[nk]={nk:nk,origDesc:t.desc,months:{},amounts:[]};
+      if(!groups[nk].months[mk])groups[nk].months[mk]=[];
+      groups[nk].months[mk].push(t.a);
+      groups[nk].amounts.push(t.a);
+    });
+  });
+
+  // Find candidates: 2+ distinct months, amounts within ±5% of average
+  var candidates=[];
+  var keys=Object.keys(groups);
+  for(var gi=0;gi<keys.length;gi++){
+    var nk=keys[gi];
+    var g=groups[nk];
+    var distinctMonths=Object.keys(g.months).length;
+    if(distinctMonths<2)continue;
+    // check if already in fixed payments
+    if(fixedNorms[nk])continue;
+    // check if user dismissed this key
+    var dismissed=false;
+    for(var di=0;di<RECURRING_DISMISSED.length;di++){
+      if(RECURRING_DISMISSED[di]===nk){dismissed=true;break;}
+    }
+    if(dismissed)continue;
+    // check amount similarity: all amounts within ±5% of mean
+    var sum=0;
+    for(var ai=0;ai<g.amounts.length;ai++)sum+=g.amounts[ai];
+    var avg=sum/g.amounts.length;
+    if(avg<5)continue; // skip trivially small amounts
+    var similar=true;
+    for(var ai2=0;ai2<g.amounts.length;ai2++){
+      if(Math.abs(g.amounts[ai2]-avg)/avg>0.05){similar=false;break;}
+    }
+    if(!similar)continue;
+    candidates.push({nk:nk,origDesc:g.origDesc,avg:avg,months:distinctMonths});
+  }
+  if(!candidates.length)return null;
+  // Sort: more months first, then higher amount
+  candidates.sort(function(a,b){
+    if(b.months!==a.months)return b.months-a.months;
+    return b.avg-a.avg;
+  });
+  return candidates[0];
+}
+
+// Render (or hide) the recurring suggestion banner for the best candidate.
+function showRecurringSuggestion(){
+  var el=document.getElementById('recurring-banner');
+  if(!el)return;
+  var candidate=detectRecurring();
+  _recurringCandidate=candidate;
+  if(!candidate){el.style.display='none';return;}
+  var amtStr='₪'+fmt(candidate.avg);
+  var textEl=document.getElementById('recurring-banner-text');
+  if(textEl)textEl.innerHTML='זיהינו <strong>'+esc(candidate.origDesc)+'</strong> כהוצאה חוזרת ('+amtStr+' לחודש) — להוסיף לתשלומים קבועים?';
+  el.style.display='block';
+}
+
+// "כן" button: add candidate to FIXED_PAYMENTS, save, re-render.
+function addRecurringToFixed(){
+  if(!_recurringCandidate)return;
+  var c=_recurringCandidate;
+  var newId=Date.now();
+  FIXED_PAYMENTS.push({id:newId,name:c.origDesc,amount:Math.round(c.avg*100)/100,day:1,method:'bank',active:true});
+  save();
+  renderFixed();
+  var el=document.getElementById('recurring-banner');
+  if(el)el.style.display='none';
+  _recurringCandidate=null;
+  toast('✓ נוסף לתשלומים קבועים');
+}
+
+// "התעלם" button: push normalized key to dismissed list, hide banner.
+function dismissRecurring(){
+  if(!_recurringCandidate)return;
+  RECURRING_DISMISSED.push(_recurringCandidate.nk);
+  try{localStorage.setItem('pf_recurring_dismissed',JSON.stringify(RECURRING_DISMISSED));}catch(e){}
+  var el=document.getElementById('recurring-banner');
+  if(el)el.style.display='none';
+  _recurringCandidate=null;
+}
+
 // Show a small banner if any saved subscription renews within 7 days
 function showSubsAlerts(){
   var subs=JSON.parse(localStorage.getItem('pf_subs')||'[]');
