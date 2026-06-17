@@ -1014,10 +1014,18 @@ html.mode-private .biz-only{ display:none!important; }
 
 <!-- ══ CLIENT CARD ════════════════════════════════════════ -->
 <div class="mbg" id="cc-mbg" onclick="if(event.target===this)closeClientCard()">
-  <div class="modal" id="cc-modal">
-    <div class="modal-title" id="cc-title">כרטיס לקוח</div>
-    <div id="cc-content" style="max-height:60vh;overflow-y:auto;padding-right:2px"></div>
-    <button class="mclose" onclick="closeClientCard()">סגור</button>
+  <div class="modal" id="cc-modal" style="height:92vh;max-height:92vh;display:flex;flex-direction:column;padding:0;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;flex-shrink:0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="cc-avatar" style="width:44px;height:44px;border-radius:50%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:500;color:var(--cyan);flex-shrink:0"></div>
+        <div>
+          <div class="modal-title" id="cc-title" style="margin:0;padding:0;font-size:17px"></div>
+          <div id="cc-subtitle" style="font-size:11px;color:var(--muted);margin-top:1px"></div>
+        </div>
+      </div>
+      <button onclick="closeClientCard()" style="background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--text2);border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">✕</button>
+    </div>
+    <div id="cc-content" style="flex:1;overflow-y:auto;padding:16px 18px 24px;direction:rtl"></div>
   </div>
 </div>
 
@@ -1638,7 +1646,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260729;
+var APP_VER=20260730;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -3462,20 +3470,99 @@ function appendHistoryCancelled(client){
   saveClientRecords();
 }
 
-// ── PROJECT 5: CLIENT CARD ────────────────────────────────
+// ── CLIENT CARD (full-featured) ───────────────────────────
+var _ccName='';
+
 function openClientCard(name){
-  var bg=document.getElementById('cc-mbg');
-  document.getElementById('cc-title').textContent='כרטיס לקוח — '+name;
+  _ccName=name;
+  var initials=name.trim().split(' ').map(function(w){return w[0]||'';}).slice(0,2).join('');
+  document.getElementById('cc-avatar').textContent=initials;
+  document.getElementById('cc-title').textContent=name;
+  document.getElementById('cc-subtitle').textContent='';
   renderClientCard(name);
-  bg.classList.add('open');
+  document.getElementById('cc-mbg').classList.add('open');
 }
-function closeClientCard(){
-  closeMbg('cc-mbg');
+function closeClientCard(){ closeMbg('cc-mbg'); _ccName=''; }
+function openQuickAdd(){
+  var bg=document.getElementById('qa-mbg');
+  if(bg){ if(_ccName)document.getElementById('qa-name').value=_ccName; bg.classList.add('open'); }
 }
+
+// Save editable profile fields
+function saveClientProfile(){
+  var name=_ccName;
+  if(!name)return;
+  var phone=document.getElementById('ccp-phone').value.trim();
+  var address=document.getElementById('ccp-address').value.trim();
+  var notes=document.getElementById('ccp-notes').value.trim();
+  var treatType=document.getElementById('ccp-treat').value.trim();
+  CLIENT_PROFILES[name]=CLIENT_PROFILES[name]||{};
+  CLIENT_PROFILES[name].phone=phone;
+  CLIENT_PROFILES[name].address=address;
+  CLIENT_PROFILES[name].notes=notes;
+  CLIENT_PROFILES[name].treatType=treatType;
+  saveCPs();
+  toast('✓ פרטי '+name+' נשמרו');
+}
+
+// WhatsApp quick-open
+function openWhatsApp(name){
+  var prof=CLIENT_PROFILES[name]||{};
+  var phone=(prof.phone||'').replace(/[-\s()]/g,'');
+  if(!phone){toast('הוסיפי מספר טלפון תחילה');return;}
+  if(phone.charAt(0)==='0')phone='972'+phone.slice(1);
+  if(phone.charAt(0)==='+')phone=phone.slice(1);
+  window.open('https://wa.me/'+phone,'_blank');
+}
+
+// Manual SMS send (with custom message option)
+function manualSMS(name){
+  var prof=CLIENT_PROFILES[name]||{};
+  if(!SETTINGS.twilioSid){toast('הגדירי Twilio בהגדרות');return;}
+  if(!prof.phone){toast('הוסיפי מספר טלפון תחילה');return;}
+  var first=name.split(' ')[0];
+  var msg=window.prompt('תוכן ה-SMS ל-'+first+':','שלום '+first+', מזכירה לך שיש לנו תור קרוב. לביטול/שינוי תורי אותי 💛 — שני');
+  if(!msg)return;
+  var phone=(prof.phone||'').replace(/[-\s]/g,'');
+  if(phone.charAt(0)==='0')phone='+972'+phone.slice(1);
+  var url='https://api.twilio.com/2010-04-01/Accounts/'+SETTINGS.twilioSid+'/Messages.json';
+  var body=new URLSearchParams({To:phone,From:SETTINGS.twilioFrom,Body:msg});
+  fetch(url,{method:'POST',headers:{'Authorization':'Basic '+btoa(SETTINGS.twilioSid+':'+SETTINGS.twilioToken),'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()})
+    .then(function(){toast('📱 SMS נשלח ל-'+name);})
+    .catch(function(){toast('שגיאה בשליחת SMS');});
+}
+
+// Manual invoice
+function manualInvoice(name){
+  if(!SETTINGS.morningToken){toast('הגדירי Morning בהגדרות');return;}
+  var prof=CLIENT_PROFILES[name]||{};
+  var amtStr=window.prompt('סכום החשבונית ל-'+name+' (₪):','800');
+  if(!amtStr)return;
+  var amt=parseFloat(amtStr)||0;
+  if(!amt)return;
+  var payload={description:'טיפול',income:[{catalogNum:'1',description:prof.treatType||'טיפול',quantity:1,price:amt,taxAmount:0}],client:{name:name,phone:prof.phone||'',address:prof.address||''},type:'receipt',lang:'he',currency:'ILS'};
+  fetch('https://api.morning.co.il/v1/documents',{method:'POST',headers:{'Authorization':'Bearer '+SETTINGS.morningToken,'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(function(r){return r.json();})
+    .then(function(d){toast('🧾 חשבונית נוצרה: #'+(d.id||''));})
+    .catch(function(){toast('שגיאה ביצירת חשבונית');});
+}
+
+// Save/update note on a history entry
+function saveSessionNote(name, idx){
+  var val=document.getElementById('cc-note-'+idx).value.trim();
+  CLIENT_RECORDS[name]=CLIENT_RECORDS[name]||{cancellations:[],history:[]};
+  if(CLIENT_RECORDS[name].history[idx]!==undefined){
+    CLIENT_RECORDS[name].history[idx].note=val;
+    saveClientRecords();
+    toast('✓ הערה נשמרה');
+  }
+}
+
 function renderClientCard(name){
+  var prof=CLIENT_PROFILES[name]||{};
   var rec=CLIENT_RECORDS[name]||{cancellations:[],history:[]};
-  var html='';
-  // gather all done appointments from CLIENTS across all months
+
+  // Gather done appointments
   var doneAppts=[];
   var allMks=Object.keys(CLIENTS);
   for(var mi=0;mi<allMks.length;mi++){
@@ -3484,67 +3571,125 @@ function renderClientCard(name){
     for(var ci=0;ci<arr.length;ci++){
       var ap=arr[ci];
       if(ap.name===name&&ap.status==='done'){
-        // find year for this month key
         var yr2=null;
-        for(var mii=0;mii<MONTHS.length;mii++){
-          if(MONTHS[mii].key===parseInt(mk)){yr2=MONTHS[mii].year;break;}
-        }
+        for(var mii=0;mii<MONTHS.length;mii++){if(MONTHS[mii].key===parseInt(mk)){yr2=MONTHS[mii].year;break;}}
         doneAppts.push({day:ap.day,month:parseInt(mk),year:yr2,amount:ap.amount,treat:ap.treat||''});
       }
     }
   }
-  // sort by year, month, day ascending
   doneAppts.sort(function(a,b){
     if(a.year!==b.year)return a.year-b.year;
     if(a.month!==b.month)return a.month-b.month;
     return a.day-b.day;
   });
-  // anchor price
-  if(doneAppts.length>0){
-    var first=doneAppts[0];
-    var fdStr=(first.day<10?'0'+first.day:String(first.day))+'/'+(first.month<10?'0'+first.month:String(first.month))+'/'+(first.year||'');
-    html+='<div style="color:var(--gold,#FFB347);font-size:20px;font-weight:500;margin-bottom:8px">&#x05EA;&#x05E9;&#x05DC;&#x05D5;&#x05DD; &#x05E8;&#x05D0;&#x05E9;&#x05D5;&#x05DF;: &#x20AA;'+fmt(first.amount)+' &#x05D1;-'+fdStr+'</div>';
-    var latest=doneAppts[doneAppts.length-1];
-    if(doneAppts.length>1&&latest.amount>first.amount&&first.amount>0){
-      var pct=Math.round((latest.amount-first.amount)/first.amount*100);
-      html+='<div style="color:var(--pos);font-size:13px;margin-bottom:10px">&#x05DE;&#x05D7;&#x05D9;&#x05E8; &#x05E2;&#x05DC;&#x05D4; &#x05D1;-'+pct+'% &#x05DE;&#x05D0;&#x05D6; &#x05D4;&#x05D8;&#x05D9;&#x05E4;&#x05D5;&#x05DC; &#x05D4;&#x05E8;&#x05D0;&#x05E9;&#x05D5;&#x05DF;</div>';
-    }
-  }
-  // stats
+
   var totalPaid=0;
   for(var di=0;di<doneAppts.length;di++)totalPaid+=doneAppts[di].amount;
   var visitCount=doneAppts.length;
   var avgPrice=visitCount>0?Math.round(totalPaid/visitCount):0;
-  var lastVisitStr='—';
+  var lastVisitStr='טרם ביקרה';
   if(visitCount>0){
     var lv=doneAppts[visitCount-1];
     lastVisitStr=(lv.day<10?'0'+lv.day:String(lv.day))+'/'+(lv.month<10?'0'+lv.month:String(lv.month))+'/'+(lv.year||'');
   }
-  html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">'
-    +'<div style="flex:1;min-width:80px;background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">&#x05E1;&#x05D4;&#x05F4;&#x05DB; &#x05E9;&#x05D9;&#x05DC;&#x05DD;</div><div style="font-size:16px;font-weight:500;color:var(--pos)">&#x20AA;'+fmt(totalPaid)+'</div></div>'
-    +'<div style="flex:1;min-width:80px;background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">&#x05D1;&#x05D9;&#x05E7;&#x05D5;&#x05E8;&#x05D9;&#x05DD;</div><div style="font-size:16px;font-weight:500">'+visitCount+'</div></div>'
-    +'<div style="flex:1;min-width:80px;background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">&#x05DE;&#x05D7;&#x05D9;&#x05E8; &#x05DE;&#x05DE;&#x05D5;&#x05E6;&#x05E2;</div><div style="font-size:16px;font-weight:500">&#x20AA;'+fmt(avgPrice)+'</div></div>'
-    +'</div>'
-    +'<div style="font-size:11px;color:var(--muted);margin-bottom:14px">&#x05D1;&#x05D9;&#x05E7;&#x05D5;&#x05E8; &#x05D0;&#x05D7;&#x05E8;&#x05D5;&#x05DF;: '+lastVisitStr+'</div>';
-  // treatment history from CLIENT_RECORDS
-  var hist=(rec.history||[]);
-  if(hist.length>0){
-    html+='<div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:8px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px">&#x05D4;&#x05D9;&#x05E1;&#x05D8;&#x05D5;&#x05E8;&#x05D9;&#x05D9;&#x05EA; &#x05D8;&#x05D9;&#x05E4;&#x05D5;&#x05DC;&#x05D9;&#x05DD;</div>';
-    for(var hi=hist.length-1;hi>=0;hi--){
-      var h=hist[hi];
-      if(h.status==='done'){
-        html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">'
-          +'<div><span style="font-size:12px;font-weight:500">'+h.date+'</span>'+(h.treatment?' <span style="font-size:11px;color:var(--muted)">· '+esc(h.treatment)+'</span>':'')+'</div>'
-          +'<div style="color:var(--pos);font-weight:500">&#x20AA;'+fmt(h.amount)+'</div></div>';
-      } else if(h.status==='cancelled'){
-        var byWhom=h.byBusiness?'&#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC; &#x05E2;&#x05DC; &#x05D9;&#x05D3;&#x05D9; &#x05D4;&#x05E2;&#x05E1;&#x05E7;':'&#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC; &#x05E2;&#x05DC; &#x05D9;&#x05D3;&#x05D9; &#x05D4;&#x05DC;&#x05E7;&#x05D5;&#x05D7;&#x05D4;';
-        html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">'
-          +'<div><span style="font-size:12px;font-weight:500">'+h.date+'</span> <span style="font-size:11px;color:var(--neg)">&#x2715; '+byWhom+'</span></div>'
-          +'<div style="color:var(--neg);font-size:11px">&#x05D1;&#x05D5;&#x05D8;&#x05DC;</div></div>';
-      }
+  // price trend
+  var trendHtml='';
+  if(doneAppts.length>1){
+    var first=doneAppts[0],latest=doneAppts[doneAppts.length-1];
+    if(latest.amount>first.amount&&first.amount>0){
+      var pct=Math.round((latest.amount-first.amount)/first.amount*100);
+      trendHtml='<span style="background:rgba(94,255,197,.12);color:var(--pos);font-size:11px;padding:2px 8px;border-radius:20px;margin-right:6px">↑ '+pct+'% מהתחלה</span>';
     }
   }
-  if(html===''){html='<div class="mempty">&#x05D0;&#x05D9;&#x05DF; &#x05E0;&#x05EA;&#x05D5;&#x05E0;&#x05D9;&#x05DD; &#x05E2;&#x05D3;&#x05D9;&#x05D9;&#x05DF;</div>';}
+  document.getElementById('cc-subtitle').innerHTML='ביקור אחרון: '+lastVisitStr+' '+trendHtml;
+
+  var hasPhone=!!(prof.phone);
+  var hasTwilio=!!(SETTINGS.twilioSid);
+  var hasMorning=!!(SETTINGS.morningToken);
+
+  var html='';
+
+  // ── PROFILE EDIT SECTION ──
+  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:14px">';
+  html+='<div style="font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px">פרטי קשר</div>';
+  html+='<div style="display:flex;flex-direction:column;gap:8px">';
+  html+='<div style="display:flex;align-items:center;gap:8px">'
+    +'<span style="font-size:16px;flex-shrink:0">📞</span>'
+    +'<input id="ccp-phone" type="tel" placeholder="מספר טלפון" value="'+esc(prof.phone||'')+'"'
+    +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif;direction:ltr;text-align:left">'
+    +'</div>';
+  html+='<div style="display:flex;align-items:center;gap:8px">'
+    +'<span style="font-size:16px;flex-shrink:0">🏠</span>'
+    +'<input id="ccp-address" type="text" placeholder="כתובת (לחשבוניות)" value="'+esc(prof.address||'')+'"'
+    +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif">'
+    +'</div>';
+  html+='<div style="display:flex;align-items:center;gap:8px">'
+    +'<span style="font-size:16px;flex-shrink:0">💆</span>'
+    +'<input id="ccp-treat" type="text" placeholder="סוג טיפול מועדף (פנים, גוף...)" value="'+esc(prof.treatType||'')+'"'
+    +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif">'
+    +'</div>';
+  html+='<div style="display:flex;align-items:flex-start;gap:8px">'
+    +'<span style="font-size:16px;flex-shrink:0;margin-top:6px">📝</span>'
+    +'<textarea id="ccp-notes" rows="2" placeholder="הערות כלליות על הלקוחה..."'
+    +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif;resize:none;line-height:1.5">'+esc(prof.notes||'')+'</textarea>'
+    +'</div>';
+  html+='</div>';
+  html+='<button onclick="saveClientProfile()" style="margin-top:10px;width:100%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);border-radius:8px;padding:9px;font-size:13px;font-weight:500;cursor:pointer;font-family:Rubik,sans-serif">שמור פרטים</button>';
+  html+='</div>';
+
+  // ── STATS ──
+  html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">';
+  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">סה"כ שולם</div><div style="font-size:15px;font-weight:500;color:var(--pos)">₪'+fmt(totalPaid)+'</div></div>';
+  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">ביקורים</div><div style="font-size:15px;font-weight:500">'+visitCount+'</div></div>';
+  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">ממוצע/טיפול</div><div style="font-size:15px;font-weight:500">₪'+fmt(avgPrice)+'</div></div>';
+  html+='</div>';
+
+  // ── QUICK ACTIONS ──
+  html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px">';
+  html+='<button onclick="openWhatsApp(\''+esc(name)+'\')" style="background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
+    +'<span style="font-size:20px">💬</span><span style="font-size:10px;color:#25D366;font-family:Rubik,sans-serif">וואטסאפ</span></button>';
+  html+='<button onclick="manualSMS(\''+esc(name)+'\')" style="background:'+(hasTwilio?'rgba(29,233,182,.1)':'rgba(255,255,255,.05)')+';border:1px solid '+(hasTwilio?'rgba(29,233,182,.25)':'rgba(255,255,255,.1)')+';border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
+    +'<span style="font-size:20px">📱</span><span style="font-size:10px;color:'+(hasTwilio?'var(--cyan)':'var(--muted)')+';font-family:Rubik,sans-serif">SMS</span></button>';
+  html+='<button onclick="manualInvoice(\''+esc(name)+'\')" style="background:'+(hasMorning?'rgba(232,168,62,.1)':'rgba(255,255,255,.05)')+';border:1px solid '+(hasMorning?'rgba(232,168,62,.25)':'rgba(255,255,255,.1)')+';border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
+    +'<span style="font-size:20px">🧾</span><span style="font-size:10px;color:'+(hasMorning?'var(--gold)':'var(--muted)')+';font-family:Rubik,sans-serif">חשבונית</span></button>';
+  html+='<button onclick="closeClientCard();openQuickAdd()" style="background:rgba(29,233,182,.12);border:1px solid rgba(29,233,182,.28);border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
+    +'<span style="font-size:20px">➕</span><span style="font-size:10px;color:var(--cyan);font-family:Rubik,sans-serif">תור חדש</span></button>';
+  html+='</div>';
+
+  // ── HISTORY ──
+  var hist=rec.history||[];
+  html+='<div style="font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px">היסטוריית פגישות</div>';
+  if(hist.length===0&&visitCount===0){
+    html+='<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px 0">אין פגישות עדיין</div>';
+  } else {
+    for(var hi=hist.length-1;hi>=0;hi--){
+      var h=hist[hi];
+      var isDone=h.status==='done';
+      html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px">';
+      if(isDone){
+        html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+          +'<div><span style="font-size:13px;font-weight:500">'+esc(h.date)+'</span>'
+          +(h.treatment?' <span style="font-size:11px;color:var(--muted);margin-right:4px">· '+esc(h.treatment)+'</span>':'')+'</div>'
+          +'<span style="font-size:13px;font-weight:500;color:var(--pos)">₪'+fmt(h.amount)+'</span>'
+          +'</div>';
+      } else {
+        var byWhom=h.byBusiness?'ביטול על ידי עסק':'ביטול על ידי לקוחה';
+        html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+          +'<div><span style="font-size:13px;font-weight:500">'+esc(h.date)+'</span>'
+          +' <span style="font-size:11px;color:var(--neg)">✕ '+byWhom+'</span></div>'
+          +'<span style="font-size:11px;color:var(--neg)">בוטל</span>'
+          +'</div>';
+      }
+      // Note area
+      html+='<div style="display:flex;align-items:center;gap:6px;margin-top:6px">'
+        +'<input id="cc-note-'+hi+'" type="text" placeholder="הוסיפי הערה לפגישה..." value="'+esc(h.note||'')+'"'
+        +' style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:5px 8px;color:var(--text2);font-size:11px;font-family:Rubik,sans-serif">'
+        +'<button onclick="saveSessionNote(\''+esc(name)+'\','+hi+')" style="background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer;white-space:nowrap;font-family:Rubik,sans-serif">שמור</button>'
+        +'</div>';
+      html+='</div>';
+    }
+  }
+
   document.getElementById('cc-content').innerHTML=html;
 }
 
