@@ -76,8 +76,8 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
   to  {transform:rotate(360deg)}
 }
 @keyframes spPulse{
-  0%  {text-shadow:0 0 40px rgba(0,255,212,1),0 0 90px rgba(0,255,212,.7),0 0 160px rgba(0,255,212,.35),0 0 280px rgba(0,255,212,.15)}
-  100%{text-shadow:0 0 70px rgba(0,255,212,1),0 0 140px rgba(0,255,212,.9),0 0 250px rgba(0,255,212,.55),0 0 400px rgba(0,255,212,.25)}
+  0%  {text-shadow:0 0 30px rgba(0,255,212,.6)}
+  100%{text-shadow:0 0 50px rgba(0,255,212,.9)}
 }
 
 /* "My Money" neon text */
@@ -89,8 +89,8 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
   animation:spFade .55s .75s both, spNameGlow 2.5s 1.5s ease-in-out infinite alternate;
 }
 @keyframes spNameGlow{
-  0%  {text-shadow:0 0 30px rgba(0,255,212,1),0 0 70px rgba(0,255,212,.7),0 0 120px rgba(0,255,212,.35)}
-  100%{text-shadow:0 0 55px rgba(0,255,212,1),0 0 110px rgba(0,255,212,.9),0 0 200px rgba(0,255,212,.5),0 0 320px rgba(0,255,212,.2)}
+  0%  {text-shadow:0 0 20px rgba(0,255,212,.5)}
+  100%{text-shadow:0 0 40px rgba(0,255,212,.85)}
 }
 .sp-greet{
   position:relative;z-index:1;
@@ -118,7 +118,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .auth-logo{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:6px}
 .auth-mark{
   font-size:38px;font-weight:900;color:#00FFD4;line-height:1;
-  text-shadow:0 0 26px rgba(0,255,212,.7),0 0 60px rgba(0,255,212,.3);
+  text-shadow:0 0 20px rgba(0,255,212,.5);
 }
 .auth-title{font-size:30px;font-weight:900;font-style:italic;color:#00FFD4;letter-spacing:.5px}
 .auth-sub{font-size:13px;color:var(--text2);margin-bottom:26px;line-height:1.5}
@@ -238,7 +238,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
   padding:14px 10px 13px;display:flex;flex-direction:column;align-items:center;gap:6px;
   cursor:pointer;transition:transform .15s,opacity .15s;
   position:relative;overflow:hidden;
-  box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 10px 26px -14px rgba(0,0,0,.7);
+  box-shadow:0 8px 20px -12px rgba(0,0,0,.5);
 }
 .tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--tc,var(--cyan))}
 .tile:active{transform:scale(.95);opacity:.75}
@@ -339,7 +339,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .compare-wrap{background:var(--card);border-radius:var(--r);padding:14px 10px 8px;height:240px;display:none;margin-top:8px}
 .compare-wrap.open{display:block}
 .txn-group-hdr{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;padding:10px 4px 5px;text-transform:uppercase}
-.txn-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--rs);background:linear-gradient(180deg,rgba(25,40,64,.4) 0%,var(--card) 65%);border:1px solid var(--border);margin-bottom:7px;box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 6px 18px -12px rgba(0,0,0,.6)}
+.txn-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--rs);background:linear-gradient(180deg,rgba(25,40,64,.4) 0%,var(--card) 65%);border:1px solid var(--border);margin-bottom:7px;box-shadow:0 4px 14px -10px rgba(0,0,0,.5)}
 .txn-icon{
   flex-shrink:0;width:36px;height:36px;border-radius:10px;
   display:flex;align-items:center;justify-content:center;
@@ -374,7 +374,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .page-sub  {font-size:13px;color:var(--muted);margin-top:3px}
 
 .cl-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 16px 14px}
-.cl-sum-card{background:linear-gradient(180deg,rgba(25,40,64,.5) 0%,var(--card) 62%);border:1px solid var(--border);border-radius:var(--r);padding:15px 14px 13px;box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 10px 26px -14px rgba(0,0,0,.7)}
+.cl-sum-card{background:linear-gradient(180deg,rgba(25,40,64,.5) 0%,var(--card) 62%);border:1px solid var(--border);border-radius:var(--r);padding:15px 14px 13px;box-shadow:0 8px 20px -12px rgba(0,0,0,.5)}
 .cl-sum-card.done-c{border-color:rgba(0,230,118,.22)}
 .cl-sum-card.plan-c{border-color:rgba(255,179,71,.22)}
 .cls-icon {display:none}
@@ -527,7 +527,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 
 /* ══ GOALS ════════════════════════════════════════════════ */
 .goals-grid{display:flex;flex-direction:column;gap:12px;padding:0 16px 16px}
-.goal-card{background:linear-gradient(180deg,rgba(25,40,64,.5) 0%,var(--card) 62%);border:1px solid var(--border);border-radius:var(--r);padding:16px 16px 13px;position:relative;overflow:hidden;box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 10px 26px -14px rgba(0,0,0,.7)}
+.goal-card{background:linear-gradient(180deg,rgba(25,40,64,.5) 0%,var(--card) 62%);border:1px solid var(--border);border-radius:var(--r);padding:16px 16px 13px;position:relative;overflow:hidden;box-shadow:0 8px 20px -12px rgba(0,0,0,.5)}
 .goal-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gc,var(--cyan))}
 .goal-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .goal-icon{display:none}
@@ -608,7 +608,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 
 /* ══ PAYMENT METHOD GRID ════════════════════════════════ */
 .pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 20px}
-.pm-card{background:linear-gradient(180deg,rgba(25,40,64,.5) 0%,var(--card) 62%);border:1px solid var(--border);border-radius:var(--r);padding:15px 14px 13px;cursor:pointer;transition:transform .15s,opacity .15s;position:relative;overflow:hidden;box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 10px 26px -14px rgba(0,0,0,.7)}
+.pm-card{background:linear-gradient(180deg,rgba(25,40,64,.5) 0%,var(--card) 62%);border:1px solid var(--border);border-radius:var(--r);padding:15px 14px 13px;cursor:pointer;transition:transform .15s,opacity .15s;position:relative;overflow:hidden;box-shadow:0 8px 20px -12px rgba(0,0,0,.5)}
 .pm-card:active{transform:scale(.97);opacity:.8}
 .pm-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--pm-c,var(--cyan))}
 .pm-name{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
@@ -645,7 +645,7 @@ select option{background:#111D2C;color:#fff}
 .adv-btn-dismiss{padding:11px 14px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:var(--r);color:var(--muted);font-size:13px;cursor:pointer}
 
 .fp-add-btn{display:block;width:calc(100% - 32px);margin:12px 16px;padding:14px;background:rgba(29,233,182,.1);border:1px dashed rgba(29,233,182,.35);border-radius:var(--r);color:var(--cyan);font-size:15px;font-weight:600;cursor:pointer;text-align:center;}
-.fp-item{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(25,40,64,.4) 0%,var(--card) 65%);border:1px solid var(--border);border-radius:var(--r);margin:8px 16px;padding:14px;box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 8px 20px -12px rgba(0,0,0,.65)}
+.fp-item{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(25,40,64,.4) 0%,var(--card) 65%);border:1px solid var(--border);border-radius:var(--r);margin:8px 16px;padding:14px;box-shadow:0 8px 20px -12px rgba(0,0,0,.65)}
 .fp-item-left{flex:1}
 .fp-name{font-size:15px;font-weight:600;color:var(--text)}
 .fp-meta{font-size:13px;color:var(--muted);margin-top:3px}
@@ -1329,7 +1329,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260709;
+var APP_VER=20260710;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
