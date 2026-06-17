@@ -942,6 +942,20 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="modal-title" id="m-title">—</div>
     <div class="modal-sub">לחצי על סטטוס לשינוי</div>
     <div id="m-clients"></div>
+    <!-- move-to-date panel (shown when ↗ is tapped) -->
+    <div id="move-panel" style="display:none;background:rgba(255,255,255,.05);border-radius:12px;padding:12px;margin-bottom:12px">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">העברי <b id="move-name" style="color:var(--text)"></b> לתאריך:</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="number" id="move-day" placeholder="יום" min="1" max="31"
+          style="width:60px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px;color:var(--text);font-family:Sora,sans-serif;font-size:14px;text-align:center">
+        <select id="move-month"
+          style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px;color:var(--text);font-family:Sora,sans-serif;font-size:13px"></select>
+        <button onclick="confirmMove()"
+          style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:13px;font-weight:800;padding:8px 16px;border-radius:8px;border:none;cursor:pointer">העבר</button>
+        <button onclick="cancelMove()"
+          style="background:none;border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:13px;padding:8px 12px;border-radius:8px;cursor:pointer">ביטול</button>
+      </div>
+    </div>
     <div class="modal-sep"></div>
     <div class="mi-row">
       <div class="mfld"><label>שם</label><input type="text"   id="m-name" placeholder="שם לקוחה"></div>
@@ -1315,7 +1329,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260706;
+var APP_VER=20260707;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2765,8 +2779,9 @@ function openModal(day,mi){
 function renderMC(){
   var mk=MONTHS[modalMi].key;
   var list=(CLIENTS[mk]||[]).filter(function(c){return c.day===modalDay;});
+  document.getElementById('move-panel').style.display='none';
   document.getElementById('m-clients').innerHTML=list.length===0?'<div class="mempty">אין לקוחות ביום זה</div>':
-    list.map(function(c,i){return'<div class="mc-row"><div class="mc-name">'+esc(c.name)+(c.treat?' <span style="font-size:11px;color:var(--muted)">· '+esc(c.treat)+'</span>':'')+'</div><button class="sbtn '+c.status+'" onclick="toggleC('+i+')">'+(c.status==='done'?'✓ בוצע':'⏳ ממתין')+'</button><div class="mc-amt '+c.status+'">₪'+fmt(c.amount)+'</div><button class="del-btn" onclick="delC('+i+')">✕</button></div>';}).join('');
+    list.map(function(c,i){return'<div class="mc-row"><div class="mc-name">'+esc(c.name)+(c.treat?' <span style="font-size:11px;color:var(--muted)">· '+esc(c.treat)+'</span>':'')+'</div><button class="sbtn '+c.status+'" onclick="toggleC('+i+')">'+(c.status==='done'?'✓ בוצע':'⏳ ממתין')+'</button><div class="mc-amt '+c.status+'">₪'+fmt(c.amount)+'</div><button class="mv-btn" onclick="startMove('+i+')" title="העברי לתאריך אחר" style="background:none;border:1px solid rgba(255,255,255,.18);color:var(--muted);font-size:12px;padding:4px 8px;border-radius:6px;cursor:pointer;margin-left:4px">↗</button><button class="del-btn" onclick="delC('+i+')">✕</button></div>';}).join('');
 }
 function toggleC(idx){
   var mk=MONTHS[modalMi].key,list=CLIENTS[mk]||[];
@@ -2800,6 +2815,51 @@ function modalAdd(){
 function closeMbg(id){var bg=document.getElementById(id);if(!bg)return;bg.classList.add('closing');setTimeout(function(){bg.classList.remove('open','closing');},195);}
 function closeModal(){closeMbg('mbg');}
 function closeMBG(e){if(e.target===document.getElementById('mbg'))closeModal();}
+
+var _moveIdx=-1;
+function startMove(idx){
+  var mk=MONTHS[modalMi].key;
+  var list=(CLIENTS[mk]||[]).filter(function(c){return c.day===modalDay;});
+  if(!list[idx])return;
+  _moveIdx=idx;
+  document.getElementById('move-name').textContent=list[idx].name;
+  document.getElementById('move-day').value=modalDay;
+  // populate month select
+  var moNames=['','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+  var sel=document.getElementById('move-month');
+  sel.innerHTML=MONTHS.map(function(ml,i){
+    return '<option value="'+i+'"'+(i===modalMi?' selected':'')+'>'+moNames[ml.key]+' '+ml.year+'</option>';
+  }).join('');
+  document.getElementById('move-panel').style.display='block';
+  document.getElementById('move-day').focus();
+}
+function cancelMove(){
+  _moveIdx=-1;
+  document.getElementById('move-panel').style.display='none';
+}
+function confirmMove(){
+  if(_moveIdx<0)return;
+  var newDay=parseInt(document.getElementById('move-day').value);
+  var newMi=parseInt(document.getElementById('move-month').value);
+  if(!newDay||newDay<1||newDay>31)return;
+  // get the client from the current day
+  var mk=MONTHS[modalMi].key;
+  var allList=CLIENTS[mk]||[];
+  var dayList=allList.filter(function(c){return c.day===modalDay;});
+  var client=dayList[_moveIdx];
+  if(!client)return;
+  var ai=allList.indexOf(client);
+  // move: remove from old slot
+  allList.splice(ai,1);
+  // add to new slot (may be different month)
+  var newMk=MONTHS[newMi].key;
+  CLIENTS[newMk]=CLIENTS[newMk]||[];
+  var moved=Object.assign({},client,{day:newDay});
+  CLIENTS[newMk].push(moved);
+  save();renderMC();renderClients();renderHome();
+  cancelMove();
+  toast('✓ '+esc(client.name)+' הועברה ל-'+newDay+'/'+MONTHS[newMi].key);
+}
 
 function saveQA(){
   var name=document.getElementById('qa-name').value.trim();
