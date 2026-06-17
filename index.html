@@ -479,7 +479,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .drw-item.active .di-icon svg { stroke:var(--cyan); }
 
 /* ══ FAB ══════════════════════════════════════════════════ */
-.fab-wrap{position:fixed;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:20px;display:flex;gap:10px;z-index:300}
+.fab-wrap{position:fixed;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:20px;z-index:300}
 
 /* ══ BOTTOM TAB BAR ══════════════════════════════════════ */
 .btm-nav{
@@ -502,10 +502,9 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .btm-item.active svg{transform:translateY(-1px)}
 .btm-item.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:2.5px;border-radius:0 0 3px 3px;background:var(--cyan)}
 .btm-item:active{transform:scale(.92)}
-.fab{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:transform .15s}
+.fab{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:transform .15s;position:relative}
 .fab:active{transform:scale(.92)}
-.fab-add{background:var(--cyan);color:#0A1520;font-size:28px;font-weight:700;box-shadow:0 6px 22px -6px rgba(29,233,182,.45)}
-.fab-mic{background:#0D2E26;color:var(--cyan);border:1px solid rgba(29,233,182,.3);box-shadow:0 4px 14px -6px rgba(0,0,0,.5)}
+.fab-add{background:var(--cyan);color:#0A1520;font-size:28px;font-weight:700;box-shadow:0 4px 16px -6px rgba(0,0,0,.4)}
 
 /* ══ TOAST ════════════════════════════════════════════════ */
 #toast{
@@ -1298,8 +1297,10 @@ html.mode-private .biz-only{ display:none!important; }
 
 <!-- ══ FAB ════════════════════════════════════════════════ -->
 <div class="fab-wrap">
-  <button class="fab fab-add" onclick="openAddTxn()" title="הוסף פעולה">+</button>
-  <button class="fab fab-mic" onclick="openAdvisor()" title="יועץ כלכלי">💡</button>
+  <button class="fab fab-add" id="main-fab" onclick="openAddTxn()" title="הוסף פעולה / לחצי לחיצה ארוכה ליועץ">
+    <span id="fab-icon">+</span>
+    <span style="position:absolute;top:2px;right:2px;font-size:9px;line-height:1;opacity:.7">💡</span>
+  </button>
 </div>
 
 <!-- BOTTOM TAB BAR -->
@@ -1329,7 +1330,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260711;
+var APP_VER=20260712;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -3281,6 +3282,22 @@ function runAdvisor(){
   showAdvisor(insights);
 }
 
+// Long-press on main FAB → open advisor
+(function(){
+  var fab=document.getElementById('main-fab');
+  if(!fab)return;
+  var t=null;
+  fab.addEventListener('touchstart',function(e){
+    t=setTimeout(function(){
+      t=null;
+      if(navigator.vibrate)navigator.vibrate(40);
+      openAdvisor();
+    },600);
+  },{passive:true});
+  fab.addEventListener('touchend',function(){if(t){clearTimeout(t);t=null;}});
+  fab.addEventListener('touchmove',function(){if(t){clearTimeout(t);t=null;}});
+})();
+
 // Manual trigger — bypasses the 8h throttle (used by the 💡 button)
 function openAdvisor(){
   var saved=localStorage.getItem('shani_adv_last');
@@ -3855,8 +3872,7 @@ var TOUR_STEPS=[
   {sel:'.mnav',       emoji:'📅',title:'מעבר בין חודשים',text:'החצים מזיזים אותך בין החודשים. האפליקציה נפתחת תמיד על החודש הנוכחי.'},
   {sel:'#home-tiles', emoji:'📊',title:'הכנסות · הוצאות · תחזית',text:'לחיצה על כל אריח פותחת פירוט מלא — מי שילם, על מה הוצאת, ומה התחזית.'},
   {sel:'#home-pm',    emoji:'💳',title:'הכרטיסים והחשבונות',text:'מצב עו"ש, מאסטרקארד, ויזה ומזומן. לחיצה על כרטיס פותחת פירוט והוספת הוצאה ידנית.'},
-  {sel:'.fab-add',    emoji:'➕',title:'הוספה מהירה',text:'הכפתור הירוק מוסיף הוצאה או הכנסה — אפשר גם להדביק רשימה שלמה בבת אחת.'},
-  {sel:'.fab-mic',    emoji:'💡',title:'היועץ הכלכלי',text:'נורת הרעיון נותנת תובנות חכמות על דפוסי ההוצאה שלך ואיך לחסוך.'},
+  {sel:'.fab-add',    emoji:'➕',title:'הוספה מהירה',text:'לחיצה קצרה מוסיפה הוצאה או הכנסה. לחיצה ארוכה (600ms) פותחת את היועץ הכלכלי 💡 שנותן תובנות על דפוסי ההוצאה שלך.'},
   {sel:'#bn-gmail',   emoji:'📧',title:'ייבוא מג׳ימייל',text:'מתחברים לגוגל והאפליקציה שולפת חיובים מהמיילים של הבנקים — אוטומטית.'},
   {sel:'.bnav',       emoji:'🧭',title:'ניווט עליון',text:'לקוחות · בית · מטרות · תשלומים קבועים · ג׳ימייל. הכל במרחק לחיצה.'}
 ];
