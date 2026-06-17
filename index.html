@@ -783,6 +783,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="drw-item biz-only" data-page="clients" onclick="go('clients');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 5.6"/><path d="M16.2 13.4a5.5 5.5 0 0 1 4.3 6.1"/></svg></span><span>לקוחות</span></div>
     <div class="drw-item" data-page="goals" onclick="go('goals');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg></span><span>מטרות</span></div>
     <div class="drw-item" data-page="fixed" onclick="go('fixed');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/><path d="M6 14.5h4"/></svg></span><span>תשלומים קבועים</span></div>
+    <div class="drw-item" data-page="annual" onclick="go('annual');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M7 13h4"/><path d="M7 17h6"/></svg></span><span>הוצאות שנתיות</span></div>
     <div class="drw-item" data-page="gmail" onclick="go('gmail');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></span><span>Gmail</span></div>
     <div class="drw-item" data-page="income" onclick="go('income');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 16.5V8"/><path d="m8.5 11.5 3.5-3.5 3.5 3.5"/></svg></span><span>הכנסות</span></div>
     <div class="drw-item" data-page="expenses" onclick="go('expenses');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V16"/><path d="m8.5 12.5 3.5 3.5 3.5-3.5"/></svg></span><span>הוצאות</span></div>
@@ -1286,6 +1287,56 @@ html.mode-private .biz-only{ display:none!important; }
   </div>
 </div>
 
+<!-- ══ ANNUAL EXPENSES ═════════════════════════════════════ -->
+<div class="screen" id="s-annual">
+  <div class="detail-hdr">
+    <button class="back-btn" onclick="go('home')">‹</button>
+    <div class="detail-title">הוצאות שנתיות</div>
+  </div>
+  <div style="padding:0 16px 8px;display:flex;justify-content:space-between;align-items:center">
+    <div id="annual-grand-total" style="font-size:13px;color:var(--muted)"></div>
+    <button onclick="openAnnualModal()" style="background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:9px 18px;border-radius:var(--rs);border:none;cursor:pointer">+ הוסף</button>
+  </div>
+  <div id="annual-list" style="padding:0 16px 80px"></div>
+</div>
+
+<!-- ══ ADD ANNUAL EXPENSE MODAL ════════════════════════════ -->
+<div class="mbg" id="annual-mbg" onclick="if(event.target===this)closeMbg(this.id)">
+  <div class="modal">
+    <div class="modal-title">הוצאה שנתית חדשה</div>
+    <div class="mi-row" style="margin-bottom:10px">
+      <div class="mfld" style="flex:2"><label>שם</label><input type="text" id="an-name" placeholder="ביטוח, חופשה, מתנות..."></div>
+      <div class="mfld" style="max-width:95px"><label>₪</label><input type="number" id="an-amount" placeholder="0"></div>
+    </div>
+    <div class="mi-row" style="margin-bottom:12px">
+      <div class="mfld"><label>חודש</label>
+        <select id="an-month" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px 10px;color:var(--text);font-family:'Sora',sans-serif;font-size:13px">
+          <option value="1">ינואר</option>
+          <option value="2">פברואר</option>
+          <option value="3">מרץ</option>
+          <option value="4">אפריל</option>
+          <option value="5">מאי</option>
+          <option value="6">יוני</option>
+          <option value="7">יולי</option>
+          <option value="8">אוגוסט</option>
+          <option value="9">ספטמבר</option>
+          <option value="10">אוקטובר</option>
+          <option value="11">נובמבר</option>
+          <option value="12">דצמבר</option>
+        </select>
+      </div>
+      <div class="mfld" style="max-width:130px;display:flex;align-items:flex-end;gap:8px;padding-bottom:2px">
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:var(--text2);white-space:nowrap">
+          <input type="checkbox" id="an-recurring" style="width:15px;height:15px;accent-color:var(--cyan)">
+          חוזר שנתי
+        </label>
+      </div>
+    </div>
+    <button onclick="saveAnnualItem()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
+    <button class="mclose" onclick="closeMbg('annual-mbg')">ביטול</button>
+  </div>
+</div>
+
 <!-- SETTINGS MODAL -->
 <div class="modal-bg" id="settings-modal-bg" style="display:none">
   <div class="modal" style="max-height:85vh;overflow-y:auto;border-radius:var(--r);padding:20px">
@@ -1341,7 +1392,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260714;
+var APP_VER=20260715;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2020,6 +2071,7 @@ var CLIENTS = {
 
 var CARDS = {visa:700,mc:3609,bank:9381,cashBal:0,limit:10000};
 var GOALS = [];
+var ANNUAL = [];
 var FIXED_PAYMENTS = [
   {id:1,name:'שכירות',amount:4100,day:2,method:'bank',active:true},
   {id:2,name:'פרטנר',amount:60.42,day:12,method:'bank',active:true},
@@ -2129,6 +2181,7 @@ function save(){
   cloudPush();
 }
 function saveGoals(){try{localStorage.setItem('shani_goals',JSON.stringify(GOALS));}catch(e){}cloudPush();}
+function saveAnnual(){try{localStorage.setItem('pf_annual',JSON.stringify(ANNUAL));}catch(e){}}
 var CLIENTS_VERSION=20;  // bump to force reload clients from code
 var CARDS_VERSION=10;    // bump to force reload cards from code
 function load(){
@@ -2144,6 +2197,7 @@ function load(){
     var g=localStorage.getItem('shani_goals');   if(g)GOALS=JSON.parse(g);
     var bu=localStorage.getItem('shani_budgets');if(bu){var buo=JSON.parse(bu);Object.assign(BUDGETS,buo);}
     var fp=localStorage.getItem('shani_fp'); if(fp)FIXED_PAYMENTS=JSON.parse(fp);
+    var an=localStorage.getItem('pf_annual'); if(an){try{ANNUAL=JSON.parse(an);}catch(ex){ANNUAL=[];}}
   }catch(e){}
 }
 function exportData(){
@@ -2197,6 +2251,7 @@ function go(name){
   if(name==='fixed')    renderFixed();
   if(name==='gmail')    renderGmail();
   if(name==='gcal')     renderGcal();
+  if(name==='annual')   renderAnnual();
 }
 
 // ── COUNT-UP ANIMATION ───────────────────────────────────
@@ -3305,6 +3360,68 @@ function saveFP(){
     FIXED_PAYMENTS.push({id:newId,name:name,amount:amount,day:day,method:_fpMethod,active:true});
   }
   save();closeFPModal();renderFixed();
+}
+
+// ── ANNUAL EXPENSES ───────────────────────────────────
+var MOS_NAMES=['','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+function openAnnualModal(){
+  document.getElementById('an-name').value='';
+  document.getElementById('an-amount').value='';
+  document.getElementById('an-month').value=String(new Date().getMonth()+1);
+  document.getElementById('an-recurring').checked=false;
+  document.getElementById('annual-mbg').classList.add('open');
+}
+function saveAnnualItem(){
+  var name=document.getElementById('an-name').value.trim();
+  var amount=parseFloat(document.getElementById('an-amount').value)||0;
+  var month=parseInt(document.getElementById('an-month').value)||1;
+  var recurring=document.getElementById('an-recurring').checked;
+  if(!name||!amount){toast('נא למלא שם וסכום');return;}
+  ANNUAL.push({id:Date.now(),name:name,amount:amount,month:month,recurring:recurring});
+  saveAnnual();
+  closeMbg('annual-mbg');
+  renderAnnual();
+  toast('נוסף ✓');
+}
+function delAnnual(id){
+  ANNUAL=ANNUAL.filter(function(x){return x.id!==id;});
+  saveAnnual();
+  renderAnnual();
+  toast('נמחק');
+}
+function renderAnnual(){
+  var grandTotal=ANNUAL.reduce(function(s,x){return s+x.amount;},0);
+  var gt=document.getElementById('annual-grand-total');
+  if(gt) gt.textContent=ANNUAL.length?'סה"כ שנתי: ₪'+fmt(grandTotal):'';
+  var h='';
+  if(!ANNUAL.length){
+    h='<div style="text-align:center;color:var(--muted);padding:48px 0;font-size:13px">אין הוצאות שנתיות<br><span style="font-size:11px">לחצי על + הוסף כדי להתחיל</span></div>';
+    document.getElementById('annual-list').innerHTML=h;
+    return;
+  }
+  for(var m=1;m<=12;m++){
+    var items=ANNUAL.filter(function(x){return x.month===m;});
+    if(!items.length) continue;
+    var mTotal=items.reduce(function(s,x){return s+x.amount;},0);
+    h+='<div style="margin-bottom:18px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    h+='<span style="font-size:13px;font-weight:700;color:var(--cyan)">'+MOS_NAMES[m]+'</span>';
+    h+='<span style="font-size:11px;color:var(--muted)">₪'+fmt(mTotal)+'</span>';
+    h+='</div>';
+    h+='<div style="background:var(--card);border-radius:var(--r);overflow:hidden;border:1px solid var(--border)">';
+    items.forEach(function(x){
+      h+='<div style="display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border)">';
+      h+='<div style="flex:1;min-width:0">';
+      h+='<div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(x.name)+'</div>';
+      if(x.recurring) h+='<div style="font-size:10px;color:var(--cyan);margin-top:2px">חוזר שנתי</div>';
+      h+='</div>';
+      h+='<div style="font-size:15px;font-weight:700;color:var(--neg);margin:0 10px">₪'+fmt(x.amount)+'</div>';
+      h+='<button onclick="delAnnual('+x.id+')" style="background:rgba(255,107,107,.13);border:none;color:var(--neg);font-size:13px;padding:5px 10px;border-radius:8px;cursor:pointer;font-family:\'Sora\',sans-serif">מחק</button>';
+      h+='</div>';
+    });
+    h+='</div></div>';
+  }
+  document.getElementById('annual-list').innerHTML=h;
 }
 
 // ── AI FINANCIAL ADVISOR ──────────────────────────────
