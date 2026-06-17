@@ -355,6 +355,10 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .txn-amt.neg {color:var(--orange)}
 .txn-amt.pos {color:var(--pos)}
 .txn-amt.dim {color:rgba(255,255,255,.35)}
+.txn-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.txn-chip{font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(29,233,182,.12);color:var(--cyan);font-weight:700;cursor:pointer;border:1px solid rgba(29,233,182,.2)}
+.txn-chip.active{background:rgba(29,233,182,.28);border-color:var(--cyan)}
+.tag-filter-bar{display:flex;flex-wrap:wrap;gap:5px;padding:8px 14px 4px;min-height:0}
 
 /* ══ BALANCE DETAIL ══════════════════════════════════════ */
 .bal-detail{padding:0 16px 16px}
@@ -891,6 +895,7 @@ html.mode-private .biz-only{ display:none!important; }
     <button class="compare-toggle" onclick="toggleCatChart(this)">השוואה חודשית ▾</button>
     <div class="compare-wrap" id="compare-wrap"><canvas id="cat-chart"></canvas></div>
   </div>
+  <div class="tag-filter-bar" id="exp-tag-filter"></div>
   <div class="txn-list" id="exp-list"></div>
 </div>
 
@@ -1072,8 +1077,11 @@ html.mode-private .biz-only{ display:none!important; }
         <div class="mfld" style="flex:2"><label>תיאור</label><input type="text" id="sf-desc" placeholder="מה הייתה הפעולה?"></div>
         <div class="mfld" style="max-width:95px"><label>₪</label><input type="number" id="sf-amt" placeholder="0"></div>
       </div>
-      <div class="mi-row" style="margin-bottom:14px">
+      <div class="mi-row" style="margin-bottom:10px">
         <div class="mfld"><label>תאריך (אופציונלי)</label><input type="date" id="sf-date"></div>
+      </div>
+      <div class="mi-row" style="margin-bottom:14px">
+        <div class="mfld"><label>תגיות (אופציונלי, מופרדות בפסיק)</label><input type="text" id="sf-tags" placeholder="מזון, בית, חיסכון..."></div>
       </div>
       <button onclick="addSingleTxn()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
     </div>
@@ -1333,7 +1341,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260713;
+var APP_VER=20260714;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2580,22 +2588,46 @@ function renderExpenses(){
   }
   document.getElementById('exp-subs').innerHTML=sh;
 
+  // ── Collect all tags for filter bar ──
+  var allTags={};
+  items.forEach(function(t){if(t.tags)t.tags.forEach(function(g){allTags[g]=(allTags[g]||0)+1;});});
+  var tagKeys=Object.keys(allTags);
+  var tfEl=document.getElementById('exp-tag-filter');
+  if(tfEl){
+    if(!tagKeys.length){tfEl.innerHTML='';}
+    else{
+      var tf='<span style="font-size:10px;color:var(--muted);align-self:center;margin-left:4px">סנן לפי תגית:</span>';
+      tagKeys.forEach(function(g){
+        var on=_tagFilter===g;
+        tf+='<span class="txn-chip'+(on?' active':'')+'" onclick="setTagFilter(\''+esc(g)+'\')">#'+esc(g)+'</span>';
+      });
+      if(_tagFilter)tf+='<span class="txn-chip" style="background:rgba(255,107,107,.15);color:var(--neg);border-color:rgba(255,107,107,.3)" onclick="setTagFilter(null)">✕ נקה</span>';
+      tfEl.innerHTML=tf;
+    }
+  }
+
   // ── Transactions by date ──
+  var filtered=_tagFilter?items.filter(function(t){return t.tags&&t.tags.indexOf(_tagFilter)>=0;}):items;
   var byDate={};
-  items.forEach(function(t){if(!byDate[t.d])byDate[t.d]=[];byDate[t.d].push(t);});
+  filtered.forEach(function(t){if(!byDate[t.d])byDate[t.d]=[];byDate[t.d].push(t);});
   var h='';var ti=0;
+  if(_tagFilter&&!filtered.length){h='<div class="mempty">אין הוצאות עם תגית #'+esc(_tagFilter)+'</div>';}
   Object.keys(byDate).sort().forEach(function(dt){
     h+='<div class="txn-group-hdr">'+dt+'</div>';
     byDate[dt].forEach(function(t){
       var c=cat(t.desc);
       var mt=t.method?'<span class="txn-method '+t.method+'">'+(t.method==='mc'?'MC':t.method==='bank'?'עוש':'Visa')+'</span>':'';
       var key=encodeURIComponent(t.d+'|'+t.desc+'|'+t.a);
-      h+='<div class="txn-item stagger" style="--si:'+ti+'"><div class="txn-icon" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="txn-body"><div class="txn-desc">'+esc(t.desc)+mt+'</div><div class="txn-date">'+esc(dt)+'</div></div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div><button class="txn-del" onclick="delExpTxn(\''+key+'\')">✕</button></div>';
+      var chips='';
+      if(t.tags&&t.tags.length)chips='<div class="txn-chips">'+t.tags.map(function(g){return'<span class="txn-chip" onclick="setTagFilter(\''+esc(g)+'\')">#'+esc(g)+'</span>';}).join('')+'</div>';
+      h+='<div class="txn-item stagger" style="--si:'+ti+'"><div class="txn-icon" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="txn-body"><div class="txn-desc">'+esc(t.desc)+mt+'</div><div class="txn-date">'+esc(dt)+'</div>'+chips+'</div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div><button class="txn-del" onclick="delExpTxn(\''+key+'\')">✕</button></div>';
       ti++;
     });
   });
   document.getElementById('exp-list').innerHTML=h;
 }
+
+function setTagFilter(tag){_tagFilter=tag;renderExpenses();}
 
 // ── DELETE EXPENSE ────────────────────────────────────────
 function delExpTxn(key){
@@ -3043,6 +3075,7 @@ function deleteGoal(idx){
 var addParsed=[];
 var addType='expense';
 var addMethod='bank';
+var _tagFilter=null;
 
 function openAddTxn(){
   addParsed=[];
@@ -3165,10 +3198,13 @@ function addSingleTxn(){
   else{var now=new Date();d=String(now.getDate()).padStart(2,'0');m2=String(mo.key).padStart(2,'0');}
   var entry={d:d+'/'+m2,desc:desc,a:amt};
   if(addMethod!=='cash'&&addMethod!=='bank')entry.method=addMethod;
+  var tagsVal=document.getElementById('sf-tags').value.trim();
+  var tags=tagsVal?tagsVal.split(',').map(function(s){return s.trim();}).filter(Boolean):[];
+  if(tags.length)entry.tags=tags;
   if(addType==='expense'){RAW.expense[mo.key]=RAW.expense[mo.key]||[];RAW.expense[mo.key].push(entry);}
   else{RAW.income[mo.key]=RAW.income[mo.key]||[];RAW.income[mo.key].push(entry);}
   save();
-  document.getElementById('sf-desc').value='';document.getElementById('sf-amt').value='';
+  document.getElementById('sf-desc').value='';document.getElementById('sf-amt').value='';document.getElementById('sf-tags').value='';
   closeMbg('atxn-mbg');
   renderHome();toast('✓ '+desc+' נוסף');
 }
