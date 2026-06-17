@@ -83,7 +83,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 /* "My Money" neon text */
 .sp-name{
   position:relative;z-index:1;
-  font-size:56px;font-weight:900;font-style:italic;
+  font-size:56px;font-weight:500;font-style:italic;
   color:#00FFD4;margin-top:20px;line-height:1.05;letter-spacing:1px;
   filter:brightness(1.1);
   animation:spFade .55s .75s both, spNameGlow 2.5s 1.5s ease-in-out infinite alternate;
@@ -94,12 +94,12 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 }
 .sp-greet{
   position:relative;z-index:1;
-  font-size:15px;font-weight:600;color:rgba(255,255,255,.85);
+  font-size:15px;font-weight:400;color:rgba(255,255,255,.85);
   margin-top:16px;animation:spFade .5s 1s both;
 }
 .sp-sub{
   position:relative;z-index:1;
-  font-size:10px;font-weight:700;letter-spacing:4px;
+  font-size:10px;font-weight:500;letter-spacing:4px;
   color:var(--cyan);opacity:.55;text-transform:uppercase;
   margin-top:8px;animation:spFade .5s 1.15s both;
 }
@@ -117,20 +117,20 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .auth-card{width:100%;max-width:380px;text-align:center}
 .auth-logo{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:6px}
 .auth-mark{
-  font-size:38px;font-weight:900;color:#00FFD4;line-height:1;
+  font-size:38px;font-weight:500;color:#00FFD4;line-height:1;
   text-shadow:0 0 20px rgba(0,255,212,.5);
 }
-.auth-title{font-size:30px;font-weight:900;font-style:italic;color:#00FFD4;letter-spacing:.5px}
+.auth-title{font-size:30px;font-weight:500;font-style:italic;color:#00FFD4;letter-spacing:.5px}
 .auth-sub{font-size:13px;color:var(--text2);margin-bottom:26px;line-height:1.5}
 .auth-google{
   width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
-  background:#fff;color:#1F2937;font-family:'Rubik',sans-serif;font-size:15px;font-weight:700;
+  background:#fff;color:#1F2937;font-family:'Rubik',sans-serif;font-size:15px;font-weight:500;
   padding:13px 16px;border:none;border-radius:12px;cursor:pointer;
   box-shadow:0 4px 18px -6px rgba(0,0,0,.5);transition:transform .12s ease,box-shadow .12s ease;
 }
 .auth-google:active{transform:scale(.98)}
 .auth-google svg{width:20px;height:20px;flex:none}
-.auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:11px;font-weight:600}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:11px;font-weight:400}
 .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border2)}
 .auth-fields{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
 .auth-fields input{
@@ -140,23 +140,23 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 }
 .auth-fields input:focus{border-color:var(--cyan);background:rgba(29,233,182,.06)}
 .auth-mode{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 2px 0}
-.auth-mode>span{font-size:13px;color:var(--text2);font-weight:600}
+.auth-mode>span{font-size:13px;color:var(--text2);font-weight:400}
 .auth-mode-switch{display:flex;background:rgba(255,255,255,.06);border:1px solid var(--border2);border-radius:12px;padding:3px;gap:3px}
 .auth-mode-switch button{
-  font-family:'Rubik',sans-serif;font-size:13px;font-weight:700;color:var(--muted);
+  font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;color:var(--muted);
   background:transparent;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;transition:all .15s ease;
 }
 .auth-mode-switch button.on{background:var(--cyan);color:#08131F;box-shadow:0 2px 10px rgba(29,233,182,.3)}
 .auth-primary{
   width:100%;background:var(--cyan);color:#08131F;font-family:'Rubik',sans-serif;
-  font-size:15px;font-weight:800;padding:14px;border:none;border-radius:12px;cursor:pointer;
+  font-size:15px;font-weight:500;padding:14px;border:none;border-radius:12px;cursor:pointer;
   box-shadow:0 4px 20px -4px rgba(29,233,182,.45);transition:transform .12s ease;
 }
 .auth-primary:active{transform:scale(.98)}
 .auth-primary:disabled{opacity:.6;cursor:default}
-.auth-err{min-height:18px;font-size:13px;font-weight:600;color:var(--neg);margin-top:11px}
+.auth-err{min-height:18px;font-size:13px;font-weight:400;color:var(--neg);margin-top:11px}
 .auth-toggle{margin-top:16px;font-size:13px;color:var(--text2);cursor:pointer}
-.auth-toggle b{color:var(--cyan);font-weight:700}
+.auth-toggle b{color:var(--cyan);font-weight:500}
 .drw-account{font-size:11px;color:var(--muted);padding:6px 16px 2px;word-break:break-all;display:flex;align-items:center;gap:6px}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:none}
 .sync-dot.ok{background:var(--pos);box-shadow:0 0 8px rgba(0,230,118,.6)}
@@ -177,15 +177,15 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .backup-btn{
   background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);
-  color:var(--text2);font-family:'Rubik',sans-serif;font-size:11px;font-weight:700;
+  color:var(--text2);font-family:'Rubik',sans-serif;font-size:11px;font-weight:500;
   padding:7px 14px;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:6px;
 }
 .hero-right{text-align:right}
-.hero-greet{font-size:20px;font-weight:800;font-family:'Rubik',sans-serif}
-.hero-date {font-size:11px;color:var(--muted);margin-top:3px;font-weight:600;letter-spacing:.2px}
-.hero-lbl  {font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1px;text-align:center;margin-bottom:10px;text-transform:uppercase}
+.hero-greet{font-size:20px;font-weight:500;font-family:'Rubik',sans-serif}
+.hero-date {font-size:11px;color:var(--muted);margin-top:3px;font-weight:400;letter-spacing:.2px}
+.hero-lbl  {font-size:11px;font-weight:400;color:var(--muted);letter-spacing:1px;text-align:center;margin-bottom:10px;text-transform:uppercase}
 .hero-bal  {
-  font-size:44px;font-weight:900;letter-spacing:-2px;line-height:1;
+  font-size:44px;font-weight:500;letter-spacing:-2px;line-height:1;
   font-variant-numeric:tabular-nums;text-align:center;margin-bottom:11px;
   transition:color .3s;
 }
@@ -193,7 +193,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .hero-bal.neg{color:var(--neg);text-shadow:0 0 42px rgba(255,107,107,.22)}
 .hero-bal.settle{animation:settlePop .26s cubic-bezier(.2,1.4,.4,1)}
 @keyframes settlePop{50%{transform:scale(1.03)}}
-.hero-delta{display:inline-flex;align-items:center;gap:5px;margin:0 auto 12px;padding:4px 11px;border-radius:12px;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;width:fit-content}
+.hero-delta{display:inline-flex;align-items:center;gap:5px;margin:0 auto 12px;padding:4px 11px;border-radius:12px;font-size:11px;font-weight:500;font-variant-numeric:tabular-nums;width:fit-content}
 .hero-delta.up{background:rgba(0,230,118,.12);color:var(--pos)}
 .hero-delta.down{background:rgba(255,107,107,.12);color:var(--neg)}
 .hero-delta-wrap{text-align:center}
@@ -211,12 +211,12 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .alert-card.ok {background:linear-gradient(135deg,#0D2E1A,#091C10);border-color:rgba(0,230,118,.3)}
 .alert-card.bad{background:linear-gradient(135deg,#2E0A0A,#1C0606);border-color:rgba(255,107,107,.35)}
 .a-body {flex:1;text-align:right}
-.a-title{font-size:13px;font-weight:700;color:rgba(200,180,255,.9);margin-bottom:4px}
+.a-title{font-size:13px;font-weight:500;color:rgba(200,180,255,.9);margin-bottom:4px}
 .alert-card.ok  .a-title{color:var(--pos)}
 .alert-card.bad .a-title{color:#FF8080}
 .a-sub  {font-size:11px;color:var(--muted);line-height:1.5}
 .a-icon {display:none}
-.a-amt  {font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--cyan);flex-shrink:0}
+.a-amt  {font-size:20px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--cyan);flex-shrink:0}
 .alert-card.ok  .a-amt{color:var(--pos)}
 .alert-card.bad .a-amt{color:#FF8080}
 
@@ -229,12 +229,12 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;
 }
 .marrow:hover{color:var(--text);border-color:rgba(255,255,255,.25)}
-.mlabel{font-size:15px;font-weight:700;min-width:94px;text-align:center}
+.mlabel{font-size:15px;font-weight:500;min-width:94px;text-align:center}
 
 /* ══ TILES ════════════════════════════════════════════════ */
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 16px 16px}
 .tile{
-  background:linear-gradient(180deg,rgba(25,40,64,.5) 0%,var(--card) 62%);border:1px solid var(--border);border-radius:var(--r);
+  background:var(--card2);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);
   padding:14px 10px 13px;display:flex;flex-direction:column;align-items:center;gap:6px;
   cursor:pointer;transition:transform .15s,opacity .15s;
   position:relative;overflow:hidden;
@@ -243,7 +243,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--tc,var(--cyan))}
 .tile:active{transform:scale(.95);opacity:.75}
 .tile-ico{display:none}
-.tile-val{font-size:15px;font-weight:800;letter-spacing:-.5px;font-variant-numeric:tabular-nums;text-align:center;margin-top:4px}
+.tile-val{font-size:15px;font-weight:500;letter-spacing:-.5px;font-variant-numeric:tabular-nums;text-align:center;margin-top:4px}
 .tile-val.pos   {color:var(--cyan)}
 .tile-val.neg   {color:var(--neg)}
 .tile-val.orange{color:var(--neg)}
@@ -251,7 +251,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 
 /* ══ SECTION LABEL ════════════════════════════════════════ */
 .sec-row{display:flex;justify-content:space-between;align-items:center;padding:0 20px 10px}
-.sec-lbl{font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px}
+.sec-lbl{font-size:11px;font-weight:500;color:var(--cyan);letter-spacing:.5px}
 
 /* ══ CREDIT CARDS ═════════════════════════════════════════ */
 .cards-scroll{display:flex;gap:12px;padding:0 16px 14px;overflow-x:auto;scrollbar-width:none}
@@ -265,12 +265,12 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .cc.visa{background:linear-gradient(140deg,#0E2B70,#1E5BA8);border:1px solid rgba(30,91,168,.55)}
 .cc::before{content:'';position:absolute;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.07);top:-30px;right:-25px;pointer-events:none}
 .cc-top  {display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.cc-brand{font-size:9px;font-weight:700;letter-spacing:1.8px;color:rgba(255,255,255,.5);text-transform:uppercase}
+.cc-brand{font-size:9px;font-weight:500;letter-spacing:1.8px;color:rgba(255,255,255,.5);text-transform:uppercase}
 .cc-toggle{width:28px;height:16px;border-radius:6px;background:rgba(255,255,255,.15);position:relative}
 .cc-toggle::after{content:'';position:absolute;width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.4);top:2px;left:2px}
 .cc-sub{font-size:9px;color:rgba(255,255,255,.5);margin-bottom:4px}
-.cc-amt{font-size:20px;font-weight:800;color:#fff;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
-.cc-tag{display:inline-block;font-size:9px;font-weight:700;padding:3px 9px;border-radius:12px;margin-top:8px}
+.cc-amt{font-size:20px;font-weight:500;color:#fff;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.cc-tag{display:inline-block;font-size:9px;font-weight:500;padding:3px 9px;border-radius:12px;margin-top:8px}
 .cc-tag.warn{background:rgba(255,179,71,.2);color:#FFB347}
 .cc-tag.next{background:rgba(0,230,118,.15);color:var(--pos)}
 .cc-due{font-size:10px;color:rgba(255,255,255,.5);margin-top:5px;line-height:1.5}
@@ -282,27 +282,27 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   border-radius:var(--r);border:1px solid rgba(255,107,107,.2);
   padding:16px 18px;display:flex;justify-content:space-between;align-items:center;
 }
-.bank-lbl{font-size:13px;font-weight:700;color:var(--muted)}
+.bank-lbl{font-size:13px;font-weight:500;color:var(--muted)}
 .bank-sub{font-size:10px;color:var(--muted2);margin-top:3px}
-.bank-amt{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--neg)}
+.bank-amt{font-size:20px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--neg)}
 
 /* ══ UPDATE FORM ══════════════════════════════════════════ */
 .upd-card{background:var(--card);border-radius:var(--r);margin:0 16px 16px;padding:16px;border:1px solid var(--border)}
-.upd-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.upd-title{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
 .upd-row{display:flex;gap:8px;margin-bottom:10px}
 .upd-fld{flex:1}
-.upd-fld label{display:block;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:5px;letter-spacing:.5px;text-transform:uppercase}
+.upd-fld label{display:block;font-size:10px;font-weight:500;color:var(--muted);margin-bottom:5px;letter-spacing:.5px;text-transform:uppercase}
 .upd-fld input{width:100%;font-family:'Rubik',sans-serif;font-size:13px;padding:10px 12px;border:1.5px solid var(--border2);border-radius:12px;background:rgba(255,255,255,.07);color:var(--text);outline:none}
 .upd-fld input:focus{border-color:var(--cyan)}
-.upd-btn{background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:11px 22px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 2px 14px rgba(29,233,182,.3)}
-.toast-line{font-size:13px;font-weight:600;margin-top:8px;min-height:16px;color:var(--cyan)}
+.upd-btn{background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:11px 22px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 2px 14px rgba(29,233,182,.3)}
+.toast-line{font-size:13px;font-weight:400;margin-top:8px;min-height:16px;color:var(--cyan)}
 
 /* ══ DETAIL SCREENS ══════════════════════════════════════ */
 .detail-hdr{display:flex;align-items:center;gap:12px;padding:16px 20px 14px;background:linear-gradient(180deg,#0C1D30,#0B1520)}
 .back-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);color:var(--text2);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .back-btn:active{opacity:.6}
-.detail-title{font-size:20px;font-weight:700;flex:1;font-family:'Rubik',sans-serif;color:var(--cyan);letter-spacing:-.3px}
-.detail-total{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+.detail-title{font-size:20px;font-weight:500;flex:1;font-family:'Rubik',sans-serif;color:var(--cyan);letter-spacing:-.3px}
+.detail-total{font-size:15px;font-weight:500;font-variant-numeric:tabular-nums}
 .detail-total.neg{color:var(--neg)}
 .detail-total.pos{color:var(--pos)}
 .txn-list{padding:0 16px 16px}
@@ -311,15 +311,15 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .pie-wrap{display:flex;align-items:center;gap:18px;padding:14px 18px 6px;direction:rtl}
 .pie{position:relative;width:128px;height:128px;border-radius:50%;flex-shrink:0;box-shadow:0 8px 24px -10px rgba(0,0,0,.7)}
 .pie-hole{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:84px;height:84px;border-radius:50%;background:var(--bg2);display:flex;flex-direction:column;align-items:center;justify-content:center}
-.pie-hole-val{font-size:15px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
-.pie-hole-lbl{font-size:9px;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-top:1px}
+.pie-hole-val{font-size:15px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.pie-hole-lbl{font-size:9px;color:var(--muted);font-weight:500;letter-spacing:.5px;margin-top:1px}
 .pie-legend{flex:1;display:flex;flex-direction:column;gap:7px;min-width:0}
 .pie-leg-row{display:flex;align-items:center;gap:8px;cursor:pointer}
 .pie-leg-dot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
-.pie-leg-lbl{font-size:13px;color:var(--text2);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
-.pie-leg-amt{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;flex-shrink:0}
-.pie-leg-pct{font-size:10px;color:var(--muted);font-weight:700;flex-shrink:0;min-width:30px;text-align:left}
-.pie-over{font-size:9px;color:var(--neg);font-weight:700}
+.pie-leg-lbl{font-size:13px;color:var(--text2);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.pie-leg-amt{font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;flex-shrink:0}
+.pie-leg-pct{font-size:10px;color:var(--muted);font-weight:500;flex-shrink:0;min-width:30px;text-align:left}
+.pie-over{font-size:9px;color:var(--neg);font-weight:500}
 .cat-chip{display:flex;flex-direction:column;gap:3px;border-radius:12px;padding:6px 11px 5px;font-size:11px;border:1px solid transparent;cursor:pointer;min-width:68px;transition:opacity .15s,transform .15s;-webkit-tap-highlight-color:transparent}
 .cat-chip:active{transform:scale(.96);opacity:.8}
 .cc-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
@@ -328,53 +328,53 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 /* Subscriptions */
 .subs-section{margin:2px 16px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
 .subs-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;cursor:pointer;user-select:none}
-.subs-hdr-lbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase}
-.subs-total{font-size:13px;font-weight:800;color:var(--text)}
+.subs-hdr-lbl{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.8px;text-transform:uppercase}
+.subs-total{font-size:13px;font-weight:500;color:var(--text)}
 .sub-row{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-top:1px solid var(--border)}
-.sub-name{font-size:13px;font-weight:600;color:var(--text2)}
-.sub-amt{font-size:13px;font-weight:700}
+.sub-name{font-size:13px;font-weight:400;color:var(--text2)}
+.sub-amt{font-size:13px;font-weight:500}
 /* Comparison chart */
 .compare-section{padding:0 16px 10px}
-.compare-toggle{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:9px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;text-align:center;cursor:pointer;display:block}
+.compare-toggle{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:9px;color:var(--muted);font-size:10px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;text-align:center;cursor:pointer;display:block}
 .compare-wrap{background:var(--card);border-radius:var(--r);padding:14px 10px 8px;height:240px;display:none;margin-top:8px}
 .compare-wrap.open{display:block}
-.txn-group-hdr{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;padding:10px 4px 5px;text-transform:uppercase}
+.txn-group-hdr{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.5px;padding:10px 4px 5px;text-transform:uppercase}
 .txn-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--rs);background:linear-gradient(180deg,rgba(25,40,64,.4) 0%,var(--card) 65%);border:1px solid var(--border);margin-bottom:7px;box-shadow:0 4px 14px -10px rgba(0,0,0,.5)}
 .txn-icon{
   flex-shrink:0;width:36px;height:36px;border-radius:12px;
   display:flex;align-items:center;justify-content:center;
-  font-size:10px;font-weight:800;letter-spacing:.2px;text-align:center;line-height:1.2;
+  font-size:10px;font-weight:500;letter-spacing:.2px;text-align:center;line-height:1.2;
 }
 .txn-body{flex:1}
-.txn-desc{font-size:13px;font-weight:600;line-height:1.3}
+.txn-desc{font-size:13px;font-weight:400;line-height:1.3}
 .txn-date{font-size:10px;color:var(--muted);margin-top:2px;font-weight:500;letter-spacing:.2px}
-.txn-method{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;margin-right:4px;vertical-align:middle}
+.txn-method{display:inline-block;font-size:10px;font-weight:500;padding:2px 6px;border-radius:6px;margin-right:4px;vertical-align:middle}
 .txn-method.mc  {background:rgba(29,233,182,.15);color:var(--cyan)}
 .txn-method.visa{background:rgba(30,91,168,.35);color:#6BA3FF}
-.txn-amt{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;flex-shrink:0}
+.txn-amt{font-size:15px;font-weight:500;font-variant-numeric:tabular-nums;flex-shrink:0}
 .txn-amt.neg {color:var(--neg)}
 .txn-amt.pos {color:var(--pos)}
 .txn-amt.dim {color:rgba(255,255,255,.35)}
 .txn-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
-.txn-chip{font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(29,233,182,.12);color:var(--cyan);font-weight:700;cursor:pointer;border:1px solid rgba(29,233,182,.2)}
+.txn-chip{font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(29,233,182,.12);color:var(--cyan);font-weight:500;cursor:pointer;border:1px solid rgba(29,233,182,.2)}
 .txn-chip.active{background:rgba(29,233,182,.28);border-color:var(--cyan)}
 .tag-filter-bar{display:flex;flex-wrap:wrap;gap:5px;padding:8px 14px 4px;min-height:0}
 
 /* ══ BALANCE DETAIL ══════════════════════════════════════ */
 .bal-detail{padding:0 16px 16px}
 .bal-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-radius:var(--rs);background:var(--card);border:1px solid var(--border);margin-bottom:7px}
-.bal-row-lbl{font-size:13px;font-weight:600}
-.bal-row-val{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+.bal-row-lbl{font-size:13px;font-weight:400}
+.bal-row-val{font-size:15px;font-weight:500;font-variant-numeric:tabular-nums}
 .bal-row-val.pos{color:var(--pos)}.bal-row-val.neg{color:var(--neg)}.bal-row-val.pur{color:var(--cyan)}.bal-row-val.amb{color:var(--gold)}.bal-row-val.red{color:var(--neg)}
 .bal-div{height:1px;background:var(--border);margin:6px 0 14px}
 .bal-total{display:flex;justify-content:space-between;align-items:center;padding:16px;border-radius:var(--r);background:linear-gradient(135deg,rgba(29,233,182,.1),rgba(29,233,182,.04));border:1px solid rgba(29,233,182,.22);margin-bottom:10px}
-.bal-total-lbl{font-size:13px;font-weight:800}
-.bal-total-val{font-size:20px;font-weight:900;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.bal-total-lbl{font-size:13px;font-weight:500}
+.bal-total-val{font-size:20px;font-weight:500;letter-spacing:-1px;font-variant-numeric:tabular-nums}
 .bal-total-val.pos{color:var(--cyan)}.bal-total-val.neg{color:var(--neg)}
 
 /* ══ CLIENTS ══════════════════════════════════════════════ */
 .page-hdr{padding:16px 20px 6px;background:linear-gradient(170deg,#0C1E30,#0B1520)}
-.page-title{font-size:20px;font-weight:800;letter-spacing:-.5px}
+.page-title{font-size:20px;font-weight:500;letter-spacing:-.5px}
 .page-sub  {font-size:13px;color:var(--muted);margin-top:3px}
 
 .cl-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 16px 14px}
@@ -382,8 +382,8 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .cl-sum-card.done-c{border-color:rgba(0,230,118,.22)}
 .cl-sum-card.plan-c{border-color:rgba(255,179,71,.22)}
 .cls-icon {display:none}
-.cls-title{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
-.cls-val  {font-size:20px;font-weight:900;letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1.1}
+.cls-title{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+.cls-val  {font-size:20px;font-weight:500;letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1.1}
 .cls-val.pos{color:var(--pos)}.cls-val.amb{color:#FFB347}.cls-val.cyn{color:var(--cyan)}
 .cls-sub  {font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5}
 
@@ -394,15 +394,15 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 /* ══ CALENDAR ═════════════════════════════════════════════ */
 .cal-wrap {margin:0 16px 14px;background:rgba(255,255,255,.03);border-radius:var(--r);border:1px solid var(--border);overflow:hidden}
 .cal-hdr  {display:grid;grid-template-columns:repeat(7,1fr);background:rgba(255,255,255,.04);border-bottom:1px solid var(--border)}
-.cal-dn   {text-align:center;font-size:9px;font-weight:700;color:var(--muted2);padding:9px 0;letter-spacing:.5px}
+.cal-dn   {text-align:center;font-size:9px;font-weight:500;color:var(--muted2);padding:9px 0;letter-spacing:.5px}
 .cal-grid {display:grid;grid-template-columns:repeat(7,1fr)}
 .cal-cell {min-height:50px;border-bottom:1px solid rgba(255,255,255,.04);border-right:1px solid rgba(255,255,255,.04);padding:4px 3px;cursor:pointer;transition:background .1s}
 .cal-cell:nth-child(7n+1){border-right:none}
 .cal-cell:hover{background:rgba(29,233,182,.06)}
 .cal-cell.empty{cursor:default;background:transparent!important}
-.cal-cell.today .cal-num{background:var(--cyan);color:#0A1520;border-radius:50%;font-weight:800}
-.cal-num{font-size:9px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;margin-bottom:2px;color:var(--muted2);font-weight:700}
-.cal-dot{font-size:9px;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:6px;padding:2px 4px;margin-bottom:2px;font-weight:800;letter-spacing:.2px}
+.cal-cell.today .cal-num{background:var(--cyan);color:#0A1520;border-radius:50%;font-weight:500}
+.cal-num{font-size:9px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;margin-bottom:2px;color:var(--muted2);font-weight:500}
+.cal-dot{font-size:9px;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:6px;padding:2px 4px;margin-bottom:2px;font-weight:500;letter-spacing:.2px}
 .cal-dot.done   {background:rgba(94,255,197,.15);color:#5EFFC5}
 .cal-dot.planned{background:rgba(212,149,106,.18);color:#D4956A}
 
@@ -416,14 +416,14 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .mbg.closing .modal,.cd-mbg.closing .cd-modal{animation:slideDown .2s ease both}
 @keyframes slideDown{from{transform:translateY(0)}to{transform:translateY(100%)}}
 @keyframes fadeOut{from{opacity:1}to{opacity:0}}
-.modal-title{font-size:20px;font-weight:800;font-family:'Rubik',sans-serif;letter-spacing:.5px;text-align:right;margin-bottom:2px}
+.modal-title{font-size:20px;font-weight:500;font-family:'Rubik',sans-serif;letter-spacing:.5px;text-align:right;margin-bottom:2px}
 .modal-sub  {font-size:13px;color:var(--muted);margin-bottom:16px}
 .mc-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.07)}
 .mc-row:last-child{border-bottom:none}
-.mc-name{flex:1;font-size:13px;font-weight:600}
-.mc-amt {font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
+.mc-name{flex:1;font-size:13px;font-weight:400}
+.mc-amt {font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}
 .mc-amt.done   {color:var(--pos)}.mc-amt.planned{color:#FFB347}
-.sbtn{font-size:11px;padding:4px 11px;border-radius:6px;border:none;cursor:pointer;font-family:'Rubik',sans-serif;font-weight:700}
+.sbtn{font-size:11px;padding:4px 11px;border-radius:6px;border:none;cursor:pointer;font-family:'Rubik',sans-serif;font-weight:500}
 .sbtn.done   {background:rgba(0,230,118,.15);color:var(--pos)}
 .sbtn.planned{background:rgba(255,179,71,.15);color:#FFB347}
 .del-btn{background:none;border:none;color:var(--muted);font-size:15px;cursor:pointer;padding:2px 5px}
@@ -431,10 +431,10 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .modal-sep{height:1px;background:rgba(255,255,255,.08);margin:10px 0 16px}
 .mi-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
 .mfld  {flex:1;min-width:80px}
-.mfld label{display:block;font-size:10px;color:var(--muted);margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.mfld label{display:block;font-size:10px;color:var(--muted);margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
 .mfld input,.mfld select{width:100%;font-family:'Rubik',sans-serif;font-size:13px;padding:10px 12px;border:1.5px solid var(--border2);border-radius:12px;background:rgba(255,255,255,.07);color:var(--text);outline:none;-webkit-appearance:none}
 .mfld input:focus{border-color:var(--cyan)}
-.madd-btn{background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:15px;font-weight:800;padding:10px 16px;border-radius:12px;border:none;cursor:pointer}
+.madd-btn{background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:15px;font-weight:500;padding:10px 16px;border-radius:12px;border:none;cursor:pointer}
 .mclose{display:block;width:100%;text-align:center;font-size:13px;color:var(--muted);margin-top:16px;background:none;border:none;font-family:'Rubik',sans-serif;cursor:pointer}
 .mempty{font-size:13px;color:var(--muted);text-align:center;padding:26px 0;animation:fadeUp .4s ease both}
 .mempty::before{content:'✦';display:block;font-size:20px;color:var(--border2);margin-bottom:8px;animation:floatY 3s ease-in-out infinite}
@@ -458,8 +458,8 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .hdr-ham.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); background:var(--cyan); }
 .hdr-ham.open span:nth-child(2){ opacity:0; }
 .hdr-ham.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); background:var(--cyan); }
-.hdr-brand { display:flex; align-items:center; gap:8px; font-size:15px; font-weight:900; font-style:italic; color:var(--text); letter-spacing:.2px; }
-.hdr-brand-mark { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; font-style:normal; font-weight:900; font-size:15px; box-shadow:0 2px 10px rgba(29,233,182,.4); }
+.hdr-brand { display:flex; align-items:center; gap:8px; font-size:15px; font-weight:500; font-style:italic; color:var(--text); letter-spacing:.2px; }
+.hdr-brand-mark { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; font-style:normal; font-weight:500; font-size:15px; box-shadow:0 2px 10px rgba(29,233,182,.4); }
 
 /* DRAWER */
 .drw-bg { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:400; display:none; animation:none; }
@@ -475,9 +475,9 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .drw-bg.open .drw-panel { animation:slideInPanel .28s cubic-bezier(.2,1,.3,1) both; }
 @keyframes slideInPanel{from{transform:translateX(100%)}to{transform:translateX(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.drw-logo { font-size:20px; font-weight:900; font-style:italic; color:var(--text); padding:0 20px 20px; border-bottom:1px solid var(--border); margin-bottom:8px; display:flex; align-items:center; gap:9px; }
-.drw-logo-mark { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:12px; background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; font-style:normal; font-weight:900; font-size:20px; box-shadow:0 2px 12px rgba(29,233,182,.4); }
-.drw-item { display:flex; align-items:center; gap:12px; padding:14px 20px; cursor:pointer; transition:background .15s; color:var(--text2); font-size:15px; font-weight:600; }
+.drw-logo { font-size:20px; font-weight:500; font-style:italic; color:var(--text); padding:0 20px 20px; border-bottom:1px solid var(--border); margin-bottom:8px; display:flex; align-items:center; gap:9px; }
+.drw-logo-mark { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:12px; background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; font-style:normal; font-weight:500; font-size:20px; box-shadow:0 2px 12px rgba(29,233,182,.4); }
+.drw-item { display:flex; align-items:center; gap:12px; padding:14px 20px; cursor:pointer; transition:background .15s; color:var(--text2); font-size:15px; font-weight:400; }
 .drw-item:hover { background:rgba(255,255,255,.05); }
 .drw-item.active { color:var(--cyan); background:rgba(29,233,182,.08); }
 .drw-item .di-emoji { font-size:20px; width:28px; text-align:center; }
@@ -501,7 +501,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   flex:1;background:none;border:none;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;gap:3px;
   padding:9px 0 7px;position:relative;color:var(--muted);
-  font-family:'Rubik',sans-serif;font-size:10px;font-weight:600;
+  font-family:'Rubik',sans-serif;font-size:10px;font-weight:400;
   transition:color .18s;
 }
 .btm-item svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s}
@@ -511,14 +511,14 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .btm-item:active{transform:scale(.92)}
 .fab{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:transform .15s;position:relative}
 .fab:active{transform:scale(.92)}
-.fab-add{background:var(--cyan);color:#0A1520;font-size:28px;font-weight:700;box-shadow:0 4px 16px -6px rgba(0,0,0,.4)}
+.fab-add{background:var(--cyan);color:#0A1520;font-size:28px;font-weight:500;box-shadow:0 4px 16px -6px rgba(0,0,0,.4)}
 
 /* ══ TOAST ════════════════════════════════════════════════ */
 #toast{
   position:fixed;bottom:calc(90px + env(safe-area-inset-bottom,0px));
   left:50%;transform:translate(-50%,10px);
   background:var(--cyan);color:#0A1520;
-  font-family:'Rubik',sans-serif;font-size:13px;font-weight:700;
+  font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;
   padding:11px 22px;border-radius:18px;z-index:1000;
   opacity:0;transition:opacity .25s,transform .35s cubic-bezier(.2,1.5,.4,1);pointer-events:none;white-space:nowrap;
   box-shadow:0 6px 22px -6px rgba(29,233,182,.4);
@@ -529,7 +529,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 /* ══ TRENDS ══════════════════════════════════════════════ */
 .trends-wrap{margin:0 16px 14px;background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:14px 16px}
 .trends-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.trends-ttl{font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px;text-transform:uppercase}
+.trends-ttl{font-size:11px;font-weight:500;color:var(--cyan);letter-spacing:.5px;text-transform:uppercase}
 
 /* ══ GOALS ════════════════════════════════════════════════ */
 .goals-grid{display:flex;flex-direction:column;gap:12px;padding:0 16px 16px}
@@ -538,27 +538,27 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .goal-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .goal-icon{display:none}
 .goal-info{flex:1;min-width:0}
-.goal-name{font-size:13px;font-weight:700}
+.goal-name{font-size:13px;font-weight:500}
 .goal-deadline{font-size:10px;color:var(--muted);margin-top:2px}
 .goal-amounts{text-align:left;flex-shrink:0}
-.goal-saved{font-size:15px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1}
+.goal-saved{font-size:15px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1}
 .goal-target{font-size:10px;color:var(--muted);margin-top:2px}
 .goal-bar-bg{background:rgba(255,255,255,.08);border-radius:12px;height:7px;margin-bottom:9px;overflow:hidden}
 .goal-bar-fill{height:100%;border-radius:12px;transition:width .7s cubic-bezier(.2,1,.3,1)}
 .goal-footer{display:flex;justify-content:space-between;align-items:center}
-.goal-pct{font-size:11px;font-weight:700}
+.goal-pct{font-size:11px;font-weight:500}
 .goal-monthly{font-size:10px;color:var(--muted)}
-.goal-add-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--text);font-family:'Rubik',sans-serif;font-size:11px;font-weight:700;padding:5px 12px;border-radius:12px;cursor:pointer;flex-shrink:0}
+.goal-add-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--text);font-family:'Rubik',sans-serif;font-size:11px;font-weight:500;padding:5px 12px;border-radius:12px;cursor:pointer;flex-shrink:0}
 .goal-del{position:absolute;top:10px;left:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 5px}
 .goal-del:hover{color:var(--neg)}
 .add-goal-card{background:rgba(29,233,182,.05);border:1.5px dashed rgba(29,233,182,.28);border-radius:var(--r);padding:18px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer}
 .add-goal-card:active{background:rgba(29,233,182,.1)}
-.add-goal-lbl{font-size:13px;font-weight:700;color:var(--cyan)}
+.add-goal-lbl{font-size:13px;font-weight:500;color:var(--cyan)}
 .goals-sum{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 16px 12px}
 
 /* ══ ADD TRANSACTION ══════════════════════════════════════ */
 .atabs{display:flex;gap:5px;margin-bottom:14px;background:rgba(255,255,255,.05);border-radius:12px;padding:4px}
-.atab{flex:1;font-family:'Rubik',sans-serif;font-size:11px;font-weight:700;padding:7px 4px;border:none;background:none;color:var(--muted);border-radius:6px;cursor:pointer;transition:all .13s}
+.atab{flex:1;font-family:'Rubik',sans-serif;font-size:11px;font-weight:500;padding:7px 4px;border:none;background:none;color:var(--muted);border-radius:6px;cursor:pointer;transition:all .13s}
 .atab.on{background:var(--card2);color:var(--text)}
 .parse-area{width:100%;min-height:110px;font-family:'Rubik',sans-serif;font-size:13px;padding:11px 12px;border:1.5px solid var(--border2);border-radius:12px;background:rgba(255,255,255,.06);color:var(--text);outline:none;resize:vertical;direction:rtl;line-height:1.65}
 .parse-area:focus{border-color:var(--cyan)}
@@ -566,17 +566,17 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .pp-row{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:12px;background:var(--card);margin-bottom:5px;font-size:13px}
 .pp-del{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:13px;flex-shrink:0;padding:0 2px}
 .type-toggle{display:flex;border-radius:12px;overflow:hidden;border:1.5px solid var(--border2);margin-bottom:12px}
-.ttype{flex:1;font-family:'Rubik',sans-serif;font-size:13px;font-weight:700;padding:9px;border:none;background:none;color:var(--muted);cursor:pointer;transition:all .13s}
+.ttype{flex:1;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:9px;border:none;background:none;color:var(--muted);cursor:pointer;transition:all .13s}
 .ttype.on.expense{background:rgba(255,107,107,.18);color:var(--neg)}
 .ttype.on.income{background:rgba(0,230,118,.13);color:var(--pos)}
 .method-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
-.mchip{padding:6px 13px;border-radius:18px;border:1.5px solid var(--border2);background:none;color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .12s}
+.mchip{padding:6px 13px;border-radius:18px;border:1.5px solid var(--border2);background:none;color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .12s}
 .mchip.on.cash{background:rgba(255,179,71,.3);border-color:#FFB347;color:#FFB347}
 .mchip.on.bank{background:rgba(255,107,107,.2);border-color:var(--neg);color:var(--neg)}
 .mchip.on.visa{background:rgba(107,163,255,.25);border-color:#6BA3FF;color:#6BA3FF}
 .mchip.on.mc{background:rgba(29,233,182,.15);border-color:var(--cyan);color:var(--cyan)}
 .csv-hint{font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.75;background:rgba(255,255,255,.04);padding:8px 10px;border-radius:12px}
-.import-sum{font-size:11px;color:var(--cyan);font-weight:700}
+.import-sum{font-size:11px;color:var(--cyan);font-weight:500}
 .add-panel{display:none}
 .add-panel.active{display:block}
 .pp-preview{margin-top:10px;max-height:200px;overflow-y:auto}
@@ -587,50 +587,50 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .cd-modal{background:#111D2C;border-radius:18px 26px 0 0;width:100%;max-width:430px;max-height:78dvh;overflow-y:auto;padding:8px 20px calc(30px + env(safe-area-inset-bottom,0px));animation:slideUp .22s ease;border-top:1px solid var(--border2)}
 .cd-modal::before{content:'';display:block;width:36px;height:4px;background:var(--border2);border-radius:2px;margin:14px auto 16px}
 .cd-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
-.cd-title{font-size:20px;font-weight:800}
-.cd-total{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--neg)}
+.cd-title{font-size:20px;font-weight:500}
+.cd-total{font-size:20px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--neg)}
 .cd-item{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:12px;background:var(--card);border:1px solid var(--border);margin-bottom:6px}
 .cd-item-ico{
   flex-shrink:0;width:34px;height:34px;border-radius:12px;
   display:flex;align-items:center;justify-content:center;
-  font-size:10px;font-weight:800;letter-spacing:.2px;text-align:center;line-height:1.2;
+  font-size:10px;font-weight:500;letter-spacing:.2px;text-align:center;line-height:1.2;
 }
 .cd-item-body{flex:1}
-.cd-item-desc{font-size:13px;font-weight:600;line-height:1.3}
+.cd-item-desc{font-size:13px;font-weight:400;line-height:1.3}
 .cd-item-date{font-size:10px;color:var(--muted);margin-top:2px;font-weight:500;letter-spacing:.2px}
-.cd-item-amt{font-size:13px;font-weight:800;color:var(--neg);font-variant-numeric:tabular-nums;flex-shrink:0}
+.cd-item-amt{font-size:13px;font-weight:500;color:var(--neg);font-variant-numeric:tabular-nums;flex-shrink:0}
 .cc-hint{font-size:9px;color:rgba(255,255,255,.32);margin-top:7px;letter-spacing:.3px}
 
 /* ══ UPCOMING ════════════════════════════════════════════ */
 .upcoming-wrap{padding:0 16px 14px}
-.upc-hdr{font-size:10px;font-weight:700;color:var(--cyan);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;padding:0 2px}
+.upc-hdr{font-size:10px;font-weight:500;color:var(--cyan);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;padding:0 2px}
 .upc-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--rs);background:var(--card);border:1px solid var(--border);margin-bottom:7px}
 .upc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .upc-body{flex:1}
-.upc-label{font-size:13px;font-weight:600}
+.upc-label{font-size:13px;font-weight:400}
 .upc-date{font-size:10px;color:var(--muted);margin-top:2px;font-weight:500;letter-spacing:.2px}
-.upc-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:6px;flex-shrink:0}
-.upc-amt{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;flex-shrink:0}
+.upc-badge{font-size:9px;font-weight:500;padding:2px 8px;border-radius:6px;flex-shrink:0}
+.upc-amt{font-size:15px;font-weight:500;font-variant-numeric:tabular-nums;flex-shrink:0}
 
 /* ══ PAYMENT METHOD GRID ════════════════════════════════ */
 .pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 20px}
-.pm-card{background:linear-gradient(180deg,rgba(25,40,64,.5) 0%,var(--card) 62%);border:1px solid var(--border);border-radius:var(--r);padding:15px 14px 13px;cursor:pointer;transition:transform .15s,opacity .15s;position:relative;overflow:hidden;box-shadow:0 8px 20px -12px rgba(0,0,0,.5)}
+.pm-card{background:var(--card);border:1px solid rgba(255,255,255,.10);border-radius:var(--r);padding:15px 14px 13px;cursor:pointer;transition:transform .15s,opacity .15s;position:relative;overflow:hidden;box-shadow:0 8px 20px -12px rgba(0,0,0,.5)}
 .pm-card:active{transform:scale(.97);opacity:.8}
 .pm-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--pm-c,var(--cyan))}
-.pm-name{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
-.pm-amt{font-size:20px;font-weight:900;letter-spacing:-1px;font-variant-numeric:tabular-nums;margin-bottom:3px}
+.pm-name{font-size:9px;font-weight:500;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
+.pm-amt{font-size:20px;font-weight:500;letter-spacing:-1px;font-variant-numeric:tabular-nums;margin-bottom:3px}
 .pm-sub{font-size:10px;color:var(--muted);line-height:1.5;margin-top:2px}
-.pm-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:6px;margin-top:6px}
+.pm-tag{display:inline-block;font-size:9px;font-weight:500;padding:2px 8px;border-radius:6px;margin-top:6px}
 
 /* ══ SECTION HDR ═════════════════════════════════════════ */
 .s-hdr{display:flex;justify-content:space-between;align-items:center;padding:4px 20px 10px}
-.s-hdr-lbl{font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px;text-transform:uppercase;font-family:'Rubik',sans-serif}
+.s-hdr-lbl{font-size:11px;font-weight:500;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;font-family:'Rubik',sans-serif}
 
 /* ══ CD MODAL ADD FORM ═══════════════════════════════════ */
 .cd-add-sep{height:1px;background:var(--border);margin:14px 0}
-.cd-add-ttl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px}
+.cd-add-ttl{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px}
 .cd-file-lbl{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--rs);background:rgba(255,255,255,.04);border:1.5px dashed rgba(29,233,182,.3);cursor:pointer;margin-bottom:6px}
-.cd-file-lbl span{font-size:13px;font-weight:700;color:var(--cyan)}
+.cd-file-lbl span{font-size:13px;font-weight:500;color:var(--cyan)}
 
 select option{background:#111D2C;color:#fff}
 ::-webkit-scrollbar{width:2px}
@@ -642,21 +642,21 @@ select option{background:#111D2C;color:#fff}
 .advisor-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan);border-radius:var(--r-xl,22px) var(--r-xl,22px) 0 0;opacity:.7}
 .adv-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .adv-icon{width:44px;height:44px;border-radius:50%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.adv-title{font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:.5px}
+.adv-title{font-size:13px;font-weight:500;color:var(--cyan);letter-spacing:.5px}
 .adv-sub{font-size:11px;color:var(--muted);margin-top:1px}
 .adv-msg{font-size:13px;line-height:1.7;color:var(--text2);margin-bottom:18px}
-.adv-msg strong{color:var(--text);font-weight:700}
+.adv-msg strong{color:var(--text);font-weight:500}
 .adv-actions{display:flex;gap:10px}
-.adv-btn-ok{flex:1;padding:11px;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);border-radius:var(--r);color:var(--cyan);font-size:13px;font-weight:700;cursor:pointer}
+.adv-btn-ok{flex:1;padding:11px;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);border-radius:var(--r);color:var(--cyan);font-size:13px;font-weight:500;cursor:pointer}
 .adv-btn-dismiss{padding:11px 14px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:var(--r);color:var(--muted);font-size:13px;cursor:pointer}
 
-.fp-add-btn{display:block;width:calc(100% - 32px);margin:12px 16px;padding:14px;background:rgba(29,233,182,.1);border:1px dashed rgba(29,233,182,.35);border-radius:var(--r);color:var(--cyan);font-size:15px;font-weight:600;cursor:pointer;text-align:center;}
+.fp-add-btn{display:block;width:calc(100% - 32px);margin:12px 16px;padding:14px;background:rgba(29,233,182,.1);border:1px dashed rgba(29,233,182,.35);border-radius:var(--r);color:var(--cyan);font-size:15px;font-weight:400;cursor:pointer;text-align:center;}
 .fp-item{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(25,40,64,.4) 0%,var(--card) 65%);border:1px solid var(--border);border-radius:var(--r);margin:8px 16px;padding:14px;box-shadow:0 8px 20px -12px rgba(0,0,0,.65)}
 .fp-item-left{flex:1}
-.fp-name{font-size:15px;font-weight:600;color:var(--text)}
+.fp-name{font-size:15px;font-weight:400;color:var(--text)}
 .fp-meta{font-size:13px;color:var(--muted);margin-top:3px}
 .fp-item-right{display:flex;align-items:center;gap:10px}
-.fp-amt{font-size:15px;font-weight:700;color:var(--neg)}
+.fp-amt{font-size:15px;font-weight:500;color:var(--neg)}
 .fp-edit-btn,.fp-del-btn{background:none;border:none;cursor:pointer;font-size:15px;padding:4px;}
 .fp-toggle{position:relative;display:inline-block;width:40px;height:22px}
 .fp-toggle input{opacity:0;width:0;height:0}
@@ -671,20 +671,20 @@ select option{background:#111D2C;color:#fff}
 .ob-bubble{position:absolute;max-width:282px;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:16px 17px;box-shadow:0 14px 44px rgba(0,0,0,.55);z-index:9600;animation:obPop .4s cubic-bezier(.2,1.5,.4,1) both}
 @keyframes obPop{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}
 .ob-emoji{font-size:20px;margin-bottom:6px}
-.ob-title{font-size:13px;font-weight:800;color:var(--cyan);margin-bottom:6px}
+.ob-title{font-size:13px;font-weight:500;color:var(--cyan);margin-bottom:6px}
 .ob-text{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:15px}
 .ob-actions{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .ob-dots{display:flex;gap:5px;align-items:center}
 .ob-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);transition:all .25s}
 .ob-dot.on{background:var(--cyan);width:18px;border-radius:3px}
-.ob-next{background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:9px 18px;border-radius:12px;border:none;cursor:pointer}
+.ob-next{background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:9px 18px;border-radius:12px;border:none;cursor:pointer}
 .ob-skip{background:none;border:none;color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;cursor:pointer}
-.ob-close{position:fixed;bottom:calc(env(safe-area-inset-bottom,12px) + 12px);left:50%;transform:translateX(-50%);z-index:9700;background:rgba(255,255,255,.14);border:1px solid var(--border2);color:#fff;font-family:'Rubik',sans-serif;font-size:13px;font-weight:700;padding:9px 20px;border-radius:12px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.ob-close{position:fixed;bottom:calc(env(safe-area-inset-bottom,12px) + 12px);left:50%;transform:translateX(-50%);z-index:9700;background:rgba(255,255,255,.14);border:1px solid var(--border2);color:#fff;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:9px 20px;border-radius:12px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 
 /* ── GMAIL ── */
-.gp-btn{padding:7px 16px;border-radius:12px;border:1.5px solid var(--border2);background:none;color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.gp-btn{padding:7px 16px;border-radius:12px;border:1.5px solid var(--border2);background:none;color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
 .gp-btn.on{background:rgba(29,233,182,.15);border-color:rgba(29,233,182,.5);color:var(--cyan)}
-.dup-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;margin-right:4px;vertical-align:middle}
+.dup-badge{display:inline-block;font-size:9px;font-weight:500;padding:2px 7px;border-radius:6px;margin-right:4px;vertical-align:middle}
 .dup-exact{background:rgba(255,107,107,.2);color:#FF6B6B}
 .dup-close{background:rgba(255,179,71,.2);color:#FFB347}
 
@@ -700,7 +700,7 @@ select option{background:#111D2C;color:#fff}
 /* ── 1b. MODAL-BTN ── */
 .modal-btn{
   width:100%;background:var(--cyan);color:#0A1520;
-  font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;
+  font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;
   padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:4px;
 }
 
@@ -743,11 +743,11 @@ html.theme-light .drw-panel { background:#112438; }
 .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:700; align-items:center; justify-content:center; padding:24px; }
 .modal-bg.open { display:flex; }
 .modal-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-.modal-title { font-size:15px; font-weight:800; }
+.modal-title { font-size:15px; font-weight:500; }
 .modal-close { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; }
 .inp { display:block; width:100%; font-family:'Rubik',sans-serif; font-size:13px; padding:10px 12px; border:1.5px solid var(--border2); border-radius:12px; background:rgba(255,255,255,.07); color:var(--text); outline:none; }
 .inp:focus { border-color:var(--cyan); }
-.btn-primary { width:100%; background:linear-gradient(135deg,#2AF0C2,#1DE9B6); color:#0A1520; font-family:'Rubik',sans-serif; font-size:13px; font-weight:800; padding:12px; border-radius:12px; border:none; cursor:pointer; box-shadow:0 6px 18px -8px rgba(29,233,182,.5); transition:transform .12s,filter .12s; }
+.btn-primary { width:100%; background:linear-gradient(135deg,#2AF0C2,#1DE9B6); color:#0A1520; font-family:'Rubik',sans-serif; font-size:13px; font-weight:500; padding:12px; border-radius:12px; border:none; cursor:pointer; box-shadow:0 6px 18px -8px rgba(29,233,182,.5); transition:transform .12s,filter .12s; }
 .btn-primary:active { transform:scale(.97); filter:brightness(.94); }
 
 /* private/business mode: hide client UI in private mode */
@@ -755,7 +755,7 @@ html.mode-private .biz-only{ display:none!important; }
 
 /* mode pill in drawer */
 .mode-switch{ display:flex; gap:6px; margin:10px 20px 4px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:4px; }
-.mode-opt{ flex:1; text-align:center; padding:8px 0; border-radius:12px; font-family:'Rubik',sans-serif; font-size:13px; font-weight:700; color:var(--muted); cursor:pointer; border:none; background:none; transition:all .18s; }
+.mode-opt{ flex:1; text-align:center; padding:8px 0; border-radius:12px; font-family:'Rubik',sans-serif; font-size:13px; font-weight:500; color:var(--muted); cursor:pointer; border:none; background:none; transition:all .18s; }
 .mode-opt.on{ background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; }
 
 /* accessibility: respect reduced-motion preference */
@@ -847,22 +847,22 @@ html.mode-private .biz-only{ display:none!important; }
 <!-- ══ HOME ══════════════════════════════════════════════ -->
 <div class="screen active" id="s-home">
   <!-- Subscription renewal alert bar (hidden until a sub is near expiry) -->
-  <div id="subs-alert-bar" style="display:none;background:rgba(255,160,0,.13);border-bottom:1px solid rgba(255,160,0,.25);padding:8px 16px;font-size:13px;font-weight:600;color:var(--gold);line-height:1.6;cursor:pointer" onclick="go('gmail')"></div>
-  <div id="orders-alert-bar" style="display:none;background:rgba(255,140,0,.15);border-bottom:1px solid rgba(255,140,0,.3);padding:8px 16px;font-size:13px;font-weight:600;color:#FFA020;line-height:1.6;cursor:pointer" onclick="go('suppliers')"></div>
+  <div id="subs-alert-bar" style="display:none;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.1);padding:8px 16px;font-size:13px;font-weight:400;color:var(--text2);line-height:1.6;cursor:pointer" onclick="go('gmail')"></div>
+  <div id="orders-alert-bar" style="display:none;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.1);padding:8px 16px;font-size:13px;font-weight:400;color:var(--text2);line-height:1.6;cursor:pointer" onclick="go('suppliers')"></div>
   <!-- Recurring expense suggestion banner (hidden until a candidate is detected) -->
-  <div id="recurring-banner" style="display:none;background:rgba(29,233,182,.10);border-bottom:1px solid rgba(29,233,182,.22);padding:10px 16px;font-size:13px;font-weight:600;color:var(--cyan);line-height:1.5;direction:rtl">
+  <div id="recurring-banner" style="display:none;background:rgba(29,233,182,.10);border-bottom:1px solid rgba(29,233,182,.22);padding:10px 16px;font-size:13px;font-weight:400;color:var(--cyan);line-height:1.5;direction:rtl">
     <div id="recurring-banner-text" style="margin-bottom:8px"></div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button type="button" id="recurring-yes-btn" onclick="addRecurringToFixed()" style="background:rgba(29,233,182,.22);border:1px solid rgba(29,233,182,.4);color:var(--cyan);font-family:Sora,sans-serif;font-size:12px;font-weight:700;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">כן, הוסף</button>
-      <button type="button" onclick="dismissRecurring()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:12px;font-weight:600;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">התעלם</button>
+      <button type="button" id="recurring-yes-btn" onclick="addRecurringToFixed()" style="background:rgba(29,233,182,.22);border:1px solid rgba(29,233,182,.4);color:var(--cyan);font-family:Sora,sans-serif;font-size:12px;font-weight:500;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">כן, הוסף</button>
+      <button type="button" onclick="dismissRecurring()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:12px;font-weight:400;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">התעלם</button>
     </div>
   </div>
   <!-- Recurring income suggestion banner -->
-  <div id="income-recurring-banner" style="display:none;background:rgba(255,213,79,.10);border-bottom:1px solid rgba(255,213,79,.28);padding:10px 16px;font-size:13px;font-weight:600;color:var(--gold);line-height:1.5;direction:rtl">
+  <div id="income-recurring-banner" style="display:none;background:rgba(255,213,79,.10);border-bottom:1px solid rgba(255,213,79,.28);padding:10px 16px;font-size:13px;font-weight:400;color:var(--gold);line-height:1.5;direction:rtl">
     <div id="income-recurring-banner-text" style="margin-bottom:8px"></div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button type="button" onclick="addRecurringToFixedIncome()" style="background:rgba(255,213,79,.22);border:1px solid rgba(255,213,79,.45);color:var(--gold);font-family:Sora,sans-serif;font-size:12px;font-weight:700;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">כן, הוסף</button>
-      <button type="button" onclick="dismissRecurringIncome()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:12px;font-weight:600;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">לא עכשיו</button>
+      <button type="button" onclick="addRecurringToFixedIncome()" style="background:rgba(255,213,79,.22);border:1px solid rgba(255,213,79,.45);color:var(--gold);font-family:Sora,sans-serif;font-size:12px;font-weight:500;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">כן, הוסף</button>
+      <button type="button" onclick="dismissRecurringIncome()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:12px;font-weight:400;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">לא עכשיו</button>
     </div>
   </div>
   <div class="hero">
@@ -992,7 +992,7 @@ html.mode-private .biz-only{ display:none!important; }
         style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 12px;color:var(--text);font-family:'Rubik',sans-serif;font-size:15px;box-sizing:border-box;margin-bottom:10px">
       <div style="display:flex;gap:8px">
         <button onclick="confirmMove()"
-          style="flex:1;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:10px;border-radius:10px;border:none;cursor:pointer">&#x05D0;&#x05D9;&#x05E9;&#x05D5;&#x05E8; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D4; &#x2713;</button>
+          style="flex:1;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:10px;border:none;cursor:pointer">&#x05D0;&#x05D9;&#x05E9;&#x05D5;&#x05E8; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D4; &#x2713;</button>
         <button onclick="cancelMove()"
           style="flex:1;background:none;border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;padding:10px;border-radius:10px;cursor:pointer">&#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC;</button>
       </div>
@@ -1037,7 +1037,7 @@ html.mode-private .biz-only{ display:none!important; }
         <select id="qa-st"><option value="done">בוצע ✓</option><option value="planned">מתוכנן</option></select>
       </div>
     </div>
-    <button style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:13px;border-radius:12px;border:none;cursor:pointer" onclick="saveQA()">שמור</button>
+    <button style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:13px;border-radius:12px;border:none;cursor:pointer" onclick="saveQA()">שמור</button>
     <button class="mclose" onclick="closeMbg('qa-mbg')">ביטול</button>
   </div>
 </div>
@@ -1068,7 +1068,7 @@ html.mode-private .biz-only{ display:none!important; }
       <input class="minput" type="number" id="fp-amount" placeholder="סכום ₪" />
       <input class="minput" type="number" id="fp-day" placeholder="יום בחודש (1-31)" min="1" max="31"/>
       <div class="method-chips" style="margin:8px 0">
-        <span style="font-size:10px;color:var(--muted);font-weight:700">אמצעי:</span>
+        <span style="font-size:10px;color:var(--muted);font-weight:500">אמצעי:</span>
         <button class="mchip bank on" data-m="bank" onclick="setFPMethod('bank')">עו"ש</button>
         <button class="mchip mc"   data-m="mc"   onclick="setFPMethod('mc')">MC</button>
         <button class="mchip visa" data-m="visa" onclick="setFPMethod('visa')">ויזה</button>
@@ -1087,7 +1087,7 @@ html.mode-private .biz-only{ display:none!important; }
       <button class="ttype income" onclick="setAddType('income')">הכנסה</button>
     </div>
     <div class="method-chips">
-      <span style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.4px">אמצעי:</span>
+      <span style="font-size:10px;color:var(--muted);font-weight:500;letter-spacing:.4px">אמצעי:</span>
       <button class="mchip bank on" data-m="bank" onclick="setAddMethod('bank')">עו"ש</button>
       <button class="mchip cash" data-m="cash" onclick="setAddMethod('cash')">מזומן</button>
       <button class="mchip visa" data-m="visa" onclick="setAddMethod('visa')">ויזה</button>
@@ -1109,10 +1109,10 @@ html.mode-private .biz-only{ display:none!important; }
 1,200 נטלי"></textarea>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
         <span id="parse-count" class="import-sum"></span>
-        <button onclick="parseTextInput()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Rubik',sans-serif;font-size:13px;font-weight:700;padding:8px 16px;border-radius:12px;cursor:pointer">נתחי ›</button>
+        <button onclick="parseTextInput()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:8px 16px;border-radius:12px;cursor:pointer">נתחי ›</button>
       </div>
       <div id="pp-preview" class="pp-preview"></div>
-      <button onclick="importParsed()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:10px">שמור הכל ✓</button>
+      <button onclick="importParsed()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:10px">שמור הכל ✓</button>
     </div>
     <!-- Form panel -->
     <div id="add-panel-form" class="add-panel">
@@ -1126,7 +1126,7 @@ html.mode-private .biz-only{ display:none!important; }
       <div class="mi-row" style="margin-bottom:14px">
         <div class="mfld"><label>תגיות (אופציונלי, מופרדות בפסיק)</label><input type="text" id="sf-tags" placeholder="מזון, בית, חיסכון..."></div>
       </div>
-      <button onclick="addSingleTxn()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
+      <button onclick="addSingleTxn()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
     </div>
     <!-- CSV panel -->
     <div id="add-panel-csv" class="add-panel">
@@ -1134,9 +1134,9 @@ html.mode-private .biz-only{ display:none!important; }
       <textarea id="csv-text" class="parse-area" style="min-height:90px" placeholder="תאריך,סכום,תיאור,סוג,אמצעי&#10;03/05,4100,שכירות,expense,bank&#10;11/05,1200,נטלי,income,cash"></textarea>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
         <span id="csv-count" class="import-sum"></span>
-        <button onclick="parseCSV()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Rubik',sans-serif;font-size:13px;font-weight:700;padding:8px 16px;border-radius:12px;cursor:pointer">נתחי ›</button>
+        <button onclick="parseCSV()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:8px 16px;border-radius:12px;cursor:pointer">נתחי ›</button>
       </div>
-      <button onclick="importParsed()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:10px">ייבא ✓</button>
+      <button onclick="importParsed()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:10px">ייבא ✓</button>
     </div>
     <button class="mclose" onclick="closeMbg('atxn-mbg')">ביטול</button>
   </div>
@@ -1154,7 +1154,7 @@ html.mode-private .biz-only{ display:none!important; }
       <div class="mfld"><label>יעד ₪</label><input type="number" id="ng-target" placeholder="5000"></div>
       <div class="mfld"><label>תאריך יעד</label><input type="date" id="ng-deadline"></div>
     </div>
-    <button onclick="saveNewGoal()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">צור מטרה ✓</button>
+    <button onclick="saveNewGoal()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer">צור מטרה ✓</button>
     <button class="mclose" onclick="closeMbg('new-goal-mbg')">ביטול</button>
   </div>
 </div>
@@ -1163,11 +1163,11 @@ html.mode-private .biz-only{ display:none!important; }
 <div class="mbg" id="goal-add-mbg" onclick="if(event.target===this)closeMbg(this.id)">
   <div class="modal">
     <div class="modal-title">הוסף חיסכון</div>
-    <div class="modal-sub" id="ga-name" style="font-size:13px;color:var(--cyan);font-weight:700"></div>
+    <div class="modal-sub" id="ga-name" style="font-size:13px;color:var(--cyan);font-weight:500"></div>
     <div class="mi-row" style="margin:14px 0">
       <div class="mfld"><label>סכום ₪</label><input type="number" id="ga-amt" placeholder="0"></div>
     </div>
-    <button onclick="saveGoalAdd()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
+    <button onclick="saveGoalAdd()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
     <button class="mclose" onclick="closeMbg('goal-add-mbg')">ביטול</button>
   </div>
 </div>
@@ -1191,7 +1191,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="mi-row" style="margin-bottom:12px">
       <div class="mfld"><label>תאריך (אופציונלי)</label><input type="date" id="cd-date-inp"></div>
     </div>
-    <button onclick="addFromPM()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:11px;border-radius:12px;border:none;cursor:pointer;margin-bottom:6px">הוסף</button>
+    <button onclick="addFromPM()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:11px;border-radius:12px;border:none;cursor:pointer;margin-bottom:6px">הוסף</button>
 
     <!-- Bank file import — shown only for עו"ש -->
     <div id="cd-import-wrap" style="display:none">
@@ -1233,11 +1233,11 @@ html.mode-private .biz-only{ display:none!important; }
     <div id="gmail-setup" style="display:none">
       <div style="text-align:center;margin-bottom:24px">
         <div style="font-size:40px;margin-bottom:10px">📧</div>
-        <div style="font-size:15px;font-weight:800;margin-bottom:8px">חיבור Gmail</div>
+        <div style="font-size:15px;font-weight:500;margin-bottom:8px">חיבור Gmail</div>
         <div style="font-size:13px;color:var(--muted);line-height:1.7">האפליקציה תמצא אוטומטית חיובי<br>כרטיסים מהמיילים של הבנקים שלך</div>
       </div>
       <div style="background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:16px">
-        <div style="font-size:13px;font-weight:800;color:var(--cyan);letter-spacing:.5px;margin-bottom:12px;text-transform:uppercase">הגדרה חד-פעמית · 3 דקות</div>
+        <div style="font-size:13px;font-weight:500;color:var(--cyan);letter-spacing:.5px;margin-bottom:12px;text-transform:uppercase">הגדרה חד-פעמית · 3 דקות</div>
         <div style="font-size:13px;color:var(--text2);line-height:2">
           <b style="color:var(--cyan)">1.</b> פתחי <span style="color:var(--cyan);text-decoration:underline" onclick="window.open('https://console.cloud.google.com')">console.cloud.google.com</span><br>
           <b style="color:var(--cyan)">2.</b> צרי פרויקט → הפעילי <b>Gmail API</b> → Credentials → OAuth Web App<br>
@@ -1245,7 +1245,7 @@ html.mode-private .biz-only{ display:none!important; }
           <b style="color:var(--cyan)">3.</b> העתיקי את ה-<b>Client ID</b> והדביקי כאן:
         </div>
         <input class="minput" id="gmail-client-id" placeholder="123456789.apps.googleusercontent.com" style="margin-top:12px;margin-bottom:10px">
-        <button onclick="saveGmailClientId()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">שמור וחברי ›</button>
+        <button onclick="saveGmailClientId()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer">שמור וחברי ›</button>
       </div>
       <div style="text-align:center;font-size:11px;color:var(--muted)">רק פעם אחת — לאחר מכן כפתור אחד יחפש עסקאות</div>
     </div>
@@ -1256,9 +1256,9 @@ html.mode-private .biz-only{ display:none!important; }
       <svg width="48" height="48" viewBox="0 0 48 48" style="margin-bottom:20px"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.2l6.8-6.8C35.7 2.2 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.1C12.5 13 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8C43.8 37.3 46.5 31.3 46.5 24.5z"/><path fill="#FBBC05" d="M10.5 28.6A14.7 14.7 0 0 1 9.5 24c0-1.6.3-3.1.7-4.6l-7.9-6.1A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2.1 1.4-4.7 2.3-7.7 2.3-6.2 0-11.5-4.2-13.4-9.8l-7.9 6.1C6.5 42.5 14.6 48 24 48z"/></svg>
 
       <div id="gmail-pre-auth">
-        <div style="font-size:20px;font-weight:800;margin-bottom:8px;color:var(--text)">כניסה עם Google</div>
+        <div style="font-size:20px;font-weight:500;margin-bottom:8px;color:var(--text)">כניסה עם Google</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:32px;line-height:1.6">לסריקת חיובי כרטיסים אוטומטית<br>מהמיילים של הבנקים שלך</div>
-        <button id="gmail-auth-btn" onclick="gmailAuth()" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--cyan),#00BCD4);color:#08141E;font-family:'Rubik',sans-serif;font-size:15px;font-weight:800;padding:15px 32px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 28px rgba(29,233,182,.35);width:100%;max-width:300px;justify-content:center">
+        <button id="gmail-auth-btn" onclick="gmailAuth()" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--cyan),#00BCD4);color:#08141E;font-family:'Rubik',sans-serif;font-size:15px;font-weight:500;padding:15px 32px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 28px rgba(29,233,182,.35);width:100%;max-width:300px;justify-content:center">
           <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#08141E" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>
           התחברי עם Google
         </button>
@@ -1267,16 +1267,16 @@ html.mode-private .biz-only{ display:none!important; }
 
       <!-- After auth: period selector -->
       <div id="gmail-period-wrap" style="display:none;margin-top:8px">
-        <div style="font-size:13px;color:var(--pos);font-weight:700;margin-bottom:20px">✓ מחוברת לגוגל</div>
-        <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.8px;margin-bottom:10px;text-transform:uppercase">בחרי תקופה לסריקה</div>
+        <div style="font-size:13px;color:var(--pos);font-weight:500;margin-bottom:20px">✓ מחוברת לגוגל</div>
+        <div style="font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.8px;margin-bottom:10px;text-transform:uppercase">בחרי תקופה לסריקה</div>
         <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px">
           <button class="gp-btn on" data-d="30"  onclick="setGmailPeriod(30)">30 יום</button>
           <button class="gp-btn"    data-d="90"  onclick="setGmailPeriod(90)">3 חודשים</button>
           <button class="gp-btn"    data-d="180" onclick="setGmailPeriod(180)">6 חודשים</button>
           <button class="gp-btn"    data-d="365" onclick="setGmailPeriod(365)">שנה</button>
         </div>
-        <button onclick="gmailFetch(_gmailDays)" style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:13px;font-weight:800;padding:12px 28px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 2px 14px rgba(29,233,182,.3)">סרקי מיילים ›</button>
-        <div id="gmail-status2" style="font-size:13px;color:var(--cyan);margin-top:16px;min-height:18px;font-weight:600"></div>
+        <button onclick="gmailFetch(_gmailDays)" style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:12px 28px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 2px 14px rgba(29,233,182,.3)">סרקי מיילים ›</button>
+        <div id="gmail-status2" style="font-size:13px;color:var(--cyan);margin-top:16px;min-height:18px;font-weight:400"></div>
         <div style="margin-top:8px"><button onclick="resetGmailSetup()" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;font-family:Sora,sans-serif;text-decoration:underline">התנתקי</button></div>
       </div>
     </div>
@@ -1285,17 +1285,17 @@ html.mode-private .biz-only{ display:none!important; }
   <div id="gmail-found" style="display:none;padding:0 16px 16px">
     <div style="display:flex;justify-content:space-between;align-items:center;padding:0 0 10px">
       <div>
-        <span style="font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px">עסקאות שנמצאו</span>
+        <span style="font-size:11px;font-weight:500;color:var(--cyan);letter-spacing:.5px">עסקאות שנמצאו</span>
         <div id="gmail-dup-note" style="font-size:10px;color:var(--muted);margin-top:3px"></div>
       </div>
-      <button onclick="gmailImportAll()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-family:Sora,sans-serif;font-size:13px;font-weight:700;padding:7px 14px;border-radius:12px;cursor:pointer">ייבאי מסומנות ✓</button>
+      <button onclick="gmailImportAll()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:7px 14px;border-radius:12px;cursor:pointer">ייבאי מסומנות ✓</button>
     </div>
     <div id="gmail-txns"></div>
     <!-- Subscriptions detected during scan -->
     <div id="gmail-subs-section" style="display:none;margin-top:18px;border-top:1px solid rgba(255,255,255,.08);padding-top:14px">
-      <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.5px;margin-bottom:10px">מנויים שנמצאו</div>
+      <div style="font-size:11px;font-weight:500;color:var(--gold);letter-spacing:.5px;margin-bottom:10px">מנויים שנמצאו</div>
       <div id="gmail-subs-list"></div>
-      <button onclick="gmailImportSubs()" style="margin-top:10px;background:rgba(255,200,80,.12);border:1px solid rgba(255,200,80,.3);color:var(--gold);font-family:Sora,sans-serif;font-size:13px;font-weight:700;padding:7px 14px;border-radius:12px;cursor:pointer;width:100%">שמרי מסומנים כמנויים קבועים</button>
+      <button onclick="gmailImportSubs()" style="margin-top:10px;background:rgba(255,200,80,.12);border:1px solid rgba(255,200,80,.3);color:var(--gold);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:7px 14px;border-radius:12px;cursor:pointer;width:100%">שמרי מסומנים כמנויים קבועים</button>
     </div>
   </div>
 </div>
@@ -1310,16 +1310,16 @@ html.mode-private .biz-only{ display:none!important; }
   <div style="padding:20px 16px">
     <div id="gcal-no-cid" style="display:none;text-align:center;padding:20px 0">
       <div style="font-size:32px;margin-bottom:12px">📅</div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:8px">קודם חברי Gmail</div>
+      <div style="font-size:15px;font-weight:500;margin-bottom:8px">קודם חברי Gmail</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px">כדי להשתמש ביומן גוגל<br>יש לחבר תחילה את Gmail</div>
-      <button onclick="go('gmail');closeDrawer&&closeDrawer()" style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:13px;font-weight:800;padding:12px 24px;border-radius:12px;border:none;cursor:pointer">עברי לחיבור Gmail ›</button>
+      <button onclick="go('gmail');closeDrawer&&closeDrawer()" style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:12px 24px;border-radius:12px;border:none;cursor:pointer">עברי לחיבור Gmail ›</button>
     </div>
     <div id="gcal-connect-area" style="text-align:center;padding-top:40px">
       <!-- Google logo -->
       <svg width="52" height="52" viewBox="0 0 48 48" style="margin-bottom:22px;filter:drop-shadow(0 0 18px rgba(66,133,244,.4))"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.2l6.8-6.8C35.7 2.2 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.1C12.5 13 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8C43.8 37.3 46.5 31.3 46.5 24.5z"/><path fill="#FBBC05" d="M10.5 28.6A14.7 14.7 0 0 1 9.5 24c0-1.6.3-3.1.7-4.6l-7.9-6.1A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2.1 1.4-4.7 2.3-7.7 2.3-6.2 0-11.5-4.2-13.4-9.8l-7.9 6.1C6.5 42.5 14.6 48 24 48z"/></svg>
-      <div style="font-size:20px;font-weight:800;margin-bottom:8px">חיבור יומן Google</div>
+      <div style="font-size:20px;font-weight:500;margin-bottom:8px">חיבור יומן Google</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:36px;line-height:1.7">מייבאת תורים מהיומן שלך<br>לחודש הנוכחי ולאחור</div>
-      <button id="gcal-connect-btn" onclick="gcalConnect()" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--cyan),#00BCD4);color:#08141E;font-family:'Rubik',sans-serif;font-size:15px;font-weight:800;padding:15px 32px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 28px rgba(29,233,182,.35);width:100%;max-width:300px;justify-content:center">
+      <button id="gcal-connect-btn" onclick="gcalConnect()" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--cyan),#00BCD4);color:#08141E;font-family:'Rubik',sans-serif;font-size:15px;font-weight:500;padding:15px 32px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 28px rgba(29,233,182,.35);width:100%;max-width:300px;justify-content:center">
         <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#08141E" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>
         התחברי עם Google
       </button>
@@ -1343,7 +1343,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div id="sup-panel-suppliers">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <div id="sup-count" style="font-size:11px;color:var(--muted)"></div>
-        <button onclick="openSupplierModal(null)" style="background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:8px 16px;border-radius:var(--rs);border:none;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05E1;&#x05E4;&#x05E7;</button>
+        <button onclick="openSupplierModal(null)" style="background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:8px 16px;border-radius:var(--rs);border:none;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05E1;&#x05E4;&#x05E7;</button>
       </div>
       <div id="sup-list" style="padding-bottom:80px"></div>
     </div>
@@ -1352,7 +1352,7 @@ html.mode-private .biz-only{ display:none!important; }
         <select id="ord-filter-sup" onchange="renderOrders()" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-family:'Rubik',sans-serif;font-size:11px;flex:1;margin-left:10px">
           <option value="">&#x05DB;&#x05DC; &#x05D4;&#x05E1;&#x05E4;&#x05E7;&#x05D9;&#x05DD;</option>
         </select>
-        <button onclick="openOrderModal()" style="background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:8px 16px;border-radius:var(--rs);border:none;cursor:pointer">+ &#x05D4;&#x05D6;&#x05DE;&#x05E0;&#x05D4;</button>
+        <button onclick="openOrderModal()" style="background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:8px 16px;border-radius:var(--rs);border:none;cursor:pointer">+ &#x05D4;&#x05D6;&#x05DE;&#x05E0;&#x05D4;</button>
       </div>
       <div id="ord-list" style="padding-bottom:80px"></div>
     </div>
@@ -1367,7 +1367,7 @@ html.mode-private .biz-only{ display:none!important; }
   </div>
   <div style="padding:0 16px 8px;display:flex;justify-content:space-between;align-items:center">
     <div id="annual-grand-total" style="font-size:13px;color:var(--muted)"></div>
-    <button onclick="openAnnualModal()" style="background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:9px 18px;border-radius:var(--rs);border:none;cursor:pointer">+ הוסף</button>
+    <button onclick="openAnnualModal()" style="background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:9px 18px;border-radius:var(--rs);border:none;cursor:pointer">+ הוסף</button>
   </div>
   <div id="annual-list" style="padding:0 16px 80px"></div>
 </div>
@@ -1404,7 +1404,7 @@ html.mode-private .biz-only{ display:none!important; }
         </label>
       </div>
     </div>
-    <button onclick="saveAnnualItem()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
+    <button onclick="saveAnnualItem()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
     <button class="mclose" onclick="closeMbg('annual-mbg')">ביטול</button>
   </div>
 </div>
@@ -1417,7 +1417,7 @@ html.mode-private .biz-only{ display:none!important; }
       <div class="mfld" style="flex:2"><label>שם הנכס</label><input type="text" id="asset-name-inp" placeholder="חשבון חיסכון, קרן פנסיה..."></div>
       <div class="mfld" style="max-width:110px"><label>סכום ₪</label><input type="number" id="asset-amt-inp" placeholder="0"></div>
     </div>
-    <button onclick="addAsset()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף נכס ✓</button>
+    <button onclick="addAsset()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף נכס ✓</button>
     <button class="mclose" onclick="closeMbg('asset-mbg')">ביטול</button>
   </div>
 </div>
@@ -1444,7 +1444,7 @@ html.mode-private .biz-only{ display:none!important; }
       </select>
     </div>
     <input type="hidden" id="sup-edit-id">
-    <button onclick="saveSupplier()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">&#x05E9;&#x05DE;&#x05D5;&#x05E8; &#x2713;</button>
+    <button onclick="saveSupplier()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer">&#x05E9;&#x05DE;&#x05D5;&#x05E8; &#x2713;</button>
     <button class="mclose" onclick="closeMbg('sup-mbg')">&#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC;</button>
   </div>
 </div>
@@ -1456,21 +1456,21 @@ html.mode-private .biz-only{ display:none!important; }
     <input type="hidden" id="cat-sup-id">
     <div id="cat-product-list" style="margin-bottom:12px"></div>
     <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--rs);padding:12px;margin-bottom:10px">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px">&#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05DE;&#x05D5;&#x05E6;&#x05E8; &#x05D9;&#x05D3;&#x05E0;&#x05D9;&#x05EA;</div>
+      <div style="font-size:11px;font-weight:500;color:var(--muted);margin-bottom:8px">&#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05DE;&#x05D5;&#x05E6;&#x05E8; &#x05D9;&#x05D3;&#x05E0;&#x05D9;&#x05EA;</div>
       <div class="mi-row" style="gap:6px;margin-bottom:6px">
         <div class="mfld" style="flex:3"><input type="text" id="cat-pname" placeholder="&#x05E9;&#x05DD; &#x05DE;&#x05D5;&#x05E6;&#x05E8;"></div>
         <div class="mfld" style="flex:1"><input type="number" id="cat-pprice" placeholder="&#x05DE;&#x05D7;&#x05D9;&#x05E8;" step="0.01"></div>
         <div class="mfld" style="flex:1"><input type="text" id="cat-punit" placeholder="&#x05D9;&#x05D7;. (&#x05D9;&#x05D7;/&#x05E7;&#x05D2;/&#x05E6;&#x05E4;...)"></div>
       </div>
-      <button onclick="addCatalogProduct()" style="width:100%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);border-radius:var(--rs);color:var(--cyan);font-family:'Rubik',sans-serif;font-size:12px;font-weight:700;padding:8px;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05DC;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2;</button>
+      <button onclick="addCatalogProduct()" style="width:100%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);border-radius:var(--rs);color:var(--cyan);font-family:'Rubik',sans-serif;font-size:12px;font-weight:500;padding:8px;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05DC;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2;</button>
     </div>
     <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--rs);padding:12px">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px">&#x05D9;&#x05D9;&#x05D1;&#x05D5;&#x05D0; &#x05DE;&#x05D8;&#x05E7;&#x05E1;&#x05D8; &#x05D7;&#x05D5;&#x05E4;&#x05E9;&#x05D9;</div>
+      <div style="font-size:11px;font-weight:500;color:var(--muted);margin-bottom:8px">&#x05D9;&#x05D9;&#x05D1;&#x05D5;&#x05D0; &#x05DE;&#x05D8;&#x05E7;&#x05E1;&#x05D8; &#x05D7;&#x05D5;&#x05E4;&#x05E9;&#x05D9;</div>
       <textarea id="cat-paste-txt" rows="4" placeholder="&#x05D4;&#x05D3;&#x05D1;&#x05E7; &#x05E8;&#x05E9;&#x05D9;&#x05DE;&#x05EA; &#x05DE;&#x05D5;&#x05E6;&#x05E8;&#x05D9;&#x05DD;... &#x05DC;&#x05D3;&#x05D5;&#x05D2;&#x05DE;&#x05D0;:&#10;&#x05D7;&#x05DC;&#x05D1; 3% 6.90&#10;&#x05DC;&#x05D7;&#x05DD; &#x05D0;&#x05D7;&#x05D9;&#x05D3; - 5.50 &#x20AA;&#10;&#x05D1;&#x05D9;&#x05E6;&#x05D4;,3.90" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px;color:var(--text);font-family:'Rubik',sans-serif;font-size:12px;box-sizing:border-box;resize:vertical"></textarea>
-      <button onclick="parseSupplierProducts()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:'Rubik',sans-serif;font-size:12px;font-weight:700;padding:8px;cursor:pointer;margin-top:6px">&#x05E0;&#x05EA;&#x05D7; &#x203A;</button>
+      <button onclick="parseSupplierProducts()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:'Rubik',sans-serif;font-size:12px;font-weight:500;padding:8px;cursor:pointer;margin-top:6px">&#x05E0;&#x05EA;&#x05D7; &#x203A;</button>
       <div id="cat-parsed-preview" style="margin-top:8px"></div>
       <div id="cat-parsed-count" style="font-size:10px;color:var(--muted);margin-top:4px"></div>
-      <button id="cat-import-btn" onclick="confirmCatalogImport()" style="display:none;width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:10px;border-radius:12px;border:none;cursor:pointer;margin-top:8px">&#x05D9;&#x05D9;&#x05D1;&#x05D0; &#x05DC;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2; &#x2713;</button>
+      <button id="cat-import-btn" onclick="confirmCatalogImport()" style="display:none;width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:12px;border:none;cursor:pointer;margin-top:8px">&#x05D9;&#x05D9;&#x05D1;&#x05D0; &#x05DC;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2; &#x2713;</button>
     </div>
     <button class="mclose" onclick="closeMbg('cat-mbg')">&#x05E1;&#x05D2;&#x05D5;&#x05E8;</button>
   </div>
@@ -1487,25 +1487,25 @@ html.mode-private .biz-only{ display:none!important; }
       </select>
     </div>
     <div id="ord-catalog-chips" style="margin-bottom:10px;display:none">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">&#x05DE;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2;:</div>
+      <div style="font-size:11px;font-weight:500;color:var(--muted);margin-bottom:6px">&#x05DE;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2;:</div>
       <div id="ord-chips-inner" style="display:flex;flex-wrap:wrap;gap:6px"></div>
     </div>
     <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--rs);padding:10px;margin-bottom:10px">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:7px">&#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05E4;&#x05E8;&#x05D9;&#x05D8; &#x05D7;&#x05D5;&#x05E4;&#x05E9;&#x05D9;:</div>
+      <div style="font-size:11px;font-weight:500;color:var(--muted);margin-bottom:7px">&#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05E4;&#x05E8;&#x05D9;&#x05D8; &#x05D7;&#x05D5;&#x05E4;&#x05E9;&#x05D9;:</div>
       <div class="mi-row" style="gap:5px;margin-bottom:5px">
         <div class="mfld" style="flex:3"><input type="text" id="ord-item-name" placeholder="&#x05E9;&#x05DD; &#x05E4;&#x05E8;&#x05D9;&#x05D8;"></div>
         <div class="mfld" style="flex:1"><input type="number" id="ord-item-qty" placeholder="&#x05DB;&#x05DE;" min="1" value="1"></div>
         <div class="mfld" style="flex:1"><input type="number" id="ord-item-price" placeholder="&#x05DE;&#x05D7;&#x05D9;&#x05E8;" step="0.01"></div>
       </div>
-      <button onclick="addOrderItemFree()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:'Rubik',sans-serif;font-size:12px;font-weight:700;padding:7px;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05E4;&#x05E8;&#x05D9;&#x05D8;</button>
+      <button onclick="addOrderItemFree()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:'Rubik',sans-serif;font-size:12px;font-weight:500;padding:7px;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05E4;&#x05E8;&#x05D9;&#x05D8;</button>
     </div>
     <div id="ord-items-list" style="margin-bottom:10px"></div>
-    <div style="text-align:center;font-size:20px;font-weight:900;color:var(--cyan);margin-bottom:10px">&#x05E1;&#x05D4;"&#x05DB; &#x20AA;<span id="ord-total-disp">0</span></div>
+    <div style="text-align:center;font-size:20px;font-weight:500;color:var(--cyan);margin-bottom:10px">&#x05E1;&#x05D4;"&#x05DB; &#x20AA;<span id="ord-total-disp">0</span></div>
     <div class="mi-row" style="gap:8px;margin-bottom:14px">
       <div class="mfld" style="flex:1"><label>&#x05EA;&#x05D0;&#x05E8;&#x05D9;&#x05DA; &#x05D4;&#x05D6;&#x05DE;&#x05E0;&#x05D4;</label><input type="date" id="ord-date-inp"></div>
       <div class="mfld" style="flex:1"><label>&#x05EA;&#x05D0;&#x05E8;&#x05D9;&#x05DA; &#x05EA;&#x05E9;&#x05DC;&#x05D5;&#x05DD;</label><input type="date" id="ord-due-inp"></div>
     </div>
-    <button onclick="saveOrder()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">&#x05E9;&#x05DE;&#x05D5;&#x05E8; &#x05D4;&#x05D6;&#x05DE;&#x05E0;&#x05D4; &#x2713;</button>
+    <button onclick="saveOrder()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer">&#x05E9;&#x05DE;&#x05D5;&#x05E8; &#x05D4;&#x05D6;&#x05DE;&#x05E0;&#x05D4; &#x2713;</button>
     <button class="mclose" onclick="closeMbg('ord-mbg')">&#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC;</button>
   </div>
 </div>
@@ -1518,11 +1518,11 @@ html.mode-private .biz-only{ display:none!important; }
       <button class="modal-close" onclick="closeSettings()">✕</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <div style="font-size:13px;font-weight:700;color:var(--cyan);margin-bottom:4px">📱 Twilio SMS</div>
+      <div style="font-size:13px;font-weight:500;color:var(--cyan);margin-bottom:4px">📱 Twilio SMS</div>
       <input id="set-twilio-sid" class="inp" placeholder="Twilio Account SID" oninput="SETTINGS.twilioSid=this.value;saveSettings()">
       <input id="set-twilio-token" class="inp" placeholder="Twilio Auth Token" type="password" oninput="SETTINGS.twilioToken=this.value;saveSettings()">
       <input id="set-twilio-from" class="inp" placeholder="מספר שולח Twilio (+1...)" oninput="SETTINGS.twilioFrom=this.value;saveSettings()">
-      <div style="font-size:13px;font-weight:700;color:var(--cyan);margin-top:8px;margin-bottom:4px">🧾 Morning חשבוניות</div>
+      <div style="font-size:13px;font-weight:500;color:var(--cyan);margin-top:8px;margin-bottom:4px">🧾 Morning חשבוניות</div>
       <input id="set-morning-token" class="inp" placeholder="Morning API Token" oninput="SETTINGS.morningToken=this.value;saveSettings()">
       <input id="set-biz-name" class="inp" placeholder="שם העסק" oninput="SETTINGS.bizName=this.value;saveSettings()">
       <button class="btn-primary" style="margin-top:8px" onclick="closeSettings()">שמור וסגור</button>
@@ -1565,7 +1565,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260727;
+var APP_VER=20260728;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2321,7 +2321,7 @@ function renderNetWorth(){
     if(prevKey){
       var delta=netWorth-NW_HIST[prevKey];
       var up=delta>=0;
-      trendHtml='<span style="font-size:11px;font-weight:700;color:'+(up?'var(--pos)':'var(--neg)')+'">'+
+      trendHtml='<span style="font-size:11px;font-weight:500;color:'+(up?'var(--pos)':'var(--neg)')+'">'+
         (up?'↑':'↓')+' ₪'+fmt(Math.abs(delta))+' מ-'+prevKey+
       '</span>';
     }
@@ -2329,7 +2329,7 @@ function renderNetWorth(){
   var h='<div style="margin-top:18px;padding:0 16px 4px">';
   // header
   h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;cursor:pointer" onclick="toggleNetWorth()">'+
-    '<span style="font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px;text-transform:uppercase">שווי נטו</span>'+
+    '<span style="font-size:11px;font-weight:500;color:var(--cyan);letter-spacing:.5px;text-transform:uppercase">שווי נטו</span>'+
     '<span id="nw-arrow" style="font-size:10px;color:var(--muted)">'+(_nwOpen?'▴':'▾')+'</span>'+
   '</div>';
   h+='<div id="nw-body" style="display:'+(_nwOpen?'block':'none')+'">';
@@ -2337,8 +2337,8 @@ function renderNetWorth(){
   h+='<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 16px 14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.18)">';
   h+='<div style="display:flex;justify-content:space-between;align-items:flex-start">';
   h+='<div>';
-  h+='<div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">שווי נטו</div>';
-  h+='<div style="font-size:20px;font-weight:900;color:'+(netWorth>=0?'var(--pos)':'var(--neg)')+'">'+
+  h+='<div style="font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">שווי נטו</div>';
+  h+='<div style="font-size:20px;font-weight:500;color:'+(netWorth>=0?'var(--pos)':'var(--neg)')+'">'+
     (netWorth>=0?'+':'-')+'₪'+fmt(Math.abs(netWorth))+
   '</div>';
   if(trendHtml) h+='<div style="margin-top:5px">'+trendHtml+'</div>';
@@ -2349,40 +2349,40 @@ function renderNetWorth(){
   h+='<div style="display:flex;gap:10px;margin-bottom:12px">';
   // assets column
   h+='<div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:12px">';
-  h+='<div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">נכסים</div>';
-  h+='<div style="font-size:15px;font-weight:800;color:var(--pos);margin-bottom:8px">+₪'+fmt(totalAssets)+'</div>';
+  h+='<div style="font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">נכסים</div>';
+  h+='<div style="font-size:15px;font-weight:500;color:var(--pos);margin-bottom:8px">+₪'+fmt(totalAssets)+'</div>';
   if(goalsSaved>0){
     h+='<div style="display:flex;justify-content:space-between;margin-bottom:4px">'+
       '<span style="font-size:11px;color:var(--text2)">מטרות חיסכון</span>'+
-      '<span style="font-size:11px;font-weight:700;color:var(--pos)">₪'+fmt(goalsSaved)+'</span>'+
+      '<span style="font-size:11px;font-weight:500;color:var(--pos)">₪'+fmt(goalsSaved)+'</span>'+
     '</div>';
   }
   ASSETS.forEach(function(a){
     h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'+
       '<span style="font-size:11px;color:var(--text2)">'+esc(a.name)+'</span>'+
       '<span style="display:flex;align-items:center;gap:6px">'+
-        '<span style="font-size:11px;font-weight:700;color:var(--pos)">₪'+fmt(a.amount)+'</span>'+
+        '<span style="font-size:11px;font-weight:500;color:var(--pos)">₪'+fmt(a.amount)+'</span>'+
         '<button onclick="delAsset(\''+a.id+'\')" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:0;line-height:1">×</button>'+
       '</span>'+
     '</div>';
   });
-  h+='<button onclick="document.getElementById(\'asset-mbg\').classList.add(\'open\')" style="margin-top:8px;width:100%;background:rgba(29,233,182,.1);border:1px solid rgba(29,233,182,.25);border-radius:var(--rs);color:var(--cyan);font-size:11px;font-weight:700;font-family:\'Sora\',sans-serif;padding:7px;cursor:pointer">+ הוסף נכס</button>';
+  h+='<button onclick="document.getElementById(\'asset-mbg\').classList.add(\'open\')" style="margin-top:8px;width:100%;background:rgba(29,233,182,.1);border:1px solid rgba(29,233,182,.25);border-radius:var(--rs);color:var(--cyan);font-size:11px;font-weight:500;font-family:\'Sora\',sans-serif;padding:7px;cursor:pointer">+ הוסף נכס</button>';
   h+='</div>';
   // liabilities column
   h+='<div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:12px">';
-  h+='<div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">התחייבויות</div>';
-  h+='<div style="font-size:15px;font-weight:800;color:var(--neg);margin-bottom:8px">-₪'+fmt(totalLiab)+'</div>';
+  h+='<div style="font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">התחייבויות</div>';
+  h+='<div style="font-size:15px;font-weight:500;color:var(--neg);margin-bottom:8px">-₪'+fmt(totalLiab)+'</div>';
   h+='<div style="display:flex;justify-content:space-between;margin-bottom:4px">'+
     '<span style="font-size:11px;color:var(--text2)">עו"ש</span>'+
-    '<span style="font-size:11px;font-weight:700;color:var(--neg)">₪'+fmt(CARDS.bank)+'</span>'+
+    '<span style="font-size:11px;font-weight:500;color:var(--neg)">₪'+fmt(CARDS.bank)+'</span>'+
   '</div>';
   h+='<div style="display:flex;justify-content:space-between;margin-bottom:4px">'+
     '<span style="font-size:11px;color:var(--text2)">מאסטרקארד</span>'+
-    '<span style="font-size:11px;font-weight:700;color:var(--neg)">₪'+fmt(CARDS.mc)+'</span>'+
+    '<span style="font-size:11px;font-weight:500;color:var(--neg)">₪'+fmt(CARDS.mc)+'</span>'+
   '</div>';
   h+='<div style="display:flex;justify-content:space-between">'+
     '<span style="font-size:11px;color:var(--text2)">ויזה</span>'+
-    '<span style="font-size:11px;font-weight:700;color:var(--neg)">₪'+fmt(CARDS.visa)+'</span>'+
+    '<span style="font-size:11px;font-weight:500;color:var(--neg)">₪'+fmt(CARDS.visa)+'</span>'+
   '</div>';
   h+='</div>';
   h+='</div>';
@@ -2418,7 +2418,7 @@ function renderBudgets(){
     var over=r.spent>r.budget;
     h+='<div style="margin-bottom:12px;cursor:pointer" onclick="editBudget(\''+r.lbl+'\')">'  +
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'+
-        '<span style="font-size:11px;font-weight:700;color:var(--text2)">'+esc(r.lbl)+(over?' ⚠':'')+'</span>'+
+        '<span style="font-size:11px;font-weight:500;color:var(--text2)">'+esc(r.lbl)+(over?' ⚠':'')+'</span>'+
         '<span style="font-size:11px;color:'+(over?'var(--neg)':'var(--muted)')+'">₪'+fmt(r.spent)+' / ₪'+fmt(r.budget)+'</span>'+
       '</div>'+
       '<div style="height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden">'+
@@ -2816,14 +2816,14 @@ function showPMDetail(method){
   if(method==='bank'){
     var over=CARDS.bank-CARDS.limit;
     h+='<div style="padding:12px 14px;border-radius:var(--rs);background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);margin-top:8px">'+
-      '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;font-weight:700;color:var(--muted)">יתרת חוב</span><span style="font-size:15px;font-weight:900;color:var(--neg)">-₪'+fmt(CARDS.bank)+'</span></div>'+
-      '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;font-weight:700;color:var(--muted)">מסגרת אשראי</span><span style="font-size:13px;font-weight:700;color:var(--muted)">₪'+fmt(CARDS.limit)+'</span></div>'+
-      (over>0?'<div style="display:flex;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--neg)">חריגה מהמסגרת</span><span style="font-size:13px;font-weight:900;color:var(--neg)">₪'+fmt(over)+'</span></div>':'<div style="font-size:11px;font-weight:700;color:var(--pos)">בתוך המסגרת</div>')+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;font-weight:500;color:var(--muted)">יתרת חוב</span><span style="font-size:15px;font-weight:500;color:var(--neg)">-₪'+fmt(CARDS.bank)+'</span></div>'+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;font-weight:500;color:var(--muted)">מסגרת אשראי</span><span style="font-size:13px;font-weight:500;color:var(--muted)">₪'+fmt(CARDS.limit)+'</span></div>'+
+      (over>0?'<div style="display:flex;justify-content:space-between"><span style="font-size:11px;font-weight:500;color:var(--neg)">חריגה מהמסגרת</span><span style="font-size:13px;font-weight:500;color:var(--neg)">₪'+fmt(over)+'</span></div>':'<div style="font-size:11px;font-weight:500;color:var(--pos)">בתוך המסגרת</div>')+
     '</div>';
     h+='<div class="mi-row" style="margin-top:8px">'+
         '<div class="mfld"><label>יתרת מינוס ₪</label><input type="number" id="pm-bank-val" placeholder="'+CARDS.bank+'"></div>'+
         '<div class="mfld" style="max-width:110px"><label>מסגרת ₪</label><input type="number" id="pm-bank-lim" placeholder="'+CARDS.limit+'"></div>'+
-        '<button onclick="updBankFromPM()" style="background:rgba(255,255,255,.1);border:1px solid var(--border2);color:var(--text);font-family:Sora,sans-serif;font-size:13px;font-weight:700;padding:10px 14px;border-radius:12px;border:none;cursor:pointer;align-self:flex-end;flex-shrink:0">עדכן</button>'+
+        '<button onclick="updBankFromPM()" style="background:rgba(255,255,255,.1);border:1px solid var(--border2);color:var(--text);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:10px 14px;border-radius:12px;border:none;cursor:pointer;align-self:flex-end;flex-shrink:0">עדכן</button>'+
       '</div>';
   }
   document.getElementById('cd-list').innerHTML=h;
@@ -3240,7 +3240,7 @@ function renderMC(){
     var badge=nc>0?'<span style="background:rgba(255,107,107,.15);color:var(--neg);font-size:9px;padding:2px 6px;border-radius:6px;margin-right:4px"> &#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC;&#x05D9;&#x05DD;: '+nc+'</span>':'';
     var sLabel=c.status==='done'?'&#x2713; &#x05D1;&#x05D5;&#x05E6;&#x05E2;':c.status==='cancelled'?'&#x2715; &#x05D1;&#x05D5;&#x05D8;&#x05DC;':'&#x23F3; &#x05DE;&#x05DE;&#x05EA;&#x05D9;&#x05DF;';
     var amtClass='mc-amt '+c.status;
-    return '<div class="mc-row"><div class="mc-name" onclick="openClientCard(\''+esc(c.name)+'\')" style="cursor:pointer;text-decoration:underline dotted var(--muted)">'+esc(c.name)+badge+(c.treat?' <span style="font-size:11px;color:var(--muted)">&#xB7; '+esc(c.treat)+'</span>':'')+'</div><button class="sbtn '+c.status+'" onclick="toggleC('+i+')">'+sLabel+'</button><div class="'+amtClass+'">&#x20AA;'+fmt(c.amount)+'</div><button class="mv-btn" onclick="startMove('+i+')" title="&#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9; &#x05DC;&#x05EA;&#x05D0;&#x05E8;&#x05D9;&#x05DA; &#x05D0;&#x05D7;&#x05E8;" style="background:rgba(29,233,182,.12);border:1px solid rgba(29,233,182,.25);color:var(--cyan);font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer;margin-left:4px">&#128197; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9;</button><button class="del-btn" onclick="delC('+i+')">&#x2715;</button></div>';
+    return '<div class="mc-row"><div class="mc-name" onclick="openClientCard(\''+esc(c.name)+'\')" style="cursor:pointer;text-decoration:underline dotted var(--muted)">'+esc(c.name)+badge+(c.treat?' <span style="font-size:11px;color:var(--muted)">&#xB7; '+esc(c.treat)+'</span>':'')+'</div><button class="sbtn '+c.status+'" onclick="toggleC('+i+')">'+sLabel+'</button><div class="'+amtClass+'">&#x20AA;'+fmt(c.amount)+'</div><button class="mv-btn" onclick="startMove('+i+')" title="&#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9; &#x05DC;&#x05EA;&#x05D0;&#x05E8;&#x05D9;&#x05DA; &#x05D0;&#x05D7;&#x05E8;" style="background:rgba(29,233,182,.12);border:1px solid rgba(29,233,182,.25);color:var(--cyan);font-size:11px;font-weight:500;padding:5px 10px;border-radius:8px;cursor:pointer;margin-left:4px">&#128197; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9;</button><button class="del-btn" onclick="delC('+i+')">&#x2715;</button></div>';
   }).join('');
 }
 function toggleC(idx){
@@ -3354,8 +3354,8 @@ function confirmMove(){
   panel.style.display='block';
   panel.innerHTML='<div style="font-size:12px;color:var(--muted);margin-bottom:10px">מי ביטל את התור המקורי?</div>'
     +'<div style="display:flex;gap:8px">'
-    +'<button onclick="doneWhoCancel(true)" style="flex:1;background:rgba(255,107,107,.15);color:var(--neg);font-family:\'Sora\',sans-serif;font-size:12px;font-weight:700;padding:10px;border-radius:10px;border:1px solid rgba(255,107,107,.25);cursor:pointer">ביטלתי אני (העסק)</button>'
-    +'<button onclick="doneWhoCancel(false)" style="flex:1;background:rgba(255,179,71,.12);color:#FFB347;font-family:\'Sora\',sans-serif;font-size:12px;font-weight:700;padding:10px;border-radius:10px;border:1px solid rgba(255,179,71,.25);cursor:pointer">ביטלה הלקוחה</button>'
+    +'<button onclick="doneWhoCancel(true)" style="flex:1;background:rgba(255,107,107,.15);color:var(--neg);font-family:\'Sora\',sans-serif;font-size:12px;font-weight:500;padding:10px;border-radius:10px;border:1px solid rgba(255,107,107,.25);cursor:pointer">ביטלתי אני (העסק)</button>'
+    +'<button onclick="doneWhoCancel(false)" style="flex:1;background:rgba(255,179,71,.12);color:#FFB347;font-family:\'Sora\',sans-serif;font-size:12px;font-weight:500;padding:10px;border-radius:10px;border:1px solid rgba(255,179,71,.25);cursor:pointer">ביטלה הלקוחה</button>'
     +'</div>'
     +'<button onclick="cancelMove()" style="display:block;width:100%;text-align:center;font-size:12px;color:var(--muted);margin-top:10px;background:none;border:none;font-family:\'Sora\',sans-serif;cursor:pointer">דלג / לא רלוונטי</button>';
 }
@@ -3429,7 +3429,7 @@ function renderClientCard(name){
   if(doneAppts.length>0){
     var first=doneAppts[0];
     var fdStr=(first.day<10?'0'+first.day:String(first.day))+'/'+(first.month<10?'0'+first.month:String(first.month))+'/'+(first.year||'');
-    html+='<div style="color:var(--gold,#FFB347);font-size:20px;font-weight:800;margin-bottom:8px">&#x05EA;&#x05E9;&#x05DC;&#x05D5;&#x05DD; &#x05E8;&#x05D0;&#x05E9;&#x05D5;&#x05DF;: &#x20AA;'+fmt(first.amount)+' &#x05D1;-'+fdStr+'</div>';
+    html+='<div style="color:var(--gold,#FFB347);font-size:20px;font-weight:500;margin-bottom:8px">&#x05EA;&#x05E9;&#x05DC;&#x05D5;&#x05DD; &#x05E8;&#x05D0;&#x05E9;&#x05D5;&#x05DF;: &#x20AA;'+fmt(first.amount)+' &#x05D1;-'+fdStr+'</div>';
     var latest=doneAppts[doneAppts.length-1];
     if(doneAppts.length>1&&latest.amount>first.amount&&first.amount>0){
       var pct=Math.round((latest.amount-first.amount)/first.amount*100);
@@ -3447,25 +3447,25 @@ function renderClientCard(name){
     lastVisitStr=(lv.day<10?'0'+lv.day:String(lv.day))+'/'+(lv.month<10?'0'+lv.month:String(lv.month))+'/'+(lv.year||'');
   }
   html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">'
-    +'<div style="flex:1;min-width:80px;background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">&#x05E1;&#x05D4;&#x05F4;&#x05DB; &#x05E9;&#x05D9;&#x05DC;&#x05DD;</div><div style="font-size:16px;font-weight:800;color:var(--pos)">&#x20AA;'+fmt(totalPaid)+'</div></div>'
-    +'<div style="flex:1;min-width:80px;background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">&#x05D1;&#x05D9;&#x05E7;&#x05D5;&#x05E8;&#x05D9;&#x05DD;</div><div style="font-size:16px;font-weight:800">'+visitCount+'</div></div>'
-    +'<div style="flex:1;min-width:80px;background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">&#x05DE;&#x05D7;&#x05D9;&#x05E8; &#x05DE;&#x05DE;&#x05D5;&#x05E6;&#x05E2;</div><div style="font-size:16px;font-weight:800">&#x20AA;'+fmt(avgPrice)+'</div></div>'
+    +'<div style="flex:1;min-width:80px;background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">&#x05E1;&#x05D4;&#x05F4;&#x05DB; &#x05E9;&#x05D9;&#x05DC;&#x05DD;</div><div style="font-size:16px;font-weight:500;color:var(--pos)">&#x20AA;'+fmt(totalPaid)+'</div></div>'
+    +'<div style="flex:1;min-width:80px;background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">&#x05D1;&#x05D9;&#x05E7;&#x05D5;&#x05E8;&#x05D9;&#x05DD;</div><div style="font-size:16px;font-weight:500">'+visitCount+'</div></div>'
+    +'<div style="flex:1;min-width:80px;background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">&#x05DE;&#x05D7;&#x05D9;&#x05E8; &#x05DE;&#x05DE;&#x05D5;&#x05E6;&#x05E2;</div><div style="font-size:16px;font-weight:500">&#x20AA;'+fmt(avgPrice)+'</div></div>'
     +'</div>'
     +'<div style="font-size:11px;color:var(--muted);margin-bottom:14px">&#x05D1;&#x05D9;&#x05E7;&#x05D5;&#x05E8; &#x05D0;&#x05D7;&#x05E8;&#x05D5;&#x05DF;: '+lastVisitStr+'</div>';
   // treatment history from CLIENT_RECORDS
   var hist=(rec.history||[]);
   if(hist.length>0){
-    html+='<div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px">&#x05D4;&#x05D9;&#x05E1;&#x05D8;&#x05D5;&#x05E8;&#x05D9;&#x05D9;&#x05EA; &#x05D8;&#x05D9;&#x05E4;&#x05D5;&#x05DC;&#x05D9;&#x05DD;</div>';
+    html+='<div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:8px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px">&#x05D4;&#x05D9;&#x05E1;&#x05D8;&#x05D5;&#x05E8;&#x05D9;&#x05D9;&#x05EA; &#x05D8;&#x05D9;&#x05E4;&#x05D5;&#x05DC;&#x05D9;&#x05DD;</div>';
     for(var hi=hist.length-1;hi>=0;hi--){
       var h=hist[hi];
       if(h.status==='done'){
         html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">'
-          +'<div><span style="font-size:12px;font-weight:700">'+h.date+'</span>'+(h.treatment?' <span style="font-size:11px;color:var(--muted)">· '+esc(h.treatment)+'</span>':'')+'</div>'
-          +'<div style="color:var(--pos);font-weight:800">&#x20AA;'+fmt(h.amount)+'</div></div>';
+          +'<div><span style="font-size:12px;font-weight:500">'+h.date+'</span>'+(h.treatment?' <span style="font-size:11px;color:var(--muted)">· '+esc(h.treatment)+'</span>':'')+'</div>'
+          +'<div style="color:var(--pos);font-weight:500">&#x20AA;'+fmt(h.amount)+'</div></div>';
       } else if(h.status==='cancelled'){
         var byWhom=h.byBusiness?'&#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC; &#x05E2;&#x05DC; &#x05D9;&#x05D3;&#x05D9; &#x05D4;&#x05E2;&#x05E1;&#x05E7;':'&#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC; &#x05E2;&#x05DC; &#x05D9;&#x05D3;&#x05D9; &#x05D4;&#x05DC;&#x05E7;&#x05D5;&#x05D7;&#x05D4;';
         html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">'
-          +'<div><span style="font-size:12px;font-weight:700">'+h.date+'</span> <span style="font-size:11px;color:var(--neg)">&#x2715; '+byWhom+'</span></div>'
+          +'<div><span style="font-size:12px;font-weight:500">'+h.date+'</span> <span style="font-size:11px;color:var(--neg)">&#x2715; '+byWhom+'</span></div>'
           +'<div style="color:var(--neg);font-size:11px">&#x05D1;&#x05D5;&#x05D8;&#x05DC;</div></div>';
       }
     }
@@ -3697,7 +3697,7 @@ function renderPP(){
       '<span style="color:var(--muted);font-size:10px;font-weight:500;letter-spacing:.2px;flex-shrink:0">'+t.date+'</span>'+
       '<span style="flex:1">'+esc(t.desc)+'</span>'+
       (mLbl?'<span style="font-size:9px;color:var(--muted);background:rgba(255,255,255,.08);padding:2px 6px;border-radius:6px">'+mLbl+'</span>':'')+
-      '<span style="font-weight:800;color:'+col+'">'+sign+'₪'+fmt(t.amount)+'</span>'+
+      '<span style="font-weight:500;color:'+col+'">'+sign+'₪'+fmt(t.amount)+'</span>'+
       '<button class="pp-del" onclick="removePP('+i+')">✕</button>'+
     '</div>';
   });
@@ -3924,17 +3924,17 @@ function renderAnnual(){
     var mTotal=items.reduce(function(s,x){return s+x.amount;},0);
     h+='<div style="margin-bottom:18px">';
     h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-    h+='<span style="font-size:13px;font-weight:700;color:var(--cyan)">'+MOS_NAMES[m]+'</span>';
+    h+='<span style="font-size:13px;font-weight:500;color:var(--cyan)">'+MOS_NAMES[m]+'</span>';
     h+='<span style="font-size:11px;color:var(--muted)">₪'+fmt(mTotal)+'</span>';
     h+='</div>';
     h+='<div style="background:var(--card);border-radius:var(--r);overflow:hidden;border:1px solid var(--border)">';
     items.forEach(function(x){
       h+='<div style="display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border)">';
       h+='<div style="flex:1;min-width:0">';
-      h+='<div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(x.name)+'</div>';
+      h+='<div style="font-size:13px;font-weight:400;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(x.name)+'</div>';
       if(x.recurring) h+='<div style="font-size:10px;color:var(--cyan);margin-top:2px">חוזר שנתי</div>';
       h+='</div>';
-      h+='<div style="font-size:15px;font-weight:700;color:var(--neg);margin:0 10px">₪'+fmt(x.amount)+'</div>';
+      h+='<div style="font-size:15px;font-weight:500;color:var(--neg);margin:0 10px">₪'+fmt(x.amount)+'</div>';
       h+='<button onclick="delAnnual('+x.id+')" style="background:rgba(255,107,107,.13);border:none;color:var(--neg);font-size:13px;padding:5px 10px;border-radius:8px;cursor:pointer;font-family:\'Sora\',sans-serif">מחק</button>';
       h+='</div>';
     });
@@ -4481,12 +4481,12 @@ function renderGmailTxns(){
       '<label style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer">'+
         '<input type="checkbox" id="gt'+i+'"'+(checked?' checked':'')+' style="width:16px;height:16px;accent-color:var(--cyan)">'+
         '<div>'+
-          '<div style="font-size:13px;font-weight:600">'+dupBadge+esc(t.desc)+'</div>'+
+          '<div style="font-size:13px;font-weight:400">'+dupBadge+esc(t.desc)+'</div>'+
           '<div style="font-size:10px;color:var(--muted);margin-top:2px">'+t.d+' · <span style="color:'+col+'">'+mLbl[t.method]+'</span></div>'+
           '<div style="font-size:9px;color:var(--muted2);margin-top:2px;direction:ltr">'+t.raw.slice(0,70)+'</div>'+
         '</div>'+
       '</label>'+
-      '<div style="font-size:15px;font-weight:800;color:var(--neg);flex-shrink:0;padding-top:2px">-₪'+fmt(t.a)+'</div>'+
+      '<div style="font-size:15px;font-weight:500;color:var(--neg);flex-shrink:0;padding-top:2px">-₪'+fmt(t.a)+'</div>'+
     '</div>';
   });
   document.getElementById('gmail-txns').innerHTML=h;
@@ -4509,16 +4509,16 @@ function renderGmailTxns(){
           daysLeft=Math.round((rd-today)/(1000*60*60*24));
         }
       }
-      var urgency=daysLeft!==null&&daysLeft<=7?'<span style="color:var(--neg);font-weight:800;font-size:10px"> · מסתיים בעוד '+daysLeft+' יום!</span>':'';
+      var urgency=daysLeft!==null&&daysLeft<=7?'<span style="color:var(--neg);font-weight:500;font-size:10px"> · מסתיים בעוד '+daysLeft+' יום!</span>':'';
       hs+='<div class="fp-item" style="align-items:center">'+
         '<label style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer">'+
           '<input type="checkbox" id="gs'+i+'" checked style="width:16px;height:16px;accent-color:var(--gold)">'+
           '<div>'+
-            '<div style="font-size:13px;font-weight:700">'+esc(s.name)+'</div>'+
+            '<div style="font-size:13px;font-weight:500">'+esc(s.name)+'</div>'+
             '<div style="font-size:10px;color:var(--muted);margin-top:2px;font-weight:500;letter-spacing:.2px">חידוש: '+esc(s.renewDate)+urgency+'</div>'+
           '</div>'+
         '</label>'+
-        '<div style="font-size:15px;font-weight:800;color:var(--gold);flex-shrink:0">'+
+        '<div style="font-size:15px;font-weight:500;color:var(--gold);flex-shrink:0">'+
           (s.amount?'₪'+fmt(s.amount)+'/חודש':'')+'</div>'+
       '</div>';
     });
@@ -4800,9 +4800,9 @@ function renderSuppliers(){
     var prodCount = (s.products||[]).length;
     h += '<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">' +
-      '<div style="font-size:15px;font-weight:800;color:var(--text)">' + esc(s.name) + '</div>' +
+      '<div style="font-size:15px;font-weight:500;color:var(--text)">' + esc(s.name) + '</div>' +
       '<div style="display:flex;gap:6px">' +
-      '<button onclick="openCatalog(\'' + s.id + '\')" style="background:rgba(29,233,182,.12);border:1px solid rgba(29,233,182,.25);border-radius:var(--rs);color:var(--cyan);font-size:11px;font-weight:700;font-family:\'Sora\',sans-serif;padding:5px 10px;cursor:pointer">קטלוג</button>' +
+      '<button onclick="openCatalog(\'' + s.id + '\')" style="background:rgba(29,233,182,.12);border:1px solid rgba(29,233,182,.25);border-radius:var(--rs);color:var(--cyan);font-size:11px;font-weight:500;font-family:\'Sora\',sans-serif;padding:5px 10px;cursor:pointer">קטלוג</button>' +
       '<button onclick="openSupplierModal(\'' + s.id + '\')" style="background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:11px;font-family:\'Sora\',sans-serif;padding:5px 8px;cursor:pointer">עריכה</button>' +
       '<button onclick="delSupplier(\'' + s.id + '\')" style="background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.25);border-radius:var(--rs);color:var(--neg);font-size:11px;font-family:\'Sora\',sans-serif;padding:5px 8px;cursor:pointer">מחק</button>' +
       '</div></div>' +
@@ -4916,7 +4916,7 @@ function renderCatalogList(supId){
     h+='<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)">' +
       '<div style="flex:1;font-size:13px">' + esc(p.name) + '</div>' +
       '<div style="font-size:11px;color:var(--muted)">' + esc(p.unit||'') + '</div>' +
-      '<div style="font-size:13px;font-weight:700;color:var(--cyan);min-width:50px;text-align:left">₪' + fmt(p.price||0) + '</div>' +
+      '<div style="font-size:13px;font-weight:500;color:var(--cyan);min-width:50px;text-align:left">₪' + fmt(p.price||0) + '</div>' +
       '<button onclick="delProduct(\'' + sid + '\',' + i + ')" style="background:none;border:none;color:var(--neg);font-size:13px;cursor:pointer;padding:2px 4px">✕</button>' +
       '</div>';
   });
@@ -5073,23 +5073,23 @@ function renderOrders(){
     if(st!=='paid' && o.dueDate){
       var due = new Date(o.dueDate); due.setHours(0,0,0,0);
       var diff = Math.round((due-today)/(1000*60*60*24));
-      if(diff<0) dueWarn='<span style="color:var(--neg);font-size:10px;font-weight:700"> ⚠ פג תוקף</span>';
-      else if(diff<=7) dueWarn='<span style="color:#FFA020;font-size:10px;font-weight:700"> ⚠ '+diff+' ימים</span>';
+      if(diff<0) dueWarn='<span style="color:var(--neg);font-size:10px;font-weight:500"> ⚠ פג תוקף</span>';
+      else if(diff<=7) dueWarn='<span style="color:#FFA020;font-size:10px;font-weight:500"> ⚠ '+diff+' ימים</span>';
     }
     h+='<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;margin-bottom:9px">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px">' +
       '<div>' +
-      '<div style="font-size:13px;font-weight:800">' + esc(supName) + '</div>' +
+      '<div style="font-size:13px;font-weight:500">' + esc(supName) + '</div>' +
       '<div style="font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.2px">' + (o.date||'') + ' · פירעון: ' + (o.dueDate||'—') + dueWarn + '</div>' +
       '</div>' +
-      '<div style="font-size:15px;font-weight:900;color:var(--cyan)">₪' + fmt(o.total||0) + '</div>' +
+      '<div style="font-size:15px;font-weight:500;color:var(--cyan)">₪' + fmt(o.total||0) + '</div>' +
       '</div>' +
       '<div style="display:flex;align-items:center;gap:7px;margin-top:6px">' +
-      '<span style="background:'+statusBg[st]+';color:'+statusCol[st]+';border:1px solid '+statusCol[st]+'40;border-radius:20px;font-size:10px;font-weight:700;padding:3px 10px">'+statusMap[st]+'</span>';
+      '<span style="background:'+statusBg[st]+';color:'+statusCol[st]+';border:1px solid '+statusCol[st]+'40;border-radius:20px;font-size:10px;font-weight:500;padding:3px 10px">'+statusMap[st]+'</span>';
     if(st==='open'){
-      h+='<button onclick="setOrderStatus(\''+o.id+'\',\'received\')" style="background:rgba(29,233,182,.1);border:1px solid rgba(29,233,182,.2);border-radius:var(--rs);color:var(--cyan);font-size:10px;font-family:\'Sora\',sans-serif;font-weight:700;padding:4px 9px;cursor:pointer">התקבל</button>';
+      h+='<button onclick="setOrderStatus(\''+o.id+'\',\'received\')" style="background:rgba(29,233,182,.1);border:1px solid rgba(29,233,182,.2);border-radius:var(--rs);color:var(--cyan);font-size:10px;font-family:\'Sora\',sans-serif;font-weight:500;padding:4px 9px;cursor:pointer">התקבל</button>';
     } else if(st==='received'){
-      h+='<button onclick="setOrderStatus(\''+o.id+'\',\'paid\')" style="background:rgba(100,220,100,.12);border:1px solid rgba(100,220,100,.25);border-radius:var(--rs);color:var(--pos);font-size:10px;font-family:\'Sora\',sans-serif;font-weight:700;padding:4px 9px;cursor:pointer">שולם</button>';
+      h+='<button onclick="setOrderStatus(\''+o.id+'\',\'paid\')" style="background:rgba(100,220,100,.12);border:1px solid rgba(100,220,100,.25);border-radius:var(--rs);color:var(--pos);font-size:10px;font-family:\'Sora\',sans-serif;font-weight:500;padding:4px 9px;cursor:pointer">שולם</button>';
     }
     h+='<button onclick="delOrder(\''+o.id+'\')" style="background:rgba(255,80,80,.09);border:1px solid rgba(255,80,80,.2);border-radius:var(--rs);color:var(--neg);font-size:10px;font-family:\'Sora\',sans-serif;padding:4px 8px;cursor:pointer">מחק</button>' +
       '</div></div>';
@@ -5187,7 +5187,7 @@ function _renderOrderItems(){
     h+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px">' +
       '<span style="flex:1">' + esc(it.name) + '</span>' +
       '<span style="color:var(--muted)">' + it.qty + ' × ₪' + fmt(it.price) + '</span>' +
-      '<span style="font-weight:700;color:var(--cyan)">₪' + fmt(line) + '</span>' +
+      '<span style="font-weight:500;color:var(--cyan)">₪' + fmt(line) + '</span>' +
       '<button onclick="removeOrderItem('+i+')" style="background:none;border:none;color:var(--neg);font-size:12px;cursor:pointer;padding:0 4px">✕</button>' +
       '</div>';
   });
@@ -5547,7 +5547,7 @@ function renderGCalEvents(events){
   }
   _gcalEvents=events;
   var mon=['ינו','פבר','מרץ','אפר','מאי','יוני','יולי','אוג','ספט','אוק','נוב','דצמ'];
-  var h='<div style="font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-bottom:12px">'+events.length+' תורים — לחצי על תור לייבוא</div>';
+  var h='<div style="font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.5px;margin-bottom:12px">'+events.length+' תורים — לחצי על תור לייבוא</div>';
   for(var i=0;i<events.length;i++){
     var ev=events[i];
     var dt=new Date(ev.start.dateTime||ev.start.date);
@@ -5557,7 +5557,7 @@ function renderGCalEvents(events){
     var evId='gcalev'+i;
     h+='<div id="'+evId+'" style="background:var(--card);border-radius:12px;margin-bottom:8px;overflow:hidden">';
     h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer" onclick="gcalToggleForm(\''+evId+'\')">';
-    h+='<div><div style="font-weight:700;font-size:13px">'+esc(ev.summary||'(ללא שם)')+'</div>';
+    h+='<div><div style="font-weight:500;font-size:13px">'+esc(ev.summary||'(ללא שם)')+'</div>';
     h+='<div style="font-size:13px;color:var(--muted);margin-top:2px">'+day+' '+mo+(timeStr?' · '+timeStr:'')+'</div></div>';
     h+='<span style="color:var(--cyan);font-size:20px;line-height:1">›</span>';
     h+='</div>';
@@ -5566,7 +5566,7 @@ function renderGCalEvents(events){
     h+='<input id="'+evId+'-amt" placeholder="מחיר ₪" type="number" style="flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:9px 11px;color:var(--text);font-family:Sora,sans-serif;font-size:13px;outline:none">';
     h+='<input id="'+evId+'-treat" placeholder="סוג טיפול" style="flex:2;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:9px 11px;color:var(--text);font-family:Sora,sans-serif;font-size:13px;outline:none">';
     h+='</div>';
-    h+='<button onclick="importGCalEvent('+i+',\''+evId+'\')" style="margin-top:10px;width:100%;background:var(--cyan);color:#08141E;border:none;border-radius:12px;padding:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:Sora,sans-serif">+ הוסיפי ללקוחות</button>';
+    h+='<button onclick="importGCalEvent('+i+',\''+evId+'\')" style="margin-top:10px;width:100%;background:var(--cyan);color:#08141E;border:none;border-radius:12px;padding:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:Sora,sans-serif">+ הוסיפי ללקוחות</button>';
     h+='</div>';
     h+='</div>';
   }
