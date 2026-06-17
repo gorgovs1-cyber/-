@@ -11,7 +11,7 @@
 <title>My Money</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B1520'/%3E%3Ctext x='32' y='50' font-family='Arial,sans-serif' font-size='44' font-weight='900' fill='%2300FFD4' text-anchor='middle'%3E%E2%82%AA%3C/text%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230B1520'/%3E%3Ctext x='90' y='138' font-family='Arial,sans-serif' font-size='124' font-weight='900' fill='%2300FFD4' text-anchor='middle'%3E%E2%82%AA%3C/text%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0A0814;--bg2:#120E1E;--card:#171321;--card2:#1F1A2E;
@@ -181,7 +181,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
   padding:7px 14px;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:6px;
 }
 .hero-right{text-align:right}
-.hero-greet{font-size:20px;font-weight:800}
+.hero-greet{font-size:20px;font-weight:800;font-family:'Rubik',sans-serif}
 .hero-date {font-size:11px;color:var(--muted);margin-top:3px;font-weight:600;letter-spacing:.2px}
 .hero-lbl  {font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1px;text-align:center;margin-bottom:10px;text-transform:uppercase}
 .hero-bal  {
@@ -301,7 +301,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .detail-hdr{display:flex;align-items:center;gap:12px;padding:16px 20px 14px;background:linear-gradient(180deg,#0C1D30,#0B1520)}
 .back-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);color:var(--text2);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .back-btn:active{opacity:.6}
-.detail-title{font-size:20px;font-weight:800;flex:1}
+.detail-title{font-size:20px;font-weight:700;flex:1;font-family:'Rubik',sans-serif;color:var(--cyan);letter-spacing:-.3px}
 .detail-total{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
 .detail-total.neg{color:var(--orange)}
 .detail-total.pos{color:var(--pos)}
@@ -403,8 +403,8 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .cal-cell.today .cal-num{background:var(--cyan);color:#0A1520;border-radius:50%;font-weight:800}
 .cal-num{font-size:9px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;margin-bottom:2px;color:var(--muted2);font-weight:700}
 .cal-dot{font-size:9px;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:6px;padding:2px 4px;margin-bottom:2px;font-weight:800;letter-spacing:.2px}
-.cal-dot.done   {background:rgba(0,230,118,.22);color:#5CFFA8}
-.cal-dot.planned{background:rgba(255,179,71,.22);color:#FFD060}
+.cal-dot.done   {background:rgba(94,255,197,.15);color:#5EFFC5}
+.cal-dot.planned{background:rgba(212,149,106,.18);color:#D4956A}
 
 /* ══ MODAL ════════════════════════════════════════════════ */
 .mbg {display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:500;align-items:flex-end;justify-content:center}
@@ -416,7 +416,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .mbg.closing .modal,.cd-mbg.closing .cd-modal{animation:slideDown .2s ease both}
 @keyframes slideDown{from{transform:translateY(0)}to{transform:translateY(100%)}}
 @keyframes fadeOut{from{opacity:1}to{opacity:0}}
-.modal-title{font-size:20px;font-weight:800;font-family:'Sora',sans-serif;letter-spacing:.5px;text-align:right;margin-bottom:2px}
+.modal-title{font-size:20px;font-weight:800;font-family:'Rubik',sans-serif;letter-spacing:.5px;text-align:right;margin-bottom:2px}
 .modal-sub  {font-size:13px;color:var(--muted);margin-bottom:16px}
 .mc-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.07)}
 .mc-row:last-child{border-bottom:none}
@@ -440,7 +440,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .mempty::before{content:'✦';display:block;font-size:20px;color:var(--border2);margin-bottom:8px;animation:floatY 3s ease-in-out infinite}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .sbtn.cancelled{background:rgba(255,107,107,.15);color:var(--neg)}
-.cal-dot.cancelled{background:rgba(255,107,107,.22);color:#FF6B6B}
+.cal-dot.cancelled{background:rgba(255,107,138,.15);color:#FF6B8A}
 .mc-amt.cancelled{color:var(--neg)}
 
 /* ══ TOP HEADER ═══════════════════════════════════════════ */
@@ -624,7 +624,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 
 /* ══ SECTION HDR ═════════════════════════════════════════ */
 .s-hdr{display:flex;justify-content:space-between;align-items:center;padding:4px 20px 10px}
-.s-hdr-lbl{font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px;text-transform:uppercase}
+.s-hdr-lbl{font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px;text-transform:uppercase;font-family:'Rubik',sans-serif}
 
 /* ══ CD MODAL ADD FORM ═══════════════════════════════════ */
 .cd-add-sep{height:1px;background:var(--border);margin:14px 0}
@@ -1565,7 +1565,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260725;
+var APP_VER=20260726;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
