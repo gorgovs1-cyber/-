@@ -14,10 +14,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0B1520;--bg2:#0D1C2C;--card:#131E2D;--card2:#192840;
-  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.14);
-  --cyan:#1DE9B6;--pos:#00E676;--neg:#FF6B6B;--orange:#E8923A;
-  --gold:#E8A83E;--pur:rgba(255,255,255,.6);--pur-bg:rgba(255,255,255,.04);--pur-bd:rgba(255,255,255,.12);
+  --bg:#0A0814;--bg2:#120E1E;--card:#171321;--card2:#1F1A2E;
+  --border:rgba(183,148,232,.12);--border2:rgba(183,148,232,.22);
+  --cyan:#1DE9B6;--pos:#5EFFC5;--neg:#FF6B8A;--orange:#D4956A;
+  --gold:#E8A83E;--pur:#B794E8;--pur-bg:rgba(183,148,232,.07);--pur-bd:rgba(183,148,232,.22);
   --text:#fff;--text2:rgba(255,255,255,.75);--muted:rgba(255,255,255,.42);--muted2:rgba(255,255,255,.22);
   --r:18px;--rs:12px;--rl:18px;
 }
@@ -29,7 +29,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 /* ══ SPLASH ══════════════════════════════════════════════ */
 #splash{
   position:fixed;inset:0;z-index:9999;overflow:hidden;
-  background:#050D18;
+  background:#0A0814;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   transition:opacity .7s ease;
 }
@@ -37,7 +37,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 #splash::before{
   content:'';position:absolute;
   width:340px;height:340px;border-radius:50%;
-  background:radial-gradient(circle,rgba(13,45,64,.95) 0%,rgba(7,20,35,.7) 50%,transparent 100%);
+  background:radial-gradient(circle,rgba(51,25,68,.95) 0%,rgba(25,15,45,.7) 50%,transparent 100%);
   top:50%;left:50%;transform:translate(-50%,-54%);
   pointer-events:none;
 }
@@ -110,7 +110,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
   position:fixed;inset:0;z-index:9000;display:none;
   flex-direction:column;align-items:center;justify-content:center;
   padding:24px calc(20px + env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) calc(20px + env(safe-area-inset-left,0px));
-  background:radial-gradient(120% 80% at 50% 0%,#0E2436 0%,#0A1422 55%,#070F1A 100%);
+  background:radial-gradient(120% 80% at 50% 0%,#1A0F28 0%,#120E1E 55%,#0A0814 100%);
   overflow-y:auto;
 }
 #auth-screen.show{display:flex;animation:spFade .4s ease both}
@@ -1565,7 +1565,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260723;
+var APP_VER=20260724;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
