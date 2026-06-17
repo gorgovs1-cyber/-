@@ -838,6 +838,8 @@ html.mode-private .biz-only{ display:none!important; }
 
 <!-- ══ HOME ══════════════════════════════════════════════ -->
 <div class="screen active" id="s-home">
+  <!-- Subscription renewal alert bar (hidden until a sub is near expiry) -->
+  <div id="subs-alert-bar" style="display:none;background:rgba(255,160,0,.13);border-bottom:1px solid rgba(255,160,0,.25);padding:8px 16px;font-size:12px;font-weight:600;color:var(--gold);line-height:1.6;cursor:pointer" onclick="go('gmail')"></div>
   <div class="hero">
     <div class="hero-top">
       <div class="hero-right">
@@ -1222,6 +1224,12 @@ html.mode-private .biz-only{ display:none!important; }
       <button onclick="gmailImportAll()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-family:Sora,sans-serif;font-size:12px;font-weight:700;padding:7px 14px;border-radius:10px;cursor:pointer">ייבאי מסומנות ✓</button>
     </div>
     <div id="gmail-txns"></div>
+    <!-- Subscriptions detected during scan -->
+    <div id="gmail-subs-section" style="display:none;margin-top:18px;border-top:1px solid rgba(255,255,255,.08);padding-top:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.5px;margin-bottom:10px">מנויים שנמצאו</div>
+      <div id="gmail-subs-list"></div>
+      <button onclick="gmailImportSubs()" style="margin-top:10px;background:rgba(255,200,80,.12);border:1px solid rgba(255,200,80,.3);color:var(--gold);font-family:Sora,sans-serif;font-size:12px;font-weight:700;padding:7px 14px;border-radius:10px;cursor:pointer;width:100%">שמרי מסומנים כמנויים קבועים</button>
+    </div>
   </div>
 </div>
 
@@ -1307,7 +1315,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260705;
+var APP_VER=20260706;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -3091,6 +3099,7 @@ initSplash();
 applyTheme();
 renderHome();
 updateBottomNav('home');
+showSubsAlerts();
 
 // ── FIXED PAYMENTS ───────────────────────────────────────
 function renderFixed(){
@@ -3264,6 +3273,7 @@ function closeAdvisor(){
 
 // ── GMAIL IMPORT ──────────────────────────────────────────
 var _gmailParsed=[];
+var _gmailSubs=[];
 var _gmailToken=null;
 var _gmailDays=30;
 
@@ -3414,14 +3424,94 @@ function gmailFetch(days){
       }).catch(function(){return null;});
     });
     Promise.all(fetches).then(function(results){
-      _gmailParsed=[];
+      _gmailParsed=[];_gmailSubs=[];
       results.forEach(function(msg){if(msg)parseGmailMsg(msg);});
-      dedupeParsed();
-      renderGmailTxns();
+      // collect PDF attachments for second-pass reading
+      var pdfParts=[];
+      results.forEach(function(msg){
+        if(!msg)return;
+        var parts=findPdfParts(msg.payload,msg.id);
+        parts.forEach(function(p){
+          p.subj='';p.from='';p.date=msg.internalDate;
+          if(msg.payload&&msg.payload.headers)msg.payload.headers.forEach(function(h){if(h.name==='Subject')p.subj=h.value;if(h.name==='From')p.from=h.value;});
+          pdfParts.push(p);
+        });
+      });
+      if(pdfParts.length){
+        gmStatus('קורא '+pdfParts.length+' קבצי PDF...');
+        gmailFetchPdfs(pdfParts).then(function(){dedupeParsed();renderGmailTxns();});
+      } else {
+        dedupeParsed();renderGmailTxns();
+      }
     });
   }).catch(function(e){
     if(e&&e.message==='auth')return;
     gmStatus('שגיאה בגישה לג׳ימייל — נסי שוב',true);
+  });
+}
+// Walk payload tree to find PDF attachment parts
+function findPdfParts(payload,msgId,out){
+  out=out||[];
+  if(!payload)return out;
+  if((payload.mimeType||'').toLowerCase()==='application/pdf'&&payload.body&&payload.body.attachmentId){
+    out.push({msgId:msgId,attachId:payload.body.attachmentId,filename:payload.filename||'attachment.pdf'});
+  }
+  if(payload.parts)payload.parts.forEach(function(p){findPdfParts(p,msgId,out);});
+  return out;
+}
+// base64url → Uint8Array (for PDF.js binary data)
+function b64uToUint8Array(s){
+  s=s.replace(/-/g,'+').replace(/_/g,'/');
+  while(s.length%4)s+='=';
+  var bin=atob(s);
+  var b=new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);
+  return b;
+}
+// Load PDF.js lazily and parse a list of Gmail PDF attachments
+function gmailFetchPdfs(metas){
+  return new Promise(function(resolve){
+    if(typeof pdfjsLib!=='undefined'){resolve();return;}
+    var s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload=function(){
+      pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      resolve();
+    };
+    s.onerror=resolve;
+    document.head.appendChild(s);
+  }).then(function(){
+    if(typeof pdfjsLib==='undefined')return;
+    return Promise.all(metas.map(function(meta){
+      return fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/'+meta.msgId+'/attachments/'+meta.attachId,{
+        headers:{Authorization:'Bearer '+_gmailToken}
+      }).then(function(r){return r.json();}).then(function(att){
+        if(!att.data)return;
+        var bytes=b64uToUint8Array(att.data);
+        return pdfjsLib.getDocument({data:bytes}).promise.then(function(pdf){
+          var pages=[];for(var p=1;p<=Math.min(pdf.numPages,15);p++)pages.push(p);
+          return Promise.all(pages.map(function(pn){
+            return pdf.getPage(pn).then(function(pg){
+              return pg.getTextContent().then(function(tc){
+                return tc.items.map(function(it){return it.str;}).join(' ');
+              });
+            });
+          })).then(function(txts){
+            var fullText=txts.join(' ');
+            // wrap as synthetic message and parse
+            var synMsg={
+              internalDate:meta.date,snippet:'',
+              payload:{
+                mimeType:'text/plain',
+                headers:[{name:'Subject',value:'PDF: '+meta.filename},{name:'From',value:meta.from}],
+                body:{data:btoa(unescape(encodeURIComponent(fullText)))}
+              }
+            };
+            parseGmailMsg(synMsg);
+          });
+        });
+      }).catch(function(){});
+    }));
   });
 }
 // Remove duplicate transactions found within the same scan (same amount+date+desc)
@@ -3433,8 +3523,12 @@ function dedupeParsed(){
     seen[k]=1;out.push(t);
   });
   _gmailParsed=out;
+  // dedupe subs too
+  var ss={},sout=[];
+  _gmailSubs.forEach(function(s){var k=s.name+'|'+s.amount;if(ss[k])return;ss[k]=1;sout.push(s);});
+  _gmailSubs=sout;
 }
-// Parse common Israeli bank/card email formats — now reads the FULL email body
+// Parse emails and PDFs for Israeli transactions and subscriptions
 function parseGmailMsg(msg){
   var subj='',from='';
   if(msg.payload&&msg.payload.headers){
@@ -3444,59 +3538,102 @@ function parseGmailMsg(msg){
     });
   }
   var body=gmailBodyText(msg.payload);
-  var text=subj+' '+ (msg.snippet||'') +' '+body;
+  var text=subj+' '+(msg.snippet||'')+' '+body;
   var date=msg.internalDate?new Date(parseInt(msg.internalDate)):new Date();
   var emailMo=date.getMonth()+1,yr=date.getFullYear();
   var emailD=String(date.getDate()).padStart(2,'0')+'/'+String(date.getMonth()+1).padStart(2,'0');
 
-  // payment method detection
+  // payment method
   var fromDomain=(from.match(/@([\w.-]+)/)||[])[1]||'';
   var method='mc';
   if(/visa|ויזה|cal\.co\.il|כאל/i.test(text+from))method='visa';
   else if(/leumi|לאומי|הפועלים|hapoalim|דיסקונט|discount|מזרחי|mizrahi|עו"ש|עוש|pepper|onezero|ביט/i.test(text+from))method='bank';
 
-  // amount patterns: ₪/ש"ח AND "ILS 65.10" style receipts (Wolt, etc.)
-  var amtRe=/(?:בסך(?:\s+של)?|בסכום(?:\s+של)?|חיוב(?:\s+של)?|ע"ס|בעלות|סכום:?|total:?|סה"כ:?)\s*(?:ILS|₪)?\s*([\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?)\s*(?:₪|ש"ח|ש״ח|ILS)?/gi;
+  // ── SUBSCRIPTION DETECTION (iCloud, Pango, Apple, etc.) ──
+  var isSub=false;
+  var subName='',subAmt=0,subRenew='';
+  // Apple subscription expiry
+  var appleMatch=text.match(/([^\s,]+\+?)\s+בנפח[^,]*[,\s]+\(?חודש\s*אחד\)?\s*[-–]\s*([\d.]+)\s*(?:₪|ש"ח)/);
+  if(!appleMatch)appleMatch=text.match(/(iCloud\+?|Apple\s*\w+|Apple\s+TV\+?|Apple\s+Music)\s*.*?([\d.]+)\s*(?:₪|ש"ח|ILS)/i);
+  var subjectHasExpiry=/המינוי שלך מסתיים|subscription.*expir|חידוש אוטומטי|renewal/i.test(text);
+  if((appleMatch||subjectHasExpiry)&&/apple\.com/i.test(from)){
+    isSub=true;
+    if(appleMatch){subName=appleMatch[1].trim();subAmt=parseFloat(appleMatch[2]);}
+    else{subName='Apple מנוי';}
+    // find renewal date
+    var sd=text.match(/מסתיים\s+ב(?:תאריך)?\s*(\d{1,2})\s+(ינואר|פברואר|מרץ|אפריל|מאי|יוני|יולי|אוגוסט|ספטמבר|אוקטובר|נובמבר|דצמבר)/);
+    if(sd){var HM2={ינואר:1,פברואר:2,מרץ:3,אפריל:4,מאי:5,יוני:6,יולי:7,אוגוסט:8,ספטמבר:9,אוקטובר:10,נובמבר:11,דצמבר:12};subRenew=String(parseInt(sd[1])).padStart(2,'0')+'/'+String(HM2[sd[2]]).padStart(2,'0');}
+  }
+  // Pango monthly bill
+  var pangoMatch=text.match(/(?:הסיכום\s+לתשלום|סיכום\s+חודשי)[:\s]*([\d.]+)\s*(?:₪|ש"ח)/);
+  if(!pangoMatch)pangoMatch=text.match(/פנגו.*?([\d.]+)\s*(?:₪|ש"ח)/i);
+  if(pangoMatch&&/pango/i.test(text+from)){
+    isSub=true;
+    subName='Pango';
+    subAmt=parseFloat(pangoMatch[1]);
+    // Pango period: "DD.MM.YYYY - DD.MM.YYYY", use start date
+    var pp=text.match(/(\d{2})\.(\d{2})\.\d{4}\s*[-–]\s*(\d{2})\.(\d{2})\.\d{4}/);
+    if(pp)subRenew=pp[1]+'/'+pp[2];
+    else subRenew=emailD;
+  }
+  // Generic subscription keywords
+  if(!isSub&&/(?:חידוש\s+מנוי|מנוי\s+שנתי|מנוי\s+חודשי|מנוי\s+ל|subscription\s+renew)/i.test(text)){
+    isSub=true;
+    subName=fromDomain?fromDomain.split('.')[0]:subj.slice(0,20);
+    subRenew=emailD;
+  }
+  if(isSub){
+    // find amount if not already found
+    if(!subAmt){
+      var sm2=text.match(/([\d.]+)\s*(?:₪|ש"ח|ILS\s+[\d.]+)/);
+      if(sm2)subAmt=parseFloat(sm2[1]);
+    }
+    _gmailSubs.push({name:subName,amount:subAmt,renewDate:subRenew||emailD,year:yr,raw:subj.slice(0,60)});
+    // if this is a renewal notice (not charge confirmation), skip adding as expense
+    if(subjectHasExpiry&&!pangoMatch)return;
+  }
+
+  // ── AMOUNT EXTRACTION ──
+  var HEB_MONTHS={ינואר:1,פברואר:2,מרץ:3,אפריל:4,מאי:5,יוני:6,יולי:7,אוגוסט:8,ספטמבר:9,אוקטובר:10,נובמבר:11,דצמבר:12};
+
+  // Pattern 1: "בסך / סכום / סר הכל / הסיכום לתשלום" followed by ₪ or number
+  var amtRe=/(?:בסך(?:\s+של)?|בסכום(?:\s+של)?|חיוב(?:\s+של)?|ע"ס|בעלות|סכום:?|total:?|סה"כ:?|סר\s*הכל:?|הסיכום\s+לתשלום:?|לתשלום:?)\s*(?:ILS|₪)?\s*([\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?)\s*(?:₪|ש"ח|ש״ח|ILS)?/gi;
+  // Pattern 2: "ILS 65.10"
   var ilsRe=/\bILS\s+([\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?)/g;
+  // Pattern 3: fallback ₪/ש"ח adjacent to number
   var altRe=/₪\s*([\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?)|([\d]{1,3}(?:,\d{3})*(?:\.\d{1,2})?)\s*(?:₪|ש"ח|ש״ח)/g;
 
-  // try to find a transaction date inside the body: DD/MM, DD.MM, or "יוני 16, 2026"
-  var HEB_MONTHS={ינואר:1,פברואר:2,מרץ:3,אפריל:4,מאי:5,יוני:6,יולי:7,אוגוסט:8,ספטמבר:9,אוקטובר:10,נובמבר:11,דצמבר:12};
+  // ── DATE EXTRACTION ──
   var txnD=emailD,txnMo=emailMo;
-  var dm=text.match(/(?:בתאריך|ב-?)\s*(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/);
-  if(dm){
-    txnD=String(parseInt(dm[1])).padStart(2,'0')+'/'+String(parseInt(dm[2])).padStart(2,'0');
-    txnMo=parseInt(dm[2]);
-  } else {
-    var hm=text.match(/(ינואר|פברואר|מרץ|אפריל|מאי|יוני|יולי|אוגוסט|ספטמבר|אוקטובר|נובמבר|דצמבר)\s+(\d{1,2})[,،]\s*(\d{4})/);
-    if(!hm)hm=text.match(/(\d{1,2})\s+(ינואר|פברואר|מרץ|אפריל|מאי|יוני|יולי|אוגוסט|ספטמבר|אוקטובר|נובמבר|דצמבר)\s*,?\s*(\d{4})/);
-    if(hm){
-      var mo2=HEB_MONTHS[hm[1]]||HEB_MONTHS[hm[2]]||emailMo;
-      var day2=hm[1]in HEB_MONTHS?parseInt(hm[2]):parseInt(hm[1]);
-      txnD=String(day2).padStart(2,'0')+'/'+String(mo2).padStart(2,'0');
-      txnMo=mo2;
+  // Date in subject "(25/05/2026)" — Selfie/store order style
+  var sdm=subj.match(/\((\d{1,2})[./](\d{1,2})[./](\d{2,4})\)/);
+  if(sdm){txnD=String(parseInt(sdm[1])).padStart(2,'0')+'/'+String(parseInt(sdm[2])).padStart(2,'0');txnMo=parseInt(sdm[2]);}
+  else{
+    // "בתאריך 25/05" or "ב-25.05"
+    var dm2=text.match(/(?:בתאריך|ב-?)\s*(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?/);
+    if(dm2){txnD=String(parseInt(dm2[1])).padStart(2,'0')+'/'+String(parseInt(dm2[2])).padStart(2,'0');txnMo=parseInt(dm2[2]);}
+    else{
+      // Hebrew month name "יוני 16, 2026" or "16 יוני 2026"
+      var hm=text.match(/(ינואר|פברואר|מרץ|אפריל|מאי|יוני|יולי|אוגוסט|ספטמבר|אוקטובר|נובמבר|דצמבר)\s+(\d{1,2})[,،]?\s*(\d{4})/);
+      if(!hm)hm=text.match(/(\d{1,2})\s+(ינואר|פברואר|מרץ|אפריל|מאי|יוני|יולי|אוגוסט|ספטמבר|אוקטובר|נובמבר|דצמבר)\s*,?\s*(\d{4})/);
+      if(hm){var mo3=HEB_MONTHS[hm[1]]||HEB_MONTHS[hm[2]]||emailMo;var day3=hm[1]in HEB_MONTHS?parseInt(hm[2]):parseInt(hm[1]);txnD=String(day3).padStart(2,'0')+'/'+String(mo3).padStart(2,'0');txnMo=mo3;}
     }
   }
 
-  // description: name of merchant/business
+  // ── DESCRIPTION ──
   function findDesc(){
-    // bank / card style emails
     var bm=text.match(/(?:בבית\s*עסק|בית\s*העסק|אצל|ב-)\s*[:\-]?\s*([^\d₪\n,.]{2,30}?)(?:\s*(?:בסך|בסכום|בתאריך|ב-?\d|₪|\.|,|$))/);
     if(bm&&bm[1].trim().length>1)return bm[1].trim();
-    // Wolt-style: "הנה הקבלה שלך: <BIZ NAME>"
     var wm=text.match(/(?:הנה הקבלה שלך|הזמנה מ-?|ordered from)[:\s-]*([^\d\n,]{2,35}?)(?:\s*(?:\d|₪|ILS|\n|$))/i);
     if(wm&&wm[1].trim().length>1)return wm[1].trim();
-    // subject as fallback (e.g. "קבלה עבור אבולעפיה | נחלת בנימין")
-    var sm=subj.match(/(?:קבלה עבור|receipt for|order at|הזמנה ב-?)\s*(.+)/i);
-    if(sm)return sm[1].trim().slice(0,35);
+    // "[הזמנה #138904] (25/05/2026)" subject → use sender name
+    if(/^\[הזמנה/.test(subj)&&fromDomain){var dn2=fromDomain.split('.')[0];return dn2.charAt(0).toUpperCase()+dn2.slice(1);}
+    var sm3=subj.match(/(?:קבלה עבור|receipt for|order at|הזמנה ב-?)\s*(.+)/i);
+    if(sm3)return sm3[1].trim().slice(0,35);
     if(/הוראת\s*קבע|הו"ק/.test(text))return 'הוראת קבע';
     if(/משיכת\s*מזומן/.test(text))return 'משיכת מזומן';
-    // use sender domain name (e.g. "wolt.com" → "Wolt")
-    if(fromDomain){
-      var dn=fromDomain.split('.')[0];
-      return dn.charAt(0).toUpperCase()+dn.slice(1);
-    }
-    return subj?subj.slice(0,35):'חיוב';
+    if(fromDomain){var dn3=fromDomain.split('.')[0];return dn3.charAt(0).toUpperCase()+dn3.slice(1);}
+    return subj?subj.replace(/\[.*?\]/g,'').trim().slice(0,35):'חיוב';
   }
 
   var found={},mm2;
@@ -3506,6 +3643,7 @@ function parseGmailMsg(msg){
 
   var amts=Object.keys(found).map(parseFloat);
   if(!amts.length)return;
+  // use the largest amount — usually the total (סר הכל) rather than a line-item
   var amt=Math.max.apply(null,amts);
   var desc=findDesc();
 
@@ -3538,7 +3676,7 @@ function renderGmailTxns(){
   var h='';
   _gmailParsed.forEach(function(t,i){
     var col=mCol[t.method]||'#aaa';
-    var checked=t._dup!=='exact';  // uncheck exact duplicates
+    var checked=t._dup!=='exact';
     var dupBadge='';
     if(t._dup==='exact') dupBadge='<span class="dup-badge dup-exact">קיים כבר</span>';
     else if(t._dup==='close') dupBadge='<span class="dup-badge dup-close">אולי כפול</span>';
@@ -3556,6 +3694,42 @@ function renderGmailTxns(){
     '</div>';
   });
   document.getElementById('gmail-txns').innerHTML=h;
+
+  // render subscriptions
+  var subsEl=document.getElementById('gmail-subs-section');
+  var subsList=document.getElementById('gmail-subs-list');
+  if(_gmailSubs.length){
+    subsEl.style.display='block';
+    // check which subs expire within 7 days
+    var today=new Date();
+    var hs='';
+    _gmailSubs.forEach(function(s,i){
+      var daysLeft=null;
+      if(s.renewDate){
+        var parts=s.renewDate.split('/');
+        if(parts.length===2){
+          var rd=new Date(today.getFullYear(),parseInt(parts[1])-1,parseInt(parts[0]));
+          if(rd<today)rd.setFullYear(rd.getFullYear()+1);
+          daysLeft=Math.round((rd-today)/(1000*60*60*24));
+        }
+      }
+      var urgency=daysLeft!==null&&daysLeft<=7?'<span style="color:var(--neg);font-weight:800;font-size:10px"> · מסתיים בעוד '+daysLeft+' יום!</span>':'';
+      hs+='<div class="fp-item" style="align-items:center">'+
+        '<label style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer">'+
+          '<input type="checkbox" id="gs'+i+'" checked style="width:16px;height:16px;accent-color:var(--gold)">'+
+          '<div>'+
+            '<div style="font-size:13px;font-weight:700">'+esc(s.name)+'</div>'+
+            '<div style="font-size:10px;color:var(--muted);margin-top:2px">חידוש: '+esc(s.renewDate)+urgency+'</div>'+
+          '</div>'+
+        '</label>'+
+        '<div style="font-size:15px;font-weight:800;color:var(--gold);flex-shrink:0">'+
+          (s.amount?'₪'+fmt(s.amount)+'/חודש':'')+'</div>'+
+      '</div>';
+    });
+    subsList.innerHTML=hs;
+  } else {
+    subsEl.style.display='none';
+  }
 }
 function gmailImportAll(){
   var added=0;
@@ -3571,7 +3745,48 @@ function gmailImportAll(){
   });
   if(added){save();renderHome();toast('✓ '+added+' עסקאות יובאו');}
   document.getElementById('gmail-found').style.display='none';
-  _gmailParsed=[];
+  _gmailParsed=[];_gmailSubs=[];
+}
+// Save selected subscriptions to localStorage as recurring reminders
+function gmailImportSubs(){
+  var existing=JSON.parse(localStorage.getItem('pf_subs')||'[]');
+  var added=0;
+  _gmailSubs.forEach(function(s,i){
+    var cb=document.getElementById('gs'+i);
+    if(!cb||!cb.checked)return;
+    // avoid duplicates by name
+    var dup=existing.some(function(e){return e.name===s.name;});
+    if(dup)return;
+    existing.push({id:Date.now()+i,name:s.name,amount:s.amount,renewDate:s.renewDate,year:s.year});
+    added++;
+  });
+  if(added){
+    localStorage.setItem('pf_subs',JSON.stringify(existing));
+    toast('✓ '+added+' מנויים נשמרו');
+    document.getElementById('gmail-subs-section').style.display='none';
+    showSubsAlerts();
+  }
+}
+// Show a small banner if any saved subscription renews within 7 days
+function showSubsAlerts(){
+  var subs=JSON.parse(localStorage.getItem('pf_subs')||'[]');
+  var today=new Date(),alerts=[];
+  subs.forEach(function(s){
+    if(!s.renewDate)return;
+    var p=s.renewDate.split('/');if(p.length<2)return;
+    var rd=new Date(today.getFullYear(),parseInt(p[1])-1,parseInt(p[0]));
+    if(rd<today)rd.setFullYear(rd.getFullYear()+1);
+    var days=Math.round((rd-today)/(1000*60*60*24));
+    if(days<=7)alerts.push({name:s.name,days:days,amount:s.amount});
+  });
+  var el=document.getElementById('subs-alert-bar');
+  if(!el)return;
+  if(alerts.length){
+    el.innerHTML=alerts.map(function(a){
+      return '<span>⚠ '+esc(a.name)+' מסתיים בעוד '+a.days+' יום (₪'+fmt(a.amount)+')</span>';
+    }).join(' · ');
+    el.style.display='block';
+  }else{el.style.display='none';}
 }
 
 // ── ONBOARDING TOUR ───────────────────────────────────────
