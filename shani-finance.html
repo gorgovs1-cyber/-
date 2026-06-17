@@ -1565,7 +1565,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260724;
+var APP_VER=20260725;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -5821,10 +5821,18 @@ function onSignedIn(user){
     if(doc.exists){
       var data=doc.data();
       var localAt=parseInt(localStorage.getItem('shani_synced_at')||'0');
-      if((data.updatedAt||0) > localAt){
+      var cloudAt=data.updatedAt||0;
+      // safety: only apply cloud if cloud is clearly newer AND has non-empty client data
+      var cloudHasClients=data.clients&&Object.keys(data.clients).length>0;
+      var localHasClients=Object.keys(CLIENTS).length>0;
+      if(cloudAt > localAt && (cloudHasClients || !localHasClients)){
         applyCloud(data);
         setSyncDot('ok');
         toast('✓ סונכרן מהענן');
+      } else if(cloudAt > localAt && !cloudHasClients && localHasClients){
+        // cloud is newer but has no clients — local wins, push up
+        _cloudPushNow();
+        toast('✓ גיבוי מקומי נשמר לענן');
       } else {
         _cloudPushNow();      // local is newer/equal → push our copy up
       }
