@@ -868,6 +868,9 @@ html.mode-private .biz-only{ display:none!important; }
 
   <div class="upcoming-wrap" id="home-upcoming"></div>
 
+  <!-- Budget progress bars -->
+  <div id="home-budgets"></div>
+
   <div class="s-hdr">
     <span class="s-hdr-lbl">אמצעי תשלום</span>
     <span style="font-size:10px;color:var(--muted)">לחצי לפרטים והוספה</span>
@@ -1330,7 +1333,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260712;
+var APP_VER=20260713;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2021,9 +2024,48 @@ var FIXED_PAYMENTS = [
 ];
 var _fpEditId=null;
 var _fpMethod='bank';
-var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:700,אוכל:400,קפה:180};
+var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:1200,אוכל:800,קפה:300,דלק:400,נסיעה:300,חניה:200,ביטוח:500,חשמל:350,חשבון:300,מנוי:200,טלפון:150,פרטנר:250};
 var _budgetEditLbl='';
 var catChartInst=null;
+
+function renderBudgets(){
+  var el=document.getElementById('home-budgets');
+  if(!el)return;
+  // collect spending for current month from RAW.expense
+  var m=MONTHS[homeMi].key;
+  var yr=MONTHS[homeMi].year;
+  var items=(RAW.expense[m]||[]).filter(function(t){return !t.year||t.year===yr;});
+  var catTotals={};
+  items.forEach(function(t){var c=cat(t.desc||'');catTotals[c.lbl]=(catTotals[c.lbl]||0)+t.a;});
+  // only show categories that have a budget set AND either spent or budgeted
+  var rows=Object.keys(BUDGETS).filter(function(k){return BUDGETS[k]>0;}).map(function(k){
+    return{lbl:k,spent:catTotals[k]||0,budget:BUDGETS[k]};
+  }).filter(function(r){return r.spent>0||r.budget>0;}).sort(function(a,b){
+    return (b.spent/b.budget)-(a.spent/a.budget);
+  });
+  if(!rows.length){el.innerHTML='';return;}
+  var h='<div class="s-hdr" style="margin-top:18px">'+
+    '<span class="s-hdr-lbl">תקציבים חודשיים</span>'+
+    '<span style="font-size:10px;color:var(--muted)">לחצי לעריכה</span>'+
+  '</div>';
+  h+='<div style="padding:0 16px 4px">';
+  rows.forEach(function(r){
+    var pct=Math.min(100,Math.round(r.spent/r.budget*100));
+    var barColor=pct<70?'var(--pos)':pct<90?'var(--orange)':'var(--neg)';
+    var over=r.spent>r.budget;
+    h+='<div style="margin-bottom:12px;cursor:pointer" onclick="editBudget(\''+r.lbl+'\')">'  +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'+
+        '<span style="font-size:11px;font-weight:700;color:var(--text2)">'+esc(r.lbl)+(over?' ⚠':'')+'</span>'+
+        '<span style="font-size:11px;color:'+(over?'var(--neg)':'var(--muted)')+'">₪'+fmt(r.spent)+' / ₪'+fmt(r.budget)+'</span>'+
+      '</div>'+
+      '<div style="height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden">'+
+        '<div style="height:100%;width:'+pct+'%;background:'+barColor+';border-radius:3px;transition:width .4s"></div>'+
+      '</div>'+
+    '</div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
 
 // ── HELPERS ──────────────────────────────────────────────
 function fmt(n){ return Math.round(n).toLocaleString('he-IL'); }
@@ -2366,6 +2408,7 @@ function renderPMCards(r){
       '<div class="pm-sub">הוצאות החודש: ₪'+fmt(cashTotal)+'</div>'+
       '<span class="pm-tag" style="background:rgba(255,179,71,.15);color:#FFB347">יתרה במזומן</span>'+
     '</div>';
+  renderBudgets();
 }
 
 // ── PAYMENT METHOD DETAIL ─────────────────────────────────
