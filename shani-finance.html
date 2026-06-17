@@ -784,6 +784,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="drw-item" data-page="goals" onclick="go('goals');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg></span><span>מטרות</span></div>
     <div class="drw-item" data-page="fixed" onclick="go('fixed');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/><path d="M6 14.5h4"/></svg></span><span>תשלומים קבועים</span></div>
     <div class="drw-item" data-page="annual" onclick="go('annual');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M7 13h4"/><path d="M7 17h6"/></svg></span><span>הוצאות שנתיות</span></div>
+    <div class="drw-item" data-page="suppliers" onclick="go('suppliers');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2.5"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12v4"/><path d="M8 14h8"/></svg></span><span>ספקים והזמנות</span></div>
     <div class="drw-item" data-page="gmail" onclick="go('gmail');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></span><span>Gmail</span></div>
     <div class="drw-item" data-page="income" onclick="go('income');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 16.5V8"/><path d="m8.5 11.5 3.5-3.5 3.5 3.5"/></svg></span><span>הכנסות</span></div>
     <div class="drw-item" data-page="expenses" onclick="go('expenses');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V16"/><path d="m8.5 12.5 3.5 3.5 3.5-3.5"/></svg></span><span>הוצאות</span></div>
@@ -844,6 +845,7 @@ html.mode-private .biz-only{ display:none!important; }
 <div class="screen active" id="s-home">
   <!-- Subscription renewal alert bar (hidden until a sub is near expiry) -->
   <div id="subs-alert-bar" style="display:none;background:rgba(255,160,0,.13);border-bottom:1px solid rgba(255,160,0,.25);padding:8px 16px;font-size:13px;font-weight:600;color:var(--gold);line-height:1.6;cursor:pointer" onclick="go('gmail')"></div>
+  <div id="orders-alert-bar" style="display:none;background:rgba(255,140,0,.15);border-bottom:1px solid rgba(255,140,0,.3);padding:8px 16px;font-size:13px;font-weight:600;color:#FFA020;line-height:1.6;cursor:pointer" onclick="go('suppliers')"></div>
   <!-- Recurring expense suggestion banner (hidden until a candidate is detected) -->
   <div id="recurring-banner" style="display:none;background:rgba(29,233,182,.10);border-bottom:1px solid rgba(29,233,182,.22);padding:10px 16px;font-size:13px;font-weight:600;color:var(--cyan);line-height:1.5;direction:rtl">
     <div id="recurring-banner-text" style="margin-bottom:8px"></div>
@@ -1298,6 +1300,36 @@ html.mode-private .biz-only{ display:none!important; }
   </div>
 </div>
 
+<!-- ══ SUPPLIERS & ORDERS ══════════════════════════════════ -->
+<div class="screen" id="s-suppliers">
+  <div class="detail-hdr">
+    <button class="back-btn" onclick="go('home')">&#x2039;</button>
+    <div class="detail-title">&#x05E1;&#x05E4;&#x05E7;&#x05D9;&#x05DD; &#x05D5;&#x05D4;&#x05D6;&#x05DE;&#x05E0;&#x05D5;&#x05EA;</div>
+  </div>
+  <div style="padding:0 16px 8px">
+    <div class="atabs" id="sup-tabs">
+      <button class="atab on" data-st="suppliers" onclick="setSupTab('suppliers')">&#x05E1;&#x05E4;&#x05E7;&#x05D9;&#x05DD;</button>
+      <button class="atab" data-st="orders" onclick="setSupTab('orders')">&#x05D4;&#x05D6;&#x05DE;&#x05E0;&#x05D5;&#x05EA;</button>
+    </div>
+    <div id="sup-panel-suppliers">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div id="sup-count" style="font-size:11px;color:var(--muted)"></div>
+        <button onclick="openSupplierModal(null)" style="background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:8px 16px;border-radius:var(--rs);border:none;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05E1;&#x05E4;&#x05E7;</button>
+      </div>
+      <div id="sup-list" style="padding-bottom:80px"></div>
+    </div>
+    <div id="sup-panel-orders" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <select id="ord-filter-sup" onchange="renderOrders()" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--rs);padding:7px 10px;color:var(--text);font-family:'Sora',sans-serif;font-size:11px;flex:1;margin-left:10px">
+          <option value="">&#x05DB;&#x05DC; &#x05D4;&#x05E1;&#x05E4;&#x05E7;&#x05D9;&#x05DD;</option>
+        </select>
+        <button onclick="openOrderModal()" style="background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:8px 16px;border-radius:var(--rs);border:none;cursor:pointer">+ &#x05D4;&#x05D6;&#x05DE;&#x05E0;&#x05D4;</button>
+      </div>
+      <div id="ord-list" style="padding-bottom:80px"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ ANNUAL EXPENSES ═════════════════════════════════════ -->
 <div class="screen" id="s-annual">
   <div class="detail-hdr">
@@ -1361,6 +1393,94 @@ html.mode-private .biz-only{ display:none!important; }
   </div>
 </div>
 
+<!-- ══ SUPPLIER MODAL ═══════════════════════════════════════ -->
+<div class="mbg" id="sup-mbg" onclick="if(event.target===this)closeMbg(this.id)">
+  <div class="modal">
+    <div class="modal-title" id="sup-modal-title">&#x05E1;&#x05E4;&#x05E7; &#x05D7;&#x05D3;&#x05E9;</div>
+    <div class="mi-row" style="margin-bottom:10px">
+      <div class="mfld" style="flex:2"><label>&#x05E9;&#x05DD; &#x05E1;&#x05E4;&#x05E7;</label><input type="text" id="sup-name-inp" placeholder="&#x05E9;&#x05DD; &#x05D7;&#x05D1;&#x05E8;&#x05D4;..."></div>
+      <div class="mfld" style="flex:1"><label>&#x05D8;&#x05DC;&#x05E4;&#x05D5;&#x05DF;</label><input type="tel" id="sup-phone-inp" placeholder="05x-..."></div>
+    </div>
+    <div class="mi-row" style="margin-bottom:10px">
+      <div class="mfld" style="flex:2"><label>&#x05D0;&#x05D9;&#x05DE;&#x05D9;&#x05D9;&#x05DC;</label><input type="email" id="sup-email-inp" placeholder="email@..."></div>
+      <div class="mfld" style="flex:1"><label>&#x05D0;&#x05D9;&#x05E9; &#x05E7;&#x05E9;&#x05E8;</label><input type="text" id="sup-contact-inp" placeholder="&#x05D9;&#x05D5;&#x05E1;&#x05D9;..."></div>
+    </div>
+    <div class="mfld" style="margin-bottom:14px"><label>&#x05EA;&#x05E0;&#x05D0;&#x05D9; &#x05EA;&#x05E9;&#x05DC;&#x05D5;&#x05DD;</label>
+      <select id="sup-terms-inp" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px 10px;color:var(--text);font-family:'Sora',sans-serif;font-size:13px">
+        <option value="&#x05DE;&#x05D6;&#x05D5;&#x05DE;&#x05DF;">&#x05DE;&#x05D6;&#x05D5;&#x05DE;&#x05DF;</option>
+        <option value="&#x05E9;&#x05D5;&#x05D8;&#x05E3;">&#x05E9;&#x05D5;&#x05D8;&#x05E3;</option>
+        <option value="&#x05E9;&#x05D5;&#x05D8;&#x05E3;+30">&#x05E9;&#x05D5;&#x05D8;&#x05E3;+30</option>
+        <option value="&#x05E9;&#x05D5;&#x05D8;&#x05E3;+60">&#x05E9;&#x05D5;&#x05D8;&#x05E3;+60</option>
+        <option value="&#x05E9;&#x05D5;&#x05D8;&#x05E3;+90">&#x05E9;&#x05D5;&#x05D8;&#x05E3;+90</option>
+      </select>
+    </div>
+    <input type="hidden" id="sup-edit-id">
+    <button onclick="saveSupplier()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">&#x05E9;&#x05DE;&#x05D5;&#x05E8; &#x2713;</button>
+    <button class="mclose" onclick="closeMbg('sup-mbg')">&#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC;</button>
+  </div>
+</div>
+
+<!-- ══ CATALOG MODAL ════════════════════════════════════════ -->
+<div class="mbg" id="cat-mbg" onclick="if(event.target===this)closeMbg(this.id)">
+  <div class="modal" style="max-height:85vh;overflow-y:auto">
+    <div class="modal-title" id="cat-modal-title">&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2; &#x05DE;&#x05D5;&#x05E6;&#x05E8;&#x05D9;&#x05DD;</div>
+    <input type="hidden" id="cat-sup-id">
+    <div id="cat-product-list" style="margin-bottom:12px"></div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--rs);padding:12px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px">&#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05DE;&#x05D5;&#x05E6;&#x05E8; &#x05D9;&#x05D3;&#x05E0;&#x05D9;&#x05EA;</div>
+      <div class="mi-row" style="gap:6px;margin-bottom:6px">
+        <div class="mfld" style="flex:3"><input type="text" id="cat-pname" placeholder="&#x05E9;&#x05DD; &#x05DE;&#x05D5;&#x05E6;&#x05E8;"></div>
+        <div class="mfld" style="flex:1"><input type="number" id="cat-pprice" placeholder="&#x05DE;&#x05D7;&#x05D9;&#x05E8;" step="0.01"></div>
+        <div class="mfld" style="flex:1"><input type="text" id="cat-punit" placeholder="&#x05D9;&#x05D7;. (&#x05D9;&#x05D7;/&#x05E7;&#x05D2;/&#x05E6;&#x05E4;...)"></div>
+      </div>
+      <button onclick="addCatalogProduct()" style="width:100%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);border-radius:var(--rs);color:var(--cyan);font-family:'Sora',sans-serif;font-size:12px;font-weight:700;padding:8px;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05DC;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2;</button>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--rs);padding:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px">&#x05D9;&#x05D9;&#x05D1;&#x05D5;&#x05D0; &#x05DE;&#x05D8;&#x05E7;&#x05E1;&#x05D8; &#x05D7;&#x05D5;&#x05E4;&#x05E9;&#x05D9;</div>
+      <textarea id="cat-paste-txt" rows="4" placeholder="&#x05D4;&#x05D3;&#x05D1;&#x05E7; &#x05E8;&#x05E9;&#x05D9;&#x05DE;&#x05EA; &#x05DE;&#x05D5;&#x05E6;&#x05E8;&#x05D9;&#x05DD;... &#x05DC;&#x05D3;&#x05D5;&#x05D2;&#x05DE;&#x05D0;:&#10;&#x05D7;&#x05DC;&#x05D1; 3% 6.90&#10;&#x05DC;&#x05D7;&#x05DD; &#x05D0;&#x05D7;&#x05D9;&#x05D3; - 5.50 &#x20AA;&#10;&#x05D1;&#x05D9;&#x05E6;&#x05D4;,3.90" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px;color:var(--text);font-family:'Sora',sans-serif;font-size:12px;box-sizing:border-box;resize:vertical"></textarea>
+      <button onclick="parseSupplierProducts()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:'Sora',sans-serif;font-size:12px;font-weight:700;padding:8px;cursor:pointer;margin-top:6px">&#x05E0;&#x05EA;&#x05D7; &#x203A;</button>
+      <div id="cat-parsed-preview" style="margin-top:8px"></div>
+      <div id="cat-parsed-count" style="font-size:10px;color:var(--muted);margin-top:4px"></div>
+      <button id="cat-import-btn" onclick="confirmCatalogImport()" style="display:none;width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:10px;border-radius:12px;border:none;cursor:pointer;margin-top:8px">&#x05D9;&#x05D9;&#x05D1;&#x05D0; &#x05DC;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2; &#x2713;</button>
+    </div>
+    <button class="mclose" onclick="closeMbg('cat-mbg')">&#x05E1;&#x05D2;&#x05D5;&#x05E8;</button>
+  </div>
+</div>
+
+<!-- ══ ORDER MODAL ══════════════════════════════════════════ -->
+<div class="mbg" id="ord-mbg" onclick="if(event.target===this)closeMbg(this.id)">
+  <div class="modal" style="max-height:90vh;overflow-y:auto">
+    <div class="modal-title">&#x05D4;&#x05D6;&#x05DE;&#x05E0;&#x05D4; &#x05D7;&#x05D3;&#x05E9;&#x05D4;</div>
+    <div class="mfld" style="margin-bottom:10px">
+      <label>&#x05E1;&#x05E4;&#x05E7;</label>
+      <select id="ord-sup-sel" onchange="pickOrderSupplier()" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px 10px;color:var(--text);font-family:'Sora',sans-serif;font-size:13px">
+        <option value="">-- &#x05D1;&#x05D7;&#x05E8; &#x05E1;&#x05E4;&#x05E7; --</option>
+      </select>
+    </div>
+    <div id="ord-catalog-chips" style="margin-bottom:10px;display:none">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">&#x05DE;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2;:</div>
+      <div id="ord-chips-inner" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--rs);padding:10px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:7px">&#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05E4;&#x05E8;&#x05D9;&#x05D8; &#x05D7;&#x05D5;&#x05E4;&#x05E9;&#x05D9;:</div>
+      <div class="mi-row" style="gap:5px;margin-bottom:5px">
+        <div class="mfld" style="flex:3"><input type="text" id="ord-item-name" placeholder="&#x05E9;&#x05DD; &#x05E4;&#x05E8;&#x05D9;&#x05D8;"></div>
+        <div class="mfld" style="flex:1"><input type="number" id="ord-item-qty" placeholder="&#x05DB;&#x05DE;" min="1" value="1"></div>
+        <div class="mfld" style="flex:1"><input type="number" id="ord-item-price" placeholder="&#x05DE;&#x05D7;&#x05D9;&#x05E8;" step="0.01"></div>
+      </div>
+      <button onclick="addOrderItemFree()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:'Sora',sans-serif;font-size:12px;font-weight:700;padding:7px;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05E4;&#x05E8;&#x05D9;&#x05D8;</button>
+    </div>
+    <div id="ord-items-list" style="margin-bottom:10px"></div>
+    <div style="text-align:center;font-size:20px;font-weight:900;color:var(--cyan);margin-bottom:10px">&#x05E1;&#x05D4;"&#x05DB; &#x20AA;<span id="ord-total-disp">0</span></div>
+    <div class="mi-row" style="gap:8px;margin-bottom:14px">
+      <div class="mfld" style="flex:1"><label>&#x05EA;&#x05D0;&#x05E8;&#x05D9;&#x05DA; &#x05D4;&#x05D6;&#x05DE;&#x05E0;&#x05D4;</label><input type="date" id="ord-date-inp"></div>
+      <div class="mfld" style="flex:1"><label>&#x05EA;&#x05D0;&#x05E8;&#x05D9;&#x05DA; &#x05EA;&#x05E9;&#x05DC;&#x05D5;&#x05DD;</label><input type="date" id="ord-due-inp"></div>
+    </div>
+    <button onclick="saveOrder()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">&#x05E9;&#x05DE;&#x05D5;&#x05E8; &#x05D4;&#x05D6;&#x05DE;&#x05E0;&#x05D4; &#x2713;</button>
+    <button class="mclose" onclick="closeMbg('ord-mbg')">&#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC;</button>
+  </div>
+</div>
+
 <!-- SETTINGS MODAL -->
 <div class="modal-bg" id="settings-modal-bg" style="display:none">
   <div class="modal" style="max-height:85vh;overflow-y:auto;border-radius:var(--r);padding:20px">
@@ -1416,7 +1536,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260717;
+var APP_VER=20260718;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2098,6 +2218,8 @@ var GOALS = [];
 var ASSETS = [];
 var NW_HIST = {};
 var ANNUAL = [];
+var SUPPLIERS = [];
+var ORDERS = [];
 var FIXED_PAYMENTS = [
   {id:1,name:'שכירות',amount:4100,day:2,method:'bank',active:true},
   {id:2,name:'פרטנר',amount:60.42,day:12,method:'bank',active:true},
@@ -2332,6 +2454,8 @@ function save(){
 function saveGoals(){try{localStorage.setItem('shani_goals',JSON.stringify(GOALS));}catch(e){}cloudPush();}
 function saveAnnual(){try{localStorage.setItem('pf_annual',JSON.stringify(ANNUAL));}catch(e){}}
 function saveAssets(){try{localStorage.setItem('pf_assets',JSON.stringify(ASSETS));localStorage.setItem('pf_networth_hist',JSON.stringify(NW_HIST));}catch(e){}}
+function saveSuppliers(){try{localStorage.setItem('pf_suppliers',JSON.stringify(SUPPLIERS));}catch(e){}}
+function saveOrders(){try{localStorage.setItem('pf_orders',JSON.stringify(ORDERS));}catch(e){}}
 var CLIENTS_VERSION=20;  // bump to force reload clients from code
 var CARDS_VERSION=10;    // bump to force reload cards from code
 function load(){
@@ -2350,6 +2474,8 @@ function load(){
     var an=localStorage.getItem('pf_annual'); if(an){try{ANNUAL=JSON.parse(an);}catch(ex){ANNUAL=[];}}
     var ast=localStorage.getItem('pf_assets'); if(ast){try{ASSETS=JSON.parse(ast);}catch(ex){ASSETS=[];}}
     var nwh=localStorage.getItem('pf_networth_hist'); if(nwh){try{NW_HIST=JSON.parse(nwh);}catch(ex){NW_HIST={};}}
+    var sups=localStorage.getItem('pf_suppliers'); if(sups){try{SUPPLIERS=JSON.parse(sups);}catch(ex){SUPPLIERS=[];}}
+    var ords=localStorage.getItem('pf_orders'); if(ords){try{ORDERS=JSON.parse(ords);}catch(ex){ORDERS=[];}}
     var rcd=localStorage.getItem('pf_recurring_dismissed'); if(rcd){try{RECURRING_DISMISSED=JSON.parse(rcd);}catch(ex){RECURRING_DISMISSED=[];}}
   }catch(e){}
 }
@@ -2405,6 +2531,7 @@ function go(name){
   if(name==='gmail')    renderGmail();
   if(name==='gcal')     renderGcal();
   if(name==='annual')   renderAnnual();
+  if(name==='suppliers') renderSuppliers();
 }
 
 // ── COUNT-UP ANIMATION ───────────────────────────────────
@@ -3451,6 +3578,7 @@ applyTheme();
 renderHome();
 updateBottomNav('home');
 showSubsAlerts();
+showOrderAlerts();
 
 // ── FIXED PAYMENTS ───────────────────────────────────────
 function renderFixed(){
@@ -4311,6 +4439,508 @@ function dismissRecurring(){
   var el=document.getElementById('recurring-banner');
   if(el)el.style.display='none';
   _recurringCandidate=null;
+}
+
+// ── SUPPLIERS & ORDERS MODULE ─────────────────────────────
+var _catParsed = [];
+
+function renderSuppliers(){
+  var supList = document.getElementById('sup-list');
+  var supCount = document.getElementById('sup-count');
+  if(!supList) return;
+  supCount.textContent = SUPPLIERS.length + ' ספקים';
+  if(!SUPPLIERS.length){
+    supList.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:20px 0;text-align:center">אין ספקים עדיין</div>';
+    return;
+  }
+  var h = '';
+  SUPPLIERS.forEach(function(s){
+    var ordCount = ORDERS.filter(function(o){return o.supplierId===s.id;}).length;
+    var prodCount = (s.products||[]).length;
+    h += '<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">' +
+      '<div style="font-size:15px;font-weight:800;color:var(--text)">' + esc(s.name) + '</div>' +
+      '<div style="display:flex;gap:6px">' +
+      '<button onclick="openCatalog(\'' + s.id + '\')" style="background:rgba(29,233,182,.12);border:1px solid rgba(29,233,182,.25);border-radius:var(--rs);color:var(--cyan);font-size:11px;font-weight:700;font-family:\'Sora\',sans-serif;padding:5px 10px;cursor:pointer">קטלוג</button>' +
+      '<button onclick="openSupplierModal(\'' + s.id + '\')" style="background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:11px;font-family:\'Sora\',sans-serif;padding:5px 8px;cursor:pointer">עריכה</button>' +
+      '<button onclick="delSupplier(\'' + s.id + '\')" style="background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.25);border-radius:var(--rs);color:var(--neg);font-size:11px;font-family:\'Sora\',sans-serif;padding:5px 8px;cursor:pointer">מחק</button>' +
+      '</div></div>' +
+      '<div style="display:flex;gap:14px;font-size:11px;color:var(--muted)">' +
+      (s.phone ? '<a href="tel:' + esc(s.phone) + '" style="color:var(--cyan);text-decoration:none">' + esc(s.phone) + '</a>' : '') +
+      '<span>' + esc(s.terms||'') + '</span>' +
+      '<span>' + prodCount + ' מוצרים</span>' +
+      '<span>' + ordCount + ' הזמנות</span>' +
+      '</div>' +
+      '</div>';
+  });
+  supList.innerHTML = h;
+}
+
+function setSupTab(t){
+  var tabs = document.querySelectorAll('#sup-tabs .atab');
+  tabs.forEach(function(b){ b.classList.remove('on'); });
+  var btn = document.querySelector('#sup-tabs .atab[data-st="' + t + '"]');
+  if(btn) btn.classList.add('on');
+  document.getElementById('sup-panel-suppliers').style.display = t==='suppliers' ? 'block' : 'none';
+  document.getElementById('sup-panel-orders').style.display = t==='orders' ? 'block' : 'none';
+  if(t==='orders'){ _populateOrdFilterSup(); renderOrders(); }
+  else { renderSuppliers(); }
+}
+
+function _populateOrdFilterSup(){
+  var sel = document.getElementById('ord-filter-sup');
+  if(!sel) return;
+  var cur = sel.value;
+  sel.innerHTML = '<option value="">כל הספקים</option>';
+  SUPPLIERS.forEach(function(s){
+    var opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = s.name;
+    if(s.id===cur) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function openSupplierModal(id){
+  var s = id ? SUPPLIERS.filter(function(x){return x.id===id;})[0] : null;
+  document.getElementById('sup-modal-title').textContent = s ? 'עריכת ספק' : 'ספק חדש';
+  document.getElementById('sup-name-inp').value = s ? s.name : '';
+  document.getElementById('sup-phone-inp').value = s ? (s.phone||'') : '';
+  document.getElementById('sup-email-inp').value = s ? (s.email||'') : '';
+  document.getElementById('sup-contact-inp').value = s ? (s.contact||'') : '';
+  document.getElementById('sup-terms-inp').value = s ? (s.terms||'מזומן') : 'מזומן';
+  document.getElementById('sup-edit-id').value = s ? s.id : '';
+  document.getElementById('sup-mbg').classList.add('open');
+}
+
+function saveSupplier(){
+  var name = document.getElementById('sup-name-inp').value.trim();
+  if(!name){ toast('נא להזין שם ספק'); return; }
+  var editId = document.getElementById('sup-edit-id').value;
+  var phone = document.getElementById('sup-phone-inp').value.trim();
+  var email = document.getElementById('sup-email-inp').value.trim();
+  var contact = document.getElementById('sup-contact-inp').value.trim();
+  var terms = document.getElementById('sup-terms-inp').value;
+  if(editId){
+    var idx = -1;
+    for(var i=0;i<SUPPLIERS.length;i++){ if(SUPPLIERS[i].id===editId){idx=i;break;} }
+    if(idx>=0){
+      SUPPLIERS[idx].name=name; SUPPLIERS[idx].phone=phone; SUPPLIERS[idx].email=email;
+      SUPPLIERS[idx].contact=contact; SUPPLIERS[idx].terms=terms;
+    }
+  } else {
+    SUPPLIERS.push({id:'s'+Date.now(),name:name,phone:phone,email:email,contact:contact,terms:terms,products:[]});
+  }
+  saveSuppliers();
+  closeMbg('sup-mbg');
+  renderSuppliers();
+  toast('✓ ספק נשמר');
+}
+
+function delSupplier(id){
+  SUPPLIERS = SUPPLIERS.filter(function(s){return s.id!==id;});
+  ORDERS = ORDERS.filter(function(o){return o.supplierId!==id;});
+  saveSuppliers(); saveOrders();
+  renderSuppliers();
+  toast('ספק נמחק');
+}
+
+// ── CATALOG ──────────────────────────────────────────────
+function openCatalog(supId){
+  var s = SUPPLIERS.filter(function(x){return x.id===supId;})[0];
+  if(!s) return;
+  document.getElementById('cat-sup-id').value = supId;
+  document.getElementById('cat-modal-title').textContent = 'קטלוג: ' + s.name;
+  document.getElementById('cat-pname').value='';
+  document.getElementById('cat-pprice').value='';
+  document.getElementById('cat-punit').value='';
+  document.getElementById('cat-paste-txt').value='';
+  document.getElementById('cat-parsed-preview').innerHTML='';
+  document.getElementById('cat-parsed-count').textContent='';
+  document.getElementById('cat-import-btn').style.display='none';
+  _catParsed=[];
+  renderCatalogList(supId);
+  document.getElementById('cat-mbg').classList.add('open');
+}
+
+function renderCatalogList(supId){
+  var sid = supId || document.getElementById('cat-sup-id').value;
+  var s = SUPPLIERS.filter(function(x){return x.id===sid;})[0];
+  var el = document.getElementById('cat-product-list');
+  if(!el||!s) return;
+  var prods = s.products||[];
+  if(!prods.length){ el.innerHTML='<div style="font-size:11px;color:var(--muted);padding:4px 0">אין מוצרים בקטלוג</div>'; return; }
+  var h='';
+  prods.forEach(function(p,i){
+    h+='<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)">' +
+      '<div style="flex:1;font-size:13px">' + esc(p.name) + '</div>' +
+      '<div style="font-size:11px;color:var(--muted)">' + esc(p.unit||'') + '</div>' +
+      '<div style="font-size:13px;font-weight:700;color:var(--cyan);min-width:50px;text-align:left">₪' + fmt(p.price||0) + '</div>' +
+      '<button onclick="delProduct(\'' + sid + '\',' + i + ')" style="background:none;border:none;color:var(--neg);font-size:13px;cursor:pointer;padding:2px 4px">✕</button>' +
+      '</div>';
+  });
+  el.innerHTML=h;
+}
+
+function addCatalogProduct(){
+  var supId = document.getElementById('cat-sup-id').value;
+  var name = document.getElementById('cat-pname').value.trim();
+  var price = pa(document.getElementById('cat-pprice').value);
+  var unit = document.getElementById('cat-punit').value.trim();
+  if(!name){ toast('נא להזין שם מוצר'); return; }
+  var s = SUPPLIERS.filter(function(x){return x.id===supId;})[0];
+  if(!s) return;
+  if(!s.products) s.products=[];
+  s.products.push({id:'p'+Date.now(),name:name,price:price,unit:unit});
+  saveSuppliers();
+  document.getElementById('cat-pname').value='';
+  document.getElementById('cat-pprice').value='';
+  document.getElementById('cat-punit').value='';
+  renderCatalogList(supId);
+  toast('✓ מוצר נוסף');
+}
+
+function delProduct(supId, idx){
+  var s = SUPPLIERS.filter(function(x){return x.id===supId;})[0];
+  if(!s||!s.products) return;
+  s.products.splice(idx,1);
+  saveSuppliers();
+  renderCatalogList(supId);
+}
+
+function parseSupplierProducts(){
+  var raw = document.getElementById('cat-paste-txt').value.trim();
+  if(!raw){ toast('אין טקסט להמיר'); return; }
+  var lines = raw.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+  var results = [];
+  lines.forEach(function(line){
+    var name = '', price = 0, unit = '';
+    // Try tab or comma separated first: name,price or name\tprice
+    var cols = null;
+    if(line.indexOf('\t')>=0){ cols=line.split('\t'); }
+    else if(line.indexOf(',')>=0){ cols=line.split(','); }
+    if(cols && cols.length>=2){
+      var maybePrice = pa(cols[cols.length-1]);
+      if(maybePrice>0){
+        price=maybePrice;
+        name=cols.slice(0,cols.length-1).join(' ').trim();
+      } else {
+        maybePrice=pa(cols[0]);
+        if(maybePrice>0){ price=maybePrice; name=cols.slice(1).join(' ').trim(); }
+        else { name=line.replace(/,/g,' ').trim(); }
+      }
+    } else {
+      // Free text: strip currency signs and commas from price candidates
+      var stripped = line.replace(/₪/g,'').replace(/,/g,'');
+      // trailing price: "שם 6.90" or "שם - 5.50"
+      var m = stripped.match(/^(.+?)\s*[-–]\s*([\d]+(?:\.[\d]+)?)\s*$/);
+      if(!m) m = stripped.match(/^(.+?)\s+([\d]+(?:\.[\d]+)?)\s*$/);
+      if(m){
+        var n = m[1].trim(), p2 = parseFloat(m[2]);
+        if(p2>0){ name=n; price=p2; }
+        else { name=line; }
+      } else {
+        // leading price: "6.90 שם"
+        var m2 = stripped.match(/^([\d]+(?:\.[\d]+)?)\s+(.+)$/);
+        if(m2){
+          var p3 = parseFloat(m2[1]);
+          if(p3>0){ price=p3; name=m2[2].trim(); }
+          else { name=line; }
+        } else { name=line; }
+      }
+    }
+    name = name.replace(/\s+/g,' ').trim();
+    if(!name) return;
+    results.push({name:name, price:price, unit:unit});
+  });
+  _catParsed = results;
+  _renderCatParsed();
+}
+
+function _renderCatParsed(){
+  var el = document.getElementById('cat-parsed-preview');
+  var cnt = document.getElementById('cat-parsed-count');
+  var btn = document.getElementById('cat-import-btn');
+  if(!el) return;
+  if(!_catParsed.length){
+    el.innerHTML='<div style="font-size:11px;color:var(--muted)">לא נמצאו מוצרים</div>';
+    cnt.textContent='';
+    btn.style.display='none';
+    return;
+  }
+  var h='';
+  _catParsed.forEach(function(p,i){
+    h+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px">' +
+      '<span style="flex:1">' + esc(p.name) + '</span>' +
+      '<span style="color:var(--cyan);min-width:44px;text-align:left">' + (p.price>0?'₪'+fmt(p.price):'—') + '</span>' +
+      '<button onclick="_removeCatParsed('+i+')" style="background:none;border:none;color:var(--neg);font-size:12px;cursor:pointer;padding:0 4px">✕</button>' +
+      '</div>';
+  });
+  el.innerHTML=h;
+  cnt.textContent=_catParsed.length+' מוצרים זוהו';
+  btn.style.display='block';
+}
+
+function _removeCatParsed(i){
+  _catParsed.splice(i,1);
+  _renderCatParsed();
+}
+
+function confirmCatalogImport(){
+  if(!_catParsed.length){ toast('אין מוצרים לייבא'); return; }
+  var supId = document.getElementById('cat-sup-id').value;
+  var s = SUPPLIERS.filter(function(x){return x.id===supId;})[0];
+  if(!s) return;
+  if(!s.products) s.products=[];
+  _catParsed.forEach(function(p){
+    s.products.push({id:'p'+Date.now()+'_'+Math.random().toString(36).slice(2,6),name:p.name,price:p.price,unit:p.unit||''});
+  });
+  var count = _catParsed.length;
+  _catParsed=[];
+  saveSuppliers();
+  document.getElementById('cat-paste-txt').value='';
+  document.getElementById('cat-parsed-preview').innerHTML='';
+  document.getElementById('cat-parsed-count').textContent='';
+  document.getElementById('cat-import-btn').style.display='none';
+  renderCatalogList(supId);
+  toast('✓ '+count+' מוצרים יובאו לקטלוג');
+}
+
+// ── ORDERS ───────────────────────────────────────────────
+var _orderItems = [];
+
+function renderOrders(){
+  var el = document.getElementById('ord-list');
+  if(!el) return;
+  var filterId = document.getElementById('ord-filter-sup') ? document.getElementById('ord-filter-sup').value : '';
+  var list = filterId ? ORDERS.filter(function(o){return o.supplierId===filterId;}) : ORDERS.slice();
+  list.sort(function(a,b){return (b.date||'').localeCompare(a.date||'');});
+  if(!list.length){
+    el.innerHTML='<div style="font-size:13px;color:var(--muted);padding:20px 0;text-align:center">אין הזמנות</div>';
+    return;
+  }
+  var today = new Date(); today.setHours(0,0,0,0);
+  var h='';
+  list.forEach(function(o){
+    var sup = SUPPLIERS.filter(function(s){return s.id===o.supplierId;})[0];
+    var supName = sup ? sup.name : '(ספק נמחק)';
+    var statusMap = {open:'פתוח',received:'התקבל',paid:'שולם'};
+    var statusCol = {open:'var(--muted)',received:'var(--cyan)',paid:'var(--pos)'};
+    var statusBg = {open:'rgba(255,255,255,.07)',received:'rgba(29,233,182,.12)',paid:'rgba(100,220,100,.12)'};
+    var st = o.status||'open';
+    var dueWarn = '';
+    if(st!=='paid' && o.dueDate){
+      var due = new Date(o.dueDate); due.setHours(0,0,0,0);
+      var diff = Math.round((due-today)/(1000*60*60*24));
+      if(diff<0) dueWarn='<span style="color:var(--neg);font-size:10px;font-weight:700"> ⚠ פג תוקף</span>';
+      else if(diff<=7) dueWarn='<span style="color:#FFA020;font-size:10px;font-weight:700"> ⚠ '+diff+' ימים</span>';
+    }
+    h+='<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;margin-bottom:9px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px">' +
+      '<div>' +
+      '<div style="font-size:13px;font-weight:800">' + esc(supName) + '</div>' +
+      '<div style="font-size:11px;color:var(--muted)">' + (o.date||'') + ' · פירעון: ' + (o.dueDate||'—') + dueWarn + '</div>' +
+      '</div>' +
+      '<div style="font-size:15px;font-weight:900;color:var(--cyan)">₪' + fmt(o.total||0) + '</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:7px;margin-top:6px">' +
+      '<span style="background:'+statusBg[st]+';color:'+statusCol[st]+';border:1px solid '+statusCol[st]+'40;border-radius:20px;font-size:10px;font-weight:700;padding:3px 10px">'+statusMap[st]+'</span>';
+    if(st==='open'){
+      h+='<button onclick="setOrderStatus(\''+o.id+'\',\'received\')" style="background:rgba(29,233,182,.1);border:1px solid rgba(29,233,182,.2);border-radius:var(--rs);color:var(--cyan);font-size:10px;font-family:\'Sora\',sans-serif;font-weight:700;padding:4px 9px;cursor:pointer">התקבל</button>';
+    } else if(st==='received'){
+      h+='<button onclick="setOrderStatus(\''+o.id+'\',\'paid\')" style="background:rgba(100,220,100,.12);border:1px solid rgba(100,220,100,.25);border-radius:var(--rs);color:var(--pos);font-size:10px;font-family:\'Sora\',sans-serif;font-weight:700;padding:4px 9px;cursor:pointer">שולם</button>';
+    }
+    h+='<button onclick="delOrder(\''+o.id+'\')" style="background:rgba(255,80,80,.09);border:1px solid rgba(255,80,80,.2);border-radius:var(--rs);color:var(--neg);font-size:10px;font-family:\'Sora\',sans-serif;padding:4px 8px;cursor:pointer">מחק</button>' +
+      '</div></div>';
+  });
+  el.innerHTML=h;
+}
+
+function openOrderModal(){
+  _orderItems=[];
+  document.getElementById('ord-items-list').innerHTML='';
+  document.getElementById('ord-total-disp').textContent='0';
+  document.getElementById('ord-item-name').value='';
+  document.getElementById('ord-item-qty').value='1';
+  document.getElementById('ord-item-price').value='';
+  // populate supplier select
+  var sel = document.getElementById('ord-sup-sel');
+  sel.innerHTML='<option value="">-- בחר ספק --</option>';
+  SUPPLIERS.forEach(function(s){
+    var opt=document.createElement('option');
+    opt.value=s.id; opt.textContent=s.name;
+    sel.appendChild(opt);
+  });
+  sel.value='';
+  document.getElementById('ord-catalog-chips').style.display='none';
+  // default dates
+  var now = new Date();
+  var today = now.getFullYear()+'-'+(now.getMonth()<9?'0':'')+(now.getMonth()+1)+'-'+(now.getDate()<10?'0':'')+now.getDate();
+  document.getElementById('ord-date-inp').value=today;
+  document.getElementById('ord-due-inp').value=today;
+  document.getElementById('ord-mbg').classList.add('open');
+}
+
+function pickOrderSupplier(){
+  var supId = document.getElementById('ord-sup-sel').value;
+  var chipsArea = document.getElementById('ord-catalog-chips');
+  var chipsInner = document.getElementById('ord-chips-inner');
+  if(!supId){ chipsArea.style.display='none'; return; }
+  var s = SUPPLIERS.filter(function(x){return x.id===supId;})[0];
+  // update due date from terms
+  var dateVal = document.getElementById('ord-date-inp').value;
+  if(s && dateVal){
+    var dd = computeDueDate(dateVal, s.terms||'מזומן');
+    document.getElementById('ord-due-inp').value=dd;
+  }
+  if(!s||!s.products||!s.products.length){ chipsArea.style.display='none'; return; }
+  chipsArea.style.display='block';
+  var h='';
+  s.products.forEach(function(p){
+    h+='<button onclick="addOrderItemFromCatalog(\''+s.id+'\',\''+p.id+'\')" style="background:var(--card2);border:1px solid var(--border);border-radius:20px;font-size:11px;font-family:\'Sora\',sans-serif;color:var(--text);padding:5px 10px;cursor:pointer;white-space:nowrap">' +
+      esc(p.name)+(p.price>0?' ₪'+fmt(p.price):'')+'</button>';
+  });
+  chipsInner.innerHTML=h;
+}
+
+function computeDueDate(dateStr, terms){
+  var d = new Date(dateStr);
+  if(!d||isNaN(d.getTime())) return dateStr;
+  var days = 0;
+  if(terms==='שוטף+30') days=30;
+  else if(terms==='שוטף+60') days=60;
+  else if(terms==='שוטף+90') days=90;
+  else if(terms==='שוטף') days=30; // end of following month approximation: +30
+  // מזומן = same day (days=0)
+  d.setDate(d.getDate()+days);
+  var y=d.getFullYear(), m=d.getMonth()+1, day=d.getDate();
+  return y+'-'+(m<10?'0':'')+m+'-'+(day<10?'0':'')+day;
+}
+
+function addOrderItemFromCatalog(supId, pid){
+  var s = SUPPLIERS.filter(function(x){return x.id===supId;})[0];
+  if(!s) return;
+  var p = (s.products||[]).filter(function(x){return x.id===pid;})[0];
+  if(!p) return;
+  _orderItems.push({name:p.name, qty:1, price:p.price||0});
+  _renderOrderItems();
+}
+
+function addOrderItemFree(){
+  var name = document.getElementById('ord-item-name').value.trim();
+  var qty = parseInt(document.getElementById('ord-item-qty').value)||1;
+  var price = pa(document.getElementById('ord-item-price').value);
+  if(!name){ toast('נא להזין שם פריט'); return; }
+  _orderItems.push({name:name, qty:qty, price:price});
+  document.getElementById('ord-item-name').value='';
+  document.getElementById('ord-item-qty').value='1';
+  document.getElementById('ord-item-price').value='';
+  _renderOrderItems();
+}
+
+function _renderOrderItems(){
+  var total=0;
+  var h='';
+  _orderItems.forEach(function(it,i){
+    var line=it.qty*(it.price||0); total+=line;
+    h+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px">' +
+      '<span style="flex:1">' + esc(it.name) + '</span>' +
+      '<span style="color:var(--muted)">' + it.qty + ' × ₪' + fmt(it.price) + '</span>' +
+      '<span style="font-weight:700;color:var(--cyan)">₪' + fmt(line) + '</span>' +
+      '<button onclick="removeOrderItem('+i+')" style="background:none;border:none;color:var(--neg);font-size:12px;cursor:pointer;padding:0 4px">✕</button>' +
+      '</div>';
+  });
+  document.getElementById('ord-items-list').innerHTML=h;
+  document.getElementById('ord-total-disp').textContent=fmt(total);
+}
+
+function removeOrderItem(i){
+  _orderItems.splice(i,1);
+  _renderOrderItems();
+}
+
+function saveOrder(){
+  var supId = document.getElementById('ord-sup-sel').value;
+  if(!supId){ toast('נא לבחור ספק'); return; }
+  if(!_orderItems.length){ toast('נא להוסיף לפחות פריט אחד'); return; }
+  var total = _orderItems.reduce(function(s,it){return s+it.qty*(it.price||0);},0);
+  var date = document.getElementById('ord-date-inp').value;
+  var dueDate = document.getElementById('ord-due-inp').value;
+  ORDERS.push({
+    id:'o'+Date.now(),
+    supplierId:supId,
+    date:date,
+    dueDate:dueDate,
+    items:_orderItems.slice(),
+    total:total,
+    status:'open',
+    expenseLinked:false
+  });
+  saveOrders();
+  _orderItems=[];
+  closeMbg('ord-mbg');
+  renderOrders();
+  toast('✓ הזמנה נשמרה');
+}
+
+function setOrderStatus(id, status){
+  var o = ORDERS.filter(function(x){return x.id===id;})[0];
+  if(!o) return;
+  o.status=status;
+  if(status==='paid' && !o.expenseLinked){
+    var sup = SUPPLIERS.filter(function(s){return s.id===o.supplierId;})[0];
+    var supName = sup ? sup.name : 'ספק';
+    var now = new Date();
+    var mo = now.getMonth()+1;
+    var dd = String(now.getDate()).padStart(2,'0')+'/'+String(mo).padStart(2,'0');
+    var entry = {d:dd, desc:'הזמנה - '+supName, a:o.total, tags:['ספק', supName]};
+    RAW.expense[mo] = RAW.expense[mo]||[];
+    RAW.expense[mo].push(entry);
+    o.expenseLinked=true;
+    save();
+    toast('✓ ההזמנה נרשמה כהוצאה');
+  } else {
+    saveOrders();
+    toast('✓ סטטוס עודכן');
+  }
+  renderOrders();
+  showOrderAlerts();
+}
+
+function delOrder(id){
+  ORDERS=ORDERS.filter(function(o){return o.id!==id;});
+  saveOrders();
+  renderOrders();
+  showOrderAlerts();
+}
+
+function showOrderAlerts(){
+  var el = document.getElementById('orders-alert-bar');
+  if(!el) return;
+  var today = new Date(); today.setHours(0,0,0,0);
+  var alerts = [];
+  ORDERS.forEach(function(o){
+    if(o.status==='paid') return;
+    if(!o.dueDate) return;
+    var due = new Date(o.dueDate); due.setHours(0,0,0,0);
+    var diff = Math.round((due-today)/(1000*60*60*24));
+    if(diff<=7){
+      var sup = SUPPLIERS.filter(function(s){return s.id===o.supplierId;})[0];
+      var supName = sup ? sup.name : 'ספק';
+      alerts.push({name:supName, diff:diff, total:o.total});
+    }
+  });
+  if(alerts.length){
+    el.innerHTML = alerts.map(function(a){
+      var label = a.diff<0 ? '⚠ הזמנה מ-'+esc(a.name)+' פג תאריך תשלום (₪'+fmt(a.total)+')' :
+                  a.diff===0 ? '⚠ הזמנה מ-'+esc(a.name)+' לתשלום היום (₪'+fmt(a.total)+')' :
+                  '⚠ הזמנה מ-'+esc(a.name)+' לתשלום בעוד '+a.diff+' ימים (₪'+fmt(a.total)+')';
+      return '<span>'+label+'</span>';
+    }).join(' · ');
+    el.style.display='block';
+  } else {
+    el.style.display='none';
+  }
 }
 
 // Show a small banner if any saved subscription renews within 7 days
