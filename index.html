@@ -1565,7 +1565,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260722;
+var APP_VER=20260723;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -4097,9 +4097,13 @@ function renderGmail(){
 
 function resetGmailSetup(){
   _gmailToken=null;
+  _gcalToken=null;
+  _clearGoogToken();
   var pre=document.getElementById('gmail-pre-auth');
   if(pre)pre.style.display='block';
   document.getElementById('gmail-period-wrap').style.display='none';
+  var btn=document.getElementById('gcal-connect-btn');
+  if(btn)btn.textContent='התחברי עם Google';
   gmStatus('');
   toast('התנתקת מגוגל');
 }
@@ -4199,7 +4203,7 @@ function gmailFetch(days){
   fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?q='+encodeURIComponent(query)+'&maxResults=120',{
     headers:{Authorization:'Bearer '+_gmailToken}
   }).then(function(r){
-    if(r.status===401||r.status===403){gmStatus('ההרשאה פגה — התחברי שוב לגוגל',true);_gmailToken=null;throw new Error('auth');}
+    if(r.status===401||r.status===403){gmStatus('ההרשאה פגה — מתחברת מחדש...',true);_gmailToken=null;_gcalToken=null;_clearGoogToken();throw new Error('auth');}
     return r.json();
   }).then(function(data){
     var msgs=data.messages||[];
@@ -5752,10 +5756,43 @@ function authSubmit(){
       .then(function(){ authErr(''); }).catch(function(e){ authErr(authMsg(e)); }).then(done);
   }
 }
+function _saveGoogToken(token){
+  if(!token) return;
+  sessionStorage.setItem('goog_access_token', token);
+  sessionStorage.setItem('goog_token_exp', String(Date.now() + 3500000));
+}
+function _clearGoogToken(){
+  sessionStorage.removeItem('goog_access_token');
+  sessionStorage.removeItem('goog_token_exp');
+}
+function _restoreGoogToken(){
+  var saved = sessionStorage.getItem('goog_access_token');
+  var exp   = parseInt(sessionStorage.getItem('goog_token_exp') || '0');
+  if(saved && Date.now() < exp){
+    _gmailToken = saved;
+    _gcalToken  = saved;
+    var pre = document.getElementById('gmail-pre-auth');
+    if(pre) pre.style.display = 'none';
+    var pw = document.getElementById('gmail-period-wrap');
+    if(pw) pw.style.display = 'block';
+    var btn = document.getElementById('gcal-connect-btn');
+    if(btn) btn.textContent = '✓ מחוברת ל-Google Calendar';
+    gcalFetchEvents();
+    return true;
+  }
+  return false;
+}
 function authGoogle(){
   if(!fbAuth){ authErr('שירות ההתחברות עוד נטען — נסי שוב'); return; }
   var prov=new firebase.auth.GoogleAuthProvider();
-  fbAuth.signInWithPopup(prov).catch(function(e){
+  prov.addScope('https://www.googleapis.com/auth/gmail.readonly');
+  prov.addScope('https://www.googleapis.com/auth/calendar.readonly');
+  fbAuth.signInWithPopup(prov).then(function(result){
+    try{
+      var cred = firebase.auth.GoogleAuthProvider.credentialFromResult(result);
+      if(cred && cred.accessToken){ _saveGoogToken(cred.accessToken); }
+    }catch(e){}
+  }).catch(function(e){
     if(e&&(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'||e.code==='auth/cancelled-popup-request')){
       fbAuth.signInWithRedirect(prov);
     } else { authErr(authMsg(e)); }
@@ -5776,6 +5813,8 @@ function onSignedIn(user){
   hideAuthScreen();
   updateAccountUI(user);
   setSyncDot('busy');
+  // auto-restore Google OAuth token if still valid in this session
+  setTimeout(function(){ _restoreGoogToken(); }, 300);
   // show the onboarding tour once, after a fresh login (guarded by shani_onboarded)
   if(!localStorage.getItem('shani_onboarded')){ setTimeout(function(){startTour(false);}, 800); }
   fbDb.collection('users').doc(FB_UID).get().then(function(doc){
@@ -5808,8 +5847,15 @@ function onSignedIn(user){
     // keep the user signed in across browser restarts / app re-opens (one-time login)
     try{ fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(){}); }catch(e){}
     try{ fbDb.enablePersistence({synchronizeTabs:true}).catch(function(){}); }catch(e){}
-    // complete any pending redirect-based Google sign-in
-    fbAuth.getRedirectResult().catch(function(){});
+    // complete any pending redirect-based Google sign-in and save token
+    fbAuth.getRedirectResult().then(function(result){
+      if(result && result.credential){
+        try{
+          var cred=firebase.auth.GoogleAuthProvider.credentialFromResult(result);
+          if(cred && cred.accessToken){ _saveGoogToken(cred.accessToken); }
+        }catch(e){}
+      }
+    }).catch(function(){});
     fbAuth.onAuthStateChanged(function(user){
       if(user){ onSignedIn(user); }
       else { FB_UID=null; updateAccountUI(null); setSyncDot(''); showAuthScreen(); }
