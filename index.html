@@ -19,7 +19,7 @@
   --cyan:#1DE9B6;--pos:#00E676;--neg:#FF6B6B;--orange:#E8923A;
   --gold:#E8A83E;--pur:rgba(255,255,255,.6);--pur-bg:rgba(255,255,255,.04);--pur-bd:rgba(255,255,255,.12);
   --text:#fff;--text2:rgba(255,255,255,.75);--muted:rgba(255,255,255,.42);--muted2:rgba(255,255,255,.22);
-  --r:18px;--rs:12px;--rl:24px;
+  --r:18px;--rs:12px;--rl:18px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{overflow-x:hidden}
@@ -125,7 +125,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .auth-google{
   width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
   background:#fff;color:#1F2937;font-family:'Sora',sans-serif;font-size:15px;font-weight:700;
-  padding:13px 16px;border:none;border-radius:14px;cursor:pointer;
+  padding:13px 16px;border:none;border-radius:12px;cursor:pointer;
   box-shadow:0 4px 18px -6px rgba(0,0,0,.5);transition:transform .12s ease,box-shadow .12s ease;
 }
 .auth-google:active{transform:scale(.98)}
@@ -135,21 +135,21 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .auth-fields{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
 .auth-fields input{
   width:100%;font-family:'Sora',sans-serif;font-size:15px;text-align:right;
-  padding:13px 15px;border:1.5px solid var(--border2);border-radius:13px;
+  padding:13px 15px;border:1.5px solid var(--border2);border-radius:12px;
   background:rgba(255,255,255,.06);color:var(--text);outline:none;
 }
 .auth-fields input:focus{border-color:var(--cyan);background:rgba(29,233,182,.06)}
 .auth-mode{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 2px 0}
 .auth-mode>span{font-size:13px;color:var(--text2);font-weight:600}
-.auth-mode-switch{display:flex;background:rgba(255,255,255,.06);border:1px solid var(--border2);border-radius:11px;padding:3px;gap:3px}
+.auth-mode-switch{display:flex;background:rgba(255,255,255,.06);border:1px solid var(--border2);border-radius:12px;padding:3px;gap:3px}
 .auth-mode-switch button{
   font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--muted);
-  background:transparent;border:none;padding:7px 16px;border-radius:8px;cursor:pointer;transition:all .15s ease;
+  background:transparent;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;transition:all .15s ease;
 }
 .auth-mode-switch button.on{background:var(--cyan);color:#08131F;box-shadow:0 2px 10px rgba(29,233,182,.3)}
 .auth-primary{
   width:100%;background:var(--cyan);color:#08131F;font-family:'Sora',sans-serif;
-  font-size:15px;font-weight:800;padding:14px;border:none;border-radius:14px;cursor:pointer;
+  font-size:15px;font-weight:800;padding:14px;border:none;border-radius:12px;cursor:pointer;
   box-shadow:0 4px 20px -4px rgba(29,233,182,.45);transition:transform .12s ease;
 }
 .auth-primary:active{transform:scale(.98)}
@@ -178,7 +178,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .backup-btn{
   background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);
   color:var(--text2);font-family:'Sora',sans-serif;font-size:11px;font-weight:700;
-  padding:7px 14px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:6px;
 }
 .hero-right{text-align:right}
 .hero-greet{font-size:20px;font-weight:800}
@@ -193,7 +193,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .hero-bal.neg{color:var(--neg);text-shadow:0 0 42px rgba(255,107,107,.22)}
 .hero-bal.settle{animation:settlePop .26s cubic-bezier(.2,1.4,.4,1)}
 @keyframes settlePop{50%{transform:scale(1.03)}}
-.hero-delta{display:inline-flex;align-items:center;gap:5px;margin:0 auto 12px;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;width:fit-content}
+.hero-delta{display:inline-flex;align-items:center;gap:5px;margin:0 auto 12px;padding:4px 11px;border-radius:12px;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;width:fit-content}
 .hero-delta.up{background:rgba(0,230,118,.12);color:var(--pos)}
 .hero-delta.down{background:rgba(255,107,107,.12);color:var(--neg)}
 .hero-delta-wrap{text-align:center}
@@ -266,11 +266,11 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .cc::before{content:'';position:absolute;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.07);top:-30px;right:-25px;pointer-events:none}
 .cc-top  {display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .cc-brand{font-size:9px;font-weight:700;letter-spacing:1.8px;color:rgba(255,255,255,.5);text-transform:uppercase}
-.cc-toggle{width:28px;height:16px;border-radius:8px;background:rgba(255,255,255,.15);position:relative}
+.cc-toggle{width:28px;height:16px;border-radius:6px;background:rgba(255,255,255,.15);position:relative}
 .cc-toggle::after{content:'';position:absolute;width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.4);top:2px;left:2px}
 .cc-sub{font-size:9px;color:rgba(255,255,255,.5);margin-bottom:4px}
 .cc-amt{font-size:20px;font-weight:800;color:#fff;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
-.cc-tag{display:inline-block;font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:8px}
+.cc-tag{display:inline-block;font-size:9px;font-weight:700;padding:3px 9px;border-radius:12px;margin-top:8px}
 .cc-tag.warn{background:rgba(255,179,71,.2);color:#FFB347}
 .cc-tag.next{background:rgba(0,230,118,.15);color:var(--pos)}
 .cc-due{font-size:10px;color:rgba(255,255,255,.5);margin-top:5px;line-height:1.5}
@@ -320,7 +320,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .pie-leg-amt{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;flex-shrink:0}
 .pie-leg-pct{font-size:10px;color:var(--muted);font-weight:700;flex-shrink:0;min-width:30px;text-align:left}
 .pie-over{font-size:9px;color:var(--neg);font-weight:700}
-.cat-chip{display:flex;flex-direction:column;gap:3px;border-radius:14px;padding:6px 11px 5px;font-size:11px;border:1px solid transparent;cursor:pointer;min-width:68px;transition:opacity .15s,transform .15s;-webkit-tap-highlight-color:transparent}
+.cat-chip{display:flex;flex-direction:column;gap:3px;border-radius:12px;padding:6px 11px 5px;font-size:11px;border:1px solid transparent;cursor:pointer;min-width:68px;transition:opacity .15s,transform .15s;-webkit-tap-highlight-color:transparent}
 .cat-chip:active{transform:scale(.96);opacity:.8}
 .cc-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
 .cc-bar{width:100%;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
@@ -341,14 +341,14 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .txn-group-hdr{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;padding:10px 4px 5px;text-transform:uppercase}
 .txn-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--rs);background:linear-gradient(180deg,rgba(25,40,64,.4) 0%,var(--card) 65%);border:1px solid var(--border);margin-bottom:7px;box-shadow:0 4px 14px -10px rgba(0,0,0,.5)}
 .txn-icon{
-  flex-shrink:0;width:36px;height:36px;border-radius:10px;
+  flex-shrink:0;width:36px;height:36px;border-radius:12px;
   display:flex;align-items:center;justify-content:center;
   font-size:10px;font-weight:800;letter-spacing:.2px;text-align:center;line-height:1.2;
 }
 .txn-body{flex:1}
 .txn-desc{font-size:13px;font-weight:600;line-height:1.3}
 .txn-date{font-size:10px;color:var(--muted);margin-top:2px}
-.txn-method{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;margin-right:4px;vertical-align:middle}
+.txn-method{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;margin-right:4px;vertical-align:middle}
 .txn-method.mc  {background:rgba(29,233,182,.15);color:var(--cyan)}
 .txn-method.visa{background:rgba(30,91,168,.35);color:#6BA3FF}
 .txn-amt{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;flex-shrink:0}
@@ -398,14 +398,14 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .cal-cell.empty{cursor:default;background:transparent!important}
 .cal-cell.today .cal-num{background:var(--cyan);color:#0A1520;border-radius:50%;font-weight:800}
 .cal-num{font-size:10px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;margin-bottom:2px;color:var(--muted2)}
-.cal-dot{font-size:9px;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:4px;padding:2px 4px;margin-bottom:2px;font-weight:800;letter-spacing:.2px}
+.cal-dot{font-size:9px;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:6px;padding:2px 4px;margin-bottom:2px;font-weight:800;letter-spacing:.2px}
 .cal-dot.done   {background:rgba(0,230,118,.22);color:#5CFFA8}
 .cal-dot.planned{background:rgba(255,179,71,.22);color:#FFD060}
 
 /* ══ MODAL ════════════════════════════════════════════════ */
 .mbg {display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:500;align-items:flex-end;justify-content:center}
 .mbg.open{display:flex}
-.modal{background:#111D2C;border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:8px 20px calc(36px + env(safe-area-inset-bottom,0px));animation:slideUp .22s ease;border-top:1px solid var(--border2)}
+.modal{background:#111D2C;border-radius:18px 24px 0 0;width:100%;max-width:430px;padding:8px 20px calc(36px + env(safe-area-inset-bottom,0px));animation:slideUp .22s ease;border-top:1px solid var(--border2)}
 .modal::before{content:'';display:block;width:36px;height:4px;background:var(--border2);border-radius:2px;margin:14px auto 18px}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .mbg.closing,.cd-mbg.closing{animation:fadeOut .2s ease both}
@@ -419,7 +419,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .mc-name{flex:1;font-size:13px;font-weight:600}
 .mc-amt {font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
 .mc-amt.done   {color:var(--pos)}.mc-amt.planned{color:#FFB347}
-.sbtn{font-size:11px;padding:4px 11px;border-radius:8px;border:none;cursor:pointer;font-family:'Sora',sans-serif;font-weight:700}
+.sbtn{font-size:11px;padding:4px 11px;border-radius:6px;border:none;cursor:pointer;font-family:'Sora',sans-serif;font-weight:700}
 .sbtn.done   {background:rgba(0,230,118,.15);color:var(--pos)}
 .sbtn.planned{background:rgba(255,179,71,.15);color:#FFB347}
 .del-btn{background:none;border:none;color:var(--muted);font-size:15px;cursor:pointer;padding:2px 5px}
@@ -452,7 +452,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .hdr-ham.open span:nth-child(2){ opacity:0; }
 .hdr-ham.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); background:var(--cyan); }
 .hdr-brand { display:flex; align-items:center; gap:8px; font-size:15px; font-weight:900; font-style:italic; color:var(--text); letter-spacing:.2px; }
-.hdr-brand-mark { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; font-style:normal; font-weight:900; font-size:15px; box-shadow:0 2px 10px rgba(29,233,182,.4); }
+.hdr-brand-mark { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; font-style:normal; font-weight:900; font-size:15px; box-shadow:0 2px 10px rgba(29,233,182,.4); }
 
 /* DRAWER */
 .drw-bg { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:400; display:none; animation:none; }
@@ -469,7 +469,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 @keyframes slideInPanel{from{transform:translateX(100%)}to{transform:translateX(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .drw-logo { font-size:20px; font-weight:900; font-style:italic; color:var(--text); padding:0 20px 20px; border-bottom:1px solid var(--border); margin-bottom:8px; display:flex; align-items:center; gap:9px; }
-.drw-logo-mark { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; font-style:normal; font-weight:900; font-size:20px; box-shadow:0 2px 12px rgba(29,233,182,.4); }
+.drw-logo-mark { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:12px; background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; font-style:normal; font-weight:900; font-size:20px; box-shadow:0 2px 12px rgba(29,233,182,.4); }
 .drw-item { display:flex; align-items:center; gap:12px; padding:14px 20px; cursor:pointer; transition:background .15s; color:var(--text2); font-size:15px; font-weight:600; }
 .drw-item:hover { background:rgba(255,255,255,.05); }
 .drw-item.active { color:var(--cyan); background:rgba(29,233,182,.08); }
@@ -513,7 +513,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
   left:50%;transform:translate(-50%,10px);
   background:var(--cyan);color:#0A1520;
   font-family:'Sora',sans-serif;font-size:13px;font-weight:700;
-  padding:11px 22px;border-radius:24px;z-index:1000;
+  padding:11px 22px;border-radius:18px;z-index:1000;
   opacity:0;transition:opacity .25s,transform .35s cubic-bezier(.2,1.5,.4,1);pointer-events:none;white-space:nowrap;
   box-shadow:0 6px 22px -6px rgba(29,233,182,.4);
 }
@@ -537,12 +537,12 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .goal-amounts{text-align:left;flex-shrink:0}
 .goal-saved{font-size:15px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1}
 .goal-target{font-size:10px;color:var(--muted);margin-top:2px}
-.goal-bar-bg{background:rgba(255,255,255,.08);border-radius:20px;height:7px;margin-bottom:9px;overflow:hidden}
-.goal-bar-fill{height:100%;border-radius:20px;transition:width .7s cubic-bezier(.2,1,.3,1)}
+.goal-bar-bg{background:rgba(255,255,255,.08);border-radius:12px;height:7px;margin-bottom:9px;overflow:hidden}
+.goal-bar-fill{height:100%;border-radius:12px;transition:width .7s cubic-bezier(.2,1,.3,1)}
 .goal-footer{display:flex;justify-content:space-between;align-items:center}
 .goal-pct{font-size:11px;font-weight:700}
 .goal-monthly{font-size:10px;color:var(--muted)}
-.goal-add-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--text);font-family:'Sora',sans-serif;font-size:11px;font-weight:700;padding:5px 12px;border-radius:10px;cursor:pointer;flex-shrink:0}
+.goal-add-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--text);font-family:'Sora',sans-serif;font-size:11px;font-weight:700;padding:5px 12px;border-radius:12px;cursor:pointer;flex-shrink:0}
 .goal-del{position:absolute;top:10px;left:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 5px}
 .goal-del:hover{color:var(--neg)}
 .add-goal-card{background:rgba(29,233,182,.05);border:1.5px dashed rgba(29,233,182,.28);border-radius:var(--r);padding:18px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer}
@@ -551,15 +551,15 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .goals-sum{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 16px 12px}
 
 /* ══ ADD TRANSACTION ══════════════════════════════════════ */
-.atabs{display:flex;gap:5px;margin-bottom:14px;background:rgba(255,255,255,.05);border-radius:11px;padding:4px}
-.atab{flex:1;font-family:'Sora',sans-serif;font-size:11px;font-weight:700;padding:7px 4px;border:none;background:none;color:var(--muted);border-radius:8px;cursor:pointer;transition:all .13s}
+.atabs{display:flex;gap:5px;margin-bottom:14px;background:rgba(255,255,255,.05);border-radius:12px;padding:4px}
+.atab{flex:1;font-family:'Sora',sans-serif;font-size:11px;font-weight:700;padding:7px 4px;border:none;background:none;color:var(--muted);border-radius:6px;cursor:pointer;transition:all .13s}
 .atab.on{background:var(--card2);color:var(--text)}
 .parse-area{width:100%;min-height:110px;font-family:'Sora',sans-serif;font-size:13px;padding:11px 12px;border:1.5px solid var(--border2);border-radius:12px;background:rgba(255,255,255,.06);color:var(--text);outline:none;resize:vertical;direction:rtl;line-height:1.65}
 .parse-area:focus{border-color:var(--cyan)}
 .parse-area::placeholder{color:var(--muted2);font-size:11px;line-height:1.8}
-.pp-row{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:9px;background:var(--card);margin-bottom:5px;font-size:13px}
+.pp-row{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:12px;background:var(--card);margin-bottom:5px;font-size:13px}
 .pp-del{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:13px;flex-shrink:0;padding:0 2px}
-.type-toggle{display:flex;border-radius:11px;overflow:hidden;border:1.5px solid var(--border2);margin-bottom:12px}
+.type-toggle{display:flex;border-radius:12px;overflow:hidden;border:1.5px solid var(--border2);margin-bottom:12px}
 .ttype{flex:1;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;padding:9px;border:none;background:none;color:var(--muted);cursor:pointer;transition:all .13s}
 .ttype.on.expense{background:rgba(255,107,107,.18);color:var(--neg)}
 .ttype.on.income{background:rgba(0,230,118,.13);color:var(--pos)}
@@ -569,7 +569,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .mchip.on.bank{background:rgba(255,107,107,.2);border-color:var(--neg);color:var(--neg)}
 .mchip.on.visa{background:rgba(107,163,255,.25);border-color:#6BA3FF;color:#6BA3FF}
 .mchip.on.mc{background:rgba(29,233,182,.15);border-color:var(--cyan);color:var(--cyan)}
-.csv-hint{font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.75;background:rgba(255,255,255,.04);padding:8px 10px;border-radius:9px}
+.csv-hint{font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.75;background:rgba(255,255,255,.04);padding:8px 10px;border-radius:12px}
 .import-sum{font-size:11px;color:var(--cyan);font-weight:700}
 .add-panel{display:none}
 .add-panel.active{display:block}
@@ -578,14 +578,14 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 /* ══ CARD DETAIL MODAL ═══════════════════════════════════ */
 .cd-mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);z-index:600;align-items:flex-end;justify-content:center}
 .cd-mbg.open{display:flex}
-.cd-modal{background:#111D2C;border-radius:26px 26px 0 0;width:100%;max-width:430px;max-height:78dvh;overflow-y:auto;padding:8px 20px calc(30px + env(safe-area-inset-bottom,0px));animation:slideUp .22s ease;border-top:1px solid var(--border2)}
+.cd-modal{background:#111D2C;border-radius:18px 26px 0 0;width:100%;max-width:430px;max-height:78dvh;overflow-y:auto;padding:8px 20px calc(30px + env(safe-area-inset-bottom,0px));animation:slideUp .22s ease;border-top:1px solid var(--border2)}
 .cd-modal::before{content:'';display:block;width:36px;height:4px;background:var(--border2);border-radius:2px;margin:14px auto 16px}
 .cd-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
 .cd-title{font-size:20px;font-weight:800}
 .cd-total{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--orange)}
-.cd-item{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:11px;background:var(--card);border:1px solid var(--border);margin-bottom:6px}
+.cd-item{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:12px;background:var(--card);border:1px solid var(--border);margin-bottom:6px}
 .cd-item-ico{
-  flex-shrink:0;width:34px;height:34px;border-radius:9px;
+  flex-shrink:0;width:34px;height:34px;border-radius:12px;
   display:flex;align-items:center;justify-content:center;
   font-size:10px;font-weight:800;letter-spacing:.2px;text-align:center;line-height:1.2;
 }
@@ -603,7 +603,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .upc-body{flex:1}
 .upc-label{font-size:13px;font-weight:600}
 .upc-date{font-size:10px;color:var(--muted);margin-top:2px}
-.upc-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;flex-shrink:0}
+.upc-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:6px;flex-shrink:0}
 .upc-amt{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;flex-shrink:0}
 
 /* ══ PAYMENT METHOD GRID ════════════════════════════════ */
@@ -614,7 +614,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .pm-name{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
 .pm-amt{font-size:20px;font-weight:900;letter-spacing:-1px;font-variant-numeric:tabular-nums;margin-bottom:3px}
 .pm-sub{font-size:10px;color:var(--muted);line-height:1.5;margin-top:2px}
-.pm-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;margin-top:6px}
+.pm-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:6px;margin-top:6px}
 
 /* ══ SECTION HDR ═════════════════════════════════════════ */
 .s-hdr{display:flex;justify-content:space-between;align-items:center;padding:4px 20px 10px}
@@ -654,15 +654,15 @@ select option{background:#111D2C;color:#fff}
 .fp-edit-btn,.fp-del-btn{background:none;border:none;cursor:pointer;font-size:15px;padding:4px;}
 .fp-toggle{position:relative;display:inline-block;width:40px;height:22px}
 .fp-toggle input{opacity:0;width:0;height:0}
-.fp-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--border2);border-radius:22px;transition:.3s}
+.fp-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--border2);border-radius:18px;transition:.3s}
 .fp-slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
 .fp-toggle input:checked+.fp-slider{background:var(--cyan)}
 .fp-toggle input:checked+.fp-slider:before{transform:translateX(18px)}
 
 /* ── ONBOARDING TOUR ── */
 .ob-overlay{position:fixed;inset:0;z-index:9500;animation:fadeIn .3s}
-.ob-spot{position:absolute;border-radius:14px;box-shadow:0 0 0 9999px rgba(5,13,24,.82),0 0 0 3px var(--cyan),0 0 26px rgba(29,233,182,.6);transition:all .4s cubic-bezier(.2,1,.3,1);pointer-events:none}
-.ob-bubble{position:absolute;max-width:282px;background:var(--card2);border:1px solid var(--border2);border-radius:16px;padding:16px 17px;box-shadow:0 14px 44px rgba(0,0,0,.55);z-index:9600;animation:obPop .4s cubic-bezier(.2,1.5,.4,1) both}
+.ob-spot{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(5,13,24,.82),0 0 0 3px var(--cyan),0 0 26px rgba(29,233,182,.6);transition:all .4s cubic-bezier(.2,1,.3,1);pointer-events:none}
+.ob-bubble{position:absolute;max-width:282px;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:16px 17px;box-shadow:0 14px 44px rgba(0,0,0,.55);z-index:9600;animation:obPop .4s cubic-bezier(.2,1.5,.4,1) both}
 @keyframes obPop{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}
 .ob-emoji{font-size:20px;margin-bottom:6px}
 .ob-title{font-size:13px;font-weight:800;color:var(--cyan);margin-bottom:6px}
@@ -671,14 +671,14 @@ select option{background:#111D2C;color:#fff}
 .ob-dots{display:flex;gap:5px;align-items:center}
 .ob-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);transition:all .25s}
 .ob-dot.on{background:var(--cyan);width:18px;border-radius:3px}
-.ob-next{background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:9px 18px;border-radius:10px;border:none;cursor:pointer}
+.ob-next{background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:9px 18px;border-radius:12px;border:none;cursor:pointer}
 .ob-skip{background:none;border:none;color:var(--muted);font-family:'Sora',sans-serif;font-size:13px;cursor:pointer}
-.ob-close{position:fixed;bottom:calc(env(safe-area-inset-bottom,12px) + 12px);left:50%;transform:translateX(-50%);z-index:9700;background:rgba(255,255,255,.14);border:1px solid var(--border2);color:#fff;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.ob-close{position:fixed;bottom:calc(env(safe-area-inset-bottom,12px) + 12px);left:50%;transform:translateX(-50%);z-index:9700;background:rgba(255,255,255,.14);border:1px solid var(--border2);color:#fff;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;padding:9px 20px;border-radius:12px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 
 /* ── GMAIL ── */
-.gp-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border2);background:none;color:var(--muted);font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.gp-btn{padding:7px 16px;border-radius:12px;border:1.5px solid var(--border2);background:none;color:var(--muted);font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
 .gp-btn.on{background:rgba(29,233,182,.15);border-color:rgba(29,233,182,.5);color:var(--cyan)}
-.dup-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;margin-right:4px;vertical-align:middle}
+.dup-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;margin-right:4px;vertical-align:middle}
 .dup-exact{background:rgba(255,107,107,.2);color:#FF6B6B}
 .dup-close{background:rgba(255,179,71,.2);color:#FFB347}
 
@@ -749,7 +749,7 @@ html.mode-private .biz-only{ display:none!important; }
 
 /* mode pill in drawer */
 .mode-switch{ display:flex; gap:6px; margin:10px 20px 4px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:4px; }
-.mode-opt{ flex:1; text-align:center; padding:8px 0; border-radius:9px; font-family:'Sora',sans-serif; font-size:13px; font-weight:700; color:var(--muted); cursor:pointer; border:none; background:none; transition:all .18s; }
+.mode-opt{ flex:1; text-align:center; padding:8px 0; border-radius:12px; font-family:'Sora',sans-serif; font-size:13px; font-weight:700; color:var(--muted); cursor:pointer; border:none; background:none; transition:all .18s; }
 .mode-opt.on{ background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; }
 
 /* accessibility: respect reduced-motion preference */
@@ -947,13 +947,13 @@ html.mode-private .biz-only{ display:none!important; }
       <div style="font-size:13px;color:var(--muted);margin-bottom:8px">העברי <b id="move-name" style="color:var(--text)"></b> לתאריך:</div>
       <div style="display:flex;gap:8px;align-items:center">
         <input type="number" id="move-day" placeholder="יום" min="1" max="31"
-          style="width:60px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px;color:var(--text);font-family:Sora,sans-serif;font-size:13px;text-align:center">
+          style="width:60px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:8px;color:var(--text);font-family:Sora,sans-serif;font-size:13px;text-align:center">
         <select id="move-month"
-          style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px;color:var(--text);font-family:Sora,sans-serif;font-size:13px"></select>
+          style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:8px;color:var(--text);font-family:Sora,sans-serif;font-size:13px"></select>
         <button onclick="confirmMove()"
-          style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:13px;font-weight:800;padding:8px 16px;border-radius:8px;border:none;cursor:pointer">העבר</button>
+          style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:13px;font-weight:800;padding:8px 16px;border-radius:6px;border:none;cursor:pointer">העבר</button>
         <button onclick="cancelMove()"
-          style="background:none;border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:13px;padding:8px 12px;border-radius:8px;cursor:pointer">ביטול</button>
+          style="background:none;border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:13px;padding:8px 12px;border-radius:6px;cursor:pointer">ביטול</button>
       </div>
     </div>
     <div class="modal-sep"></div>
@@ -1059,7 +1059,7 @@ html.mode-private .biz-only{ display:none!important; }
 1,200 נטלי"></textarea>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
         <span id="parse-count" class="import-sum"></span>
-        <button onclick="parseTextInput()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Sora',sans-serif;font-size:13px;font-weight:700;padding:8px 16px;border-radius:10px;cursor:pointer">נתחי ›</button>
+        <button onclick="parseTextInput()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Sora',sans-serif;font-size:13px;font-weight:700;padding:8px 16px;border-radius:12px;cursor:pointer">נתחי ›</button>
       </div>
       <div id="pp-preview" class="pp-preview"></div>
       <button onclick="importParsed()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:10px">שמור הכל ✓</button>
@@ -1081,7 +1081,7 @@ html.mode-private .biz-only{ display:none!important; }
       <textarea id="csv-text" class="parse-area" style="min-height:90px" placeholder="תאריך,סכום,תיאור,סוג,אמצעי&#10;03/05,4100,שכירות,expense,bank&#10;11/05,1200,נטלי,income,cash"></textarea>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
         <span id="csv-count" class="import-sum"></span>
-        <button onclick="parseCSV()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Sora',sans-serif;font-size:13px;font-weight:700;padding:8px 16px;border-radius:10px;cursor:pointer">נתחי ›</button>
+        <button onclick="parseCSV()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Sora',sans-serif;font-size:13px;font-weight:700;padding:8px 16px;border-radius:12px;cursor:pointer">נתחי ›</button>
       </div>
       <button onclick="importParsed()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:10px">ייבא ✓</button>
     </div>
@@ -1205,7 +1205,7 @@ html.mode-private .biz-only{ display:none!important; }
       <div id="gmail-pre-auth">
         <div style="font-size:20px;font-weight:800;margin-bottom:8px;color:var(--text)">כניסה עם Google</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:32px;line-height:1.6">לסריקת חיובי כרטיסים אוטומטית<br>מהמיילים של הבנקים שלך</div>
-        <button id="gmail-auth-btn" onclick="gmailAuth()" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--cyan),#00BCD4);color:#08141E;font-family:'Sora',sans-serif;font-size:15px;font-weight:800;padding:15px 32px;border-radius:16px;border:none;cursor:pointer;box-shadow:0 4px 28px rgba(29,233,182,.35);width:100%;max-width:300px;justify-content:center">
+        <button id="gmail-auth-btn" onclick="gmailAuth()" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--cyan),#00BCD4);color:#08141E;font-family:'Sora',sans-serif;font-size:15px;font-weight:800;padding:15px 32px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 28px rgba(29,233,182,.35);width:100%;max-width:300px;justify-content:center">
           <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#08141E" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>
           התחברי עם Google
         </button>
@@ -1235,14 +1235,14 @@ html.mode-private .biz-only{ display:none!important; }
         <span style="font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px">עסקאות שנמצאו</span>
         <div id="gmail-dup-note" style="font-size:10px;color:var(--muted);margin-top:3px"></div>
       </div>
-      <button onclick="gmailImportAll()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-family:Sora,sans-serif;font-size:13px;font-weight:700;padding:7px 14px;border-radius:10px;cursor:pointer">ייבאי מסומנות ✓</button>
+      <button onclick="gmailImportAll()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-family:Sora,sans-serif;font-size:13px;font-weight:700;padding:7px 14px;border-radius:12px;cursor:pointer">ייבאי מסומנות ✓</button>
     </div>
     <div id="gmail-txns"></div>
     <!-- Subscriptions detected during scan -->
     <div id="gmail-subs-section" style="display:none;margin-top:18px;border-top:1px solid rgba(255,255,255,.08);padding-top:14px">
       <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.5px;margin-bottom:10px">מנויים שנמצאו</div>
       <div id="gmail-subs-list"></div>
-      <button onclick="gmailImportSubs()" style="margin-top:10px;background:rgba(255,200,80,.12);border:1px solid rgba(255,200,80,.3);color:var(--gold);font-family:Sora,sans-serif;font-size:13px;font-weight:700;padding:7px 14px;border-radius:10px;cursor:pointer;width:100%">שמרי מסומנים כמנויים קבועים</button>
+      <button onclick="gmailImportSubs()" style="margin-top:10px;background:rgba(255,200,80,.12);border:1px solid rgba(255,200,80,.3);color:var(--gold);font-family:Sora,sans-serif;font-size:13px;font-weight:700;padding:7px 14px;border-radius:12px;cursor:pointer;width:100%">שמרי מסומנים כמנויים קבועים</button>
     </div>
   </div>
 </div>
@@ -1266,7 +1266,7 @@ html.mode-private .biz-only{ display:none!important; }
       <svg width="52" height="52" viewBox="0 0 48 48" style="margin-bottom:22px;filter:drop-shadow(0 0 18px rgba(66,133,244,.4))"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.2l6.8-6.8C35.7 2.2 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.1C12.5 13 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8C43.8 37.3 46.5 31.3 46.5 24.5z"/><path fill="#FBBC05" d="M10.5 28.6A14.7 14.7 0 0 1 9.5 24c0-1.6.3-3.1.7-4.6l-7.9-6.1A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2.1 1.4-4.7 2.3-7.7 2.3-6.2 0-11.5-4.2-13.4-9.8l-7.9 6.1C6.5 42.5 14.6 48 24 48z"/></svg>
       <div style="font-size:20px;font-weight:800;margin-bottom:8px">חיבור יומן Google</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:36px;line-height:1.7">מייבאת תורים מהיומן שלך<br>לחודש הנוכחי ולאחור</div>
-      <button id="gcal-connect-btn" onclick="gcalConnect()" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--cyan),#00BCD4);color:#08141E;font-family:'Sora',sans-serif;font-size:15px;font-weight:800;padding:15px 32px;border-radius:16px;border:none;cursor:pointer;box-shadow:0 4px 28px rgba(29,233,182,.35);width:100%;max-width:300px;justify-content:center">
+      <button id="gcal-connect-btn" onclick="gcalConnect()" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--cyan),#00BCD4);color:#08141E;font-family:'Sora',sans-serif;font-size:15px;font-weight:800;padding:15px 32px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 28px rgba(29,233,182,.35);width:100%;max-width:300px;justify-content:center">
         <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#08141E" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>
         התחברי עם Google
       </button>
@@ -1329,7 +1329,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260710;
+var APP_VER=20260711;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -3082,7 +3082,7 @@ function renderPP(){
     h+='<div class="pp-row">'+
       '<span style="color:var(--muted);font-size:10px;flex-shrink:0">'+t.date+'</span>'+
       '<span style="flex:1">'+esc(t.desc)+'</span>'+
-      (mLbl?'<span style="font-size:9px;color:var(--muted);background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px">'+mLbl+'</span>':'')+
+      (mLbl?'<span style="font-size:9px;color:var(--muted);background:rgba(255,255,255,.08);padding:2px 6px;border-radius:6px">'+mLbl+'</span>':'')+
       '<span style="font-weight:800;color:'+col+'">'+sign+'₪'+fmt(t.amount)+'</span>'+
       '<button class="pp-del" onclick="removePP('+i+')">✕</button>'+
     '</div>';
@@ -4094,7 +4094,7 @@ function renderGCalEvents(events){
     var mo=mon[dt.getMonth()];
     var timeStr=ev.start.dateTime?(dt.getHours()+':'+String(dt.getMinutes()).padStart(2,'0')):'';
     var evId='gcalev'+i;
-    h+='<div id="'+evId+'" style="background:var(--card);border-radius:14px;margin-bottom:8px;overflow:hidden">';
+    h+='<div id="'+evId+'" style="background:var(--card);border-radius:12px;margin-bottom:8px;overflow:hidden">';
     h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer" onclick="gcalToggleForm(\''+evId+'\')">';
     h+='<div><div style="font-weight:700;font-size:13px">'+esc(ev.summary||'(ללא שם)')+'</div>';
     h+='<div style="font-size:13px;color:var(--muted);margin-top:2px">'+day+' '+mo+(timeStr?' · '+timeStr:'')+'</div></div>';
@@ -4102,10 +4102,10 @@ function renderGCalEvents(events){
     h+='</div>';
     h+='<div id="'+evId+'-form" style="display:none;padding:0 14px 14px;border-top:1px solid var(--border)">';
     h+='<div style="display:flex;gap:8px;margin-top:10px">';
-    h+='<input id="'+evId+'-amt" placeholder="מחיר ₪" type="number" style="flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:9px 11px;color:var(--text);font-family:Sora,sans-serif;font-size:13px;outline:none">';
-    h+='<input id="'+evId+'-treat" placeholder="סוג טיפול" style="flex:2;background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:9px 11px;color:var(--text);font-family:Sora,sans-serif;font-size:13px;outline:none">';
+    h+='<input id="'+evId+'-amt" placeholder="מחיר ₪" type="number" style="flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:9px 11px;color:var(--text);font-family:Sora,sans-serif;font-size:13px;outline:none">';
+    h+='<input id="'+evId+'-treat" placeholder="סוג טיפול" style="flex:2;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:9px 11px;color:var(--text);font-family:Sora,sans-serif;font-size:13px;outline:none">';
     h+='</div>';
-    h+='<button onclick="importGCalEvent('+i+',\''+evId+'\')" style="margin-top:10px;width:100%;background:var(--cyan);color:#08141E;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:Sora,sans-serif">+ הוסיפי ללקוחות</button>';
+    h+='<button onclick="importGCalEvent('+i+',\''+evId+'\')" style="margin-top:10px;width:100%;background:var(--cyan);color:#08141E;border:none;border-radius:12px;padding:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:Sora,sans-serif">+ הוסיפי ללקוחות</button>';
     h+='</div>';
     h+='</div>';
   }
