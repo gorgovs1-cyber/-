@@ -881,6 +881,9 @@ html.mode-private .biz-only{ display:none!important; }
     <span style="font-size:10px;color:var(--muted)">לחצי לפרטים והוספה</span>
   </div>
   <div class="pm-grid" id="home-pm"></div>
+
+  <!-- Net worth section -->
+  <div id="home-networth"></div>
 </div>
 
 <!-- ══ EXPENSES ═══════════════════════════════════════════ -->
@@ -1337,6 +1340,19 @@ html.mode-private .biz-only{ display:none!important; }
   </div>
 </div>
 
+<!-- ══ ADD MANUAL ASSET MODAL ══════════════════════════════ -->
+<div class="mbg" id="asset-mbg" onclick="if(event.target===this)closeMbg(this.id)">
+  <div class="modal">
+    <div class="modal-title">הוסף נכס</div>
+    <div class="mi-row" style="margin-bottom:10px">
+      <div class="mfld" style="flex:2"><label>שם הנכס</label><input type="text" id="asset-name-inp" placeholder="חשבון חיסכון, קרן פנסיה..."></div>
+      <div class="mfld" style="max-width:110px"><label>סכום ₪</label><input type="number" id="asset-amt-inp" placeholder="0"></div>
+    </div>
+    <button onclick="addAsset()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף נכס ✓</button>
+    <button class="mclose" onclick="closeMbg('asset-mbg')">ביטול</button>
+  </div>
+</div>
+
 <!-- SETTINGS MODAL -->
 <div class="modal-bg" id="settings-modal-bg" style="display:none">
   <div class="modal" style="max-height:85vh;overflow-y:auto;border-radius:var(--r);padding:20px">
@@ -1392,7 +1408,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260715;
+var APP_VER=20260716;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2071,6 +2087,8 @@ var CLIENTS = {
 
 var CARDS = {visa:700,mc:3609,bank:9381,cashBal:0,limit:10000};
 var GOALS = [];
+var ASSETS = [];
+var NW_HIST = {};
 var ANNUAL = [];
 var FIXED_PAYMENTS = [
   {id:1,name:'שכירות',amount:4100,day:2,method:'bank',active:true},
@@ -2087,6 +2105,128 @@ var _fpMethod='bank';
 var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:1200,אוכל:800,קפה:300,דלק:400,נסיעה:300,חניה:200,ביטוח:500,חשמל:350,חשבון:300,מנוי:200,טלפון:150,פרטנר:250};
 var _budgetEditLbl='';
 var catChartInst=null;
+
+// ── NET WORTH TRACKER ─────────────────────────────────────
+var _nwOpen=true;
+function toggleNetWorth(){
+  _nwOpen=!_nwOpen;
+  var body=document.getElementById('nw-body');
+  var arrow=document.getElementById('nw-arrow');
+  if(body) body.style.display=_nwOpen?'block':'none';
+  if(arrow) arrow.textContent=_nwOpen?'▴':'▾';
+}
+function addAsset(){
+  var name=document.getElementById('asset-name-inp').value.trim();
+  var amt=pa(document.getElementById('asset-amt-inp').value);
+  if(!name||!amt)return;
+  ASSETS.push({id:'a'+Date.now(),name:name,amount:amt});
+  document.getElementById('asset-name-inp').value='';
+  document.getElementById('asset-amt-inp').value='';
+  closeMbg('asset-mbg');
+  saveAssets();
+  renderNetWorth();
+  toast('✓ נכס נוסף: '+name);
+}
+function delAsset(id){
+  ASSETS=ASSETS.filter(function(a){return a.id!==id;});
+  saveAssets();
+  renderNetWorth();
+}
+function renderNetWorth(){
+  var el=document.getElementById('home-networth');
+  if(!el)return;
+  // compute assets
+  var goalsSaved=GOALS.reduce(function(s,g){return s+(g.saved||0);},0);
+  var manualAssets=ASSETS.reduce(function(s,a){return s+(a.amount||0);},0);
+  var totalAssets=goalsSaved+manualAssets;
+  // compute liabilities: bank overdraft + mc bill + visa bill
+  var totalLiab=CARDS.bank+CARDS.mc+CARDS.visa;
+  var netWorth=totalAssets-totalLiab;
+  // snapshot current month
+  var now=new Date();
+  var ym=now.getFullYear()+'-'+(now.getMonth()<9?'0':'')+(now.getMonth()+1);
+  NW_HIST[ym]=netWorth;
+  saveAssets();
+  // find trend vs previous recorded month
+  var histKeys=Object.keys(NW_HIST).sort();
+  var trendHtml='';
+  if(histKeys.length>=2){
+    var prevKey='';
+    for(var ki=histKeys.length-2;ki>=0;ki--){
+      if(histKeys[ki]!==ym){prevKey=histKeys[ki];break;}
+    }
+    if(prevKey){
+      var delta=netWorth-NW_HIST[prevKey];
+      var up=delta>=0;
+      trendHtml='<span style="font-size:11px;font-weight:700;color:'+(up?'var(--pos)':'var(--neg)')+'">'+
+        (up?'↑':'↓')+' ₪'+fmt(Math.abs(delta))+' מ-'+prevKey+
+      '</span>';
+    }
+  }
+  var h='<div style="margin-top:18px;padding:0 16px 4px">';
+  // header
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;cursor:pointer" onclick="toggleNetWorth()">'+
+    '<span style="font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.5px;text-transform:uppercase">שווי נטו</span>'+
+    '<span id="nw-arrow" style="font-size:10px;color:var(--muted)">'+(_nwOpen?'▴':'▾')+'</span>'+
+  '</div>';
+  h+='<div id="nw-body" style="display:'+(_nwOpen?'block':'none')+'">';
+  // big net number
+  h+='<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 16px 14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.18)">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start">';
+  h+='<div>';
+  h+='<div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">שווי נטו</div>';
+  h+='<div style="font-size:20px;font-weight:900;color:'+(netWorth>=0?'var(--pos)':'var(--neg)')+'">'+
+    (netWorth>=0?'+':'-')+'₪'+fmt(Math.abs(netWorth))+
+  '</div>';
+  if(trendHtml) h+='<div style="margin-top:5px">'+trendHtml+'</div>';
+  h+='</div>';
+  h+='</div>';
+  h+='</div>';
+  // two columns: assets / liabilities
+  h+='<div style="display:flex;gap:10px;margin-bottom:12px">';
+  // assets column
+  h+='<div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:12px">';
+  h+='<div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">נכסים</div>';
+  h+='<div style="font-size:15px;font-weight:800;color:var(--pos);margin-bottom:8px">+₪'+fmt(totalAssets)+'</div>';
+  if(goalsSaved>0){
+    h+='<div style="display:flex;justify-content:space-between;margin-bottom:4px">'+
+      '<span style="font-size:11px;color:var(--text2)">מטרות חיסכון</span>'+
+      '<span style="font-size:11px;font-weight:700;color:var(--pos)">₪'+fmt(goalsSaved)+'</span>'+
+    '</div>';
+  }
+  ASSETS.forEach(function(a){
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'+
+      '<span style="font-size:11px;color:var(--text2)">'+esc(a.name)+'</span>'+
+      '<span style="display:flex;align-items:center;gap:6px">'+
+        '<span style="font-size:11px;font-weight:700;color:var(--pos)">₪'+fmt(a.amount)+'</span>'+
+        '<button onclick="delAsset(\''+a.id+'\')" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:0;line-height:1">×</button>'+
+      '</span>'+
+    '</div>';
+  });
+  h+='<button onclick="document.getElementById(\'asset-mbg\').classList.add(\'open\')" style="margin-top:8px;width:100%;background:rgba(29,233,182,.1);border:1px solid rgba(29,233,182,.25);border-radius:var(--rs);color:var(--cyan);font-size:11px;font-weight:700;font-family:\'Sora\',sans-serif;padding:7px;cursor:pointer">+ הוסף נכס</button>';
+  h+='</div>';
+  // liabilities column
+  h+='<div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:12px">';
+  h+='<div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">התחייבויות</div>';
+  h+='<div style="font-size:15px;font-weight:800;color:var(--neg);margin-bottom:8px">-₪'+fmt(totalLiab)+'</div>';
+  h+='<div style="display:flex;justify-content:space-between;margin-bottom:4px">'+
+    '<span style="font-size:11px;color:var(--text2)">עו"ש</span>'+
+    '<span style="font-size:11px;font-weight:700;color:var(--neg)">₪'+fmt(CARDS.bank)+'</span>'+
+  '</div>';
+  h+='<div style="display:flex;justify-content:space-between;margin-bottom:4px">'+
+    '<span style="font-size:11px;color:var(--text2)">מאסטרקארד</span>'+
+    '<span style="font-size:11px;font-weight:700;color:var(--neg)">₪'+fmt(CARDS.mc)+'</span>'+
+  '</div>';
+  h+='<div style="display:flex;justify-content:space-between">'+
+    '<span style="font-size:11px;color:var(--text2)">ויזה</span>'+
+    '<span style="font-size:11px;font-weight:700;color:var(--neg)">₪'+fmt(CARDS.visa)+'</span>'+
+  '</div>';
+  h+='</div>';
+  h+='</div>';
+  h+='</div>';
+  h+='</div>';
+  el.innerHTML=h;
+}
 
 function renderBudgets(){
   var el=document.getElementById('home-budgets');
@@ -2182,6 +2322,7 @@ function save(){
 }
 function saveGoals(){try{localStorage.setItem('shani_goals',JSON.stringify(GOALS));}catch(e){}cloudPush();}
 function saveAnnual(){try{localStorage.setItem('pf_annual',JSON.stringify(ANNUAL));}catch(e){}}
+function saveAssets(){try{localStorage.setItem('pf_assets',JSON.stringify(ASSETS));localStorage.setItem('pf_networth_hist',JSON.stringify(NW_HIST));}catch(e){}}
 var CLIENTS_VERSION=20;  // bump to force reload clients from code
 var CARDS_VERSION=10;    // bump to force reload cards from code
 function load(){
@@ -2198,6 +2339,8 @@ function load(){
     var bu=localStorage.getItem('shani_budgets');if(bu){var buo=JSON.parse(bu);Object.assign(BUDGETS,buo);}
     var fp=localStorage.getItem('shani_fp'); if(fp)FIXED_PAYMENTS=JSON.parse(fp);
     var an=localStorage.getItem('pf_annual'); if(an){try{ANNUAL=JSON.parse(an);}catch(ex){ANNUAL=[];}}
+    var ast=localStorage.getItem('pf_assets'); if(ast){try{ASSETS=JSON.parse(ast);}catch(ex){ASSETS=[];}}
+    var nwh=localStorage.getItem('pf_networth_hist'); if(nwh){try{NW_HIST=JSON.parse(nwh);}catch(ex){NW_HIST={};}}
   }catch(e){}
 }
 function exportData(){
@@ -2401,6 +2544,7 @@ function renderHome(){
 
   renderUpcoming(r);
   renderPMCards(r);
+  renderNetWorth();
 }
 
 // ── UPCOMING PAYMENTS ────────────────────────────────────
