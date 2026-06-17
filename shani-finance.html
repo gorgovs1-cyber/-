@@ -416,7 +416,7 @@ body{font-family:'Sora',sans-serif;direction:rtl;color:var(--text);max-width:430
 .mbg.closing .modal,.cd-mbg.closing .cd-modal{animation:slideDown .2s ease both}
 @keyframes slideDown{from{transform:translateY(0)}to{transform:translateY(100%)}}
 @keyframes fadeOut{from{opacity:1}to{opacity:0}}
-.modal-title{font-size:20px;font-weight:800;margin-bottom:4px}
+.modal-title{font-size:20px;font-weight:800;font-family:'Sora',sans-serif;letter-spacing:.5px;text-align:right;margin-bottom:2px}
 .modal-sub  {font-size:13px;color:var(--muted);margin-bottom:16px}
 .mc-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.07)}
 .mc-row:last-child{border-bottom:none}
@@ -963,18 +963,16 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="modal-title" id="m-title">—</div>
     <div class="modal-sub">לחצי על סטטוס לשינוי</div>
     <div id="m-clients"></div>
-    <!-- move-to-date panel (shown when ↗ is tapped) -->
-    <div id="move-panel" style="display:none;background:rgba(255,255,255,.05);border-radius:12px;padding:12px;margin-bottom:12px">
-      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">העברי <b id="move-name" style="color:var(--text)"></b> לתאריך:</div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <input type="number" id="move-day" placeholder="יום" min="1" max="31"
-          style="width:60px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:8px;color:var(--text);font-family:Sora,sans-serif;font-size:13px;text-align:center">
-        <select id="move-month"
-          style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:8px;color:var(--text);font-family:Sora,sans-serif;font-size:13px"></select>
+    <!-- move-to-date panel (shown when 📅 is tapped) -->
+    <div id="move-panel" style="display:none;background:rgba(29,233,182,.06);border:1px solid rgba(29,233,182,.18);border-radius:14px;padding:14px 14px 12px;margin-bottom:14px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px">תאריך חדש עבור <b id="move-name" style="color:var(--text)"></b>:</div>
+      <input type="date" id="move-date"
+        style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 12px;color:var(--text);font-family:'Sora',sans-serif;font-size:15px;box-sizing:border-box;margin-bottom:10px">
+      <div style="display:flex;gap:8px">
         <button onclick="confirmMove()"
-          style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:13px;font-weight:800;padding:8px 16px;border-radius:6px;border:none;cursor:pointer">העבר</button>
+          style="flex:1;background:var(--cyan);color:#0A1520;font-family:'Sora',sans-serif;font-size:13px;font-weight:800;padding:10px;border-radius:10px;border:none;cursor:pointer">&#x05D0;&#x05D9;&#x05E9;&#x05D5;&#x05E8; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D4; &#x2713;</button>
         <button onclick="cancelMove()"
-          style="background:none;border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:13px;padding:8px 12px;border-radius:6px;cursor:pointer">ביטול</button>
+          style="flex:1;background:none;border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:'Sora',sans-serif;font-size:13px;padding:10px;border-radius:10px;cursor:pointer">&#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC;</button>
       </div>
     </div>
     <div class="modal-sep"></div>
@@ -1536,7 +1534,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260718;
+var APP_VER=20260719;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -3184,7 +3182,7 @@ function openModal(day,mi){
   modalDay=day;modalMi=mi;
   var ml=MONTHS[mi];
   var mo=['','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
-  document.getElementById('m-title').textContent=day+' ב'+mo[ml.key];
+  document.getElementById('m-title').innerHTML='<span style="color:var(--cyan);font-size:26px">'+day+'</span> <span style="font-size:18px;opacity:.8">ב'+mo[ml.key]+'</span>';
   renderMC();
   document.getElementById('mbg').classList.add('open');
 }
@@ -3193,7 +3191,7 @@ function renderMC(){
   var list=(CLIENTS[mk]||[]).filter(function(c){return c.day===modalDay;});
   document.getElementById('move-panel').style.display='none';
   document.getElementById('m-clients').innerHTML=list.length===0?'<div class="mempty">אין לקוחות ביום זה</div>':
-    list.map(function(c,i){return'<div class="mc-row"><div class="mc-name">'+esc(c.name)+(c.treat?' <span style="font-size:11px;color:var(--muted)">· '+esc(c.treat)+'</span>':'')+'</div><button class="sbtn '+c.status+'" onclick="toggleC('+i+')">'+(c.status==='done'?'✓ בוצע':'⏳ ממתין')+'</button><div class="mc-amt '+c.status+'">₪'+fmt(c.amount)+'</div><button class="mv-btn" onclick="startMove('+i+')" title="העברי לתאריך אחר" style="background:none;border:1px solid rgba(255,255,255,.18);color:var(--muted);font-size:13px;padding:4px 8px;border-radius:6px;cursor:pointer;margin-left:4px">↗</button><button class="del-btn" onclick="delC('+i+')">✕</button></div>';}).join('');
+    list.map(function(c,i){return'<div class="mc-row"><div class="mc-name">'+esc(c.name)+(c.treat?' <span style="font-size:11px;color:var(--muted)">· '+esc(c.treat)+'</span>':'')+'</div><button class="sbtn '+c.status+'" onclick="toggleC('+i+')">'+(c.status==='done'?'✓ בוצע':'⏳ ממתין')+'</button><div class="mc-amt '+c.status+'">₪'+fmt(c.amount)+'</div><button class="mv-btn" onclick="startMove('+i+')" title="העברי לתאריך אחר" style="background:rgba(29,233,182,.12);border:1px solid rgba(29,233,182,.25);color:var(--cyan);font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer;margin-left:4px">&#128197; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9;</button><button class="del-btn" onclick="delC('+i+')">✕</button></div>';}).join('');
 }
 function toggleC(idx){
   var mk=MONTHS[modalMi].key,list=CLIENTS[mk]||[];
@@ -3235,15 +3233,14 @@ function startMove(idx){
   if(!list[idx])return;
   _moveIdx=idx;
   document.getElementById('move-name').textContent=list[idx].name;
-  document.getElementById('move-day').value=modalDay;
-  // populate month select
-  var moNames=['','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
-  var sel=document.getElementById('move-month');
-  sel.innerHTML=MONTHS.map(function(ml,i){
-    return '<option value="'+i+'"'+(i===modalMi?' selected':'')+'>'+moNames[ml.key]+' '+ml.year+'</option>';
-  }).join('');
+  // set date input to current modal date
+  var yr=MONTHS[modalMi].year;
+  var mo=MONTHS[modalMi].key;
+  var dd=modalDay<10?'0'+modalDay:String(modalDay);
+  var mm=mo<10?'0'+mo:String(mo);
+  document.getElementById('move-date').value=yr+'-'+mm+'-'+dd;
   document.getElementById('move-panel').style.display='block';
-  document.getElementById('move-day').focus();
+  document.getElementById('move-date').focus();
 }
 function cancelMove(){
   _moveIdx=-1;
@@ -3251,9 +3248,19 @@ function cancelMove(){
 }
 function confirmMove(){
   if(_moveIdx<0)return;
-  var newDay=parseInt(document.getElementById('move-day').value);
-  var newMi=parseInt(document.getElementById('move-month').value);
+  var dateVal=document.getElementById('move-date').value;
+  if(!dateVal)return;
+  var parts=dateVal.split('-');
+  var newYear=parseInt(parts[0]);
+  var newMonth=parseInt(parts[1]);
+  var newDay=parseInt(parts[2]);
   if(!newDay||newDay<1||newDay>31)return;
+  // find MONTHS index for the chosen year+month
+  var newMi=-1;
+  for(var i=0;i<MONTHS.length;i++){
+    if(MONTHS[i].year===newYear&&MONTHS[i].key===newMonth){newMi=i;break;}
+  }
+  if(newMi<0)return;
   // get the client from the current day
   var mk=MONTHS[modalMi].key;
   var allList=CLIENTS[mk]||[];
