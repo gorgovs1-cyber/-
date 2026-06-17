@@ -5673,6 +5673,7 @@ function applyCloud(d){
     localStorage.setItem('shani_goals',  JSON.stringify(GOALS));
     localStorage.setItem('shani_cp',     JSON.stringify(CLIENT_PROFILES));
     localStorage.setItem('shani_settings',JSON.stringify(SETTINGS));
+    localStorage.setItem('pf_client_records', JSON.stringify(CLIENT_RECORDS));
     localStorage.setItem('shani_synced_at', String(d.updatedAt||Date.now()));
   }catch(e){}
   // re-render whatever is on screen
