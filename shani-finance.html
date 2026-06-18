@@ -117,10 +117,10 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .auth-card{width:100%;max-width:380px;text-align:center}
 .auth-logo{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:6px}
 .auth-mark{
-  font-size:38px;font-weight:500;color:#00FFD4;line-height:1;
+  font-size:44px;font-weight:500;color:#00FFD4;line-height:1;
   text-shadow:0 0 20px rgba(0,255,212,.5);
 }
-.auth-title{font-size:30px;font-weight:500;font-style:italic;color:#00FFD4;letter-spacing:.5px}
+.auth-title{font-size:20px;font-weight:500;font-style:italic;color:#00FFD4;letter-spacing:.5px}
 .auth-sub{font-size:13px;color:var(--text2);margin-bottom:26px;line-height:1.5}
 .auth-google{
   width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
@@ -157,7 +157,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .auth-err{min-height:18px;font-size:13px;font-weight:400;color:var(--neg);margin-top:11px}
 .auth-toggle{margin-top:16px;font-size:13px;color:var(--text2);cursor:pointer}
 .auth-toggle b{color:var(--cyan);font-weight:500}
-.auth-forgot{font-size:12px;color:var(--muted);cursor:pointer;text-align:left;margin-top:6px;text-decoration:underline;text-decoration-color:rgba(255,255,255,.2)}
+.auth-forgot{font-size:13px;color:var(--muted);cursor:pointer;text-align:left;margin-top:6px;text-decoration:underline;text-decoration-color:rgba(255,255,255,.2)}
 .auth-forgot:hover{color:var(--text2)}
 .auth-sep{display:flex;flex-direction:column;gap:2px;margin-bottom:4px;text-align:right}
 .auth-sep-lbl{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:4px}
@@ -519,8 +519,8 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .btm-item:active{transform:scale(.92)}
 .fab{border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s;position:relative}
 .fab:active{transform:scale(.92)}
-.fab-add{width:52px;height:52px;background:var(--cyan);color:#0A1520;font-size:26px;font-weight:400;box-shadow:0 4px 16px -6px rgba(0,0,0,.4)}
-.fab-adv{width:38px;height:38px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18)!important;color:var(--text2);font-size:18px;box-shadow:0 2px 10px rgba(0,0,0,.3)}
+.fab-add{width:52px;height:52px;background:var(--cyan);color:#0A1520;font-size:20px;font-weight:400;box-shadow:0 4px 16px -6px rgba(0,0,0,.4)}
+.fab-adv{width:38px;height:38px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18)!important;color:var(--text2);font-size:20px;box-shadow:0 2px 10px rgba(0,0,0,.3)}
 
 /* ══ TOAST ════════════════════════════════════════════════ */
 #toast{
@@ -686,7 +686,7 @@ select option{background:#111D2C;color:#fff}
 .wiz-inp:focus{border-color:var(--cyan);background:rgba(29,233,182,.06)}
 .wiz-btn{width:100%;background:var(--cyan);color:#08131F;font-family:'Rubik',sans-serif;font-size:15px;font-weight:500;padding:14px;border:none;border-radius:12px;cursor:pointer;margin-top:8px;transition:transform .12s}
 .wiz-btn:active{transform:scale(.98)}
-.wiz-skip{font-size:12px;color:var(--muted);cursor:pointer;margin-top:12px;text-decoration:underline;text-decoration-color:rgba(255,255,255,.15)}
+.wiz-skip{font-size:13px;color:var(--muted);cursor:pointer;margin-top:12px;text-decoration:underline;text-decoration-color:rgba(255,255,255,.15)}
 .wiz-dots{display:flex;justify-content:center;gap:6px;margin-bottom:20px}
 .wiz-dot{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:background .2s}
 .wiz-dot.on{background:var(--cyan)}
@@ -928,16 +928,16 @@ html.mode-private .biz-only{ display:none!important; }
   <div id="recurring-banner" style="display:none;background:rgba(29,233,182,.10);border-bottom:1px solid rgba(29,233,182,.22);padding:10px 16px;font-size:13px;font-weight:400;color:var(--cyan);line-height:1.5;direction:rtl">
     <div id="recurring-banner-text" style="margin-bottom:8px"></div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button type="button" id="recurring-yes-btn" onclick="addRecurringToFixed()" style="background:rgba(29,233,182,.22);border:1px solid rgba(29,233,182,.4);color:var(--cyan);font-family:Sora,sans-serif;font-size:12px;font-weight:500;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">כן, הוסף</button>
-      <button type="button" onclick="dismissRecurring()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:12px;font-weight:400;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">התעלם</button>
+      <button type="button" id="recurring-yes-btn" onclick="addRecurringToFixed()" style="background:rgba(29,233,182,.22);border:1px solid rgba(29,233,182,.4);color:var(--cyan);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">כן, הוסף</button>
+      <button type="button" onclick="dismissRecurring()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:13px;font-weight:400;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">התעלם</button>
     </div>
   </div>
   <!-- Recurring income suggestion banner -->
   <div id="income-recurring-banner" style="display:none;background:rgba(255,213,79,.10);border-bottom:1px solid rgba(255,213,79,.28);padding:10px 16px;font-size:13px;font-weight:400;color:var(--gold);line-height:1.5;direction:rtl">
     <div id="income-recurring-banner-text" style="margin-bottom:8px"></div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button type="button" onclick="addRecurringToFixedIncome()" style="background:rgba(255,213,79,.22);border:1px solid rgba(255,213,79,.45);color:var(--gold);font-family:Sora,sans-serif;font-size:12px;font-weight:500;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">כן, הוסף</button>
-      <button type="button" onclick="dismissRecurringIncome()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:12px;font-weight:400;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">לא עכשיו</button>
+      <button type="button" onclick="addRecurringToFixedIncome()" style="background:rgba(255,213,79,.22);border:1px solid rgba(255,213,79,.45);color:var(--gold);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">כן, הוסף</button>
+      <button type="button" onclick="dismissRecurringIncome()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:13px;font-weight:400;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">לא עכשיו</button>
     </div>
   </div>
   <div class="hero">
@@ -1089,13 +1089,13 @@ html.mode-private .biz-only{ display:none!important; }
   <div class="modal" id="cc-modal" style="height:92vh;max-height:92vh;display:flex;flex-direction:column;padding:0;overflow:hidden">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;flex-shrink:0;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:center;gap:12px">
-        <div id="cc-avatar" style="width:44px;height:44px;border-radius:50%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:500;color:var(--cyan);flex-shrink:0"></div>
+        <div id="cc-avatar" style="width:44px;height:44px;border-radius:50%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500;color:var(--cyan);flex-shrink:0"></div>
         <div>
-          <div class="modal-title" id="cc-title" style="margin:0;padding:0;font-size:17px"></div>
+          <div class="modal-title" id="cc-title" style="margin:0;padding:0;font-size:15px"></div>
           <div id="cc-subtitle" style="font-size:11px;color:var(--muted);margin-top:1px"></div>
         </div>
       </div>
-      <button onclick="closeClientCard()" style="background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--text2);border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">✕</button>
+      <button onclick="closeClientCard()" style="background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--text2);border-radius:50%;width:32px;height:32px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">✕</button>
     </div>
     <div id="cc-content" style="flex:1;overflow-y:auto;padding:16px 18px 24px;direction:rtl"></div>
   </div>
@@ -1217,7 +1217,7 @@ html.mode-private .biz-only{ display:none!important; }
           <img id="img-preview" style="max-width:100%;max-height:260px;border-radius:8px;object-fit:contain">
         </div>
         <div id="img-drop-hint" style="color:var(--muted);font-size:13px">
-          <div style="font-size:28px;margin-bottom:6px">📸</div>
+          <div style="font-size:20px;margin-bottom:6px">📸</div>
           לחצי להעלאת צילום מסך<br>
           <span style="font-size:11px">או גררי לכאן</span>
         </div>
@@ -1340,7 +1340,7 @@ html.mode-private .biz-only{ display:none!important; }
     <!-- STATE A: hidden — Client ID is hardcoded -->
     <div id="gmail-setup" style="display:none">
       <div style="text-align:center;margin-bottom:24px">
-        <div style="font-size:40px;margin-bottom:10px">📧</div>
+        <div style="font-size:44px;margin-bottom:10px">📧</div>
         <div style="font-size:15px;font-weight:500;margin-bottom:8px">חיבור Gmail</div>
         <div style="font-size:13px;color:var(--muted);line-height:1.7">האפליקציה תמצא אוטומטית חיובי<br>כרטיסים מהמיילים של הבנקים שלך</div>
       </div>
@@ -1417,7 +1417,7 @@ html.mode-private .biz-only{ display:none!important; }
   </div>
   <div style="padding:20px 16px">
     <div id="gcal-no-cid" style="display:none;text-align:center;padding:20px 0">
-      <div style="font-size:32px;margin-bottom:12px">📅</div>
+      <div style="font-size:20px;margin-bottom:12px">📅</div>
       <div style="font-size:15px;font-weight:500;margin-bottom:8px">קודם חברי Gmail</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px">כדי להשתמש ביומן גוגל<br>יש לחבר תחילה את Gmail</div>
       <button onclick="go('gmail');closeDrawer&&closeDrawer()" style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:12px 24px;border-radius:12px;border:none;cursor:pointer">עברי לחיבור Gmail ›</button>
@@ -1524,7 +1524,7 @@ html.mode-private .biz-only{ display:none!important; }
         </select>
       </div>
       <div class="mfld" style="max-width:130px;display:flex;align-items:flex-end;gap:8px;padding-bottom:2px">
-        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:var(--text2);white-space:nowrap">
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;color:var(--text2);white-space:nowrap">
           <input type="checkbox" id="an-recurring" style="width:15px;height:15px;accent-color:var(--cyan)">
           חוזר שנתי
         </label>
@@ -1588,12 +1588,12 @@ html.mode-private .biz-only{ display:none!important; }
         <div class="mfld" style="flex:1"><input type="number" id="cat-pprice" placeholder="&#x05DE;&#x05D7;&#x05D9;&#x05E8;" step="0.01"></div>
         <div class="mfld" style="flex:1"><input type="text" id="cat-punit" placeholder="&#x05D9;&#x05D7;. (&#x05D9;&#x05D7;/&#x05E7;&#x05D2;/&#x05E6;&#x05E4;...)"></div>
       </div>
-      <button onclick="addCatalogProduct()" style="width:100%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);border-radius:var(--rs);color:var(--cyan);font-family:'Rubik',sans-serif;font-size:12px;font-weight:500;padding:8px;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05DC;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2;</button>
+      <button onclick="addCatalogProduct()" style="width:100%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);border-radius:var(--rs);color:var(--cyan);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:8px;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05DC;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2;</button>
     </div>
     <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--rs);padding:12px">
       <div style="font-size:11px;font-weight:500;color:var(--muted);margin-bottom:8px">&#x05D9;&#x05D9;&#x05D1;&#x05D5;&#x05D0; &#x05DE;&#x05D8;&#x05E7;&#x05E1;&#x05D8; &#x05D7;&#x05D5;&#x05E4;&#x05E9;&#x05D9;</div>
-      <textarea id="cat-paste-txt" rows="4" placeholder="&#x05D4;&#x05D3;&#x05D1;&#x05E7; &#x05E8;&#x05E9;&#x05D9;&#x05DE;&#x05EA; &#x05DE;&#x05D5;&#x05E6;&#x05E8;&#x05D9;&#x05DD;... &#x05DC;&#x05D3;&#x05D5;&#x05D2;&#x05DE;&#x05D0;:&#10;&#x05D7;&#x05DC;&#x05D1; 3% 6.90&#10;&#x05DC;&#x05D7;&#x05DD; &#x05D0;&#x05D7;&#x05D9;&#x05D3; - 5.50 &#x20AA;&#10;&#x05D1;&#x05D9;&#x05E6;&#x05D4;,3.90" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px;color:var(--text);font-family:'Rubik',sans-serif;font-size:12px;box-sizing:border-box;resize:vertical"></textarea>
-      <button onclick="parseSupplierProducts()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:'Rubik',sans-serif;font-size:12px;font-weight:500;padding:8px;cursor:pointer;margin-top:6px">&#x05E0;&#x05EA;&#x05D7; &#x203A;</button>
+      <textarea id="cat-paste-txt" rows="4" placeholder="&#x05D4;&#x05D3;&#x05D1;&#x05E7; &#x05E8;&#x05E9;&#x05D9;&#x05DE;&#x05EA; &#x05DE;&#x05D5;&#x05E6;&#x05E8;&#x05D9;&#x05DD;... &#x05DC;&#x05D3;&#x05D5;&#x05D2;&#x05DE;&#x05D0;:&#10;&#x05D7;&#x05DC;&#x05D1; 3% 6.90&#10;&#x05DC;&#x05D7;&#x05DD; &#x05D0;&#x05D7;&#x05D9;&#x05D3; - 5.50 &#x20AA;&#10;&#x05D1;&#x05D9;&#x05E6;&#x05D4;,3.90" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px;color:var(--text);font-family:'Rubik',sans-serif;font-size:13px;box-sizing:border-box;resize:vertical"></textarea>
+      <button onclick="parseSupplierProducts()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:8px;cursor:pointer;margin-top:6px">&#x05E0;&#x05EA;&#x05D7; &#x203A;</button>
       <div id="cat-parsed-preview" style="margin-top:8px"></div>
       <div id="cat-parsed-count" style="font-size:10px;color:var(--muted);margin-top:4px"></div>
       <button id="cat-import-btn" onclick="confirmCatalogImport()" style="display:none;width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:12px;border:none;cursor:pointer;margin-top:8px">&#x05D9;&#x05D9;&#x05D1;&#x05D0; &#x05DC;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2; &#x2713;</button>
@@ -1623,7 +1623,7 @@ html.mode-private .biz-only{ display:none!important; }
         <div class="mfld" style="flex:1"><input type="number" id="ord-item-qty" placeholder="&#x05DB;&#x05DE;" min="1" value="1"></div>
         <div class="mfld" style="flex:1"><input type="number" id="ord-item-price" placeholder="&#x05DE;&#x05D7;&#x05D9;&#x05E8;" step="0.01"></div>
       </div>
-      <button onclick="addOrderItemFree()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:'Rubik',sans-serif;font-size:12px;font-weight:500;padding:7px;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05E4;&#x05E8;&#x05D9;&#x05D8;</button>
+      <button onclick="addOrderItemFree()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:7px;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05E4;&#x05E8;&#x05D9;&#x05D8;</button>
     </div>
     <div id="ord-items-list" style="margin-bottom:10px"></div>
     <div style="text-align:center;font-size:20px;font-weight:500;color:var(--cyan);margin-bottom:10px">&#x05E1;&#x05D4;"&#x05DB; &#x20AA;<span id="ord-total-disp">0</span></div>
@@ -1683,13 +1683,13 @@ html.mode-private .biz-only{ display:none!important; }
     <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px">
       <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--gold)">🏠 לוח הבית</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">קריאת המאזן החודשי</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">קריאת המאזן החודשי</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">הכרטיס הגדול בראש הדף מציג את <span style="color:var(--text2)">המאזן הצפוי לסוף החודש</span>. הוא מחשב: סך ההכנסות שנרשמו <span style="color:var(--mint)">פלוס</span> הכנסות צפויות מתורים שנקבעו, <span style="color:var(--rose)">פחות</span> כל ההוצאות שתועדו וחלקן החודשי של ההוצאות השנתיות. ירוק = עודף, אדום = גירעון.</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">ניווט בין חודשים</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">ניווט בין חודשים</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">החצים <span style="color:var(--text2);font-weight:500">‹ ›</span> משני צידי שם החודש מאפשרים לעבור אחורה ואחרי. כל הנתונים — הכנסות, הוצאות, לקוחות ויעדים — מסוננים לחודש שנבחר.</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;letter-spacing:.3px">כרטיסיות הסיכום</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;letter-spacing:.3px">כרטיסיות הסיכום</div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="color:var(--mint);flex-shrink:0">📥</span><span><strong style="color:var(--text2)">הכנסות</strong> — סך מה שנכנס מלקוחות ומקורות נוספים</span></div>
         <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="color:var(--rose);flex-shrink:0">📤</span><span><strong style="color:var(--text2)">הוצאות</strong> — כל מה שיצא: עו"ש, כרטיסים, מזומן</span></div>
@@ -1702,32 +1702,32 @@ html.mode-private .biz-only{ display:none!important; }
     <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px">
       <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--rose)">💸 הוצאות</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">הוספת הוצאה ידנית</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">הוספת הוצאה ידנית</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים על כפתור <span style="color:var(--text2);font-weight:500">+ הירוק</span> בפינה השמאלית התחתונה ← בוחרים <strong style="color:var(--rose)">הוצאה</strong>. ממלאים: סכום, אמצעי תשלום, קטגוריה, תיאור ותאריך. לסיום לוחצים "שמור".</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;letter-spacing:.3px">אמצעי תשלום</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;letter-spacing:.3px">אמצעי תשלום</div>
       <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px">
         <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:11px 14px">
           <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:3px">🏦 עו"ש (חשבון בנק)</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.6">עסקאות שחויבו ישירות מהחשבון — העברות בנקאיות, הוראות קבע, כרטיס חיוב מיידי.</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6">עסקאות שחויבו ישירות מהחשבון — העברות בנקאיות, הוראות קבע, כרטיס חיוב מיידי.</div>
         </div>
         <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:11px 14px">
           <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:3px">💳 מאסטרקארד (MC)</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.6">חיובי כרטיס האשראי מסוג מאסטרקארד — ייכנסו למאזן בתאריך החיוב בחשבון.</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6">חיובי כרטיס האשראי מסוג מאסטרקארד — ייכנסו למאזן בתאריך החיוב בחשבון.</div>
         </div>
         <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:11px 14px">
           <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:3px">💳 ויזה (Visa)</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.6">חיובי כרטיס הויזה — עם אפשרות מעקב נפרד מ-MC לראות את העלות לכל כרטיס.</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6">חיובי כרטיס הויזה — עם אפשרות מעקב נפרד מ-MC לראות את העלות לכל כרטיס.</div>
         </div>
       </div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">תיוג הוצאות עסקיות 💼</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">תיוג הוצאות עסקיות 💼</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">בעת הוספת הוצאה ניתן לסמן <span style="color:var(--text2);font-weight:500">💼 הוצאה עסקית</span>. הוצאות אלו נספרות בנפרד ומשמשות לחישוב ניכויי מס — ציוד, חומרי טיפול, השתלמויות, שיווק ועוד. ניתן לייצא דוח הוצאות עסקיות לרואה חשבון.</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">ייבוא מ-Gmail</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">ייבוא מ-Gmail</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים <strong style="color:var(--text2)">+ ← ייבוא Gmail</strong>. האפליקציה מתחברת לחשבון הגוגל ושולפת חיובי כרטיסים מהודעות הבנק. בוחרים אילו עסקאות לייבא ולוחצים אישור — הן נכנסות אוטומטית להוצאות.</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">הוצאות שנתיות</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">הוצאות שנתיות</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75">הוצאות שנתיות (ביטוח, חידוש רישיון, ציוד יקר) מוזנות פעם בשנה ומחולקות ל-12. כך המאזן החודשי תמיד מציג את ה"עלות האמיתית" — גם כשהתשלום בפועל חד-פעמי.</div>
     </div>
 
@@ -1735,16 +1735,16 @@ html.mode-private .biz-only{ display:none!important; }
     <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px">
       <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:#a78bfa">👥 לקוחות ויומן תורים</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">יומן התורים</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">יומן התורים</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לשונית <strong style="color:var(--text2)">לקוחות</strong> מציגה יומן חודשי. ימים שיש בהם תורים מסומנים בנקודה צבעונית. לחיצה על יום מציגה את רשימת התורים לאותו יום עם שם הלקוחה, שירות, שעה ומחיר.</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">הוספת תור חדש</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">הוספת תור חדש</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים <strong style="color:var(--text2)">+ תור חדש</strong>. ממלאים: שם לקוחה, סוג שירות (צבע, תספורת, טיפול, קרטין וכד'), שעה, תאריך ומחיר. האפליקציה מחשבת את ההכנסות הצפויות לחודש מכלל התורים שנקבעו.</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">סימון תור כבוצע / ביטול</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">סימון תור כבוצע / ביטול</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לאחר הטיפול — לוחצים <span style="color:var(--mint);font-weight:500">✓ בוצע</span> ליד שם הלקוחה. ההכנסה עוברת אוטומטית למאזן כהכנסה מאושרת. אם הלקוחה ביטלה — לוחצים "לא הגיעה" וההכנסה הצפויה מוסרת מהחישוב.</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">כרטיס לקוחה</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">כרטיס לקוחה</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75">לחיצה על שם לקוחה פותחת את הכרטיס שלה: היסטוריית ביקורים, סך הכנסות, הערות אישיות ותאריך הביקור האחרון. שימושי לזיהוי לקוחות קבועות ושמירת מידע לפני הטיפול הבא.</div>
     </div>
 
@@ -1752,13 +1752,13 @@ html.mode-private .biz-only{ display:none!important; }
     <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px">
       <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--gold)">🎯 יעדי חיסכון</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">יצירת יעד חדש</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">יצירת יעד חדש</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">בלשונית <strong style="color:var(--text2)">יעדים</strong> לוחצים <strong>+ יעד חדש</strong>. מגדירים: שם (חופשה, מכשיר, קרן חירום), סכום מטרה, תאריך יעד, אייקון וצבע אישי. האפליקציה מחשבת כמה צריך לחסוך בכל חודש כדי להגיע בזמן.</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">הוספת חיסכון</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">הוספת חיסכון</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים <span style="color:var(--gold);font-weight:500">+ הוסיפי חיסכון</span> בכרטיס הרצוי, מזינים את הסכום שנחסך ולוחצים אישור. פס ההתקדמות מתעדכן מיד ומציג כמה נשאר.</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">מעקב התקדמות</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">מעקב התקדמות</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75">כל יעד מציג: סכום שנחסך, סכום שנותר, אחוז התקדמות ומספר הימים עד לתאריך היעד. עם הגעה ל-100% — האפליקציה מציגה הודעת הצלחה.</div>
     </div>
 
@@ -1768,7 +1768,7 @@ html.mode-private .biz-only{ display:none!important; }
 
       <div style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:12px">היועצת היא מנוע AI שמנתח את הנתונים הפיננסיים שלך ומספק תובנות אישיות — לא עצות גנריות.</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;letter-spacing:.3px">מה היא מנתחת</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;letter-spacing:.3px">מה היא מנתחת</div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
         <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">•</span><span>דפוסי הוצאות חוזרים וקטגוריות שצמחו</span></div>
         <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">•</span><span>השוואה בין חודשים — מה השתנה ולמה</span></div>
@@ -1778,12 +1778,12 @@ html.mode-private .biz-only{ display:none!important; }
         <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">•</span><span>הוצאות עסקיות לעומת פרטיות — יחס ניכוי מס</span></div>
       </div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">איך פותחים</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">איך פותחים</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים על כפתור <span style="background:rgba(29,233,182,.15);color:var(--cyan);border-radius:8px;padding:2px 8px;font-size:13px">💡</span> בפינה השמאלית התחתונה. נפתח חלון שיחה שבו ניתן לשאול שאלות חופשיות, למשל: <em style="color:var(--text2)">"כמה הוצאתי על ציוד ברבעון האחרון?"</em> או <em style="color:var(--text2)">"מתי אגיע ליעד החופשה?"</em>.</div>
 
       <div style="background:rgba(29,233,182,.07);border:1px solid rgba(29,233,182,.18);border-radius:10px;padding:12px 14px">
-        <div style="font-size:12px;color:var(--cyan);font-weight:600;margin-bottom:4px">טיפ לשימוש אפקטיבי</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.6">ככל שיש יותר נתונים מתועדים, כך הניתוח מדויק יותר. מומלץ לתעד הוצאות שוטפות ולא לפספס חודשים — היועצת תזהה מגמות ארוכות טווח ותתן המלצות טובות יותר.</div>
+        <div style="font-size:13px;color:var(--cyan);font-weight:600;margin-bottom:4px">טיפ לשימוש אפקטיבי</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">ככל שיש יותר נתונים מתועדים, כך הניתוח מדויק יותר. מומלץ לתעד הוצאות שוטפות ולא לפספס חודשים — היועצת תזהה מגמות ארוכות טווח ותתן המלצות טובות יותר.</div>
       </div>
     </div>
 
@@ -1791,16 +1791,16 @@ html.mode-private .biz-only{ display:none!important; }
     <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px">
       <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--text2)">⚙️ הגדרות חשבון</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">כניסה וסנכרון ענן</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">כניסה וסנכרון ענן</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">מתחברים עם <strong style="color:var(--text2)">חשבון Google</strong> (מייל + סיסמה). לאחר הכניסה כל הנתונים נשמרים בענן ומסונכרנים אוטומטית — הכנסות, הוצאות, לקוחות, יעדים וכל ההגדרות.</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">שימוש ממספר מכשירים</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">שימוש ממספר מכשירים</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">ניתן להיכנס מהטלפון, הטאבלט והמחשב בו-זמנית. עסקה שנוספה בנייד תופיע מיד בדפדפן. מאפשר לנהל מהנייד ולצפות בדוחות על מסך גדול.</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">גיבוי ייצוא נתונים</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">גיבוי ייצוא נתונים</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">בתפריט הגדרות ← <strong style="color:var(--text2)">גיבוי נתונים</strong> — מוריד קובץ JSON עם כל הנתונים. מומלץ לגבות אחת לחודש ולשמור ב-Google Drive או iCloud.</div>
 
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">התקנה כאפליקציה (PWA)</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">התקנה כאפליקציה (PWA)</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.75">בדפדפן Chrome/Safari לוחצים <strong style="color:var(--text2)">"הוסף למסך הבית"</strong>. האפליקציה תיפתח ללא סרגל כתובות — כמו אפליקציה מלאה — עם אייקון על שולחן העבודה ותמיכה בשימוש ללא אינטרנט.</div>
     </div>
 
@@ -1811,35 +1811,35 @@ html.mode-private .biz-only{ display:none!important; }
 
       <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
         <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">כיצד מסמנים הוצאה כעסקית לצורך ניכוי מס?</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.65">בעת הוספת הוצאה, מסמנים את <strong>💼 הוצאה עסקית</strong>. ניתן לסנן בדוח השנתי לפי הוצאות עסקיות בלבד ולייצא אותן לרואה חשבון.</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65">בעת הוספת הוצאה, מסמנים את <strong>💼 הוצאה עסקית</strong>. ניתן לסנן בדוח השנתי לפי הוצאות עסקיות בלבד ולייצא אותן לרואה חשבון.</div>
       </div>
 
       <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
         <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">הייבוא מ-Gmail לא מוצא עסקאות — מה עושים?</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.65">וודאי שהמיילים מהבנק / חברת הכרטיס מגיעים לאותה כתובת Gmail שבה נכנסת לאפליקציה. לפעמים ההודעות נמצאות בתיקיית Promotions — יש להעביר אחת לתיקייה הראשית כדי שגוגל ייתן גישה.</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65">וודאי שהמיילים מהבנק / חברת הכרטיס מגיעים לאותה כתובת Gmail שבה נכנסת לאפליקציה. לפעמים ההודעות נמצאות בתיקיית Promotions — יש להעביר אחת לתיקייה הראשית כדי שגוגל ייתן גישה.</div>
       </div>
 
       <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
         <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">האם ניתן לערוך עסקה אחרי השמירה?</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.65">כן. נכנסים לרשימת הוצאות/הכנסות, מוצאים את העסקה ולוחצים עליה לעריכה. ניתן לשנות סכום, קטגוריה, תיאור, אמצעי תשלום ותאריך.</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65">כן. נכנסים לרשימת הוצאות/הכנסות, מוצאים את העסקה ולוחצים עליה לעריכה. ניתן לשנות סכום, קטגוריה, תיאור, אמצעי תשלום ותאריך.</div>
       </div>
 
       <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
         <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">מה ההבדל בין הוצאות שנתיות להוצאות רגילות?</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.65">הוצאות שנתיות (ביטוח שנתי, חידוש רישיון, ציוד יקר) מוזנות פעם בשנה ומחולקות ל-12 — כך המאזן החודשי מגלם את העלות האמיתית גם אם התשלום בפועל חד-פעמי.</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65">הוצאות שנתיות (ביטוח שנתי, חידוש רישיון, ציוד יקר) מוזנות פעם בשנה ומחולקות ל-12 — כך המאזן החודשי מגלם את העלות האמיתית גם אם התשלום בפועל חד-פעמי.</div>
       </div>
 
       <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
         <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">האפליקציה עובדת ללא אינטרנט?</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.65">כן — לאחר ביקור ראשון האפליקציה נשמרת במכשיר. ניתן לצפות בנתונים ולהוסיף עסקאות גם ללא חיבור. הסנכרון יתעדכן אוטומטית כשהאינטרנט יחזור.</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65">כן — לאחר ביקור ראשון האפליקציה נשמרת במכשיר. ניתן לצפות בנתונים ולהוסיף עסקאות גם ללא חיבור. הסנכרון יתעדכן אוטומטית כשהאינטרנט יחזור.</div>
       </div>
 
     </div>
 
     <!-- CTA -->
     <div style="background:rgba(29,233,182,.07);border:1px solid rgba(29,233,182,.2);border-radius:14px;padding:18px;text-align:center">
-      <div style="font-size:14px;color:var(--cyan);margin-bottom:6px;font-weight:600">רוצה ניתוח כלכלי אישי?</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6">היועצת מנתחת את ההוצאות, ההכנסות והיעדים שלך ומציעה תובנות לפי ההתנהלות האמיתית שלך — לא עצות גנריות.</div>
+      <div style="font-size:13px;color:var(--cyan);margin-bottom:6px;font-weight:600">רוצה ניתוח כלכלי אישי?</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">היועצת מנתחת את ההוצאות, ההכנסות והיעדים שלך ומציעה תובנות לפי ההתנהלות האמיתית שלך — לא עצות גנריות.</div>
       <button onclick="openAdvisor();go('home')" style="background:var(--cyan);color:#0A1520;border:none;border-radius:10px;padding:11px 28px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Rubik',sans-serif">💡 פתחי יועצת כלכלית</button>
     </div>
 
@@ -1859,7 +1859,7 @@ html.mode-private .biz-only{ display:none!important; }
   <div class="detail-hdr">
     <button class="back-btn" onclick="go('home')">‹</button>
     <div class="detail-title">🔐 פאנל אדמין</div>
-    <button onclick="exportUsersCSV()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-size:12px;font-weight:500;font-family:'Rubik',sans-serif;padding:6px 14px;border-radius:10px;cursor:pointer;border:none">ייצוא CSV</button>
+    <button onclick="exportUsersCSV()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-size:13px;font-weight:500;font-family:'Rubik',sans-serif;padding:6px 14px;border-radius:10px;cursor:pointer;border:none">ייצוא CSV</button>
   </div>
   <div id="admin-content" style="padding:14px 14px 80px;direction:rtl">
     <div style="text-align:center;padding:30px;color:var(--muted);font-size:13px">טוען נתוני משתמשים...</div>
@@ -1903,7 +1903,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260746;
+var APP_VER=20260747;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2948,11 +2948,11 @@ function renderAdmin(){
     snap.forEach(function(doc){_adminUsers.push(doc.data());});
     _adminUsers.sort(function(a,b){return (b.lastSeen||0)-(a.lastSeen||0);});
     var h='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:14px;display:flex;gap:20px">';
-    h+='<div style="text-align:center;flex:1"><div style="font-size:22px;font-weight:500;color:var(--cyan)">'+_adminUsers.length+'</div><div style="font-size:11px;color:var(--muted)">משתמשים רשומים</div></div>';
+    h+='<div style="text-align:center;flex:1"><div style="font-size:20px;font-weight:500;color:var(--cyan)">'+_adminUsers.length+'</div><div style="font-size:11px;color:var(--muted)">משתמשים רשומים</div></div>';
     var activeToday=_adminUsers.filter(function(u){return u.lastSeen&&(Date.now()-u.lastSeen)<86400000;}).length;
-    h+='<div style="text-align:center;flex:1"><div style="font-size:22px;font-weight:500;color:var(--pos)">'+activeToday+'</div><div style="font-size:11px;color:var(--muted)">פעילים היום</div></div>';
+    h+='<div style="text-align:center;flex:1"><div style="font-size:20px;font-weight:500;color:var(--pos)">'+activeToday+'</div><div style="font-size:11px;color:var(--muted)">פעילים היום</div></div>';
     var totalMin=Math.round(_adminUsers.reduce(function(s,u){return s+(u.duration||0);},0)/60);
-    h+='<div style="text-align:center;flex:1"><div style="font-size:22px;font-weight:500;color:var(--gold)">'+totalMin+'</div><div style="font-size:11px;color:var(--muted)">דקות שימוש כולל</div></div>';
+    h+='<div style="text-align:center;flex:1"><div style="font-size:20px;font-weight:500;color:var(--gold)">'+totalMin+'</div><div style="font-size:11px;color:var(--muted)">דקות שימוש כולל</div></div>';
     h+='</div>';
     h+='<div style="font-size:11px;color:var(--muted);margin-bottom:8px;padding-right:4px">כל המשתמשים · לחיצה על שורה להעתקת UID</div>';
     _adminUsers.forEach(function(u){
@@ -3007,7 +3007,7 @@ function renderBizReport(){
     h+='<span style="font-size:15px;font-weight:500;color:#FFD63C">₪'+fmt(total)+'</span>';
     h+='</div>';
     arr.sort(function(a,b){return parseInt(a.d)-parseInt(b.d);}).forEach(function(t){
-      h+='<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-top:1px solid var(--border)">';
+      h+='<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-top:1px solid var(--border)">';
       h+='<span style="color:var(--text2)">'+esc(t.desc)+'</span>';
       h+='<span style="color:var(--neg)">₪'+fmt(t.a)+'</span>';
       h+='</div>';
@@ -3018,7 +3018,7 @@ function renderBizReport(){
   else{
     h='<div style="background:rgba(255,214,60,.1);border:1px solid rgba(255,214,60,.3);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">'+
     '<div><div style="font-size:13px;font-weight:500;color:#FFD63C">סה"כ '+curYear+'</div><div style="font-size:11px;color:var(--muted);margin-top:2px">ניתן לדווח לרואה החשבון</div></div>'+
-    '<div style="font-size:22px;font-weight:500;color:#FFD63C">₪'+fmt(grandTotal)+'</div>'+
+    '<div style="font-size:20px;font-weight:500;color:#FFD63C">₪'+fmt(grandTotal)+'</div>'+
     '</div>'+h;
   }
   var el=document.getElementById('biz-report-content');
@@ -3458,7 +3458,7 @@ function renderExpenses(){
   var bs='';
   if(bizItems.length||_bizFilter){
     bs+='<div class="biz-summary-card'+(_bizFilter?' active':'')+'" onclick="toggleBizFilter()">';
-    bs+='<span style="font-size:18px">💼</span>';
+    bs+='<span style="font-size:20px">💼</span>';
     bs+='<div style="flex:1"><div style="font-size:13px;font-weight:500;color:#FFD63C">הוצאות עסקיות — '+bizItems.length+' פריטים</div>';
     bs+='<div style="font-size:11px;color:var(--muted);margin-top:2px">לחצי לסינון'+(_bizFilter?' · <span style="color:#FFD63C">מסנן כעת</span>':'')+'</div></div>';
     bs+='<div style="font-size:20px;font-weight:500;color:#FFD63C">₪'+fmt(bizTotal)+'</div>';
@@ -3608,7 +3608,7 @@ function renderIncome(){
   var h='<div class="txn-group-hdr">הכנסות קבועות</div>';
   h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(29,233,182,.18);color:#1DE9B6">לאומי</div><div class="txn-body"><div class="txn-desc">ביטוח לאומי</div><div class="txn-date">קבוע חודשי</div></div><div class="txn-amt pos">+₪'+fmt(fixedAmt)+'</div></div>';
   FIXED_INCOME.filter(function(fi){return fi.active!==false;}).forEach(function(fi){
-    h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(255,213,79,.18);color:var(--gold)">קבועה</div><div class="txn-body"><div class="txn-desc">'+esc(fi.name)+'</div><div class="txn-date">יום '+fi.day+' · קבוע חודשי</div></div><div class="txn-amt pos">+₪'+fmt(fi.amount)+'</div><button onclick="deleteFI('+fi.id+')" style="background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:0 4px">🗑</button><button onclick="openFIModal('+fi.id+')" style="background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:0 4px">✏️</button></div>';
+    h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(255,213,79,.18);color:var(--gold)">קבועה</div><div class="txn-body"><div class="txn-desc">'+esc(fi.name)+'</div><div class="txn-date">יום '+fi.day+' · קבוע חודשי</div></div><div class="txn-amt pos">+₪'+fmt(fi.amount)+'</div><button onclick="deleteFI('+fi.id+')" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:0 4px">🗑</button><button onclick="openFIModal('+fi.id+')" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:0 4px">✏️</button></div>';
   });
   if(items.length){
     h+='<div class="txn-group-hdr">הכנסות נוספות</div>';
@@ -3734,7 +3734,7 @@ function openModal(day,mi){
   modalDay=day;modalMi=mi;
   var ml=MONTHS[mi];
   var mo=['','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
-  document.getElementById('m-title').innerHTML='<span style="color:var(--cyan);font-size:26px">'+day+'</span> <span style="font-size:18px;opacity:.8">ב'+mo[ml.key]+'</span>';
+  document.getElementById('m-title').innerHTML='<span style="color:var(--cyan);font-size:20px">'+day+'</span> <span style="font-size:20px;opacity:.8">ב'+mo[ml.key]+'</span>';
   renderMC();
   document.getElementById('mbg').classList.add('open');
 }
@@ -3861,12 +3861,12 @@ function confirmMove(){
   // show who-cancelled sub-section
   var panel=document.getElementById('move-panel');
   panel.style.display='block';
-  panel.innerHTML='<div style="font-size:12px;color:var(--muted);margin-bottom:10px">מי ביטל את התור המקורי?</div>'
+  panel.innerHTML='<div style="font-size:13px;color:var(--muted);margin-bottom:10px">מי ביטל את התור המקורי?</div>'
     +'<div style="display:flex;gap:8px">'
-    +'<button onclick="doneWhoCancel(true)" style="flex:1;background:rgba(255,107,107,.15);color:var(--neg);font-family:\'Sora\',sans-serif;font-size:12px;font-weight:500;padding:10px;border-radius:10px;border:1px solid rgba(255,107,107,.25);cursor:pointer">ביטלתי אני (העסק)</button>'
-    +'<button onclick="doneWhoCancel(false)" style="flex:1;background:rgba(255,179,71,.12);color:#FFB347;font-family:\'Sora\',sans-serif;font-size:12px;font-weight:500;padding:10px;border-radius:10px;border:1px solid rgba(255,179,71,.25);cursor:pointer">ביטלה הלקוחה</button>'
+    +'<button onclick="doneWhoCancel(true)" style="flex:1;background:rgba(255,107,107,.15);color:var(--neg);font-family:\'Sora\',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:10px;border:1px solid rgba(255,107,107,.25);cursor:pointer">ביטלתי אני (העסק)</button>'
+    +'<button onclick="doneWhoCancel(false)" style="flex:1;background:rgba(255,179,71,.12);color:#FFB347;font-family:\'Sora\',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:10px;border:1px solid rgba(255,179,71,.25);cursor:pointer">ביטלה הלקוחה</button>'
     +'</div>'
-    +'<button onclick="cancelMove()" style="display:block;width:100%;text-align:center;font-size:12px;color:var(--muted);margin-top:10px;background:none;border:none;font-family:\'Sora\',sans-serif;cursor:pointer">דלג / לא רלוונטי</button>';
+    +'<button onclick="cancelMove()" style="display:block;width:100%;text-align:center;font-size:13px;color:var(--muted);margin-top:10px;background:none;border:none;font-family:\'Sora\',sans-serif;cursor:pointer">דלג / לא רלוונטי</button>';
 }
 
 // ── PROJECT 4: CANCELLATION TRACKING HELPERS ─────────────
@@ -4041,22 +4041,22 @@ function renderClientCard(name){
   html+='<div style="font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px">פרטי קשר</div>';
   html+='<div style="display:flex;flex-direction:column;gap:8px">';
   html+='<div style="display:flex;align-items:center;gap:8px">'
-    +'<span style="font-size:16px;flex-shrink:0">📞</span>'
+    +'<span style="font-size:15px;flex-shrink:0">📞</span>'
     +'<input id="ccp-phone" type="tel" placeholder="מספר טלפון" value="'+esc(prof.phone||'')+'"'
     +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif;direction:ltr;text-align:left">'
     +'</div>';
   html+='<div style="display:flex;align-items:center;gap:8px">'
-    +'<span style="font-size:16px;flex-shrink:0">🏠</span>'
+    +'<span style="font-size:15px;flex-shrink:0">🏠</span>'
     +'<input id="ccp-address" type="text" placeholder="כתובת (לחשבוניות)" value="'+esc(prof.address||'')+'"'
     +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif">'
     +'</div>';
   html+='<div style="display:flex;align-items:center;gap:8px">'
-    +'<span style="font-size:16px;flex-shrink:0">💆</span>'
+    +'<span style="font-size:15px;flex-shrink:0">💆</span>'
     +'<input id="ccp-treat" type="text" placeholder="סוג טיפול מועדף (פנים, גוף...)" value="'+esc(prof.treatType||'')+'"'
     +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif">'
     +'</div>';
   html+='<div style="display:flex;align-items:flex-start;gap:8px">'
-    +'<span style="font-size:16px;flex-shrink:0;margin-top:6px">📝</span>'
+    +'<span style="font-size:15px;flex-shrink:0;margin-top:6px">📝</span>'
     +'<textarea id="ccp-notes" rows="2" placeholder="הערות כלליות על הלקוחה..."'
     +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif;resize:none;line-height:1.5">'+esc(prof.notes||'')+'</textarea>'
     +'</div>';
@@ -5843,10 +5843,10 @@ function _renderCatParsed(){
   }
   var h='';
   _catParsed.forEach(function(p,i){
-    h+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px">' +
+    h+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px">' +
       '<span style="flex:1">' + esc(p.name) + '</span>' +
       '<span style="color:var(--cyan);min-width:44px;text-align:left">' + (p.price>0?'₪'+fmt(p.price):'—') + '</span>' +
-      '<button onclick="_removeCatParsed('+i+')" style="background:none;border:none;color:var(--neg);font-size:12px;cursor:pointer;padding:0 4px">✕</button>' +
+      '<button onclick="_removeCatParsed('+i+')" style="background:none;border:none;color:var(--neg);font-size:13px;cursor:pointer;padding:0 4px">✕</button>' +
       '</div>';
   });
   el.innerHTML=h;
@@ -6016,11 +6016,11 @@ function _renderOrderItems(){
   var h='';
   _orderItems.forEach(function(it,i){
     var line=it.qty*(it.price||0); total+=line;
-    h+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px">' +
+    h+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px">' +
       '<span style="flex:1">' + esc(it.name) + '</span>' +
       '<span style="color:var(--muted)">' + it.qty + ' × ₪' + fmt(it.price) + '</span>' +
       '<span style="font-weight:500;color:var(--cyan)">₪' + fmt(line) + '</span>' +
-      '<button onclick="removeOrderItem('+i+')" style="background:none;border:none;color:var(--neg);font-size:12px;cursor:pointer;padding:0 4px">✕</button>' +
+      '<button onclick="removeOrderItem('+i+')" style="background:none;border:none;color:var(--neg);font-size:13px;cursor:pointer;padding:0 4px">✕</button>' +
       '</div>';
   });
   document.getElementById('ord-items-list').innerHTML=h;
