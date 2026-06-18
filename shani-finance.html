@@ -1903,7 +1903,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260745;
+var APP_VER=20260746;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2803,21 +2803,21 @@ function sumI(m){ return (RAW.income[m]||[]).reduce(function(s,t){return s+t.a;}
 function cat(d){
   if(/קנאביס/i.test(d))   return{bg:'rgba(0,200,100,.18)',co:'#00C864',lbl:'קנב'};
   if(/קפה|תה/i.test(d))   return{bg:'rgba(255,177,60,.18)',co:'#FFB347',lbl:'קפה'};
-  if(/יין|בירה|קוקטייל/i.test(d)) return{bg:'rgba(181,123,238,.18)',co:'#B57BEE',lbl:'בר'};
-  if(/וולט|אוכל|סלט|מרק|פסטה|נודלס|קוסקוס/i.test(d)) return{bg:'rgba(255,109,53,.18)',co:'#FF6D35',lbl:'אוכל'};
+  if(/יין|בירה|קוקטייל/i.test(d)) return{bg:'rgba(255,255,255,.06)',co:'rgba(255,255,255,.6)',lbl:'בר'};
+  if(/וולט|אוכל|סלט|מרק|פסטה|נודלס|קוסקוס/i.test(d)) return{bg:'rgba(29,233,182,.1)',co:'rgba(29,233,182,.7)',lbl:'אוכל'};
   if(/שכירות/i.test(d))   return{bg:'rgba(29,233,182,.18)',co:'#1DE9B6',lbl:'שכ"ד'};
   if(/חשמל/i.test(d))     return{bg:'rgba(255,230,100,.18)',co:'#FFE064',lbl:'חשמל'};
   if(/ביטוח|קופת חולים/i.test(d)) return{bg:'rgba(107,163,255,.18)',co:'#6BA3FF',lbl:'ביטוח'};
   if(/סופר|קניות/i.test(d)) return{bg:'rgba(29,233,182,.18)',co:'#1DE9B6',lbl:'קניות'};
   if(/טבק/i.test(d))      return{bg:'rgba(200,150,100,.18)',co:'#C89050',lbl:'טבק'};
-  if(/דלק/i.test(d))      return{bg:'rgba(255,109,53,.18)',co:'#FF6D35',lbl:'דלק'};
-  if(/אייפון|טלפון|כיסוי|מדבקה/i.test(d)) return{bg:'rgba(181,123,238,.18)',co:'#B57BEE',lbl:'טלפון'};
+  if(/דלק/i.test(d))      return{bg:'rgba(29,233,182,.1)',co:'rgba(29,233,182,.7)',lbl:'דלק'};
+  if(/אייפון|טלפון|כיסוי|מדבקה/i.test(d)) return{bg:'rgba(255,255,255,.06)',co:'rgba(255,255,255,.6)',lbl:'טלפון'};
   if(/מנוי|ספוטיפיי|נטפליקס|קלאוד/i.test(d)) return{bg:'rgba(107,163,255,.18)',co:'#6BA3FF',lbl:'מנוי'};
   if(/פרטנר/i.test(d))    return{bg:'rgba(107,163,255,.18)',co:'#6BA3FF',lbl:'פרטנר'};
-  if(/טסט/i.test(d))      return{bg:'rgba(255,109,53,.18)',co:'#FF6D35',lbl:'טסט'};
+  if(/טסט/i.test(d))      return{bg:'rgba(29,233,182,.1)',co:'rgba(29,233,182,.7)',lbl:'טסט'};
   if(/מים|חשבון/i.test(d)) return{bg:'rgba(107,163,255,.18)',co:'#6BA3FF',lbl:'חשבון'};
-  if(/מונית/i.test(d))    return{bg:'rgba(255,109,53,.18)',co:'#FF6D35',lbl:'נסיעה'};
-  if(/חניה/i.test(d))     return{bg:'rgba(255,109,53,.18)',co:'#FF6D35',lbl:'חניה'};
+  if(/מונית/i.test(d))    return{bg:'rgba(29,233,182,.1)',co:'rgba(29,233,182,.7)',lbl:'נסיעה'};
+  if(/חניה/i.test(d))     return{bg:'rgba(29,233,182,.1)',co:'rgba(29,233,182,.7)',lbl:'חניה'};
   return{bg:'rgba(255,255,255,.08)',co:'rgba(255,255,255,.5)',lbl:'אחר'};
 }
 
@@ -3378,7 +3378,7 @@ function renderExpenses(){
   items.forEach(function(t){var c=cat(t.desc);if(!catTotals[c.lbl])catTotals[c.lbl]={amt:0,bg:c.bg,co:c.co};catTotals[c.lbl].amt+=t.a;});
   var catArr=Object.keys(catTotals).map(function(k){return{lbl:k,amt:catTotals[k].amt,bg:catTotals[k].bg,co:catTotals[k].co};}).sort(function(a,b){return b.amt-a.amt;});
   // resolve any 'var(--..)' colors to concrete hex so conic-gradient renders
-  var palette=['#1DE9B6','#FF6D35','#B57BEE','#6BA3FF','#FFB347','#FF6B6B','#00E676','#FF6FB5','#4DD0E1','#FFD060','#9CCC65','#BA68C8'];
+  var palette=['#1DE9B6','rgba(29,233,182,.55)','rgba(255,255,255,.5)','#6BA3FF','#FFB347','#FF6B6B','#00E676','rgba(29,233,182,.35)','#4DD0E1','#FFD060','#9CCC65','rgba(255,255,255,.3)'];
   catArr.forEach(function(c,i){ if(!c.co||c.co.indexOf('var(')===0){c.co=palette[i%palette.length];} });
   var total=catArr.reduce(function(s,c){return s+c.amt;},0);
   var ch='';
@@ -4180,7 +4180,7 @@ function renderTrends(){
 
 // ── GOALS ─────────────────────────────────────────────────
 var activeGoalIdx=-1;
-var GOAL_COLORS=['#1DE9B6','#B57BEE','#FFB347','#6BA3FF','#00E676','#FF6B6B','#FF6D35'];
+var GOAL_COLORS=['#1DE9B6','rgba(255,255,255,.55)','#FFB347','#6BA3FF','#00E676','#FF6B6B','rgba(29,233,182,.65)'];
 
 function renderGoals(){
   var totalT=GOALS.reduce(function(s,g){return s+g.target;},0);
