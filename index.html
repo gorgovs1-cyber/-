@@ -359,6 +359,10 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .txn-chip{font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(29,233,182,.12);color:var(--cyan);font-weight:500;cursor:pointer;border:1px solid rgba(29,233,182,.2)}
 .txn-chip.active{background:rgba(29,233,182,.28);border-color:var(--cyan)}
 .tag-filter-bar{display:flex;flex-wrap:wrap;gap:5px;padding:8px 14px 4px;min-height:0}
+.txn-biz{display:inline-flex;align-items:center;font-size:10px;padding:1px 5px;border-radius:6px;margin-right:3px;vertical-align:middle;cursor:pointer;user-select:none;background:rgba(255,214,60,.13);color:#FFD63C;border:1px solid rgba(255,214,60,.22)}
+.txn-biz.no{background:rgba(255,255,255,.05);color:var(--muted);border-color:transparent}
+.biz-summary-card{background:rgba(255,214,60,.08);border:1px solid rgba(255,214,60,.2);border-radius:12px;margin:0 14px 10px;padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.biz-summary-card.active{background:rgba(255,214,60,.16);border-color:rgba(255,214,60,.4)}
 
 /* ══ BALANCE DETAIL ══════════════════════════════════════ */
 .bal-detail{padding:0 16px 16px}
@@ -797,6 +801,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div style="border-top:1px solid var(--border);margin:8px 0"></div>
     <div class="drw-item" onclick="openAdvisor();closeDrawer()"><span class="di-emoji">💡</span><span>יועצת כלכלית</span></div>
     <div class="drw-item" data-page="guide" onclick="go('guide');closeDrawer()"><span class="di-emoji">📖</span><span>מדריך ועזרה</span></div>
+    <div class="drw-item" onclick="go('biz-report');closeDrawer()"><span class="di-emoji">💼</span><span>דוח הוצאות עסקיות</span></div>
     <div class="drw-item" onclick="exportData();closeDrawer()"><span class="di-emoji">📥</span><span>גיבוי נתונים</span></div>
     <div class="drw-item" onclick="openSettings()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M5 7h8"/><circle cx="16.5" cy="7" r="2.3"/><path d="M19 17h-8"/><circle cx="7.5" cy="17" r="2.3"/></svg></span><span>הגדרות</span></div>
     <div class="drw-item" onclick="toggleTheme()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></span><span id="theme-lbl">מצב ים</span></div>
@@ -921,6 +926,7 @@ html.mode-private .biz-only{ display:none!important; }
     <button class="compare-toggle" onclick="toggleCatChart(this)">השוואה חודשית ▾</button>
     <div class="compare-wrap" id="compare-wrap"><canvas id="cat-chart"></canvas></div>
   </div>
+  <div id="exp-biz-summary"></div>
   <div class="tag-filter-bar" id="exp-tag-filter"></div>
   <div class="txn-list" id="exp-list"></div>
 </div>
@@ -1646,6 +1652,15 @@ html.mode-private .biz-only{ display:none!important; }
   </button>
 </div>
 
+<!-- ══ BIZ REPORT ════════════════════════════════════════ -->
+<div class="screen" id="s-biz-report">
+  <div class="detail-hdr">
+    <button class="back-btn" onclick="go('home')">‹</button>
+    <div class="detail-title">💼 דוח הוצאות עסקיות</div>
+  </div>
+  <div id="biz-report-content" style="padding:14px 14px 80px;direction:rtl"></div>
+</div>
+
 <!-- BOTTOM TAB BAR -->
 <nav class="btm-nav" id="btm-nav">
   <button class="btm-item" data-page="home" onclick="go('home')" aria-label="בית">
@@ -1673,7 +1688,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260734;
+var APP_VER=20260735;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2374,6 +2389,26 @@ var FIXED_INCOME=[];
 var INCOME_DISMISSED=[];
 var _fiEditId=null;
 var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:1200,אוכל:800,קפה:300,דלק:400,נסיעה:300,חניה:200,ביטוח:500,חשמל:350,חשבון:300,מנוי:200,טלפון:150,פרטנר:250};
+// Business expense auto-detection patterns (beauty/mobile professional)
+var BIZ_PATTERNS=[
+  /דלק|פז|סונול|גז סטיישן|fuel/i,
+  /חומר|השחלה|קרטין|גלאם|מוצר (לשיער|טיפול)|תרסיס|שמפו מקצועי/i,
+  /ציוד|כלי עבודה|מכשיר|מייבש|מחליק/i,
+  /כפפות|מגבות|כיסוי ראש|רדיד/i,
+  /גוד פארם|superpharm|סופר פארם|אי.אן.פי/i,
+  /אחזקה מקצועית|תיקון ציוד/i,
+  /פרסום|שיווק|מודעה|מטה|facebook ads|google ads/i,
+  /הכשרה|קורס|השתלמות/i,
+  /ביטוח עסק|ביטוח מקצועי/i,
+  /נסיעה ללקוחה|נסיעה לטיפול/i
+];
+function isBizExpense(t){
+  if(t.biz===true)return true;
+  if(t.biz===false)return false;
+  for(var i=0;i<BIZ_PATTERNS.length;i++){if(BIZ_PATTERNS[i].test(t.desc))return true;}
+  return false;
+}
+var _bizFilter=false;
 var _budgetEditLbl='';
 var catChartInst=null;
 
@@ -2676,7 +2711,45 @@ function go(name){
   if(name==='gcal')     renderGcal();
   if(name==='annual')   renderAnnual();
   if(name==='suppliers') renderSuppliers();
+  if(name==='biz-report') renderBizReport();
   // guide is static HTML — no render function needed
+}
+
+function renderBizReport(){
+  var h='';
+  var grandTotal=0;
+  var now=new Date();
+  var curYear=now.getFullYear();
+  MONTHS.forEach(function(mo){
+    var arr=(RAW.expense[mo.key]||[]).filter(function(t){
+      var yr=t.year||curYear;
+      return yr===curYear&&isBizExpense(t);
+    });
+    if(!arr.length)return;
+    var total=arr.reduce(function(s,t){return s+t.a;},0);
+    grandTotal+=total;
+    h+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    h+='<span style="font-size:13px;font-weight:500">'+mo.name+'</span>';
+    h+='<span style="font-size:15px;font-weight:500;color:#FFD63C">₪'+fmt(total)+'</span>';
+    h+='</div>';
+    arr.sort(function(a,b){return parseInt(a.d)-parseInt(b.d);}).forEach(function(t){
+      h+='<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-top:1px solid var(--border)">';
+      h+='<span style="color:var(--text2)">'+esc(t.desc)+'</span>';
+      h+='<span style="color:var(--neg)">₪'+fmt(t.a)+'</span>';
+      h+='</div>';
+    });
+    h+='</div>';
+  });
+  if(!h){h='<div style="text-align:center;padding:40px;color:var(--muted);font-size:13px">לא נמצאו הוצאות עסקיות<br><span style="font-size:11px">הוצאות מסומנות ב-💼 יופיעו כאן</span></div>';}
+  else{
+    h='<div style="background:rgba(255,214,60,.1);border:1px solid rgba(255,214,60,.3);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">'+
+    '<div><div style="font-size:13px;font-weight:500;color:#FFD63C">סה"כ '+curYear+'</div><div style="font-size:11px;color:var(--muted);margin-top:2px">ניתן לדווח לרואה החשבון</div></div>'+
+    '<div style="font-size:22px;font-weight:500;color:#FFD63C">₪'+fmt(grandTotal)+'</div>'+
+    '</div>'+h;
+  }
+  var el=document.getElementById('biz-report-content');
+  if(el)el.innerHTML=h;
 }
 
 // ── COUNT-UP ANIMATION ───────────────────────────────────
@@ -3088,21 +3161,41 @@ function renderExpenses(){
     }
   }
 
+  // ── Business expense summary ──
+  var bizItems=items.filter(function(t){return isBizExpense(t);});
+  var bizTotal=bizItems.reduce(function(s,t){return s+t.a;},0);
+  var bs='';
+  if(bizItems.length||_bizFilter){
+    bs+='<div class="biz-summary-card'+(_bizFilter?' active':'')+'" onclick="toggleBizFilter()">';
+    bs+='<span style="font-size:18px">💼</span>';
+    bs+='<div style="flex:1"><div style="font-size:13px;font-weight:500;color:#FFD63C">הוצאות עסקיות — '+bizItems.length+' פריטים</div>';
+    bs+='<div style="font-size:11px;color:var(--muted);margin-top:2px">לחצי לסינון'+(_bizFilter?' · <span style="color:#FFD63C">מסנן כעת</span>':'')+'</div></div>';
+    bs+='<div style="font-size:20px;font-weight:500;color:#FFD63C">₪'+fmt(bizTotal)+'</div>';
+    bs+='</div>';
+  }
+  document.getElementById('exp-biz-summary').innerHTML=bs;
+
   // ── Transactions by date ──
-  var filtered=_tagFilter?items.filter(function(t){return t.tags&&t.tags.indexOf(_tagFilter)>=0;}):items;
+  var filtered=items.slice();
+  if(_tagFilter)filtered=filtered.filter(function(t){return t.tags&&t.tags.indexOf(_tagFilter)>=0;});
+  if(_bizFilter)filtered=filtered.filter(function(t){return isBizExpense(t);});
   var byDate={};
   filtered.forEach(function(t){if(!byDate[t.d])byDate[t.d]=[];byDate[t.d].push(t);});
   var h='';var ti=0;
-  if(_tagFilter&&!filtered.length){h='<div class="mempty">אין הוצאות עם תגית #'+esc(_tagFilter)+'</div>';}
+  if(!filtered.length){
+    h='<div class="mempty">'+((_tagFilter||_bizFilter)?'אין הוצאות עם הסינון הנוכחי':'אין הוצאות בחודש זה')+'</div>';
+  }
   Object.keys(byDate).sort().forEach(function(dt){
     h+='<div class="txn-group-hdr">'+dt+'</div>';
     byDate[dt].forEach(function(t){
       var c=cat(t.desc);
-      var mt=t.method?'<span class="txn-method '+t.method+'" title="לחצי לשינוי" onclick="event.stopPropagation();cycleTxnMethod(\''+key+'\')" style="cursor:pointer">'+(t.method==='mc'?'MC':t.method==='visa'?'Visa':t.method==='cash'?'מזומן':'עוש')+'</span>':'';
       var key=encodeURIComponent(t.d+'|'+t.desc+'|'+t.a);
+      var mt=t.method?'<span class="txn-method '+t.method+'" title="לחצי לשינוי" onclick="event.stopPropagation();cycleTxnMethod(\''+key+'\')" style="cursor:pointer">'+(t.method==='mc'?'MC':t.method==='visa'?'Visa':t.method==='cash'?'מזומן':'עוש')+'</span>':'';
+      var isBiz=isBizExpense(t);
+      var bizBadge='<span class="txn-biz'+(t.biz===false?' no':'')+'" title="הוצאה עסקית — לחצי לשינוי" onclick="event.stopPropagation();cycleBizFlag(\''+key+'\')">'+(isBiz?'💼':'')+'</span>';
       var chips='';
       if(t.tags&&t.tags.length)chips='<div class="txn-chips">'+t.tags.map(function(g){return'<span class="txn-chip" onclick="setTagFilter(\''+esc(g)+'\')">#'+esc(g)+'</span>';}).join('')+'</div>';
-      h+='<div class="txn-item stagger" style="--si:'+ti+'"><div class="txn-icon" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="txn-body"><div class="txn-desc">'+esc(t.desc)+mt+'</div><div class="txn-date">'+esc(dt)+'</div>'+chips+'</div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div><button class="txn-del" onclick="delExpTxn(\''+key+'\')">✕</button></div>';
+      h+='<div class="txn-item stagger" style="--si:'+ti+'"><div class="txn-icon" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="txn-body"><div class="txn-desc">'+esc(t.desc)+mt+bizBadge+'</div><div class="txn-date">'+esc(dt)+'</div>'+chips+'</div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div><button class="txn-del" onclick="delExpTxn(\''+key+'\')">✕</button></div>';
       ti++;
     });
   });
@@ -3110,6 +3203,22 @@ function renderExpenses(){
 }
 
 function setTagFilter(tag){_tagFilter=tag;renderExpenses();}
+function toggleBizFilter(){_bizFilter=!_bizFilter;renderExpenses();}
+function cycleBizFlag(key){
+  var parts=decodeURIComponent(key).split('|');
+  var d=parts[0],desc=parts[1],a=parseFloat(parts[2]);
+  var m=MONTHS[homeMi].key;
+  var arr=RAW.expense[m]||[];
+  for(var i=0;i<arr.length;i++){
+    if(arr[i].d===d&&arr[i].desc===desc&&arr[i].a===a){
+      var cur=arr[i].biz;
+      if(cur===undefined){arr[i].biz=true;toast('סומן כהוצאה עסקית 💼');}
+      else if(cur===true){arr[i].biz=false;toast('סומן כהוצאה לא עסקית');}
+      else{delete arr[i].biz;toast('חזר לזיהוי אוטומטי');}
+      save();renderExpenses();return;
+    }
+  }
+}
 
 // ── DELETE EXPENSE ────────────────────────────────────────
 function delExpTxn(key){
