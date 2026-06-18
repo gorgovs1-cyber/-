@@ -1881,10 +1881,11 @@ html.mode-private .biz-only{ display:none!important; }
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260739;
+var APP_VER=20260741;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2842,7 +2843,7 @@ function load(){
     var c=localStorage.getItem('shani_clients'); if(c){var d=JSON.parse(c);Object.keys(d).forEach(function(k){CLIENTS[k]=d[k];});}
     var e=localStorage.getItem('shani_expense'); if(e){var d=JSON.parse(e);Object.keys(d).forEach(function(k){RAW.expense[k]=d[k];});}
     var i=localStorage.getItem('shani_income');  if(i){var d=JSON.parse(i);Object.keys(d).forEach(function(k){RAW.income[k]=d[k];});}
-    var cd=localStorage.getItem('shani_cards');  if(cd){var cdo=JSON.parse(cd);Object.assign(CARDS,cdo);if(!CARDS.limit)CARDS.limit=10000;}
+    var cd=localStorage.getItem('shani_cards');  if(cd){var cdo=JSON.parse(cd);Object.assign(CARDS,cdo);if(!CARDS.limit)CARDS.limit=10000;if(CARDS.bank<0)CARDS.bank=Math.abs(CARDS.bank);}
     var g=localStorage.getItem('shani_goals');   if(g)GOALS=JSON.parse(g);
     var bu=localStorage.getItem('shani_budgets');if(bu){var buo=JSON.parse(bu);Object.assign(BUDGETS,buo);}
     var fp=localStorage.getItem('shani_fp'); if(fp)FIXED_PAYMENTS=JSON.parse(fp);
@@ -2883,6 +2884,7 @@ var _prevScreen='home';
 var _screenOrder={clients:0,home:1,goals:2,fixed:3,gmail:4};
 
 function go(name){
+  track('screen_view',{screen_name:name,app_version:APP_VER});
   var prevPos=_screenOrder[_prevScreen],nextPos=_screenOrder[name];
   var detail=['expenses','income','balance'];
   var slideDir='';
@@ -3482,9 +3484,9 @@ function cycleBizFlag(key){
   for(var i=0;i<arr.length;i++){
     if(arr[i].d===d&&arr[i].desc===desc&&arr[i].a===a){
       var cur=arr[i].biz;
-      if(cur===undefined){arr[i].biz=true;toast('סומן כהוצאה עסקית 💼');}
-      else if(cur===true){arr[i].biz=false;toast('סומן כהוצאה לא עסקית');}
-      else{delete arr[i].biz;toast('חזר לזיהוי אוטומטי');}
+      if(cur===undefined){arr[i].biz=true;track('tag_biz',{action:'set',desc:desc});toast('סומן כהוצאה עסקית 💼');}
+      else if(cur===true){arr[i].biz=false;track('tag_biz',{action:'clear',desc:desc});toast('סומן כהוצאה לא עסקית');}
+      else{delete arr[i].biz;track('tag_biz',{action:'auto',desc:desc});toast('חזר לזיהוי אוטומטי');}
       save();renderExpenses();return;
     }
   }
@@ -4424,6 +4426,8 @@ function importParsed(){
     else{RAW.income[mo.key]=RAW.income[mo.key]||[];RAW.income[mo.key].push(entry);}
   });
   var count=addParsed.length;
+  var expCount=addParsed.filter(function(t){return t.type==='expense';}).length;
+  var incCount=count-expCount;
   addParsed=[];
   save();
   closeMbg('atxn-mbg');
@@ -4431,6 +4435,7 @@ function importParsed(){
   document.getElementById('csv-text').value='';
   renderHome();
   toast('✓ '+count+' רשומות נוספו');
+  track('add_transaction',{method:'bulk',count:count,expense_count:expCount,income_count:incCount});
   showRecurringSuggestion();
 }
 function addSingleTxn(){
@@ -4453,6 +4458,7 @@ function addSingleTxn(){
   document.getElementById('sf-desc').value='';document.getElementById('sf-amt').value='';document.getElementById('sf-tags').value='';
   closeMbg('atxn-mbg');
   renderHome();toast('✓ '+desc+' נוסף');
+  track('add_transaction',{method:'form',type:addType,payment_method:addMethod,amount:amt});
   showRecurringSuggestion();
 }
 
@@ -4495,12 +4501,13 @@ function _apptFix180626(){
 }
 setTimeout(_apptFix180626, 2500);
 
-// One-time: set bank balance to -9980 (overdrawn)
+// One-time: set bank balance to 9980 (overdrawn — stored as positive)
 function _balFix180626(){
-  if(localStorage.getItem('_balfx180626'))return;
-  CARDS.bank=-9980;
+  if(localStorage.getItem('_balfx180626b'))return;
+  CARDS.bank=9980;
   save();cloudPush();
   localStorage.setItem('_balfx180626','1');
+  localStorage.setItem('_balfx180626b','1');
   try{renderHome();}catch(e){}
   toast('✓ עו"ש עודכן: -₪9,980');
 }
@@ -4789,6 +4796,7 @@ function runAdvisor(){
 
 // Manual trigger — bypasses the 8h throttle (used by the 💡 button)
 function openAdvisor(){
+  track('open_advisor',{month:homeMi});
   var saved=localStorage.getItem('shani_adv_last');
   localStorage.removeItem('shani_adv_last');
   runAdvisor();
@@ -6128,6 +6136,7 @@ function wizDone(){
   }
   var wiz=document.getElementById('wiz-overlay'); if(wiz){wiz.style.opacity='0';wiz.style.transition='opacity .3s';setTimeout(function(){wiz.style.display='none';},300);}
   localStorage.setItem('pf_welcomed','1');
+  track('onboarding_complete',{mode:APP_MODE,has_income:incVal>0?1:0});
   renderHome();
   setTimeout(function(){startTour(false);},600);
 }
@@ -6457,7 +6466,14 @@ function setMode(m) {
 applyMode();
 
 // ══ FIREBASE — AUTH + CLOUD SYNC ═══════════════════════════
-var fbAuth=null, fbDb=null, FB_UID=null, _syncTimer=null;
+var fbAuth=null, fbDb=null, fbAnalytics=null, FB_UID=null, _syncTimer=null;
+
+// ── GA4 event tracker ─────────────────────────────────────
+function track(eventName, params){
+  try{
+    if(fbAnalytics) fbAnalytics.logEvent(eventName, params||{});
+  }catch(e){}
+}
 var _authMode='login', _authPickedMode='business';
 
 // Replace an object's contents in-place (keeps the live reference others hold)
@@ -6575,13 +6591,14 @@ function authSubmit(){
   var done=function(){ btn.disabled=false; };
   if(_authMode==='signup'){
     if(pass.length<6){ authErr('הסיסמה חייבת לפחות 6 תווים'); done(); return; }
-    // remember chosen mode so onSignedIn can apply it for a brand-new account
     APP_MODE=_authPickedMode; localStorage.setItem('shani_mode',APP_MODE); applyMode();
     fbAuth.createUserWithEmailAndPassword(email,pass)
-      .then(function(){ authErr(''); }).catch(function(e){ authErr(authMsg(e)); }).then(done);
+      .then(function(){ authErr(''); track('sign_up',{method:'email'}); })
+      .catch(function(e){ authErr(authMsg(e)); }).then(done);
   } else {
     fbAuth.signInWithEmailAndPassword(email,pass)
-      .then(function(){ authErr(''); }).catch(function(e){ authErr(authMsg(e)); }).then(done);
+      .then(function(){ authErr(''); track('login',{method:'email'}); })
+      .catch(function(e){ authErr(authMsg(e)); }).then(done);
   }
 }
 function _saveGoogToken(token){
@@ -6626,6 +6643,7 @@ function authGoogle(){
   prov.addScope('https://www.googleapis.com/auth/gmail.readonly');
   prov.addScope('https://www.googleapis.com/auth/calendar.readonly');
   fbAuth.signInWithPopup(prov).then(function(result){
+    track('login',{method:'google'});
     try{
       var cred = firebase.auth.GoogleAuthProvider.credentialFromResult(result);
       if(cred && cred.accessToken){ _saveGoogToken(cred.accessToken); }
@@ -6720,6 +6738,7 @@ function onSignedIn(user){
     firebase.initializeApp(firebaseConfig);
     fbAuth=firebase.auth();
     fbDb=firebase.firestore();
+    try{ fbAnalytics=firebase.analytics(); }catch(e){}
     // keep the user signed in across browser restarts / app re-opens (one-time login)
     try{ fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(){}); }catch(e){}
     try{ fbDb.enablePersistence({synchronizeTabs:true}).catch(function(){}); }catch(e){}
