@@ -4,9 +4,9 @@ const fs = require('fs');
 function makeIcon(size) {
   const c = createCanvas(size, size);
   const ctx = c.getContext('2d');
-  const cx = size / 2, cy = size / 2;
+  const cx = size/2, cy = size/2;
 
-  // Deep purple background — like splash screen rgba(51,25,68)
+  // Background — near-black like splash #0A0814
   const r = size * 0.22;
   ctx.beginPath();
   ctx.moveTo(r,0); ctx.lineTo(size-r,0);
@@ -18,46 +18,44 @@ function makeIcon(size) {
   ctx.lineTo(0,r);
   ctx.quadraticCurveTo(0,0,r,0);
   ctx.closePath();
-
-  const bg = ctx.createRadialGradient(cx, cy*0.75, 0, cx, cy, size*0.8);
-  bg.addColorStop(0,   '#2B1445');   // deep purple center
-  bg.addColorStop(0.45,'#180D30');   // dark purple-navy
-  bg.addColorStop(1,   '#0A0814');   // near-black edge
-  ctx.fillStyle = bg;
+  ctx.fillStyle = '#08060E';
   ctx.fill();
 
-  // Purple glow ring — like splash backdrop
-  const ring = ctx.createRadialGradient(cx, cy, 0, cx, cy, size*0.52);
-  ring.addColorStop(0,  'rgba(100,40,160,0.35)');
-  ring.addColorStop(0.5,'rgba(60,20,100,0.15)');
-  ring.addColorStop(1,  'rgba(0,0,0,0)');
-  ctx.fillStyle = ring;
-  ctx.beginPath(); ctx.arc(cx,cy,size*0.52,0,Math.PI*2); ctx.fill();
+  // Subtle dark-purple radial behind symbol (matches splash backdrop)
+  const bg2 = ctx.createRadialGradient(cx, cy*0.9, 0, cx, cy, size*0.55);
+  bg2.addColorStop(0,  'rgba(40,18,62,0.7)');
+  bg2.addColorStop(0.6,'rgba(20,10,38,0.4)');
+  bg2.addColorStop(1,  'rgba(0,0,0,0)');
+  ctx.fillStyle = bg2;
+  ctx.beginPath(); ctx.arc(cx,cy,size*0.55,0,Math.PI*2); ctx.fill();
 
-  // Turquoise ambient — cyan shifted slightly blue
-  const amb = ctx.createRadialGradient(cx, cy, 0, cx, cy, size*0.42);
-  amb.addColorStop(0,  'rgba(0,220,255,0.20)');
-  amb.addColorStop(0.6,'rgba(0,200,220,0.07)');
-  amb.addColorStop(1,  'rgba(0,0,0,0)');
-  ctx.fillStyle = amb;
-  ctx.beginPath(); ctx.arc(cx,cy,size*0.42,0,Math.PI*2); ctx.fill();
-
-  // ₪ — shifted blue-cyan (#00DCFF) so it reads turquoise not green
-  const COLOR = '#00DCFF';
-  const fontSize = size * 0.57;
+  // ₪ — exact splash color #00FFD4 + brightness(1.15) ≈ #17FFE0
+  const COLOR = '#17FFE0';
+  const GLOW  = 'rgba(0,255,212,';
+  const fs2 = size * 0.60;
+  ctx.font = '700 ' + fs2 + 'px Arial, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.font = '600 ' + fontSize + 'px Arial, sans-serif';
 
-  [[size*0.18,0.12],[size*0.10,0.25],[size*0.05,0.52],[size*0.02,0.80]].forEach(function(l){
-    ctx.shadowColor = COLOR;
-    ctx.shadowBlur  = l[0];
-    ctx.fillStyle   = 'rgba(0,220,255,' + l[1] + ')';
-    ctx.fillText('₪', cx, cy*1.03);
-  });
+  // Layer 1 — wide outer glow (like 50px at 120px font = 0.42 ratio)
+  ctx.shadowColor = COLOR; ctx.shadowBlur = size*0.42;
+  ctx.fillStyle = GLOW + '0.45)'; ctx.fillText('₪', cx, cy*1.02);
+
+  // Layer 2 — mid glow
+  ctx.shadowBlur = size*0.20;
+  ctx.fillStyle = GLOW + '0.65)'; ctx.fillText('₪', cx, cy*1.02);
+
+  // Layer 3 — tight glow
+  ctx.shadowBlur = size*0.07;
+  ctx.fillStyle = GLOW + '0.85)'; ctx.fillText('₪', cx, cy*1.02);
+
+  // Layer 4 — crisp solid
+  ctx.shadowBlur = size*0.025;
+  ctx.fillStyle = COLOR; ctx.fillText('₪', cx, cy*1.02);
+
+  // Final sharp pass (no shadow)
   ctx.shadowBlur = 0;
-  ctx.fillStyle  = COLOR;
-  ctx.fillText('₪', cx, cy*1.03);
+  ctx.fillStyle = COLOR; ctx.fillText('₪', cx, cy*1.02);
 
   return c.toBuffer('image/png');
 }
