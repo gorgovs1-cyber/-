@@ -1885,7 +1885,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260743;
+var APP_VER=20260744;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2578,6 +2578,7 @@ var FIXED_PAYMENTS = [
   {id:6,name:'קופת חולים',amount:161.26,day:10,method:'bank',active:true},
   {id:7,name:'הייגספילד',amount:151.29,day:10,method:'mc',active:true},
   {id:8,name:'Claude Pro',amount:74,day:14,method:'visa',active:true},
+  {id:9,name:'חניה',amount:500,day:25,method:'bank',active:true},
 ];
 var _fpEditId=null;
 var _fpMethod='bank';
@@ -2585,7 +2586,7 @@ var RECURRING_DISMISSED=[];
 var FIXED_INCOME=[];
 var INCOME_DISMISSED=[];
 var _fiEditId=null;
-var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:1200,אוכל:800,קפה:300,דלק:400,נסיעה:300,חניה:200,ביטוח:500,חשמל:350,חשבון:300,מנוי:200,טלפון:150,פרטנר:250};
+var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:1200,אוכל:800,קפה:300,דלק:400,נסיעה:300,חניה:500,ביטוח:500,חשמל:350,חשבון:300,מנוי:200,טלפון:150,פרטנר:250};
 // Business expense auto-detection patterns (beauty/mobile professional)
 var BIZ_PATTERNS=[
   /דלק|פז|סונול|גז סטיישן|fuel/i,
@@ -4565,6 +4566,17 @@ function _visaFix180626(){
   toast('✓ ויזה עודכנה: גוד פארם = visa, יתרה ₪152');
 }
 setTimeout(_visaFix180626, 3200);
+
+// One-time: add חניה ₪500 on day 25 to FIXED_PAYMENTS
+function _parkFix180626(){
+  if(localStorage.getItem('_parkfx180626'))return;
+  var exists=FIXED_PAYMENTS.some(function(p){return p.name==='חניה'&&p.amount===500;});
+  if(!exists) FIXED_PAYMENTS.push({id:9,name:'חניה',amount:500,day:25,method:'bank',active:true});
+  localStorage.setItem('shani_fp',JSON.stringify(FIXED_PAYMENTS));
+  localStorage.setItem('_parkfx180626','1');
+  toast('✓ תשלום קבוע נוסף: חניה ₪500 ב-25 לחודש');
+}
+setTimeout(_parkFix180626, 3400);
 
 // One-time: set Mastercard balance to 10078.34 (ניצול from June 2026 statement)
 function _mcFix180626(){
