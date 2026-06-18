@@ -1329,6 +1329,17 @@ html.mode-private .biz-only{ display:none!important; }
     </div>
   </div>
 </div>
+<!-- ══ BUDGET SETTINGS OVERLAY ══════════════════════════════════════ -->
+<div class="mbg" id="budgets-settings-mbg" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal" style="max-height:80vh;overflow-y:auto;padding-bottom:16px">
+    <div class="modal-title">ניהול תקציבים</div>
+    <div id="budgets-settings-body" style="margin-top:12px"></div>
+    <div style="margin-top:14px;display:flex;gap:8px">
+      <button class="sbtn done" style="flex:1;padding:12px" onclick="saveBudgetSettings()">שמרי הכל</button>
+      <button class="sbtn" style="flex:1;padding:12px" onclick="document.getElementById('budgets-settings-mbg').style.display='none'">סגור</button>
+    </div>
+  </div>
+</div>
 <!-- ══ GMAIL IMPORT ══════════════════════════════════════════════════ -->
 <div class="screen" id="s-gmail">
   <div class="page-hdr">
@@ -1903,7 +1914,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260750;
+var APP_VER=20260751;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2604,7 +2615,8 @@ var RECURRING_DISMISSED=[];
 var FIXED_INCOME=[];
 var INCOME_DISMISSED=[];
 var _fiEditId=null;
-var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:1200,אוכל:800,קפה:300,דלק:400,נסיעה:300,חניה:500,ביטוח:500,חשמל:350,חשבון:300,מנוי:200,טלפון:150,פרטנר:250};
+var BUDGETS = {קנב:600,טבק:250,בר:500,קניות:1200,אוכל:800,קפה:300,דלק:400,נסיעה:300,חניה:500,ביטוח:500,חשמל:350,חשבון:300,מנוי:200,טלפון:150,פרטנר:250,טסט:300};
+var ALL_BUDGET_CATS=['אוכל','קניות','קפה','בר','טבק','קנב','דלק','חניה','נסיעה','חשמל','חשבון','מים','מנוי','פרטנר','טלפון','ביטוח','טסט','אחר'];
 // Business expense auto-detection patterns (beauty/mobile professional)
 var BIZ_PATTERNS=[
   /דלק|פז|סונול|גז סטיישן|fuel/i,
@@ -2768,10 +2780,13 @@ function renderBudgets(){
   }).filter(function(r){return r.spent>0||r.budget>0;}).sort(function(a,b){
     return (b.spent/b.budget)-(a.spent/a.budget);
   });
-  if(!rows.length){el.innerHTML='';return;}
+  if(!rows.length){
+    el.innerHTML='<div class="s-hdr" style="margin-top:18px"><span class="s-hdr-lbl">תקציבים חודשיים</span><span onclick="openBudgetSettings()" style="font-size:11px;color:var(--cyan);cursor:pointer">⚙ הגדר</span></div>';
+    return;
+  }
   var h='<div class="s-hdr" style="margin-top:18px">'+
     '<span class="s-hdr-lbl">תקציבים חודשיים</span>'+
-    '<span style="font-size:10px;color:var(--muted)">לחצי לעריכה</span>'+
+    '<span onclick="openBudgetSettings()" style="font-size:11px;color:var(--cyan);cursor:pointer">⚙ ניהול</span>'+
   '</div>';
   h+='<div style="padding:0 16px 4px">';
   rows.forEach(function(r){
@@ -2790,6 +2805,34 @@ function renderBudgets(){
   });
   h+='</div>';
   el.innerHTML=h;
+}
+
+function openBudgetSettings(){
+  var body=document.getElementById('budgets-settings-body');
+  if(!body)return;
+  var h='';
+  ALL_BUDGET_CATS.forEach(function(c){
+    var v=BUDGETS[c]||0;
+    h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'+
+      '<span style="flex:1;font-size:13px;color:var(--text2);text-align:right">'+esc(c)+'</span>'+
+      '<input data-cat="'+esc(c)+'" type="number" value="'+(v||'')+'" placeholder="ללא תקציב" style="width:110px;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:7px 10px;color:var(--text);font-size:13px;text-align:left;outline:none">'+
+    '</div>';
+  });
+  body.innerHTML=h;
+  document.getElementById('budgets-settings-mbg').style.display='flex';
+}
+function saveBudgetSettings(){
+  var inputs=document.querySelectorAll('#budgets-settings-body input[data-cat]');
+  for(var i=0;i<inputs.length;i++){
+    var c=inputs[i].getAttribute('data-cat');
+    var v=parseFloat(inputs[i].value);
+    if(v>0)BUDGETS[c]=v;
+    else delete BUDGETS[c];
+  }
+  save();
+  document.getElementById('budgets-settings-mbg').style.display='none';
+  renderBudgets();
+  toast('✓ תקציבים עודכנו');
 }
 
 // ── HELPERS ──────────────────────────────────────────────
