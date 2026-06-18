@@ -327,8 +327,8 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .cat-chip{display:flex;flex-direction:column;gap:3px;border-radius:12px;padding:6px 11px 5px;font-size:11px;border:1px solid transparent;cursor:pointer;min-width:68px;transition:opacity .15s,transform .15s;-webkit-tap-highlight-color:transparent}
 .cat-chip:active{transform:scale(.96);opacity:.8}
 .cc-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
-.cc-bar{width:100%;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
-.cc-fill{height:100%;border-radius:2px;transition:width .5s ease}
+.cc-bar{width:100%;height:3px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
+.cc-fill{height:100%;border-radius:3px;transition:width .5s ease}
 /* Subscriptions */
 .subs-section{margin:2px 16px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
 .subs-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;cursor:pointer;user-select:none}
@@ -418,7 +418,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .mbg {display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:500;align-items:flex-end;justify-content:center}
 .mbg.open{display:flex}
 .modal{background:#111D2C;border-radius:18px 24px 0 0;width:100%;max-width:430px;padding:8px 20px calc(36px + env(safe-area-inset-bottom,0px));animation:slideUp .22s ease;border-top:1px solid var(--border2)}
-.modal::before{content:'';display:block;width:36px;height:4px;background:var(--border2);border-radius:2px;margin:14px auto 18px}
+.modal::before{content:'';display:block;width:36px;height:4px;background:var(--border2);border-radius:3px;margin:14px auto 18px}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .mbg.closing,.cd-mbg.closing{animation:fadeOut .2s ease both}
 .mbg.closing .modal,.cd-mbg.closing .cd-modal{animation:slideDown .2s ease both}
@@ -462,7 +462,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   z-index:200;
 }
 .hdr-ham { background:none; border:none; cursor:pointer; padding:6px; display:flex; flex-direction:column; gap:5px; }
-.hdr-ham span { display:block; width:22px; height:2px; background:var(--text2); border-radius:2px; transition:all .25s cubic-bezier(.4,0,.2,1); transform-origin:center; }
+.hdr-ham span { display:block; width:22px; height:2px; background:var(--text2); border-radius:3px; transition:all .25s cubic-bezier(.4,0,.2,1); transform-origin:center; }
 .hdr-ham.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); background:var(--cyan); }
 .hdr-ham.open span:nth-child(2){ opacity:0; }
 .hdr-ham.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); background:var(--cyan); }
@@ -594,7 +594,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .cd-mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);z-index:600;align-items:flex-end;justify-content:center}
 .cd-mbg.open{display:flex}
 .cd-modal{background:#111D2C;border-radius:18px 26px 0 0;width:100%;max-width:430px;max-height:78dvh;overflow-y:auto;padding:8px 20px calc(30px + env(safe-area-inset-bottom,0px));animation:slideUp .22s ease;border-top:1px solid var(--border2)}
-.cd-modal::before{content:'';display:block;width:36px;height:4px;background:var(--border2);border-radius:2px;margin:14px auto 16px}
+.cd-modal::before{content:'';display:block;width:36px;height:4px;background:var(--border2);border-radius:3px;margin:14px auto 16px}
 .cd-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
 .cd-title{font-size:20px;font-weight:500}
 .cd-total{font-size:20px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--neg)}
@@ -643,7 +643,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 
 select option{background:#111D2C;color:#fff}
 ::-webkit-scrollbar{width:2px}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
 /* ── AI ADVISOR ── */
 .advisor-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9000;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .3s}
@@ -677,7 +677,7 @@ select option{background:#111D2C;color:#fff}
 /* ── ONBOARDING TOUR ── */
 /* ── WELCOME WIZARD ──────────────────────────────────── */
 .wiz-overlay{position:fixed;inset:0;z-index:9800;background:rgba(5,10,20,.92);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .35s ease both}
-.wiz-card{background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:28px 24px;width:100%;max-width:360px;text-align:center}
+.wiz-card{background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:28px 24px;width:100%;max-width:360px;text-align:center}
 .wiz-step{display:none}.wiz-step.active{display:block}
 .wiz-icon{font-size:44px;margin-bottom:12px}
 .wiz-title{font-size:20px;font-weight:500;margin-bottom:8px}
@@ -690,7 +690,7 @@ select option{background:#111D2C;color:#fff}
 .wiz-dots{display:flex;justify-content:center;gap:6px;margin-bottom:20px}
 .wiz-dot{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:background .2s}
 .wiz-dot.on{background:var(--cyan)}
-.wiz-tip{display:flex;align-items:flex-start;gap:10px;text-align:right;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:13px;color:var(--text2);line-height:1.5}
+.wiz-tip{display:flex;align-items:flex-start;gap:10px;text-align:right;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:13px;color:var(--text2);line-height:1.5}
 .ob-overlay{position:fixed;inset:0;z-index:9500;animation:fadeIn .3s}
 .ob-spot{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(5,13,24,.82),0 0 0 3px var(--cyan),0 0 26px rgba(29,233,182,.6);transition:all .4s cubic-bezier(.2,1,.3,1);pointer-events:none}
 .ob-bubble{position:absolute;max-width:282px;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:16px 17px;box-shadow:0 14px 44px rgba(0,0,0,.55);z-index:9600;animation:obPop .4s cubic-bezier(.2,1.5,.4,1) both}
@@ -859,8 +859,8 @@ html.mode-private .biz-only{ display:none!important; }
       <div class="wiz-sub">ניהול כספים חכם ופשוט.<br>בואי נגדיר את החשבון שלך:</div>
       <input class="wiz-inp" id="wiz-name" placeholder="השם שלך" type="text" autocomplete="name">
       <div style="display:flex;background:rgba(255,255,255,.06);border:1px solid var(--border2);border-radius:12px;padding:3px;gap:3px;margin-bottom:6px">
-        <button id="wiz-biz" onclick="wizPickMode('business')" style="flex:1;background:var(--cyan);color:#08131F;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;border:none;padding:9px;border-radius:10px;cursor:pointer">עסקי</button>
-        <button id="wiz-prv" onclick="wizPickMode('private')" style="flex:1;background:none;color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;border:none;padding:9px;border-radius:10px;cursor:pointer">פרטי</button>
+        <button id="wiz-biz" onclick="wizPickMode('business')" style="flex:1;background:var(--cyan);color:#08131F;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;border:none;padding:9px;border-radius:12px;cursor:pointer">עסקי</button>
+        <button id="wiz-prv" onclick="wizPickMode('private')" style="flex:1;background:none;color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;border:none;padding:9px;border-radius:12px;cursor:pointer">פרטי</button>
       </div>
       <button class="wiz-btn" onclick="wizStep(2)">הבא ›</button>
       <div class="wiz-skip" onclick="wizDone()">דלג על ההגדרה</div>
@@ -928,16 +928,16 @@ html.mode-private .biz-only{ display:none!important; }
   <div id="recurring-banner" style="display:none;background:rgba(29,233,182,.10);border-bottom:1px solid rgba(29,233,182,.22);padding:10px 16px;font-size:13px;font-weight:400;color:var(--cyan);line-height:1.5;direction:rtl">
     <div id="recurring-banner-text" style="margin-bottom:8px"></div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button type="button" id="recurring-yes-btn" onclick="addRecurringToFixed()" style="background:rgba(29,233,182,.22);border:1px solid rgba(29,233,182,.4);color:var(--cyan);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">כן, הוסף</button>
-      <button type="button" onclick="dismissRecurring()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:13px;font-weight:400;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">התעלם</button>
+      <button type="button" id="recurring-yes-btn" onclick="addRecurringToFixed()" style="background:rgba(29,233,182,.22);border:1px solid rgba(29,233,182,.4);color:var(--cyan);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:8px 18px;border-radius:12px;cursor:pointer;min-height:36px">כן, הוסף</button>
+      <button type="button" onclick="dismissRecurring()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:13px;font-weight:400;padding:8px 18px;border-radius:12px;cursor:pointer;min-height:36px">התעלם</button>
     </div>
   </div>
   <!-- Recurring income suggestion banner -->
   <div id="income-recurring-banner" style="display:none;background:rgba(255,213,79,.10);border-bottom:1px solid rgba(255,213,79,.28);padding:10px 16px;font-size:13px;font-weight:400;color:var(--gold);line-height:1.5;direction:rtl">
     <div id="income-recurring-banner-text" style="margin-bottom:8px"></div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button type="button" onclick="addRecurringToFixedIncome()" style="background:rgba(255,213,79,.22);border:1px solid rgba(255,213,79,.45);color:var(--gold);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">כן, הוסף</button>
-      <button type="button" onclick="dismissRecurringIncome()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:13px;font-weight:400;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:36px">לא עכשיו</button>
+      <button type="button" onclick="addRecurringToFixedIncome()" style="background:rgba(255,213,79,.22);border:1px solid rgba(255,213,79,.45);color:var(--gold);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:8px 18px;border-radius:12px;cursor:pointer;min-height:36px">כן, הוסף</button>
+      <button type="button" onclick="dismissRecurringIncome()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:13px;font-weight:400;padding:8px 18px;border-radius:12px;cursor:pointer;min-height:36px">לא עכשיו</button>
     </div>
   </div>
   <div class="hero">
@@ -1059,15 +1059,15 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="modal-sub">לחצי על סטטוס לשינוי</div>
     <div id="m-clients"></div>
     <!-- move-to-date panel (shown when 📅 is tapped) -->
-    <div id="move-panel" style="display:none;background:rgba(29,233,182,.06);border:1px solid rgba(29,233,182,.18);border-radius:14px;padding:14px 14px 12px;margin-bottom:14px">
+    <div id="move-panel" style="display:none;background:rgba(29,233,182,.06);border:1px solid rgba(29,233,182,.18);border-radius:12px;padding:14px 14px 12px;margin-bottom:14px">
       <div style="font-size:11px;color:var(--muted);margin-bottom:6px">תאריך חדש עבור <b id="move-name" style="color:var(--text)"></b>:</div>
       <input type="date" id="move-date"
-        style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 12px;color:var(--text);font-family:'Rubik',sans-serif;font-size:15px;box-sizing:border-box;margin-bottom:10px">
+        style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:10px 12px;color:var(--text);font-family:'Rubik',sans-serif;font-size:15px;box-sizing:border-box;margin-bottom:10px">
       <div style="display:flex;gap:8px">
         <button onclick="confirmMove()"
-          style="flex:1;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:10px;border:none;cursor:pointer">&#x05D0;&#x05D9;&#x05E9;&#x05D5;&#x05E8; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D4; &#x2713;</button>
+          style="flex:1;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:12px;border:none;cursor:pointer">&#x05D0;&#x05D9;&#x05E9;&#x05D5;&#x05E8; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D4; &#x2713;</button>
         <button onclick="cancelMove()"
-          style="flex:1;background:none;border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;padding:10px;border-radius:10px;cursor:pointer">&#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC;</button>
+          style="flex:1;background:none;border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;padding:10px;border-radius:12px;cursor:pointer">&#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC;</button>
       </div>
     </div>
     <div class="modal-sep"></div>
@@ -1214,7 +1214,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div id="add-panel-img" class="add-panel">
       <div id="img-drop-zone" style="border:2px dashed var(--border2);border-radius:12px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;transition:border-color .15s" onclick="document.getElementById('img-file-input').click()" ondragover="event.preventDefault();this.style.borderColor='var(--cyan)'" ondragleave="this.style.borderColor='var(--border2)'" ondrop="event.preventDefault();this.style.borderColor='var(--border2)';if(event.dataTransfer.files[0]){var fi=document.getElementById('img-file-input');var dt=new DataTransfer();dt.items.add(event.dataTransfer.files[0]);fi.files=dt.files;loadImgPreview(fi);}">
         <div id="img-preview-wrap" style="display:none;margin-bottom:10px">
-          <img id="img-preview" style="max-width:100%;max-height:260px;border-radius:8px;object-fit:contain">
+          <img id="img-preview" style="max-width:100%;max-height:260px;border-radius:6px;object-fit:contain">
         </div>
         <div id="img-drop-hint" style="color:var(--muted);font-size:13px">
           <div style="font-size:20px;margin-bottom:6px">📸</div>
@@ -1508,7 +1508,7 @@ html.mode-private .biz-only{ display:none!important; }
     </div>
     <div class="mi-row" style="margin-bottom:12px">
       <div class="mfld"><label>חודש</label>
-        <select id="an-month" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px 10px;color:var(--text);font-family:'Rubik',sans-serif;font-size:13px">
+        <select id="an-month" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:9px 10px;color:var(--text);font-family:'Rubik',sans-serif;font-size:13px">
           <option value="1">ינואר</option>
           <option value="2">פברואר</option>
           <option value="3">מרץ</option>
@@ -1561,7 +1561,7 @@ html.mode-private .biz-only{ display:none!important; }
       <div class="mfld" style="flex:1"><label>&#x05D0;&#x05D9;&#x05E9; &#x05E7;&#x05E9;&#x05E8;</label><input type="text" id="sup-contact-inp" placeholder="&#x05D9;&#x05D5;&#x05E1;&#x05D9;..."></div>
     </div>
     <div class="mfld" style="margin-bottom:14px"><label>&#x05EA;&#x05E0;&#x05D0;&#x05D9; &#x05EA;&#x05E9;&#x05DC;&#x05D5;&#x05DD;</label>
-      <select id="sup-terms-inp" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px 10px;color:var(--text);font-family:'Rubik',sans-serif;font-size:13px">
+      <select id="sup-terms-inp" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:9px 10px;color:var(--text);font-family:'Rubik',sans-serif;font-size:13px">
         <option value="&#x05DE;&#x05D6;&#x05D5;&#x05DE;&#x05DF;">&#x05DE;&#x05D6;&#x05D5;&#x05DE;&#x05DF;</option>
         <option value="&#x05E9;&#x05D5;&#x05D8;&#x05E3;">&#x05E9;&#x05D5;&#x05D8;&#x05E3;</option>
         <option value="&#x05E9;&#x05D5;&#x05D8;&#x05E3;+30">&#x05E9;&#x05D5;&#x05D8;&#x05E3;+30</option>
@@ -1592,7 +1592,7 @@ html.mode-private .biz-only{ display:none!important; }
     </div>
     <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--rs);padding:12px">
       <div style="font-size:11px;font-weight:500;color:var(--muted);margin-bottom:8px">&#x05D9;&#x05D9;&#x05D1;&#x05D5;&#x05D0; &#x05DE;&#x05D8;&#x05E7;&#x05E1;&#x05D8; &#x05D7;&#x05D5;&#x05E4;&#x05E9;&#x05D9;</div>
-      <textarea id="cat-paste-txt" rows="4" placeholder="&#x05D4;&#x05D3;&#x05D1;&#x05E7; &#x05E8;&#x05E9;&#x05D9;&#x05DE;&#x05EA; &#x05DE;&#x05D5;&#x05E6;&#x05E8;&#x05D9;&#x05DD;... &#x05DC;&#x05D3;&#x05D5;&#x05D2;&#x05DE;&#x05D0;:&#10;&#x05D7;&#x05DC;&#x05D1; 3% 6.90&#10;&#x05DC;&#x05D7;&#x05DD; &#x05D0;&#x05D7;&#x05D9;&#x05D3; - 5.50 &#x20AA;&#10;&#x05D1;&#x05D9;&#x05E6;&#x05D4;,3.90" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px;color:var(--text);font-family:'Rubik',sans-serif;font-size:13px;box-sizing:border-box;resize:vertical"></textarea>
+      <textarea id="cat-paste-txt" rows="4" placeholder="&#x05D4;&#x05D3;&#x05D1;&#x05E7; &#x05E8;&#x05E9;&#x05D9;&#x05DE;&#x05EA; &#x05DE;&#x05D5;&#x05E6;&#x05E8;&#x05D9;&#x05DD;... &#x05DC;&#x05D3;&#x05D5;&#x05D2;&#x05DE;&#x05D0;:&#10;&#x05D7;&#x05DC;&#x05D1; 3% 6.90&#10;&#x05DC;&#x05D7;&#x05DD; &#x05D0;&#x05D7;&#x05D9;&#x05D3; - 5.50 &#x20AA;&#10;&#x05D1;&#x05D9;&#x05E6;&#x05D4;,3.90" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:9px;color:var(--text);font-family:'Rubik',sans-serif;font-size:13px;box-sizing:border-box;resize:vertical"></textarea>
       <button onclick="parseSupplierProducts()" style="width:100%;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:8px;cursor:pointer;margin-top:6px">&#x05E0;&#x05EA;&#x05D7; &#x203A;</button>
       <div id="cat-parsed-preview" style="margin-top:8px"></div>
       <div id="cat-parsed-count" style="font-size:10px;color:var(--muted);margin-top:4px"></div>
@@ -1608,7 +1608,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="modal-title">&#x05D4;&#x05D6;&#x05DE;&#x05E0;&#x05D4; &#x05D7;&#x05D3;&#x05E9;&#x05D4;</div>
     <div class="mfld" style="margin-bottom:10px">
       <label>&#x05E1;&#x05E4;&#x05E7;</label>
-      <select id="ord-sup-sel" onchange="pickOrderSupplier()" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px 10px;color:var(--text);font-family:'Rubik',sans-serif;font-size:13px">
+      <select id="ord-sup-sel" onchange="pickOrderSupplier()" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:9px 10px;color:var(--text);font-family:'Rubik',sans-serif;font-size:13px">
         <option value="">-- &#x05D1;&#x05D7;&#x05E8; &#x05E1;&#x05E4;&#x05E7; --</option>
       </select>
     </div>
@@ -1707,15 +1707,15 @@ html.mode-private .biz-only{ display:none!important; }
 
       <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;letter-spacing:.3px">אמצעי תשלום</div>
       <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px">
-        <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:11px 14px">
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:11px 14px">
           <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:3px">🏦 עו"ש (חשבון בנק)</div>
           <div style="font-size:13px;color:var(--muted);line-height:1.6">עסקאות שחויבו ישירות מהחשבון — העברות בנקאיות, הוראות קבע, כרטיס חיוב מיידי.</div>
         </div>
-        <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:11px 14px">
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:11px 14px">
           <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:3px">💳 מאסטרקארד (MC)</div>
           <div style="font-size:13px;color:var(--muted);line-height:1.6">חיובי כרטיס האשראי מסוג מאסטרקארד — ייכנסו למאזן בתאריך החיוב בחשבון.</div>
         </div>
-        <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:11px 14px">
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:11px 14px">
           <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:3px">💳 ויזה (Visa)</div>
           <div style="font-size:13px;color:var(--muted);line-height:1.6">חיובי כרטיס הויזה — עם אפשרות מעקב נפרד מ-MC לראות את העלות לכל כרטיס.</div>
         </div>
@@ -1779,9 +1779,9 @@ html.mode-private .biz-only{ display:none!important; }
       </div>
 
       <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">איך פותחים</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים על כפתור <span style="background:rgba(29,233,182,.15);color:var(--cyan);border-radius:8px;padding:2px 8px;font-size:13px">💡</span> בפינה השמאלית התחתונה. נפתח חלון שיחה שבו ניתן לשאול שאלות חופשיות, למשל: <em style="color:var(--text2)">"כמה הוצאתי על ציוד ברבעון האחרון?"</em> או <em style="color:var(--text2)">"מתי אגיע ליעד החופשה?"</em>.</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים על כפתור <span style="background:rgba(29,233,182,.15);color:var(--cyan);border-radius:6px;padding:2px 8px;font-size:13px">💡</span> בפינה השמאלית התחתונה. נפתח חלון שיחה שבו ניתן לשאול שאלות חופשיות, למשל: <em style="color:var(--text2)">"כמה הוצאתי על ציוד ברבעון האחרון?"</em> או <em style="color:var(--text2)">"מתי אגיע ליעד החופשה?"</em>.</div>
 
-      <div style="background:rgba(29,233,182,.07);border:1px solid rgba(29,233,182,.18);border-radius:10px;padding:12px 14px">
+      <div style="background:rgba(29,233,182,.07);border:1px solid rgba(29,233,182,.18);border-radius:12px;padding:12px 14px">
         <div style="font-size:13px;color:var(--cyan);font-weight:600;margin-bottom:4px">טיפ לשימוש אפקטיבי</div>
         <div style="font-size:13px;color:var(--muted);line-height:1.6">ככל שיש יותר נתונים מתועדים, כך הניתוח מדויק יותר. מומלץ לתעד הוצאות שוטפות ולא לפספס חודשים — היועצת תזהה מגמות ארוכות טווח ותתן המלצות טובות יותר.</div>
       </div>
@@ -1837,10 +1837,10 @@ html.mode-private .biz-only{ display:none!important; }
     </div>
 
     <!-- CTA -->
-    <div style="background:rgba(29,233,182,.07);border:1px solid rgba(29,233,182,.2);border-radius:14px;padding:18px;text-align:center">
+    <div style="background:rgba(29,233,182,.07);border:1px solid rgba(29,233,182,.2);border-radius:12px;padding:18px;text-align:center">
       <div style="font-size:13px;color:var(--cyan);margin-bottom:6px;font-weight:600">רוצה ניתוח כלכלי אישי?</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">היועצת מנתחת את ההוצאות, ההכנסות והיעדים שלך ומציעה תובנות לפי ההתנהלות האמיתית שלך — לא עצות גנריות.</div>
-      <button onclick="openAdvisor();go('home')" style="background:var(--cyan);color:#0A1520;border:none;border-radius:10px;padding:11px 28px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Rubik',sans-serif">💡 פתחי יועצת כלכלית</button>
+      <button onclick="openAdvisor();go('home')" style="background:var(--cyan);color:#0A1520;border:none;border-radius:12px;padding:11px 28px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Rubik',sans-serif">💡 פתחי יועצת כלכלית</button>
     </div>
 
   </div>
@@ -1859,7 +1859,7 @@ html.mode-private .biz-only{ display:none!important; }
   <div class="detail-hdr">
     <button class="back-btn" onclick="go('home')">‹</button>
     <div class="detail-title">🔐 פאנל אדמין</div>
-    <button onclick="exportUsersCSV()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-size:13px;font-weight:500;font-family:'Rubik',sans-serif;padding:6px 14px;border-radius:10px;cursor:pointer;border:none">ייצוא CSV</button>
+    <button onclick="exportUsersCSV()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-size:13px;font-weight:500;font-family:'Rubik',sans-serif;padding:6px 14px;border-radius:12px;cursor:pointer;border:none">ייצוא CSV</button>
   </div>
   <div id="admin-content" style="padding:14px 14px 80px;direction:rtl">
     <div style="text-align:center;padding:30px;color:var(--muted);font-size:13px">טוען נתוני משתמשים...</div>
@@ -1903,7 +1903,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260748;
+var APP_VER=20260749;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2960,7 +2960,7 @@ function renderAdmin(){
       var st=u.startTime?new Date(u.startTime).toLocaleDateString('he-IL'):'—';
       var min=u.duration?Math.round(u.duration/60)+'d':'—';
       var isOnline=u.lastSeen&&(Date.now()-u.lastSeen)<600000;
-      h+='<div onclick="navigator.clipboard&&navigator.clipboard.writeText(\''+esc(u.uid||'')+'\');toast(\'UID הועתק\')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:7px;cursor:pointer">';
+      h+='<div onclick="navigator.clipboard&&navigator.clipboard.writeText(\''+esc(u.uid||'')+'\');toast(\'UID הועתק\')" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 14px;margin-bottom:7px;cursor:pointer">';
       h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
       h+='<span style="font-size:13px;font-weight:500">'+esc(u.email||'—')+'</span>';
       h+='<span style="font-size:10px;padding:2px 7px;border-radius:6px;background:'+(isOnline?'rgba(0,230,118,.2)':'rgba(255,255,255,.06)')+';color:'+(isOnline?'var(--pos)':'var(--muted)')+'">'+(isOnline?'🟢 מחובר':'offline')+'</span>';
@@ -3749,7 +3749,7 @@ function renderMC(){
     var badge=nc>0?'<span style="background:rgba(255,107,107,.15);color:var(--neg);font-size:9px;padding:2px 6px;border-radius:6px;margin-right:4px"> &#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC;&#x05D9;&#x05DD;: '+nc+'</span>':'';
     var sLabel=c.status==='done'?'&#x2713; &#x05D1;&#x05D5;&#x05E6;&#x05E2;':c.status==='cancelled'?'&#x2715; &#x05D1;&#x05D5;&#x05D8;&#x05DC;':'&#x23F3; &#x05DE;&#x05DE;&#x05EA;&#x05D9;&#x05DF;';
     var amtClass='mc-amt '+c.status;
-    return '<div class="mc-row"><div class="mc-name" onclick="openClientCard(\''+esc(c.name)+'\')" style="cursor:pointer;text-decoration:underline dotted var(--muted)">'+esc(c.name)+badge+(c.treat?' <span style="font-size:11px;color:var(--muted)">&#xB7; '+esc(c.treat)+'</span>':'')+'</div><button class="sbtn '+c.status+'" onclick="toggleC('+i+')">'+sLabel+'</button><div class="'+amtClass+'">&#x20AA;'+fmt(c.amount)+'</div><button class="mv-btn" onclick="startMove('+i+')" title="&#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9; &#x05DC;&#x05EA;&#x05D0;&#x05E8;&#x05D9;&#x05DA; &#x05D0;&#x05D7;&#x05E8;" style="background:rgba(29,233,182,.12);border:1px solid rgba(29,233,182,.25);color:var(--cyan);font-size:11px;font-weight:500;padding:5px 10px;border-radius:8px;cursor:pointer;margin-left:4px">&#128197; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9;</button><button class="del-btn" onclick="delC('+i+')">&#x2715;</button></div>';
+    return '<div class="mc-row"><div class="mc-name" onclick="openClientCard(\''+esc(c.name)+'\')" style="cursor:pointer;text-decoration:underline dotted var(--muted)">'+esc(c.name)+badge+(c.treat?' <span style="font-size:11px;color:var(--muted)">&#xB7; '+esc(c.treat)+'</span>':'')+'</div><button class="sbtn '+c.status+'" onclick="toggleC('+i+')">'+sLabel+'</button><div class="'+amtClass+'">&#x20AA;'+fmt(c.amount)+'</div><button class="mv-btn" onclick="startMove('+i+')" title="&#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9; &#x05DC;&#x05EA;&#x05D0;&#x05E8;&#x05D9;&#x05DA; &#x05D0;&#x05D7;&#x05E8;" style="background:rgba(29,233,182,.12);border:1px solid rgba(29,233,182,.25);color:var(--cyan);font-size:11px;font-weight:500;padding:5px 10px;border-radius:6px;cursor:pointer;margin-left:4px">&#128197; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9;</button><button class="del-btn" onclick="delC('+i+')">&#x2715;</button></div>';
   }).join('');
 }
 function toggleC(idx){
@@ -3863,8 +3863,8 @@ function confirmMove(){
   panel.style.display='block';
   panel.innerHTML='<div style="font-size:13px;color:var(--muted);margin-bottom:10px">מי ביטל את התור המקורי?</div>'
     +'<div style="display:flex;gap:8px">'
-    +'<button onclick="doneWhoCancel(true)" style="flex:1;background:rgba(255,107,107,.15);color:var(--neg);font-family:\'Sora\',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:10px;border:1px solid rgba(255,107,107,.25);cursor:pointer">ביטלתי אני (העסק)</button>'
-    +'<button onclick="doneWhoCancel(false)" style="flex:1;background:rgba(255,179,71,.12);color:#FFB347;font-family:\'Sora\',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:10px;border:1px solid rgba(255,179,71,.25);cursor:pointer">ביטלה הלקוחה</button>'
+    +'<button onclick="doneWhoCancel(true)" style="flex:1;background:rgba(255,107,107,.15);color:var(--neg);font-family:\'Sora\',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:12px;border:1px solid rgba(255,107,107,.25);cursor:pointer">ביטלתי אני (העסק)</button>'
+    +'<button onclick="doneWhoCancel(false)" style="flex:1;background:rgba(255,179,71,.12);color:#FFB347;font-family:\'Sora\',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:12px;border:1px solid rgba(255,179,71,.25);cursor:pointer">ביטלה הלקוחה</button>'
     +'</div>'
     +'<button onclick="cancelMove()" style="display:block;width:100%;text-align:center;font-size:13px;color:var(--muted);margin-top:10px;background:none;border:none;font-family:\'Sora\',sans-serif;cursor:pointer">דלג / לא רלוונטי</button>';
 }
@@ -4025,7 +4025,7 @@ function renderClientCard(name){
     var first=doneAppts[0],latest=doneAppts[doneAppts.length-1];
     if(latest.amount>first.amount&&first.amount>0){
       var pct=Math.round((latest.amount-first.amount)/first.amount*100);
-      trendHtml='<span style="background:rgba(94,255,197,.12);color:var(--pos);font-size:11px;padding:2px 8px;border-radius:20px;margin-right:6px">↑ '+pct+'% מהתחלה</span>';
+      trendHtml='<span style="background:rgba(94,255,197,.12);color:var(--pos);font-size:11px;padding:2px 8px;border-radius:12px;margin-right:6px">↑ '+pct+'% מהתחלה</span>';
     }
   }
   document.getElementById('cc-subtitle').innerHTML='ביקור אחרון: '+lastVisitStr+' '+trendHtml;
@@ -4037,31 +4037,31 @@ function renderClientCard(name){
   var html='';
 
   // ── PROFILE EDIT SECTION ──
-  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:14px">';
+  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px">';
   html+='<div style="font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px">פרטי קשר</div>';
   html+='<div style="display:flex;flex-direction:column;gap:8px">';
   html+='<div style="display:flex;align-items:center;gap:8px">'
     +'<span style="font-size:15px;flex-shrink:0">📞</span>'
     +'<input id="ccp-phone" type="tel" placeholder="מספר טלפון" value="'+esc(prof.phone||'')+'"'
-    +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif;direction:ltr;text-align:left">'
+    +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif;direction:ltr;text-align:left">'
     +'</div>';
   html+='<div style="display:flex;align-items:center;gap:8px">'
     +'<span style="font-size:15px;flex-shrink:0">🏠</span>'
     +'<input id="ccp-address" type="text" placeholder="כתובת (לחשבוניות)" value="'+esc(prof.address||'')+'"'
-    +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif">'
+    +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif">'
     +'</div>';
   html+='<div style="display:flex;align-items:center;gap:8px">'
     +'<span style="font-size:15px;flex-shrink:0">💆</span>'
     +'<input id="ccp-treat" type="text" placeholder="סוג טיפול מועדף (פנים, גוף...)" value="'+esc(prof.treatType||'')+'"'
-    +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif">'
+    +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif">'
     +'</div>';
   html+='<div style="display:flex;align-items:flex-start;gap:8px">'
     +'<span style="font-size:15px;flex-shrink:0;margin-top:6px">📝</span>'
     +'<textarea id="ccp-notes" rows="2" placeholder="הערות כלליות על הלקוחה..."'
-    +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif;resize:none;line-height:1.5">'+esc(prof.notes||'')+'</textarea>'
+    +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif;resize:none;line-height:1.5">'+esc(prof.notes||'')+'</textarea>'
     +'</div>';
   html+='</div>';
-  html+='<button onclick="saveClientProfile()" style="margin-top:10px;width:100%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);border-radius:8px;padding:9px;font-size:13px;font-weight:500;cursor:pointer;font-family:Rubik,sans-serif">שמור פרטים</button>';
+  html+='<button onclick="saveClientProfile()" style="margin-top:10px;width:100%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);border-radius:6px;padding:9px;font-size:13px;font-weight:500;cursor:pointer;font-family:Rubik,sans-serif">שמור פרטים</button>';
   html+='</div>';
 
   // ── STATS ──
@@ -4775,7 +4775,7 @@ function renderAnnual(){
       if(x.recurring) h+='<div style="font-size:10px;color:var(--cyan);margin-top:2px">חוזר שנתי</div>';
       h+='</div>';
       h+='<div style="font-size:15px;font-weight:500;color:var(--neg);margin:0 10px">₪'+fmt(x.amount)+'</div>';
-      h+='<button onclick="delAnnual('+x.id+')" style="background:rgba(255,107,107,.13);border:none;color:var(--neg);font-size:13px;padding:5px 10px;border-radius:8px;cursor:pointer;font-family:\'Sora\',sans-serif">מחק</button>';
+      h+='<button onclick="delAnnual('+x.id+')" style="background:rgba(255,107,107,.13);border:none;color:var(--neg);font-size:13px;padding:5px 10px;border-radius:6px;cursor:pointer;font-family:\'Sora\',sans-serif">מחק</button>';
       h+='</div>';
     });
     h+='</div></div>';
@@ -5917,7 +5917,7 @@ function renderOrders(){
       '<div style="font-size:15px;font-weight:500;color:var(--cyan)">₪' + fmt(o.total||0) + '</div>' +
       '</div>' +
       '<div style="display:flex;align-items:center;gap:7px;margin-top:6px">' +
-      '<span style="background:'+statusBg[st]+';color:'+statusCol[st]+';border:1px solid '+statusCol[st]+'40;border-radius:20px;font-size:10px;font-weight:500;padding:3px 10px">'+statusMap[st]+'</span>';
+      '<span style="background:'+statusBg[st]+';color:'+statusCol[st]+';border:1px solid '+statusCol[st]+'40;border-radius:12px;font-size:10px;font-weight:500;padding:3px 10px">'+statusMap[st]+'</span>';
     if(st==='open'){
       h+='<button onclick="setOrderStatus(\''+o.id+'\',\'received\')" style="background:rgba(29,233,182,.1);border:1px solid rgba(29,233,182,.2);border-radius:var(--rs);color:var(--cyan);font-size:10px;font-family:\'Sora\',sans-serif;font-weight:500;padding:4px 9px;cursor:pointer">התקבל</button>';
     } else if(st==='received'){
@@ -5970,7 +5970,7 @@ function pickOrderSupplier(){
   chipsArea.style.display='block';
   var h='';
   s.products.forEach(function(p){
-    h+='<button onclick="addOrderItemFromCatalog(\''+s.id+'\',\''+p.id+'\')" style="background:var(--card2);border:1px solid var(--border);border-radius:20px;font-size:11px;font-family:\'Sora\',sans-serif;color:var(--text);padding:5px 10px;cursor:pointer;white-space:nowrap">' +
+    h+='<button onclick="addOrderItemFromCatalog(\''+s.id+'\',\''+p.id+'\')" style="background:var(--card2);border:1px solid var(--border);border-radius:12px;font-size:11px;font-family:\'Sora\',sans-serif;color:var(--text);padding:5px 10px;cursor:pointer;white-space:nowrap">' +
       esc(p.name)+(p.price>0?' ₪'+fmt(p.price):'')+'</button>';
   });
   chipsInner.innerHTML=h;
@@ -6161,8 +6161,8 @@ function showWelcomeWizard(){
 function wizPickMode(m){
   _wizMode=m;
   var b=document.getElementById('wiz-biz'), p=document.getElementById('wiz-prv');
-  var onS='background:var(--cyan);color:#08131F;font-family:\'Rubik\',sans-serif;font-size:13px;font-weight:500;border:none;padding:9px;border-radius:10px;cursor:pointer';
-  var offS='flex:1;background:none;color:var(--muted);font-family:\'Rubik\',sans-serif;font-size:13px;border:none;padding:9px;border-radius:10px;cursor:pointer';
+  var onS='background:var(--cyan);color:#08131F;font-family:\'Rubik\',sans-serif;font-size:13px;font-weight:500;border:none;padding:9px;border-radius:12px;cursor:pointer';
+  var offS='flex:1;background:none;color:var(--muted);font-family:\'Rubik\',sans-serif;font-size:13px;border:none;padding:9px;border-radius:12px;cursor:pointer';
   if(b){ b.style.cssText=(m==='business'?'flex:1;'+onS:'flex:1;'+offS); }
   if(p){ p.style.cssText=(m==='private'?'flex:1;'+onS:'flex:1;'+offS); }
 }
