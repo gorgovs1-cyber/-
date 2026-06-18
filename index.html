@@ -1885,7 +1885,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260741;
+var APP_VER=20260742;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -4513,14 +4513,15 @@ function _balFix180626(){
 }
 setTimeout(_balFix180626, 2800);
 
-// One-time: set MC monthly charge to 4904 (June 2026 billing amount)
+// One-time: set MC monthly charge to 4094.40 (June 2026 billing amount — corrected)
 function _mcChargeFix180626(){
-  if(localStorage.getItem('_mcchg180626'))return;
-  CARDS.mc_charge=4904;
+  if(localStorage.getItem('_mcchg180626b'))return;
+  CARDS.mc_charge=4094.40;
   save();cloudPush();
   localStorage.setItem('_mcchg180626','1');
+  localStorage.setItem('_mcchg180626b','1');
   try{renderHome();}catch(e){}
-  toast('✓ חיוב MC עודכן: ₪4,904');
+  toast('✓ חיוב MC עודכן: ₪4,094');
 }
 setTimeout(_mcChargeFix180626, 2400);
 
