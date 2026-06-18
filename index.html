@@ -494,7 +494,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .drw-item.active .di-icon svg { stroke:var(--cyan); }
 
 /* ══ FAB ══════════════════════════════════════════════════ */
-.fab-wrap{position:fixed;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:20px;z-index:300;display:flex;flex-direction:column;align-items:center;gap:10px}
+.fab-wrap{position:fixed;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:20px;z-index:300}
 
 /* ══ BOTTOM TAB BAR ══════════════════════════════════════ */
 .btm-nav{
@@ -519,8 +519,8 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .btm-item:active{transform:scale(.92)}
 .fab{border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s;position:relative}
 .fab:active{transform:scale(.92)}
-.fab-add{width:52px;height:52px;background:var(--cyan);color:#0A1520;font-size:20px;font-weight:400;box-shadow:0 4px 16px -6px rgba(0,0,0,.4)}
-.fab-adv{width:38px;height:38px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18)!important;color:var(--text2);font-size:20px;box-shadow:0 2px 10px rgba(0,0,0,.3)}
+.fab-add{width:56px;height:56px;background:var(--cyan);color:#0A1520;font-size:20px;font-weight:400;box-shadow:0 4px 16px -6px rgba(0,0,0,.4)}
+.fab-badge{position:absolute;top:-2px;right:-2px;width:18px;height:18px;background:rgba(10,20,32,.75);border:1.5px solid rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;pointer-events:none;line-height:1}
 
 /* ══ TOAST ════════════════════════════════════════════════ */
 #toast{
@@ -1848,9 +1848,9 @@ html.mode-private .biz-only{ display:none!important; }
 
 <!-- ══ FAB ════════════════════════════════════════════════ -->
 <div class="fab-wrap">
-  <button class="fab fab-adv" id="adv-fab" onclick="openAdvisor()" title="יועצת כלכלית">💡</button>
-  <button class="fab fab-add" id="main-fab" onclick="openAddTxn()" title="הוסף פעולה">
+  <button class="fab fab-add" id="main-fab" title="הוסף פעולה / לחץ ארוך ליועץ">
     <span id="fab-icon">+</span>
+    <span class="fab-badge">💡</span>
   </button>
 </div>
 
@@ -1903,7 +1903,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260749;
+var APP_VER=20260750;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -4837,10 +4837,27 @@ function runAdvisor(){
   showAdvisor(insights);
 }
 
-// Haptic feedback on advisor FAB tap
+// FAB: short-tap = openAddTxn, long-press 600ms = openAdvisor
 (function(){
-  var btn=document.getElementById('adv-fab');
-  if(btn) btn.addEventListener('touchstart',function(){if(navigator.vibrate)navigator.vibrate(15);},{passive:true});
+  var fab=document.getElementById('main-fab');
+  if(!fab)return;
+  var _lp=null;
+  fab.addEventListener('touchstart',function(){
+    _lp=setTimeout(function(){
+      _lp=null;
+      haptic([20,60,20]);
+      openAdvisor();
+    },600);
+  },{passive:true});
+  fab.addEventListener('touchend',function(e){
+    if(_lp){clearTimeout(_lp);_lp=null;e.preventDefault();openAddTxn();}
+  });
+  fab.addEventListener('touchmove',function(){
+    if(_lp){clearTimeout(_lp);_lp=null;}
+  });
+  fab.addEventListener('click',function(){
+    if(!('ontouchstart' in window))openAddTxn();
+  });
 })();
 
 // Manual trigger — bypasses the 8h throttle (used by the 💡 button)
