@@ -157,6 +157,10 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .auth-err{min-height:18px;font-size:13px;font-weight:400;color:var(--neg);margin-top:11px}
 .auth-toggle{margin-top:16px;font-size:13px;color:var(--text2);cursor:pointer}
 .auth-toggle b{color:var(--cyan);font-weight:500}
+.auth-forgot{font-size:12px;color:var(--muted);cursor:pointer;text-align:left;margin-top:6px;text-decoration:underline;text-decoration-color:rgba(255,255,255,.2)}
+.auth-forgot:hover{color:var(--text2)}
+.auth-sep{display:flex;flex-direction:column;gap:2px;margin-bottom:4px;text-align:right}
+.auth-sep-lbl{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:4px}
 .drw-account{font-size:11px;color:var(--muted);padding:6px 16px 2px;word-break:break-all;display:flex;align-items:center;gap:6px}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:none}
 .sync-dot.ok{background:var(--pos);box-shadow:0 0 8px rgba(0,230,118,.6)}
@@ -805,6 +809,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="drw-item" onclick="exportData();closeDrawer()"><span class="di-emoji">📥</span><span>גיבוי נתונים</span></div>
     <div class="drw-item" onclick="openSettings()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M5 7h8"/><circle cx="16.5" cy="7" r="2.3"/><path d="M19 17h-8"/><circle cx="7.5" cy="17" r="2.3"/></svg></span><span>הגדרות</span></div>
     <div class="drw-item" onclick="toggleTheme()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></span><span id="theme-lbl">מצב ים</span></div>
+    <div class="drw-item" id="drw-admin" style="display:none" onclick="go('admin');closeDrawer()"><span class="di-emoji">🔐</span><span>פאנל אדמין</span></div>
     <div class="drw-item" id="drw-logout" style="display:none" onclick="authLogout()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M14 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H14"/><path d="M18 15.5 21.5 12 18 8.5"/><path d="M21 12h-10"/></svg></span><span>התנתקות</span></div>
     <div class="drw-account" id="drw-account" style="display:none"><span class="sync-dot" id="sync-dot"></span><span id="drw-account-email"></span></div>
   </nav>
@@ -833,11 +838,12 @@ html.mode-private .biz-only{ display:none!important; }
       המשך עם Google
     </button>
 
-    <div class="auth-divider"><span>או</span></div>
+    <div class="auth-divider"><span>כניסה עם אימייל וסיסמה</span></div>
 
     <div class="auth-fields">
-      <input id="auth-email" type="email" inputmode="email" placeholder="אימייל" autocomplete="email">
-      <input id="auth-pass" type="password" placeholder="סיסמה" autocomplete="current-password">
+      <input id="auth-email" type="email" inputmode="email" placeholder="כתובת אימייל" autocomplete="email">
+      <input id="auth-pass" type="password" placeholder="סיסמה (6 תווים לפחות)" autocomplete="current-password">
+      <div id="auth-forgot" class="auth-forgot" onclick="authForgot()" style="display:block">שכחתי סיסמה</div>
       <div class="auth-mode" id="auth-mode-wrap" style="display:none">
         <span>סוג חשבון</span>
         <div class="auth-mode-switch">
@@ -850,6 +856,7 @@ html.mode-private .biz-only{ display:none!important; }
     <button class="auth-primary" id="auth-primary-btn" onclick="authSubmit()">התחברי</button>
     <div class="auth-err" id="auth-err"></div>
     <div class="auth-toggle" id="auth-toggle" onclick="authToggleMode()">אין לך חשבון? <b>הרשמי</b></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:18px;line-height:1.6;text-align:center">🔒 הנתונים שלך מוצפנים ומאובטחים<br>כל משתמש רואה רק את הנתונים שלו</div>
   </div>
 </div>
 
@@ -1652,6 +1659,18 @@ html.mode-private .biz-only{ display:none!important; }
   </button>
 </div>
 
+<!-- ══ ADMIN PANEL ════════════════════════════════════════ -->
+<div class="screen" id="s-admin">
+  <div class="detail-hdr">
+    <button class="back-btn" onclick="go('home')">‹</button>
+    <div class="detail-title">🔐 פאנל אדמין</div>
+    <button onclick="exportUsersCSV()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-size:12px;font-weight:500;font-family:'Rubik',sans-serif;padding:6px 14px;border-radius:10px;cursor:pointer;border:none">ייצוא CSV</button>
+  </div>
+  <div id="admin-content" style="padding:14px 14px 80px;direction:rtl">
+    <div style="text-align:center;padding:30px;color:var(--muted);font-size:13px">טוען נתוני משתמשים...</div>
+  </div>
+</div>
+
 <!-- ══ BIZ REPORT ════════════════════════════════════════ -->
 <div class="screen" id="s-biz-report">
   <div class="detail-hdr">
@@ -1688,7 +1707,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260736;
+var APP_VER=20260737;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2715,7 +2734,60 @@ function go(name){
   if(name==='annual')   renderAnnual();
   if(name==='suppliers') renderSuppliers();
   if(name==='biz-report') renderBizReport();
+  if(name==='admin') renderAdmin();
   // guide is static HTML — no render function needed
+}
+
+// ── ADMIN PANEL ───────────────────────────────────────────
+var _adminUsers=[];
+function renderAdmin(){
+  var el=document.getElementById('admin-content');
+  if(!el)return;
+  if(!fbDb){el.innerHTML='<div class="mempty">Firebase לא זמין</div>';return;}
+  el.innerHTML='<div style="text-align:center;padding:30px;color:var(--muted);font-size:13px">טוען...</div>';
+  fbDb.collection('analytics').get().then(function(snap){
+    _adminUsers=[];
+    snap.forEach(function(doc){_adminUsers.push(doc.data());});
+    _adminUsers.sort(function(a,b){return (b.lastSeen||0)-(a.lastSeen||0);});
+    var h='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:14px;display:flex;gap:20px">';
+    h+='<div style="text-align:center;flex:1"><div style="font-size:22px;font-weight:500;color:var(--cyan)">'+_adminUsers.length+'</div><div style="font-size:11px;color:var(--muted)">משתמשים רשומים</div></div>';
+    var activeToday=_adminUsers.filter(function(u){return u.lastSeen&&(Date.now()-u.lastSeen)<86400000;}).length;
+    h+='<div style="text-align:center;flex:1"><div style="font-size:22px;font-weight:500;color:var(--pos)">'+activeToday+'</div><div style="font-size:11px;color:var(--muted)">פעילים היום</div></div>';
+    var totalMin=Math.round(_adminUsers.reduce(function(s,u){return s+(u.duration||0);},0)/60);
+    h+='<div style="text-align:center;flex:1"><div style="font-size:22px;font-weight:500;color:var(--gold)">'+totalMin+'</div><div style="font-size:11px;color:var(--muted)">דקות שימוש כולל</div></div>';
+    h+='</div>';
+    h+='<div style="font-size:11px;color:var(--muted);margin-bottom:8px;padding-right:4px">כל המשתמשים · לחיצה על שורה להעתקת UID</div>';
+    _adminUsers.forEach(function(u){
+      var ls=u.lastSeen?new Date(u.lastSeen).toLocaleString('he-IL'):'—';
+      var st=u.startTime?new Date(u.startTime).toLocaleDateString('he-IL'):'—';
+      var min=u.duration?Math.round(u.duration/60)+'d':'—';
+      var isOnline=u.lastSeen&&(Date.now()-u.lastSeen)<600000;
+      h+='<div onclick="navigator.clipboard&&navigator.clipboard.writeText(\''+esc(u.uid||'')+'\');toast(\'UID הועתק\')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:7px;cursor:pointer">';
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+      h+='<span style="font-size:13px;font-weight:500">'+esc(u.email||'—')+'</span>';
+      h+='<span style="font-size:10px;padding:2px 7px;border-radius:6px;background:'+(isOnline?'rgba(0,230,118,.2)':'rgba(255,255,255,.06)')+';color:'+(isOnline?'var(--pos)':'var(--muted)')+'">'+(isOnline?'🟢 מחובר':'offline')+'</span>';
+      h+='</div>';
+      h+='<div style="display:flex;gap:12px;font-size:11px;color:var(--muted)">';
+      h+='<span>נרשם: '+st+'</span><span>נראה לאחרונה: '+ls+'</span><span>זמן: '+min+'</span>';
+      h+='</div></div>';
+    });
+    if(!_adminUsers.length)h+='<div class="mempty">עוד אין נתוני משתמשים</div>';
+    el.innerHTML=h;
+  }).catch(function(e){ el.innerHTML='<div class="mempty">שגיאת Firestore: '+esc(e.message)+'</div>'; });
+}
+function exportUsersCSV(){
+  if(!_adminUsers.length){toast('אין נתונים לייצוא');return;}
+  var rows=['אימייל,UID,תאריך הצטרפות,נראה לאחרונה,זמן שימוש (שניות),גרסת אפליקציה'];
+  _adminUsers.forEach(function(u){
+    var st=u.startTime?new Date(u.startTime).toISOString():'';
+    var ls=u.lastSeen?new Date(u.lastSeen).toISOString():'';
+    rows.push([u.email||'',u.uid||'',st,ls,u.duration||0,u.appVer||''].join(','));
+  });
+  var blob=new Blob(['﻿'+rows.join('\n')],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='users_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
 }
 
 function renderBizReport(){
@@ -6245,10 +6317,11 @@ function hideAuthScreen(){ var a=document.getElementById('auth-screen'); if(a)a.
 function authToggleMode(){
   _authMode = _authMode==='login'?'signup':'login';
   var su=_authMode==='signup';
-  document.getElementById('auth-primary-btn').textContent = su?'הרשמה':'התחברי';
-  document.getElementById('auth-toggle').innerHTML = su?'יש לך חשבון? <b>התחברי</b>':'אין לך חשבון? <b>הרשמי</b>';
-  document.getElementById('auth-sub').textContent = su?'צרי חשבון חדש לסנכרון מאובטח בענן':'התחברי כדי לסנכרן את הנתונים בכל המכשירים';
+  document.getElementById('auth-primary-btn').textContent = su?'הרשמה — צרי חשבון':'התחברי';
+  document.getElementById('auth-toggle').innerHTML = su?'יש לך חשבון? <b>התחברי</b>':'אין לך חשבון? <b>הרשמי בחינם</b>';
+  document.getElementById('auth-sub').textContent = su?'כל משתמש/ת עם חשבון נפרד ומאובטח':'התחברי כדי לסנכרן את הנתונים בכל המכשירים';
   document.getElementById('auth-mode-wrap').style.display = su?'flex':'none';
+  document.getElementById('auth-forgot').style.display = su?'none':'block';
   document.getElementById('auth-pass').setAttribute('autocomplete', su?'new-password':'current-password');
   authErr('');
 }
@@ -6314,6 +6387,16 @@ function _restoreGoogToken(){
   }
   return false;
 }
+function authForgot(){
+  if(!fbAuth){ authErr('שירות ההתחברות עוד נטען'); return; }
+  var email=(document.getElementById('auth-email').value||'').trim();
+  if(!email){ authErr('הכניסי אימייל קודם'); return; }
+  fbAuth.sendPasswordResetEmail(email).then(function(){
+    authErr('');
+    document.getElementById('auth-err').style.color='var(--pos)';
+    document.getElementById('auth-err').textContent='✓ קישור לאיפוס סיסמה נשלח לאימייל';
+  }).catch(function(e){ authErr(authMsg(e)); });
+}
 function authGoogle(){
   if(!fbAuth){ authErr('שירות ההתחברות עוד נטען — נסי שוב'); return; }
   var prov=new firebase.auth.GoogleAuthProvider();
@@ -6338,13 +6421,42 @@ function updateAccountUI(user){
   var lo=document.getElementById('drw-logout'); if(lo) lo.style.display=user?'flex':'none';
   var ac=document.getElementById('drw-account'); if(ac) ac.style.display=user?'flex':'none';
   var em=document.getElementById('drw-account-email'); if(em) em.textContent=user?(user.email||user.displayName||'מחוברת'):'';
+  var ad=document.getElementById('drw-admin');
+  if(ad) ad.style.display=(user&&(user.uid===ADMIN_UID||ADMIN_UID==='REPLACE_WITH_YOUR_UID'))?'flex':'none';
 }
+
+// ── USER ANALYTICS ────────────────────────────────────────
+var _sessionStart=0, _sessionInterval=null;
+var ADMIN_UID='REPLACE_WITH_YOUR_UID'; // set to your Firebase UID to enable admin panel
+
+function _logSession(user){
+  if(!fbDb||!user)return;
+  _sessionStart=Date.now();
+  var rec={uid:user.uid, email:user.email||user.displayName||'',
+    startTime:_sessionStart, lastSeen:_sessionStart, duration:0,
+    device:navigator.userAgent.slice(0,100), appVer:APP_VER};
+  fbDb.collection('analytics').doc(user.uid).set(rec,{merge:false}).catch(function(){});
+  if(_sessionInterval)clearInterval(_sessionInterval);
+  _sessionInterval=setInterval(function(){
+    if(!fbDb||!FB_UID)return;
+    var elapsed=Math.round((Date.now()-_sessionStart)/1000);
+    fbDb.collection('analytics').doc(FB_UID).update({lastSeen:Date.now(),duration:elapsed}).catch(function(){});
+  },300000); // every 5 minutes
+}
+function _finalizeSession(){
+  if(!fbDb||!FB_UID||!_sessionStart)return;
+  var elapsed=Math.round((Date.now()-_sessionStart)/1000);
+  try{ fbDb.collection('analytics').doc(FB_UID).update({lastSeen:Date.now(),duration:elapsed,endTime:Date.now()}); }catch(e){}
+}
+window.addEventListener('beforeunload', _finalizeSession);
+window.addEventListener('pagehide', _finalizeSession);
 
 function onSignedIn(user){
   FB_UID=user.uid;
   hideAuthScreen();
   updateAccountUI(user);
   setSyncDot('busy');
+  _logSession(user);
   // auto-restore Google OAuth token if still valid in this session
   setTimeout(function(){ _restoreGoogToken(); }, 300);
   // show the onboarding tour once, after a fresh login (guarded by shani_onboarded)
