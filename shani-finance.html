@@ -675,6 +675,22 @@ select option{background:#111D2C;color:#fff}
 .fp-toggle input:checked+.fp-slider:before{transform:translateX(18px)}
 
 /* ── ONBOARDING TOUR ── */
+/* ── WELCOME WIZARD ──────────────────────────────────── */
+.wiz-overlay{position:fixed;inset:0;z-index:9800;background:rgba(5,10,20,.92);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .35s ease both}
+.wiz-card{background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:28px 24px;width:100%;max-width:360px;text-align:center}
+.wiz-step{display:none}.wiz-step.active{display:block}
+.wiz-icon{font-size:44px;margin-bottom:12px}
+.wiz-title{font-size:20px;font-weight:500;margin-bottom:8px}
+.wiz-sub{font-size:13px;color:var(--text2);margin-bottom:22px;line-height:1.6}
+.wiz-inp{width:100%;font-family:'Rubik',sans-serif;font-size:15px;text-align:right;padding:13px 15px;border:1.5px solid var(--border2);border-radius:12px;background:rgba(255,255,255,.06);color:var(--text);outline:none;box-sizing:border-box;margin-bottom:10px}
+.wiz-inp:focus{border-color:var(--cyan);background:rgba(29,233,182,.06)}
+.wiz-btn{width:100%;background:var(--cyan);color:#08131F;font-family:'Rubik',sans-serif;font-size:15px;font-weight:500;padding:14px;border:none;border-radius:12px;cursor:pointer;margin-top:8px;transition:transform .12s}
+.wiz-btn:active{transform:scale(.98)}
+.wiz-skip{font-size:12px;color:var(--muted);cursor:pointer;margin-top:12px;text-decoration:underline;text-decoration-color:rgba(255,255,255,.15)}
+.wiz-dots{display:flex;justify-content:center;gap:6px;margin-bottom:20px}
+.wiz-dot{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:background .2s}
+.wiz-dot.on{background:var(--cyan)}
+.wiz-tip{display:flex;align-items:flex-start;gap:10px;text-align:right;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:13px;color:var(--text2);line-height:1.5}
 .ob-overlay{position:fixed;inset:0;z-index:9500;animation:fadeIn .3s}
 .ob-spot{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(5,13,24,.82),0 0 0 3px var(--cyan),0 0 26px rgba(29,233,182,.6);transition:all .4s cubic-bezier(.2,1,.3,1);pointer-events:none}
 .ob-bubble{position:absolute;max-width:282px;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:16px 17px;box-shadow:0 14px 44px rgba(0,0,0,.55);z-index:9600;animation:obPop .4s cubic-bezier(.2,1.5,.4,1) both}
@@ -828,6 +844,49 @@ html.mode-private .biz-only{ display:none!important; }
 </div>
 
 <!-- ══ AUTH (login / signup) ═════════════════════════════ -->
+<!-- ══ WELCOME WIZARD ════════════════════════════════════ -->
+<div id="wiz-overlay" class="wiz-overlay" style="display:none">
+  <div class="wiz-card">
+    <div class="wiz-dots">
+      <div class="wiz-dot on" id="wd-0"></div>
+      <div class="wiz-dot" id="wd-1"></div>
+      <div class="wiz-dot" id="wd-2"></div>
+    </div>
+    <!-- Step 1 -->
+    <div class="wiz-step active" id="wiz-s1">
+      <div class="wiz-icon">👋</div>
+      <div class="wiz-title">ברוכה הבאה!</div>
+      <div class="wiz-sub">ניהול כספים חכם ופשוט.<br>בואי נגדיר את החשבון שלך:</div>
+      <input class="wiz-inp" id="wiz-name" placeholder="השם שלך" type="text" autocomplete="name">
+      <div style="display:flex;background:rgba(255,255,255,.06);border:1px solid var(--border2);border-radius:12px;padding:3px;gap:3px;margin-bottom:6px">
+        <button id="wiz-biz" onclick="wizPickMode('business')" style="flex:1;background:var(--cyan);color:#08131F;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;border:none;padding:9px;border-radius:10px;cursor:pointer">עסקי</button>
+        <button id="wiz-prv" onclick="wizPickMode('private')" style="flex:1;background:none;color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;border:none;padding:9px;border-radius:10px;cursor:pointer">פרטי</button>
+      </div>
+      <button class="wiz-btn" onclick="wizStep(2)">הבא ›</button>
+      <div class="wiz-skip" onclick="wizDone()">דלג על ההגדרה</div>
+    </div>
+    <!-- Step 2 -->
+    <div class="wiz-step" id="wiz-s2">
+      <div class="wiz-icon">💰</div>
+      <div class="wiz-title">הכנסה חודשית</div>
+      <div class="wiz-sub">כמה בערך ₪ נכנסים לך בחודש?<br>(ביטוח לאומי + לקוחות + כל מקור)</div>
+      <input class="wiz-inp" id="wiz-income" placeholder="למשל: 8000" type="number" inputmode="numeric">
+      <button class="wiz-btn" onclick="wizStep(3)">הבא ›</button>
+      <div class="wiz-skip" onclick="wizDone()">דלג</div>
+    </div>
+    <!-- Step 3 -->
+    <div class="wiz-step" id="wiz-s3">
+      <div class="wiz-icon">🚀</div>
+      <div class="wiz-title">הכל מוכן!</div>
+      <div class="wiz-sub">3 טיפים לשימוש ראשון:</div>
+      <div class="wiz-tip"><span>➕</span><span>לחצי על כפתור ה-<b>+</b> (ירוק) להוספת הוצאה מהירה</span></div>
+      <div class="wiz-tip"><span>💼</span><span>סמני הוצאות עסקיות לדוח השנתי לרואה חשבון</span></div>
+      <div class="wiz-tip"><span>💡</span><span>לחצי על המנורה לייעוץ כלכלי מבוסס AI לפי הנתונים שלך</span></div>
+      <button class="wiz-btn" onclick="wizDone()">בואי נתחיל ✓</button>
+    </div>
+  </div>
+</div>
+
 <div id="auth-screen">
   <div class="auth-card">
     <div class="auth-logo"><span class="auth-mark">₪</span><span class="auth-title">My Money</span></div>
@@ -5915,6 +5974,46 @@ var TOUR_STEPS=[
 ];
 var _tourIdx=0;
 
+// ── WELCOME WIZARD ────────────────────────────────────────
+var _wizMode='business';
+function showWelcomeWizard(){
+  if(localStorage.getItem('pf_welcomed'))return;
+  var wiz=document.getElementById('wiz-overlay');
+  if(!wiz)return;
+  wiz.style.display='flex';
+}
+function wizPickMode(m){
+  _wizMode=m;
+  var b=document.getElementById('wiz-biz'), p=document.getElementById('wiz-prv');
+  var onS='background:var(--cyan);color:#08131F;font-family:\'Rubik\',sans-serif;font-size:13px;font-weight:500;border:none;padding:9px;border-radius:10px;cursor:pointer';
+  var offS='flex:1;background:none;color:var(--muted);font-family:\'Rubik\',sans-serif;font-size:13px;border:none;padding:9px;border-radius:10px;cursor:pointer';
+  if(b){ b.style.cssText=(m==='business'?'flex:1;'+onS:'flex:1;'+offS); }
+  if(p){ p.style.cssText=(m==='private'?'flex:1;'+onS:'flex:1;'+offS); }
+}
+function wizStep(n){
+  for(var i=1;i<=3;i++){
+    var s=document.getElementById('wiz-s'+i); if(s)s.classList.toggle('active',i===n);
+    var d=document.getElementById('wd-'+(i-1)); if(d)d.classList.toggle('on',i===n);
+  }
+}
+function wizDone(){
+  var nameVal=(document.getElementById('wiz-name').value||'').trim();
+  var incVal=parseFloat(document.getElementById('wiz-income').value)||0;
+  if(nameVal){ SETTINGS.userName=nameVal;saveSettings(); }
+  APP_MODE=_wizMode; localStorage.setItem('shani_mode',APP_MODE); applyMode();
+  if(incVal>0){
+    var mo=MONTHS[homeMi];
+    RAW.income[mo.key]=RAW.income[mo.key]||[];
+    var today=new Date(); var d=String(today.getDate()).padStart(2,'0')+'/'+String(mo.key).padStart(2,'0');
+    RAW.income[mo.key].push({d:d,desc:'הכנסה חודשית',a:incVal,method:'bank'});
+    save();
+  }
+  var wiz=document.getElementById('wiz-overlay'); if(wiz){wiz.style.opacity='0';wiz.style.transition='opacity .3s';setTimeout(function(){wiz.style.display='none';},300);}
+  localStorage.setItem('pf_welcomed','1');
+  renderHome();
+  setTimeout(function(){startTour(false);},600);
+}
+
 function startTour(manual){
   if(!manual && localStorage.getItem('shani_onboarded')) return;
   // don't pop the tour over the login screen — it will show after sign-in
@@ -6003,7 +6102,13 @@ function endTour(){
 }
 
 // Run advisor 7 seconds after load (after splash). First-time users get the tour instead.
-if(!localStorage.getItem('shani_onboarded')){
+if(!localStorage.getItem('pf_welcomed')){
+  setTimeout(function(){
+    var as=document.getElementById('auth-screen');
+    if(as&&as.classList.contains('show'))return; // logged out — don't show over login
+    showWelcomeWizard();
+  },5200);
+} else if(!localStorage.getItem('shani_onboarded')){
   setTimeout(function(){startTour(false);},4900);  // right after splash fades
 }else{
   setTimeout(runAdvisor, 7000);
@@ -6459,8 +6564,9 @@ function onSignedIn(user){
   _logSession(user);
   // auto-restore Google OAuth token if still valid in this session
   setTimeout(function(){ _restoreGoogToken(); }, 300);
-  // show the onboarding tour once, after a fresh login (guarded by shani_onboarded)
-  if(!localStorage.getItem('shani_onboarded')){ setTimeout(function(){startTour(false);}, 800); }
+  // show welcome wizard on very first login, tour on subsequent first sessions
+  if(!localStorage.getItem('pf_welcomed')){ setTimeout(function(){showWelcomeWizard();}, 600); }
+  else if(!localStorage.getItem('shani_onboarded')){ setTimeout(function(){startTour(false);}, 800); }
   fbDb.collection('users').doc(FB_UID).get().then(function(doc){
     if(doc.exists){
       var data=doc.data();
