@@ -1646,65 +1646,183 @@ html.mode-private .biz-only{ display:none!important; }
   </div>
   <div style="padding:20px 20px 80px;direction:rtl">
 
+    <!-- ① מה האפליקציה עושה -->
     <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px">
-      <div style="font-size:15px;font-weight:500;margin-bottom:10px;color:var(--cyan)">💰 מה זה My Money?</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.8">אפליקציה לניהול כספי אישי ועסקי בעברית. כל ההכנסות וההוצאות שלך במקום אחד, עם סנכרון ענן אוטומטי ויועצת כלכלית AI שמנתחת את ההתנהלות שלך.</div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:10px;color:var(--cyan)">💰 מה האפליקציה עושה?</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.85;margin-bottom:12px">My Money היא אפליקציה לניהול כספי אישי ועסקי שנבנתה במיוחד לבעלות עסק עצמאי בתחום הביוטי בישראל. כל המידע הפיננסי שלך — במקום אחד, בעברית, עם סנכרון ענן מלא.</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">✓</span><span>מאזן חודשי מדויק — הכנסות מול הוצאות בזמן אמת</span></div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">✓</span><span>מעקב הוצאות: עו"ש, מאסטרקארד, ויזה ומזומן</span></div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">✓</span><span>יומן לקוחות ותורים עם מעקב הכנסות עסקי</span></div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">✓</span><span>יעדי חיסכון עם מעקב התקדמות חודשי</span></div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">✓</span><span>תכנון הוצאות שנתיות מחולק לחודשים</span></div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">✓</span><span>ייבוא אוטומטי מ-Gmail וסנכרון מרובה מכשירים</span></div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">✓</span><span>יועצת כלכלית AI המנתחת דפוסים ונותנת טיפים אישיים</span></div>
+      </div>
     </div>
 
-    <div style="font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;padding:0 4px;margin-bottom:10px">פיצ'רים עיקריים</div>
+    <!-- ② לוח הבית -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--gold)">🏠 לוח הבית</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">קריאת המאזן החודשי</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">הכרטיס הגדול בראש הדף מציג את <span style="color:var(--text2)">המאזן הצפוי לסוף החודש</span>. הוא מחשב: סך ההכנסות שנרשמו <span style="color:var(--mint)">פלוס</span> הכנסות צפויות מתורים שנקבעו, <span style="color:var(--rose)">פחות</span> כל ההוצאות שתועדו וחלקן החודשי של ההוצאות השנתיות. ירוק = עודף, אדום = גירעון.</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">ניווט בין חודשים</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">החצים <span style="color:var(--text2);font-weight:500">‹ ›</span> משני צידי שם החודש מאפשרים לעבור אחורה ואחרי. כל הנתונים — הכנסות, הוצאות, לקוחות ויעדים — מסוננים לחודש שנבחר.</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;letter-spacing:.3px">כרטיסיות הסיכום</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="color:var(--mint);flex-shrink:0">📥</span><span><strong style="color:var(--text2)">הכנסות</strong> — סך מה שנכנס מלקוחות ומקורות נוספים</span></div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="color:var(--rose);flex-shrink:0">📤</span><span><strong style="color:var(--text2)">הוצאות</strong> — כל מה שיצא: עו"ש, כרטיסים, מזומן</span></div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="flex-shrink:0">💼</span><span><strong style="color:var(--text2)">הוצאות עסקיות</strong> — הוצאות שסומנו כניכוי עסקי</span></div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="flex-shrink:0">📅</span><span><strong style="color:var(--text2)">הוצאות שנתיות</strong> — חלקן החודשי של הוצאות שנתיות מתוכננות</span></div>
+      </div>
+    </div>
+
+    <!-- ③ הוצאות -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--rose)">💸 הוצאות</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">הוספת הוצאה ידנית</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים על כפתור <span style="color:var(--text2);font-weight:500">+ הירוק</span> בפינה השמאלית התחתונה ← בוחרים <strong style="color:var(--rose)">הוצאה</strong>. ממלאים: סכום, אמצעי תשלום, קטגוריה, תיאור ותאריך. לסיום לוחצים "שמור".</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;letter-spacing:.3px">אמצעי תשלום</div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px">
+        <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:11px 14px">
+          <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:3px">🏦 עו"ש (חשבון בנק)</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">עסקאות שחויבו ישירות מהחשבון — העברות בנקאיות, הוראות קבע, כרטיס חיוב מיידי.</div>
+        </div>
+        <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:11px 14px">
+          <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:3px">💳 מאסטרקארד (MC)</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">חיובי כרטיס האשראי מסוג מאסטרקארד — ייכנסו למאזן בתאריך החיוב בחשבון.</div>
+        </div>
+        <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:11px 14px">
+          <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:3px">💳 ויזה (Visa)</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">חיובי כרטיס הויזה — עם אפשרות מעקב נפרד מ-MC לראות את העלות לכל כרטיס.</div>
+        </div>
+      </div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">תיוג הוצאות עסקיות 💼</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">בעת הוספת הוצאה ניתן לסמן <span style="color:var(--text2);font-weight:500">💼 הוצאה עסקית</span>. הוצאות אלו נספרות בנפרד ומשמשות לחישוב ניכויי מס — ציוד, חומרי טיפול, השתלמויות, שיווק ועוד. ניתן לייצא דוח הוצאות עסקיות לרואה חשבון.</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">ייבוא מ-Gmail</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים <strong style="color:var(--text2)">+ ← ייבוא Gmail</strong>. האפליקציה מתחברת לחשבון הגוגל ושולפת חיובי כרטיסים מהודעות הבנק. בוחרים אילו עסקאות לייבא ולוחצים אישור — הן נכנסות אוטומטית להוצאות.</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">הוצאות שנתיות</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75">הוצאות שנתיות (ביטוח, חידוש רישיון, ציוד יקר) מוזנות פעם בשנה ומחולקות ל-12. כך המאזן החודשי תמיד מציג את ה"עלות האמיתית" — גם כשהתשלום בפועל חד-פעמי.</div>
+    </div>
+
+    <!-- ④ לקוחות -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:#a78bfa">👥 לקוחות ויומן תורים</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">יומן התורים</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לשונית <strong style="color:var(--text2)">לקוחות</strong> מציגה יומן חודשי. ימים שיש בהם תורים מסומנים בנקודה צבעונית. לחיצה על יום מציגה את רשימת התורים לאותו יום עם שם הלקוחה, שירות, שעה ומחיר.</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">הוספת תור חדש</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים <strong style="color:var(--text2)">+ תור חדש</strong>. ממלאים: שם לקוחה, סוג שירות (צבע, תספורת, טיפול, קרטין וכד'), שעה, תאריך ומחיר. האפליקציה מחשבת את ההכנסות הצפויות לחודש מכלל התורים שנקבעו.</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">סימון תור כבוצע / ביטול</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לאחר הטיפול — לוחצים <span style="color:var(--mint);font-weight:500">✓ בוצע</span> ליד שם הלקוחה. ההכנסה עוברת אוטומטית למאזן כהכנסה מאושרת. אם הלקוחה ביטלה — לוחצים "לא הגיעה" וההכנסה הצפויה מוסרת מהחישוב.</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">כרטיס לקוחה</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75">לחיצה על שם לקוחה פותחת את הכרטיס שלה: היסטוריית ביקורים, סך הכנסות, הערות אישיות ותאריך הביקור האחרון. שימושי לזיהוי לקוחות קבועות ושמירת מידע לפני הטיפול הבא.</div>
+    </div>
+
+    <!-- ⑤ יעדים -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--gold)">🎯 יעדי חיסכון</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">יצירת יעד חדש</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">בלשונית <strong style="color:var(--text2)">יעדים</strong> לוחצים <strong>+ יעד חדש</strong>. מגדירים: שם (חופשה, מכשיר, קרן חירום), סכום מטרה, תאריך יעד, אייקון וצבע אישי. האפליקציה מחשבת כמה צריך לחסוך בכל חודש כדי להגיע בזמן.</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">הוספת חיסכון</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים <span style="color:var(--gold);font-weight:500">+ הוסיפי חיסכון</span> בכרטיס הרצוי, מזינים את הסכום שנחסך ולוחצים אישור. פס ההתקדמות מתעדכן מיד ומציג כמה נשאר.</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">מעקב התקדמות</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75">כל יעד מציג: סכום שנחסך, סכום שנותר, אחוז התקדמות ומספר הימים עד לתאריך היעד. עם הגעה ל-100% — האפליקציה מציגה הודעת הצלחה.</div>
+    </div>
+
+    <!-- ⑥ יועצת כלכלית AI -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--cyan)">💡 יועצת כלכלית AI</div>
+
+      <div style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:12px">היועצת היא מנוע AI שמנתח את הנתונים הפיננסיים שלך ומספק תובנות אישיות — לא עצות גנריות.</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;letter-spacing:.3px">מה היא מנתחת</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">•</span><span>דפוסי הוצאות חוזרים וקטגוריות שצמחו</span></div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">•</span><span>השוואה בין חודשים — מה השתנה ולמה</span></div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">•</span><span>פוטנציאל חיסכון: היכן ניתן לקצץ</span></div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">•</span><span>קצב ההתקדמות ליעדי החיסכון</span></div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">•</span><span>תזרים צפוי לשארית החודש</span></div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;display:flex;gap:8px"><span style="color:var(--cyan);flex-shrink:0">•</span><span>הוצאות עסקיות לעומת פרטיות — יחס ניכוי מס</span></div>
+      </div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">איך פותחים</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים על כפתור <span style="background:rgba(29,233,182,.15);color:var(--cyan);border-radius:8px;padding:2px 8px;font-size:13px">💡</span> בפינה השמאלית התחתונה. נפתח חלון שיחה שבו ניתן לשאול שאלות חופשיות, למשל: <em style="color:var(--text2)">"כמה הוצאתי על ציוד ברבעון האחרון?"</em> או <em style="color:var(--text2)">"מתי אגיע ליעד החופשה?"</em>.</div>
+
+      <div style="background:rgba(29,233,182,.07);border:1px solid rgba(29,233,182,.18);border-radius:10px;padding:12px 14px">
+        <div style="font-size:12px;color:var(--cyan);font-weight:600;margin-bottom:4px">טיפ לשימוש אפקטיבי</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">ככל שיש יותר נתונים מתועדים, כך הניתוח מדויק יותר. מומלץ לתעד הוצאות שוטפות ולא לפספס חודשים — היועצת תזהה מגמות ארוכות טווח ותתן המלצות טובות יותר.</div>
+      </div>
+    </div>
+
+    <!-- ⑦ הגדרות חשבון -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--text2)">⚙️ הגדרות חשבון</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">כניסה וסנכרון ענן</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">מתחברים עם <strong style="color:var(--text2)">חשבון Google</strong> (מייל + סיסמה). לאחר הכניסה כל הנתונים נשמרים בענן ומסונכרנים אוטומטית — הכנסות, הוצאות, לקוחות, יעדים וכל ההגדרות.</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">שימוש ממספר מכשירים</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">ניתן להיכנס מהטלפון, הטאבלט והמחשב בו-זמנית. עסקה שנוספה בנייד תופיע מיד בדפדפן. מאפשר לנהל מהנייד ולצפות בדוחות על מסך גדול.</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">גיבוי ייצוא נתונים</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">בתפריט הגדרות ← <strong style="color:var(--text2)">גיבוי נתונים</strong> — מוריד קובץ JSON עם כל הנתונים. מומלץ לגבות אחת לחודש ולשמור ב-Google Drive או iCloud.</div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">התקנה כאפליקציה (PWA)</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75">בדפדפן Chrome/Safari לוחצים <strong style="color:var(--text2)">"הוסף למסך הבית"</strong>. האפליקציה תיפתח ללא סרגל כתובות — כמו אפליקציה מלאה — עם אייקון על שולחן העבודה ותמיכה בשימוש ללא אינטרנט.</div>
+    </div>
+
+    <!-- ⑧ שאלות נפוצות -->
+    <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;padding:0 4px;margin-bottom:10px">שאלות נפוצות</div>
 
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px">
-        <div style="font-size:22px;flex-shrink:0">📊</div>
-        <div><div style="font-size:13px;font-weight:500;margin-bottom:3px">מאזן חודשי חכם</div><div style="font-size:12px;color:var(--muted);line-height:1.5">מחשב כמה צפוי להישאר בסוף החודש אחרי כל ההכנסות, ההוצאות והתשלומים הקבועים.</div></div>
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">כיצד מסמנים הוצאה כעסקית לצורך ניכוי מס?</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.65">בעת הוספת הוצאה, מסמנים את <strong>💼 הוצאה עסקית</strong>. ניתן לסנן בדוח השנתי לפי הוצאות עסקיות בלבד ולייצא אותן לרואה חשבון.</div>
       </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px">
-        <div style="font-size:22px;flex-shrink:0">📧</div>
-        <div><div style="font-size:13px;font-weight:500;margin-bottom:3px">ייבוא מ-Gmail</div><div style="font-size:12px;color:var(--muted);line-height:1.5">מתחברים לגוגל והאפליקציה שולפת חיובי כרטיסים ועסקאות מהמיילים של הבנקים — אוטומטית.</div></div>
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">הייבוא מ-Gmail לא מוצא עסקאות — מה עושים?</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.65">וודאי שהמיילים מהבנק / חברת הכרטיס מגיעים לאותה כתובת Gmail שבה נכנסת לאפליקציה. לפעמים ההודעות נמצאות בתיקיית Promotions — יש להעביר אחת לתיקייה הראשית כדי שגוגל ייתן גישה.</div>
       </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px">
-        <div style="font-size:22px;flex-shrink:0">💳</div>
-        <div><div style="font-size:13px;font-weight:500;margin-bottom:3px">ניהול כרטיסי אשראי</div><div style="font-size:12px;color:var(--muted);line-height:1.5">מאסטרקארד, ויזה ועו"ש — כל חיוב עם תאריך ופירוט. תראי בדיוק כמה ירד ומתי.</div></div>
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">האם ניתן לערוך עסקה אחרי השמירה?</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.65">כן. נכנסים לרשימת הוצאות/הכנסות, מוצאים את העסקה ולוחצים עליה לעריכה. ניתן לשנות סכום, קטגוריה, תיאור, אמצעי תשלום ותאריך.</div>
       </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px">
-        <div style="font-size:22px;flex-shrink:0">🔄</div>
-        <div><div style="font-size:13px;font-weight:500;margin-bottom:3px">תשלומים קבועים</div><div style="font-size:12px;color:var(--muted);line-height:1.5">הגדירי ספוטיפיי, ביטוח, שכר דירה ועוד — האפליקציה תכניס אותם אוטומטית לחישוב כל חודש.</div></div>
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">מה ההבדל בין הוצאות שנתיות להוצאות רגילות?</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.65">הוצאות שנתיות (ביטוח שנתי, חידוש רישיון, ציוד יקר) מוזנות פעם בשנה ומחולקות ל-12 — כך המאזן החודשי מגלם את העלות האמיתית גם אם התשלום בפועל חד-פעמי.</div>
       </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px">
-        <div style="font-size:22px;flex-shrink:0">🎯</div>
-        <div><div style="font-size:13px;font-weight:500;margin-bottom:3px">מטרות חיסכון</div><div style="font-size:12px;color:var(--muted);line-height:1.5">הגדירי יעד (חופשה, רכב, חירום) והאפליקציה עוקבת אחר ההתקדמות שלך.</div></div>
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">האפליקציה עובדת ללא אינטרנט?</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.65">כן — לאחר ביקור ראשון האפליקציה נשמרת במכשיר. ניתן לצפות בנתונים ולהוסיף עסקאות גם ללא חיבור. הסנכרון יתעדכן אוטומטית כשהאינטרנט יחזור.</div>
       </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px">
-        <div style="font-size:22px;flex-shrink:0">💡</div>
-        <div><div style="font-size:13px;font-weight:500;margin-bottom:3px">יועצת כלכלית AI</div><div style="font-size:12px;color:var(--muted);line-height:1.5">לוחצים על כפתור ה-💡 בפינה השמאלית התחתונה לקבלת תובנות על ההוצאות שלך — מנתחת דפוסים ונותנת טיפים אישיים.</div></div>
-      </div>
+
     </div>
 
-    <div style="font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;padding:0 4px;margin-bottom:10px">שאלות נפוצות</div>
-
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
-        <div style="font-size:13px;font-weight:500;margin-bottom:6px">כיצד מוסיפים עסקה?</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.6">לוחצים על כפתור ה-+ הירוק בפינה השמאלית התחתונה. ניתן להוסיף הכנסה, הוצאה, או לייבא מ-Gmail.</div>
-      </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
-        <div style="font-size:13px;font-weight:500;margin-bottom:6px">איך הנתונים מסונכרנים?</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.6">בכניסה עם גוגל, כל הנתונים מסונכרנים אוטומטית לענן. תוכלי להיכנס מכל מכשיר ולמצוא הכל.</div>
-      </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
-        <div style="font-size:13px;font-weight:500;margin-bottom:6px">מה ההבדל בין מצב עסקי לפרטי?</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.6">מצב עסקי מציג את לוח הלקוחות ויומן הגוגל. מצב פרטי מסתיר אותם ומציג רק את הניהול הפיננסי האישי.</div>
-      </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
-        <div style="font-size:13px;font-weight:500;margin-bottom:6px">איך גיבוי הנתונים?</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.6">בתפריט ← "גיבוי נתונים" — מוריד קובץ JSON עם כל הנתונים. שמרי אותו כגיבוי חיצוני.</div>
-      </div>
-    </div>
-
-    <div style="background:rgba(29,233,182,.08);border:1px solid rgba(29,233,182,.2);border-radius:12px;padding:16px;text-align:center">
-      <div style="font-size:13px;color:var(--cyan);margin-bottom:8px;font-weight:500">רוצה לקבל טיפ כלכלי אישי?</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5">היועצת מנתחת את ההוצאות שלך ומציעה תובנות לפי ההתנהלות האמיתית שלך.</div>
-      <button onclick="openAdvisor();go('home')" style="background:var(--cyan);color:#0A1520;border:none;border-radius:10px;padding:10px 24px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Rubik',sans-serif">💡 פתחי יועצת כלכלית</button>
+    <!-- CTA -->
+    <div style="background:rgba(29,233,182,.07);border:1px solid rgba(29,233,182,.2);border-radius:14px;padding:18px;text-align:center">
+      <div style="font-size:14px;color:var(--cyan);margin-bottom:6px;font-weight:600">רוצה ניתוח כלכלי אישי?</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6">היועצת מנתחת את ההוצאות, ההכנסות והיעדים שלך ומציעה תובנות לפי ההתנהלות האמיתית שלך — לא עצות גנריות.</div>
+      <button onclick="openAdvisor();go('home')" style="background:var(--cyan);color:#0A1520;border:none;border-radius:10px;padding:11px 28px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Rubik',sans-serif">💡 פתחי יועצת כלכלית</button>
     </div>
 
   </div>
@@ -1766,7 +1884,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260737;
+var APP_VER=20260739;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
