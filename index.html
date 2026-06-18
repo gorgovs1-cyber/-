@@ -1646,7 +1646,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260730;
+var APP_VER=20260731;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -3986,6 +3986,26 @@ function showCardDetail(type){
 
 // ── INIT ─────────────────────────────────────────────────
 load();
+
+// One-time: move הילה → 19/06 ₪800, נועם → 21/06 ₪900
+function _apptFix180626(){
+  if(localStorage.getItem('_apptfix180626'))return;
+  var changed=false;
+  var jun=CLIENTS[6]||CLIENTS['6']||[];
+  jun.forEach(function(ap){
+    if(ap.name==='הילה'&&ap.status!=='done'){ap.day=19;ap.amount=800;changed=true;}
+    if(ap.name==='נועם'&&ap.status!=='done'){ap.day=21;ap.amount=900;changed=true;}
+  });
+  if(changed){
+    save();cloudPush();
+    localStorage.setItem('_apptfix180626','1');
+    try{renderClients();}catch(e){}
+    try{renderHome();}catch(e){}
+    toast('✓ תורים הועברו: הילה→19/06, נועם→21/06');
+  }
+}
+setTimeout(_apptFix180626, 2500);
+
 // Default to last month that has income entries (= most recently active month)
 (function(){
   for(var i=MONTHS.length-1;i>=0;i--){
@@ -5892,6 +5912,7 @@ function applyCloud(d){
     localStorage.setItem('shani_synced_at', String(d.updatedAt||Date.now()));
   }catch(e){}
   // re-render whatever is on screen
+  _apptFix180626();
   renderHome();
   if(_prevScreen==='clients')  try{renderClients();}catch(e){}
   if(_prevScreen==='expenses') try{renderExpenses();}catch(e){}
