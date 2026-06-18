@@ -1688,7 +1688,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260735;
+var APP_VER=20260736;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2365,7 +2365,7 @@ var CLIENTS = {
   4:[],6:[{day:1,name:'שרית',amount:800,status:'done'},{day:13,name:'רותם',amount:800,status:'done'},{day:14,name:'קארין',amount:1100,status:'done'},{day:16,name:'אמא',amount:1000,status:'done'},{day:17,name:'הילה',amount:800,status:'planned'},{day:18,name:'נועם',amount:900,status:'planned'},{day:22,name:'איה',amount:300,status:'planned'}],7:[],8:[],9:[],10:[],11:[],12:[],1:[],2:[],3:[]
 };
 
-var CARDS = {visa:700,mc:3609,bank:9381,cashBal:0,limit:10000};
+var CARDS = {visa:700,mc:3609,mc_charge:0,bank:9381,cashBal:0,limit:10000};
 var GOALS = [];
 var ASSETS = [];
 var NW_HIST = {};
@@ -2519,9 +2519,12 @@ function renderNetWorth(){
     '<span style="font-size:11px;color:var(--text2)">עו"ש</span>'+
     '<span style="font-size:11px;font-weight:500;color:var(--neg)">₪'+fmt(CARDS.bank)+'</span>'+
   '</div>';
-  h+='<div style="display:flex;justify-content:space-between;margin-bottom:4px">'+
-    '<span style="font-size:11px;color:var(--text2)">מאסטרקארד</span>'+
-    '<span style="font-size:11px;font-weight:500;color:var(--neg)">₪'+fmt(CARDS.mc)+'</span>'+
+  h+='<div style="margin-bottom:4px">'+
+    '<div style="display:flex;justify-content:space-between">'+
+    '<span style="font-size:11px;color:var(--text2)">מאסטרקארד — חיוב חודשי</span>'+
+    '<span style="font-size:11px;font-weight:500;color:var(--neg)">₪'+fmt(CARDS.mc_charge||CARDS.mc)+'</span>'+
+    '</div>'+
+    (CARDS.mc_charge&&CARDS.mc_charge>0?'<div style="display:flex;justify-content:space-between"><span style="font-size:10px;color:var(--muted)">ניצול כולל</span><span style="font-size:10px;color:var(--muted)">₪'+fmt(CARDS.mc)+'</span></div>':'')+
   '</div>';
   h+='<div style="display:flex;justify-content:space-between">'+
     '<span style="font-size:11px;color:var(--text2)">ויזה</span>'+
@@ -2785,7 +2788,7 @@ function calc(mi){
   var planList=all.filter(function(c){return c.status==='planned';});
   var doneAmt=doneList.reduce(function(s,c){return s+c.amount;},0);
   var planAmt=planList.reduce(function(s,c){return s+c.amount;},0);
-  var mcBill=CARDS.mc,vBill=CARDS.visa;
+  var mcBill=(CARDS.mc_charge&&CARDS.mc_charge>0)?CARDS.mc_charge:CARDS.mc,vBill=CARDS.visa;
 
   // Smart deduction: only subtract bills that haven't been paid yet this month
   var today=new Date();
@@ -2956,7 +2959,7 @@ function renderPMCards(r){
     '<div class="pm-card" style="--pm-c:#B57BEE" onclick="showPMDetail(\'mc\')">'+
       '<div class="pm-name">מאסטרקארד</div>'+
       '<div class="pm-amt" style="color:#B57BEE">₪'+fmt(r.mcBill)+'</div>'+
-      '<div class="pm-sub">הוצאות החודש: ₪'+fmt(mcTotal)+' · חיוב ב-20</div>'+
+      '<div class="pm-sub">חיוב ב-20'+(CARDS.mc>0?' · ניצול: ₪'+fmt(CARDS.mc):'')+' · '+fmt(mcTotal)+' החודש</div>'+
       (dMC>=0?'<span class="pm-tag" style="background:rgba(181,123,238,.15);color:#B57BEE">עוד '+dMC+' ימים</span>':'<span class="pm-tag" style="background:rgba(0,230,118,.1);color:var(--pos)">כבר ירד</span>')+
     '</div>'+
     '<div class="pm-card" style="--pm-c:#6BA3FF" onclick="showPMDetail(\'visa\')">'+
@@ -3008,8 +3011,26 @@ function showPMDetail(method){
         '<button onclick="updBankFromPM()" style="background:rgba(255,255,255,.1);border:1px solid var(--border2);color:var(--text);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:10px 14px;border-radius:12px;border:none;cursor:pointer;align-self:flex-end;flex-shrink:0">עדכן</button>'+
       '</div>';
   }
+  if(method==='mc'){
+    h+='<div style="padding:12px 14px;border-radius:var(--rs);background:rgba(181,123,238,.08);border:1px solid rgba(181,123,238,.2);margin-top:8px">'+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--muted)">חיוב ב-20 לחודש</span><span style="font-size:15px;font-weight:500;color:#B57BEE">₪'+fmt(CARDS.mc_charge||CARDS.mc)+'</span></div>'+
+      '<div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:var(--muted)">ניצול כולל (תשלומים)</span><span style="font-size:13px;color:var(--muted)">₪'+fmt(CARDS.mc)+'</span></div>'+
+    '</div>';
+    h+='<div class="mi-row" style="margin-top:8px">'+
+        '<div class="mfld"><label>חיוב חודשי ₪ (מה יורד ב-20)</label><input type="number" id="pm-mc-charge" placeholder="'+(CARDS.mc_charge||'')+'"></div>'+
+        '<div class="mfld" style="max-width:110px"><label>ניצול כולל ₪</label><input type="number" id="pm-mc-total" placeholder="'+CARDS.mc+'"></div>'+
+        '<button onclick="updMCFromPM()" style="background:rgba(255,255,255,.1);border:1px solid var(--border2);color:var(--text);font-family:Rubik,sans-serif;font-size:13px;font-weight:500;padding:10px 14px;border-radius:12px;border:none;cursor:pointer;align-self:flex-end;flex-shrink:0">עדכן</button>'+
+      '</div>';
+  }
   document.getElementById('cd-list').innerHTML=h;
   document.getElementById('cd-mbg').classList.add('open');
+}
+function updMCFromPM(){
+  var chg=pa(document.getElementById('pm-mc-charge').value);
+  var tot=pa(document.getElementById('pm-mc-total').value);
+  if(chg) CARDS.mc_charge=chg;
+  if(tot) CARDS.mc=tot;
+  if(chg||tot){save();renderHome();showPMDetail('mc');toast('מאסטרקארד עודכן');}
 }
 function updBankFromPM(){
   var v=pa(document.getElementById('pm-bank-val').value);
@@ -4235,6 +4256,17 @@ function _balFix180626(){
   toast('✓ עו"ש עודכן: -₪9,980');
 }
 setTimeout(_balFix180626, 2800);
+
+// One-time: set MC monthly charge to 4904 (June 2026 billing amount)
+function _mcChargeFix180626(){
+  if(localStorage.getItem('_mcchg180626'))return;
+  CARDS.mc_charge=4904;
+  save();cloudPush();
+  localStorage.setItem('_mcchg180626','1');
+  try{renderHome();}catch(e){}
+  toast('✓ חיוב MC עודכן: ₪4,904');
+}
+setTimeout(_mcChargeFix180626, 2400);
 
 // One-time: add June 16-18 transactions from user-provided data
 function _txFix180626(){
@@ -6179,6 +6211,7 @@ function applyCloud(d){
   _apptFix180626();
   _balFix180626();
   _mcFix180626();
+  _mcChargeFix180626();
   _txFix180626();
   renderHome();
   if(_prevScreen==='clients')  try{renderClients();}catch(e){}
