@@ -1646,7 +1646,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260731;
+var APP_VER=20260732;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -4006,6 +4006,17 @@ function _apptFix180626(){
 }
 setTimeout(_apptFix180626, 2500);
 
+// One-time: set bank balance to -9980 (overdrawn)
+function _balFix180626(){
+  if(localStorage.getItem('_balfx180626'))return;
+  CARDS.bank=-9980;
+  save();cloudPush();
+  localStorage.setItem('_balfx180626','1');
+  try{renderHome();}catch(e){}
+  toast('✓ עו"ש עודכן: -₪9,980');
+}
+setTimeout(_balFix180626, 2800);
+
 // Default to last month that has income entries (= most recently active month)
 (function(){
   for(var i=MONTHS.length-1;i>=0;i--){
@@ -5913,6 +5924,7 @@ function applyCloud(d){
   }catch(e){}
   // re-render whatever is on screen
   _apptFix180626();
+  _balFix180626();
   renderHome();
   if(_prevScreen==='clients')  try{renderClients();}catch(e){}
   if(_prevScreen==='expenses') try{renderExpenses();}catch(e){}
