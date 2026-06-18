@@ -11,7 +11,65 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: auto; }
-    body  { background: #000; overflow-x: hidden; }
+    body  { background: #000; overflow-x: hidden; cursor: none; }
+
+    /* ══════════════════════════════════════
+       1. CINEMATIC INTRO OVERLAY
+    ══════════════════════════════════════ */
+    #intro-overlay {
+      position: fixed; inset: 0; background: #000; z-index: 9999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1.5rem;
+    }
+    #intro-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(48px, 8vw, 88px); font-weight: 300;
+      letter-spacing: 20px; padding-left: 20px;
+      opacity: 0;
+    }
+    #intro-line {
+      width: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, #e3b35a, transparent);
+    }
+    #intro-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px; font-style: italic; font-weight: 300;
+      color: #c9b896; opacity: 0;
+    }
+
+    /* ══════════════════════════════════════
+       2. CUSTOM LUXURY CURSOR
+    ══════════════════════════════════════ */
+    #cursor-dot {
+      position: fixed; top: 0; left: 0;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #e3b35a; pointer-events: none; z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.25s ease;
+    }
+    #cursor-ring {
+      position: fixed; top: 0; left: 0;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid rgba(227,179,90,0.5);
+      background: rgba(227,179,90,0);
+      pointer-events: none; z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, opacity 0.25s ease;
+    }
+    #cursor-dot.cursor-hidden { opacity: 0; }
+    #cursor-ring.cursor-grow {
+      width: 48px; height: 48px;
+      background: rgba(227,179,90,0.12);
+    }
+
+    /* hide custom cursor on touch devices */
+    @media (hover: none), (pointer: coarse) {
+      body { cursor: auto; }
+      #cursor-dot, #cursor-ring { display: none; }
+    }
+
+    /* letter-by-letter reveal spans */
+    .reveal-letter { display: inline-block; will-change: transform, opacity; }
 
     /* ── LUXURY GOLD ── */
     .lux-gold {
@@ -34,17 +92,40 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
       padding: 2rem 3rem; pointer-events: none;
+      transition: all 0.4s ease;
+    }
+    /* 6. GLASSMORPHISM NAV */
+    nav.nav-scrolled {
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(227,179,90,0.1);
+      padding: 1rem 3rem;
     }
     .nav-brand, .nav-link {
       font-family: 'Inter', sans-serif;
       font-size: 11px; letter-spacing: 5px; text-transform: uppercase;
       text-decoration: none; pointer-events: auto;
     }
+    /* 11. SMOOTH NAV LINK HOVER */
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 1px;
+      background: #e3b35a;
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+      transform-origin: left;
+    }
+    .nav-link:hover::after { transform: scaleX(1); }
 
     /* ── PROGRESS BAR (exactly one) ── */
     #progress-bar {
       position: fixed; top: 0; right: 0; width: 2px;
       background: #e3b35a; height: 0; z-index: 200;
+      box-shadow: 0 0 8px rgba(227,179,90,0.6), 0 0 20px rgba(227,179,90,0.3);
     }
 
     /* ══════════════════════════════════════
@@ -53,6 +134,25 @@
     .hero-scroll-track { height: 550vh; position: relative; }
     .hero-sticky {
       position: sticky; top: 0; height: 100vh; overflow: hidden;
+    }
+
+    /* 5. AMBIENT GOLDEN PARTICLES */
+    #particles {
+      position: absolute; inset: 0; z-index: 11;
+      pointer-events: none; overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(227,179,90,0.5);
+      animation: particleFloat linear infinite;
+      pointer-events: none;
+    }
+    @keyframes particleFloat {
+      0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-20px) translateX(var(--drift)); opacity: 0; }
     }
     #source-video {
       width: 100%; height: 100%;
@@ -121,7 +221,14 @@
       pointer-events: none;
       filter: drop-shadow(0 24px 80px rgba(227,179,90,0.35));
     }
-    .product-img-layer.is-active { opacity: 1; }
+    .product-img-layer.is-active {
+      opacity: 1;
+      animation: breathe 4s ease-in-out infinite; /* 7. BREATHING */
+    }
+    @keyframes breathe {
+      0%, 100% { transform: translate(-50%, -50%) scale(1);    filter: drop-shadow(0 20px 60px rgba(227,179,90,0.2)); }
+      50%      { transform: translate(-50%, -50%) scale(1.02); filter: drop-shadow(0 30px 80px rgba(227,179,90,0.35)); }
+    }
 
     /* RIGHT — three 100vh panels */
     .product-right { width: 50%; }
@@ -204,6 +311,11 @@
       height: 68vh; width: auto;
       object-fit: contain; position: relative; z-index: 1;
       filter: drop-shadow(0 24px 80px rgba(227,179,90,0.35));
+      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), filter 0.6s ease; /* 8. HOVER DEPTH */
+    }
+    .h-product:hover img {
+      transform: scale(1.05) translateY(-8px);
+      filter: drop-shadow(0 40px 100px rgba(227,179,90,0.4));
     }
     .h-product-label {
       position: absolute; bottom: 3rem; left: 4rem; z-index: 2;
@@ -343,6 +455,20 @@
       font-size: clamp(36px, 5vw, 52px); font-weight: 300;
       margin-bottom: 2rem; display: block;
     }
+    /* 12. SCROLL-TRIGGERED COUNTER STATS */
+    .nl-stats { display: flex; gap: 4rem; justify-content: center; margin-bottom: 3rem; }
+    .nl-stat { text-align: center; }
+    .nl-stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(48px, 6vw, 72px); font-weight: 300;
+      display: block;
+    }
+    .nl-stat-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(227,179,90,0.55);
+    }
+
     .nl-form { display: flex; max-width: 420px; margin: 0 auto; }
     .nl-input {
       flex: 1; padding: 14px 20px;
@@ -472,10 +598,21 @@
         text-align: center;
       }
       .nl-btn { width: 100%; }
+
+      /* newsletter stats — tighter on mobile */
+      .nl-stats { gap: 1.5rem; }
+      .nl-stat-num { font-size: 40px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- 1. CINEMATIC INTRO OVERLAY -->
+  <div id="intro-overlay">
+    <div id="intro-logo" class="lux-gold">SOLIS</div>
+    <div id="intro-line"></div>
+    <div id="intro-tagline">Born from sun-drenched groves.</div>
+  </div>
 
   <!-- PROGRESS BAR -->
   <div id="progress-bar"></div>
@@ -502,6 +639,8 @@
         <div class="hero-phase lux-gold" id="phase-ppp">PRESS · POUR · PERFECT</div>
         <div class="hero-phase" id="phase-corner">One fruit changed everything.</div>
       </div>
+      <!-- 5. AMBIENT GOLDEN PARTICLES -->
+      <div id="particles"></div>
       <div class="scroll-hint" id="scroll-hint">
         <span class="scroll-hint-line"></span>
         <span class="scroll-hint-text">SCROLL</span>
@@ -669,6 +808,12 @@
     <div class="nl-content">
       <span class="nl-eyebrow">The Inner Circle</span>
       <span class="nl-title lux-gold">JOIN THE RITUAL</span>
+      <!-- 12. SCROLL-TRIGGERED COUNTER -->
+      <div class="nl-stats">
+        <div class="nl-stat"><span class="nl-stat-num lux-gold" data-target="100">0</span><span class="nl-stat-label">% Cold-Pressed</span></div>
+        <div class="nl-stat"><span class="nl-stat-num lux-gold" data-target="24">0</span><span class="nl-stat-label">hr Grove to Glass</span></div>
+        <div class="nl-stat"><span class="nl-stat-num lux-gold" data-target="3">0</span><span class="nl-stat-label">Editions</span></div>
+      </div>
       <form class="nl-form" onsubmit="return false;">
         <input class="nl-input" type="email" placeholder="your@email.com">
         <button class="nl-btn">SUBSCRIBE</button>
@@ -693,8 +838,85 @@
   <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
   <script>
 
-  /* ── Lenis (desktop only — touch devices use native scroll) ── */
+  /* ── Touch / cursor capability detection ── */
   const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+
+  /* ════════════════════════════════════════
+     1. CINEMATIC INTRO SEQUENCE (GSAP timeline)
+  ════════════════════════════════════════ */
+  (() => {
+    const overlay = document.getElementById("intro-overlay");
+    if (!overlay) return;
+    // lock scroll during intro
+    document.body.style.overflow = "hidden";
+    const tl = gsap.timeline({
+      onComplete: () => {
+        overlay.style.display = "none";
+        document.body.style.overflow = "";
+        ScrollTrigger.refresh();
+      }
+    });
+    tl.to("#intro-logo",   { opacity: 1, duration: 1.0, ease: "power2.out" }, 0.2)
+      .to("#intro-line",   { width: "260px", duration: 1.0, ease: "power3.inOut" }, 0.6)
+      .to("#intro-tagline",{ opacity: 1, duration: 0.9, ease: "power2.out" }, 1.2)
+      .to("#intro-overlay",{ opacity: 0, duration: 0.7, ease: "power2.inOut" }, 2.1);
+    // safety total ~2.8s
+  })();
+
+  /* ════════════════════════════════════════
+     2. CUSTOM LUXURY CURSOR (desktop only)
+  ════════════════════════════════════════ */
+  if (!isTouch) {
+    const dot  = document.createElement("div"); dot.id  = "cursor-dot";
+    const ring = document.createElement("div"); ring.id = "cursor-ring";
+    document.body.appendChild(dot);
+    document.body.appendChild(ring);
+
+    const dotX  = gsap.quickTo(dot,  "left", { duration: 0.15, ease: "power3" });
+    const dotY  = gsap.quickTo(dot,  "top",  { duration: 0.15, ease: "power3" });
+    const ringX = gsap.quickTo(ring, "left", { duration: 0.45, ease: "power3" });
+    const ringY = gsap.quickTo(ring, "top",  { duration: 0.45, ease: "power3" });
+
+    window.addEventListener("mousemove", (e) => {
+      dotX(e.clientX);  dotY(e.clientY);
+      ringX(e.clientX); ringY(e.clientY);
+    });
+
+    const hoverTargets = "a, button, .nav-link, .nl-btn, .h-product, input";
+    document.querySelectorAll(hoverTargets).forEach(el => {
+      el.addEventListener("mouseenter", () => {
+        dot.classList.add("cursor-hidden");
+        ring.classList.add("cursor-grow");
+      });
+      el.addEventListener("mouseleave", () => {
+        dot.classList.remove("cursor-hidden");
+        ring.classList.remove("cursor-grow");
+      });
+    });
+  }
+
+  /* ════════════════════════════════════════
+     5. AMBIENT GOLDEN PARTICLES (desktop only)
+  ════════════════════════════════════════ */
+  if (!isTouch) {
+    const field = document.getElementById("particles");
+    if (field) {
+      for (let i = 0; i < 20; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        const size = (2 + Math.random() * 2).toFixed(1);          // 2-4px
+        p.style.width  = size + "px";
+        p.style.height = size + "px";
+        p.style.left   = (Math.random() * 100) + "%";
+        p.style.animationDuration = (8 + Math.random() * 12) + "s"; // 8-20s
+        p.style.animationDelay    = (Math.random() * 10) + "s";     // 0-10s
+        p.style.setProperty("--drift", (Math.random() * 60 - 30) + "px"); // -30..30
+        field.appendChild(p);
+      }
+    }
+  }
+
+  /* ── Lenis (desktop only — touch devices use native scroll) ── */
   let lenis;
   if (!isTouch) {
     lenis = new Lenis({ lerp: 0.075, smoothWheel: true });
@@ -836,7 +1058,7 @@
 
   /* ── Text entrance animations ── */
   const fadeUpEls = document.querySelectorAll(
-    '.product-eyebrow, .product-name, .product-headline, .product-desc, .product-divider, ' +
+    '.product-eyebrow, .product-headline, .product-desc, .product-divider, ' +
     '.ritual-num, .ritual-word, .ritual-desc, .ritual-accent, ' +
     '.parallax-quote, .parallax-sub, .nl-eyebrow, .nl-title'
   );
@@ -855,9 +1077,97 @@
     );
   });
 
+  /* ════════════════════════════════════════
+     3. LETTER-BY-LETTER TEXT REVEAL
+  ════════════════════════════════════════ */
+  (() => {
+    const targets = document.querySelectorAll(".product-name, #phase-title");
+    targets.forEach(el => {
+      const text = el.textContent;
+      el.textContent = "";
+      const spans = [];
+      [...text].forEach(ch => {
+        const span = document.createElement("span");
+        span.className = "reveal-letter";
+        span.textContent = ch === " " ? " " : ch;
+        el.appendChild(span);
+        spans.push(span);
+      });
+      gsap.fromTo(spans,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1, y: 0,
+          stagger: 0.04, duration: 0.6, ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 88%", toggleActions: "play none none none" }
+        }
+      );
+    });
+  })();
+
+  /* ════════════════════════════════════════
+     4. MAGNETIC SUBSCRIBE BUTTON
+  ════════════════════════════════════════ */
+  (() => {
+    const btn = document.querySelector(".nl-btn");
+    if (!btn || isTouch) return;
+    btn.addEventListener("mousemove", (e) => {
+      const rect = btn.getBoundingClientRect();
+      const offsetX = e.clientX - (rect.left + rect.width / 2);
+      const offsetY = e.clientY - (rect.top + rect.height / 2);
+      gsap.to(btn, { x: offsetX * 0.3, y: offsetY * 0.3, duration: 0.3 });
+    });
+    btn.addEventListener("mouseleave", () => {
+      gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1,0.3)" });
+    });
+  })();
+
+  /* ════════════════════════════════════════
+     6. GLASSMORPHISM NAV ON SCROLL
+  ════════════════════════════════════════ */
+  (() => {
+    const nav = document.querySelector("nav");
+    if (!nav) return;
+    const onScroll = () => {
+      nav.classList.toggle("nav-scrolled", window.scrollY > 80);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  })();
+
+  /* ════════════════════════════════════════
+     9. RITUAL CARD STAGGER ENTRANCE
+  ════════════════════════════════════════ */
+  gsap.fromTo(".ritual-card",
+    { opacity: 0, y: 60, scale: 0.95 },
+    {
+      opacity: 1, y: 0, scale: 1,
+      duration: 1.0, ease: "power3.out",
+      stagger: 0.15,
+      scrollTrigger: { trigger: ".ritual-section", start: "top 75%" }
+    }
+  );
+
+  /* ════════════════════════════════════════
+     12. SCROLL-TRIGGERED STAT COUNTER
+  ════════════════════════════════════════ */
+  document.querySelectorAll(".nl-stat-num").forEach(el => {
+    const target = +el.dataset.target;
+    ScrollTrigger.create({
+      trigger: el,
+      start: "top 85%",
+      once: true,
+      onEnter: () => {
+        gsap.to({ val: 0 }, {
+          val: target, duration: 1.5, ease: "power2.out",
+          onUpdate: function () { el.textContent = Math.round(this.targets()[0].val); }
+        });
+      }
+    });
+  });
+
   /* ── END ─────────────────────────────────── */
   ScrollTrigger.refresh();
-  </script>
+</script>
 
 </body>
 </html>
