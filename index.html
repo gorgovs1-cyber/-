@@ -1228,7 +1228,7 @@ html.mode-private .biz-only{ display:none!important; }
 16/06
 65 WOLT סלט mc
 17/06
-152 גוד פארם mc"></textarea>
+152 גוד פארם visa"></textarea>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
         <span id="img-parse-count" class="import-sum"></span>
         <button onclick="parseImgText()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:8px 16px;border-radius:12px;cursor:pointer">נתחי ›</button>
@@ -1885,7 +1885,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260742;
+var APP_VER=20260743;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -4547,6 +4547,24 @@ function _txFix180626(){
   toast('✓ 3 הוצאות נוספו (16-18/6)');
 }
 setTimeout(_txFix180626, 2600);
+
+// One-time: fix גוד פארם 17/6 — method was mc, corrected to visa. Also reset visa to new cycle.
+function _visaFix180626(){
+  if(localStorage.getItem('_visafx180626'))return;
+  var arr=RAW.expense[6]||[];
+  for(var i=0;i<arr.length;i++){
+    if(arr[i].d==='17/06'&&arr[i].a===152&&arr[i].desc==='WOLT גוד פארם'){
+      arr[i].method='visa';break;
+    }
+  }
+  // Visa billed & paid on 15th — new cycle starts at 152 (this purchase)
+  CARDS.visa=152;
+  save();cloudPush();
+  localStorage.setItem('_visafx180626','1');
+  try{renderHome();}catch(e){}try{renderExpenses();}catch(e){}
+  toast('✓ ויזה עודכנה: גוד פארם = visa, יתרה ₪152');
+}
+setTimeout(_visaFix180626, 3200);
 
 // One-time: set Mastercard balance to 10078.34 (ניצול from June 2026 statement)
 function _mcFix180626(){
