@@ -1422,6 +1422,24 @@ html.mode-private .biz-only{ display:none!important; }
       <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px">כדי להשתמש ביומן גוגל<br>יש לחבר תחילה את Gmail</div>
       <button onclick="go('gmail');closeDrawer&&closeDrawer()" style="background:var(--cyan);color:#0A1520;font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:12px 24px;border-radius:12px;border:none;cursor:pointer">עברי לחיבור Gmail ›</button>
     </div>
+    <!-- Filter settings — shown when connected -->
+    <div id="gcal-filter-wrap" style="display:none;margin-bottom:16px">
+      <div style="background:var(--card);border-radius:12px;padding:14px 16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <span style="font-size:13px;font-weight:500">סינון אירועים</span>
+          <span style="font-size:11px;color:var(--muted)">אפשרי לבחור צבע ו/או מילת מפתח</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">צבע האירוע ביומן</div>
+        <div id="cal-color-picker" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px"></div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">מילת מפתח בשם האירוע</div>
+        <input id="cal-keyword-input" placeholder='לדוגמה: לקוחה, תור, Appointment' style="width:100%;box-sizing:border-box;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:9px 12px;color:var(--text);font-family:Rubik,sans-serif;font-size:13px;outline:none" oninput="saveCalFilter()">
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button onclick="resetCalFilter()" style="flex:1;background:var(--card2);border:1px solid var(--border2);color:var(--muted);font-family:Rubik,sans-serif;font-size:13px;padding:8px;border-radius:12px;cursor:pointer;border:1px solid var(--border2)">אפס</button>
+          <button onclick="applyCalFilter()" style="flex:2;background:var(--cyan);color:#08141E;font-family:Rubik,sans-serif;font-size:13px;font-weight:500;padding:8px;border-radius:12px;border:none;cursor:pointer">רענן תורים ›</button>
+        </div>
+      </div>
+    </div>
+
     <div id="gcal-connect-area" style="text-align:center;padding-top:40px">
       <!-- Google logo -->
       <svg width="52" height="52" viewBox="0 0 48 48" style="margin-bottom:22px;filter:drop-shadow(0 0 18px rgba(66,133,244,.4))"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.2l6.8-6.8C35.7 2.2 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.1C12.5 13 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8C43.8 37.3 46.5 31.3 46.5 24.5z"/><path fill="#FBBC05" d="M10.5 28.6A14.7 14.7 0 0 1 9.5 24c0-1.6.3-3.1.7-4.6l-7.9-6.1A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2.1 1.4-4.7 2.3-7.7 2.3-6.2 0-11.5-4.2-13.4-9.8l-7.9 6.1C6.5 42.5 14.6 48 24 48z"/></svg>
@@ -1885,7 +1903,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260744;
+var APP_VER=20260745;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -4894,6 +4912,7 @@ function renderGcal(){
   var area=document.getElementById('gcal-connect-area');
   if(noCid)noCid.style.display='none';
   if(area)area.style.display='block';
+  if(_gcalToken)renderCalFilter();
 }
 
 function renderGmail(){
@@ -6352,6 +6371,60 @@ function sendInvoiceOnDone(client) {
 var _gcalToken=null;
 var _gcalEvents=[];
 var CAL_SCOPE='https://www.googleapis.com/auth/calendar.readonly';
+var CAL_FILTER={colors:[],keyword:''};
+var CAL_COLORS=[
+  {id:'11',hex:'#D50000',label:'אדום'},
+  {id:'4', hex:'#E67C73',label:'פלמינגו'},
+  {id:'6', hex:'#F4511E',label:'כתום'},
+  {id:'5', hex:'#F6BF26',label:'צהוב'},
+  {id:'2', hex:'#33B679',label:'ירוק בהיר'},
+  {id:'9', hex:'#0B8043',label:'ירוק כהה'},
+  {id:'7', hex:'#039BE5',label:'תכלת'},
+  {id:'8', hex:'#3F51B5',label:'כחול'},
+  {id:'1', hex:'#7986CB',label:'לבנדר'},
+  {id:'3', hex:'#8E24AA',label:'סגול'},
+  {id:'10',hex:'#616161',label:'אפור'}
+];
+function loadCalFilter(){
+  try{var s=localStorage.getItem('pf_cal_filter');if(s)CAL_FILTER=JSON.parse(s);}catch(e){}
+}
+function saveCalFilter(){
+  var kw=document.getElementById('cal-keyword-input');
+  if(kw)CAL_FILTER.keyword=kw.value.trim();
+  try{localStorage.setItem('pf_cal_filter',JSON.stringify(CAL_FILTER));}catch(e){}
+}
+function renderCalFilter(){
+  loadCalFilter();
+  var wrap=document.getElementById('gcal-filter-wrap');
+  if(wrap)wrap.style.display='block';
+  var cp=document.getElementById('cal-color-picker');
+  if(!cp)return;
+  var h='';
+  CAL_COLORS.forEach(function(c){
+    var sel=CAL_FILTER.colors.indexOf(c.id)>=0;
+    h+='<div onclick="toggleCalColor(\''+c.id+'\')" title="'+c.label+'" style="width:28px;height:28px;border-radius:50%;background:'+c.hex+';cursor:pointer;box-sizing:border-box;border:'+(sel?'3px solid #fff':'2px solid transparent')+';box-shadow:'+(sel?'0 0 0 2px '+c.hex:'none')+';transition:all .15s"></div>';
+  });
+  cp.innerHTML=h;
+  var kw=document.getElementById('cal-keyword-input');
+  if(kw)kw.value=CAL_FILTER.keyword||'';
+}
+function toggleCalColor(id){
+  var idx=CAL_FILTER.colors.indexOf(id);
+  if(idx>=0)CAL_FILTER.colors.splice(idx,1);
+  else CAL_FILTER.colors.push(id);
+  saveCalFilter();
+  renderCalFilter();
+}
+function applyCalFilter(){
+  saveCalFilter();
+  if(_gcalToken)gcalFetchEvents();
+}
+function resetCalFilter(){
+  CAL_FILTER={colors:[],keyword:''};
+  saveCalFilter();
+  renderCalFilter();
+  if(_gcalToken)gcalFetchEvents();
+}
 
 function gcalStatus(msg,col){
   var el=document.getElementById('gcal-status');
@@ -6372,6 +6445,7 @@ function gcalConnect(){
       _gcalToken=resp.access_token;
       var btn=document.getElementById('gcal-connect-btn');
       if(btn)btn.textContent='✓ מחוברת ל-Google Calendar';
+      renderCalFilter();
       gcalStatus('שולפת תורים...','var(--pos)');
       gcalFetchEvents();
     }
@@ -6391,9 +6465,21 @@ function gcalFetchEvents(){
     .then(function(d){
       if(d.error){gcalStatus('שגיאה: '+d.error.message,'var(--neg)');return;}
       var all=d.items||[];
-      // filter red events (colorId 11=Tomato, 4=Flamingo) — show all if none red
-      var red=all.filter(function(e){return e.colorId==='11'||e.colorId==='4';});
-      renderGCalEvents(red.length?red:all);
+      var hasColors=CAL_FILTER.colors&&CAL_FILTER.colors.length>0;
+      var hasKw=CAL_FILTER.keyword&&CAL_FILTER.keyword.trim().length>0;
+      var filtered;
+      if(!hasColors&&!hasKw){
+        // legacy default: prefer red events, fall back to all
+        var red=all.filter(function(e){return e.colorId==='11'||e.colorId==='4';});
+        filtered=red.length?red:all;
+      }else{
+        filtered=all.filter(function(e){
+          var colorOk=!hasColors||(CAL_FILTER.colors.indexOf(e.colorId)>=0);
+          var kwOk=!hasKw||((e.summary||'').indexOf(CAL_FILTER.keyword)>=0);
+          return colorOk&&kwOk;
+        });
+      }
+      renderGCalEvents(filtered);
     })
     .catch(function(){gcalStatus('שגיאה בשליפת תורים','var(--neg)');});
 }
