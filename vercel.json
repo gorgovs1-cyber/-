@@ -1,10 +1,10 @@
 {
+  "version": 2,
   "framework": null,
-  "buildCommand": null,
-  "outputDirectory": ".",
+  "buildCommand": "mkdir -p dist && cp index.html dist/index.html && cp favicon.png dist/ && cp icon-*.png dist/ && cp shani-finance.html dist/ 2>/dev/null; true",
+  "outputDirectory": "dist",
   "installCommand": "echo skip",
   "rewrites": [
-    { "source": "/shani-finance", "destination": "/shani-finance.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
