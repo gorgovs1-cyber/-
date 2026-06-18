@@ -1105,6 +1105,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="atabs">
       <button class="atab on" data-t="text" onclick="setAddTab('text')">רשימה חופשית</button>
       <button class="atab" data-t="form" onclick="setAddTab('form')">טופס</button>
+      <button class="atab" data-t="img" onclick="setAddTab('img')">📸 צילום</button>
       <button class="atab" data-t="csv" onclick="setAddTab('csv')">CSV</button>
     </div>
     <!-- Free text panel -->
@@ -1136,6 +1137,32 @@ html.mode-private .biz-only{ display:none!important; }
         <div class="mfld"><label>תגיות (אופציונלי, מופרדות בפסיק)</label><input type="text" id="sf-tags" placeholder="מזון, בית, חיסכון..."></div>
       </div>
       <button onclick="addSingleTxn()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
+    </div>
+    <!-- Screenshot panel -->
+    <div id="add-panel-img" class="add-panel">
+      <div id="img-drop-zone" style="border:2px dashed var(--border2);border-radius:12px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;transition:border-color .15s" onclick="document.getElementById('img-file-input').click()" ondragover="event.preventDefault();this.style.borderColor='var(--cyan)'" ondragleave="this.style.borderColor='var(--border2)'" ondrop="event.preventDefault();this.style.borderColor='var(--border2)';if(event.dataTransfer.files[0]){var fi=document.getElementById('img-file-input');var dt=new DataTransfer();dt.items.add(event.dataTransfer.files[0]);fi.files=dt.files;loadImgPreview(fi);}">
+        <div id="img-preview-wrap" style="display:none;margin-bottom:10px">
+          <img id="img-preview" style="max-width:100%;max-height:260px;border-radius:8px;object-fit:contain">
+        </div>
+        <div id="img-drop-hint" style="color:var(--muted);font-size:13px">
+          <div style="font-size:28px;margin-bottom:6px">📸</div>
+          לחצי להעלאת צילום מסך<br>
+          <span style="font-size:11px">או גררי לכאן</span>
+        </div>
+        <input id="img-file-input" type="file" accept="image/*" style="display:none" onchange="loadImgPreview(this)">
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;text-align:right">לאחר הצגת הצילום, הכניסי את הסכומים ידנית בתיבה למטה:</div>
+      <textarea id="img-text" class="parse-area" placeholder="הכניסי שורה לכל הוצאה שרואים בצילום:
+16/06
+65 WOLT סלט mc
+17/06
+152 גוד פארם mc"></textarea>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <span id="img-parse-count" class="import-sum"></span>
+        <button onclick="parseImgText()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:8px 16px;border-radius:12px;cursor:pointer">נתחי ›</button>
+      </div>
+      <div id="img-pp-preview" class="pp-preview"></div>
+      <button onclick="importImgParsed()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:10px">שמור הכל ✓</button>
     </div>
     <!-- CSV panel -->
     <div id="add-panel-csv" class="add-panel">
@@ -1646,7 +1673,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260733;
+var APP_VER=20260734;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -3071,7 +3098,7 @@ function renderExpenses(){
     h+='<div class="txn-group-hdr">'+dt+'</div>';
     byDate[dt].forEach(function(t){
       var c=cat(t.desc);
-      var mt=t.method?'<span class="txn-method '+t.method+'">'+(t.method==='mc'?'MC':t.method==='bank'?'עוש':'Visa')+'</span>':'';
+      var mt=t.method?'<span class="txn-method '+t.method+'" title="לחצי לשינוי" onclick="event.stopPropagation();cycleTxnMethod(\''+key+'\')" style="cursor:pointer">'+(t.method==='mc'?'MC':t.method==='visa'?'Visa':t.method==='cash'?'מזומן':'עוש')+'</span>':'';
       var key=encodeURIComponent(t.d+'|'+t.desc+'|'+t.a);
       var chips='';
       if(t.tags&&t.tags.length)chips='<div class="txn-chips">'+t.tags.map(function(g){return'<span class="txn-chip" onclick="setTagFilter(\''+esc(g)+'\')">#'+esc(g)+'</span>';}).join('')+'</div>';
@@ -3884,6 +3911,89 @@ function parseTextInput(){
   addParsed=results;
   renderPP();
 }
+// ── SCREENSHOT TAB ────────────────────────────────────────
+var imgParsed=[];
+function loadImgPreview(input){
+  if(!input.files||!input.files[0])return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    document.getElementById('img-preview').src=e.target.result;
+    document.getElementById('img-preview-wrap').style.display='block';
+    document.getElementById('img-drop-hint').style.display='none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+function parseImgText(){
+  var raw=document.getElementById('img-text').value.trim();
+  if(!raw)return;
+  var lines=raw.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+  var curDate=null;
+  var mo=MONTHS[homeMi];
+  var results=[];
+  lines.forEach(function(line){
+    var dm=line.match(/^(\d{1,2})[./](\d{1,2})$/);
+    if(dm){curDate=String(dm[1]).padStart(2,'0')+'/'+String(dm[2]).padStart(2,'0');return;}
+    var mList=['mc','visa','bank','cash'];
+    var detM=addMethod;
+    var txt=line;
+    mList.forEach(function(mt){
+      var re=new RegExp('\\s+'+mt+'\\s*$','i');
+      if(re.test(txt)){detM=mt;txt=txt.replace(re,'').trim();}
+    });
+    var m=txt.match(/^([\d,]+(?:\.\d+)?)\s+(.+)$/);
+    if(!m)return;
+    var amt=parseFloat(m[1].replace(/,/g,''));
+    var desc=m[2].trim();
+    if(!amt||!desc)return;
+    var useDate=curDate||(String(new Date().getDate()).padStart(2,'0')+'/'+String(mo.key).padStart(2,'0'));
+    results.push({date:useDate,desc:desc,amount:amt,method:detM,type:addType,monthKey:mo.key});
+  });
+  imgParsed=results;
+  document.getElementById('img-parse-count').textContent=results.length+' רשומות זוהו';
+  var h='';
+  imgParsed.forEach(function(t,i){
+    var mLbl={mc:'MC',visa:'Visa',bank:'עו"ש',cash:'מזומן'}[t.method]||'';
+    var sign=t.type==='income'?'+':'-';
+    var col=t.type==='income'?'var(--pos)':'var(--neg)';
+    h+='<div class="pp-row"><span style="color:var(--muted);font-size:11px">'+t.date+'</span><span style="flex:1">'+esc(t.desc)+'</span><span style="color:var(--text2);font-size:11px">'+mLbl+'</span><span style="color:'+col+';font-weight:500">'+sign+'₪'+fmt(t.amount)+'</span></div>';
+  });
+  document.getElementById('img-pp-preview').innerHTML=h||'<div class="mempty">לא זוהו רשומות</div>';
+}
+function importImgParsed(){
+  if(!imgParsed.length){toast('אין נתונים לייבא');return;}
+  imgParsed.forEach(function(t){
+    var mo=null;
+    MONTHS.forEach(function(x){if(x.key===t.monthKey)mo=x;});
+    if(!mo)return;
+    var entry={d:t.date,desc:t.desc,a:t.amount,method:t.method};
+    if(t.type==='expense'){RAW.expense[mo.key]=RAW.expense[mo.key]||[];RAW.expense[mo.key].push(entry);}
+    else{RAW.income[mo.key]=RAW.income[mo.key]||[];RAW.income[mo.key].push({d:t.date,desc:t.desc,a:t.amount,method:t.method});}
+  });
+  save();cloudPush();
+  closeMbg('atxn-mbg');
+  renderHome();renderExpenses();
+  toast('✓ יובאו '+imgParsed.length+' רשומות');
+  imgParsed=[];
+}
+
+// ── EDIT TRANSACTION METHOD ───────────────────────────────
+function cycleTxnMethod(key){
+  var parts=decodeURIComponent(key).split('|');
+  var d=parts[0],desc=parts[1],a=parseFloat(parts[2]);
+  var m=MONTHS[homeMi].key;
+  var arr=RAW.expense[m]||[];
+  var order=['bank','mc','visa','cash'];
+  for(var i=0;i<arr.length;i++){
+    if(arr[i].d===d&&arr[i].desc===desc&&arr[i].a===a){
+      var cur=arr[i].method||'bank';
+      var ni=(order.indexOf(cur)+1)%order.length;
+      arr[i].method=order[ni];
+      save();renderExpenses();
+      return;
+    }
+  }
+}
+
 function parseCSV(){
   var raw=document.getElementById('csv-text').value.trim();
   if(!raw)return;
@@ -4016,6 +4126,29 @@ function _balFix180626(){
   toast('✓ עו"ש עודכן: -₪9,980');
 }
 setTimeout(_balFix180626, 2800);
+
+// One-time: add June 16-18 transactions from user-provided data
+function _txFix180626(){
+  if(localStorage.getItem('_txfix180626'))return;
+  RAW.expense[6]=RAW.expense[6]||[];
+  var toAdd=[
+    {d:'16/06',desc:'WOLT סלט',a:65,method:'mc'},
+    {d:'17/06',desc:'WOLT גוד פארם',a:152,method:'mc'},
+    {d:'18/06',desc:'חשבון מים',a:95,method:'bank'}
+  ];
+  toAdd.forEach(function(t){
+    var dup=false;
+    for(var i=0;i<RAW.expense[6].length;i++){
+      if(RAW.expense[6][i].d===t.d&&RAW.expense[6][i].a===t.a&&RAW.expense[6][i].desc===t.desc){dup=true;break;}
+    }
+    if(!dup) RAW.expense[6].push(t);
+  });
+  save();cloudPush();
+  localStorage.setItem('_txfix180626','1');
+  try{renderHome();}catch(e){}try{renderExpenses();}catch(e){}
+  toast('✓ 3 הוצאות נוספו (16-18/6)');
+}
+setTimeout(_txFix180626, 2600);
 
 // One-time: set Mastercard balance to 10078.34 (ניצול from June 2026 statement)
 function _mcFix180626(){
@@ -5937,6 +6070,7 @@ function applyCloud(d){
   _apptFix180626();
   _balFix180626();
   _mcFix180626();
+  _txFix180626();
   renderHome();
   if(_prevScreen==='clients')  try{renderClients();}catch(e){}
   if(_prevScreen==='expenses') try{renderExpenses();}catch(e){}
