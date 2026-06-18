@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOLIS | Cold-Pressed Orange Juice</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: auto; }
+    body  { background: #000; overflow-x: hidden; cursor: none; }
+
+    /* ══════════════════════════════════════
+       1. CINEMATIC INTRO OVERLAY
+    ══════════════════════════════════════ */
+    #intro-overlay {
+      position: fixed; inset: 0; background: #000; z-index: 9999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1.5rem;
+    }
+    #intro-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(48px, 8vw, 88px); font-weight: 300;
+      letter-spacing: 20px; padding-left: 20px;
+      opacity: 0;
+    }
+    #intro-line {
+      width: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, #e3b35a, transparent);
+    }
+    #intro-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px; font-style: italic; font-weight: 300;
+      color: #c9b896; opacity: 0;
+    }
+
+    /* ══════════════════════════════════════
+       2. CUSTOM LUXURY CURSOR
+    ══════════════════════════════════════ */
+    #cursor-dot {
+      position: fixed; top: 0; left: 0;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #e3b35a; pointer-events: none; z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.25s ease;
+    }
+    #cursor-ring {
+      position: fixed; top: 0; left: 0;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid rgba(227,179,90,0.5);
+      background: rgba(227,179,90,0);
+      pointer-events: none; z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, opacity 0.25s ease;
+    }
+    #cursor-dot.cursor-hidden { opacity: 0; }
+    #cursor-ring.cursor-grow {
+      width: 48px; height: 48px;
+      background: rgba(227,179,90,0.12);
+    }
+
+    /* hide custom cursor on touch devices */
+    @media (hover: none), (pointer: coarse) {
+      body { cursor: auto; }
+      #cursor-dot, #cursor-ring { display: none; }
+    }
+
+    /* letter-by-letter reveal spans */
+    .reveal-letter { display: inline-block; will-change: transform, opacity; }
+
+    /* ── LUXURY GOLD ── */
+    .lux-gold {
+      background: linear-gradient(135deg,
+        #f9e7c1 0%, #e3b35a 20%, #fff6e0 45%, #c89a3c 70%, #f3d98e 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      animation: goldShimmer 6s ease-in-out infinite alternate;
+    }
+    @keyframes goldShimmer {
+      from { background-position: 0% center; }
+      to   { background-position: 100% center; }
+    }
+
+    /* ── NAV (exactly one) ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 2rem 3rem; pointer-events: none;
+      transition: all 0.4s ease;
+    }
+    /* 6. GLASSMORPHISM NAV */
+    nav.nav-scrolled {
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(227,179,90,0.1);
+      padding: 1rem 3rem;
+    }
+    .nav-brand, .nav-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; letter-spacing: 5px; text-transform: uppercase;
+      text-decoration: none; pointer-events: auto;
+    }
+    /* 11. SMOOTH NAV LINK HOVER */
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 1px;
+      background: #e3b35a;
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+      transform-origin: left;
+    }
+    .nav-link:hover::after { transform: scaleX(1); }
+
+    /* ── PROGRESS BAR (exactly one) ── */
+    #progress-bar {
+      position: fixed; top: 0; right: 0; width: 2px;
+      background: #e3b35a; height: 0; z-index: 200;
+      box-shadow: 0 0 8px rgba(227,179,90,0.6), 0 0 20px rgba(227,179,90,0.3);
+    }
+
+    /* ══════════════════════════════════════
+       HERO
+    ══════════════════════════════════════ */
+    .hero-scroll-track { height: 550vh; position: relative; }
+    .hero-sticky {
+      position: sticky; top: 0; height: 100vh; overflow: hidden;
+    }
+
+    /* 5. AMBIENT GOLDEN PARTICLES */
+    #particles {
+      position: absolute; inset: 0; z-index: 11;
+      pointer-events: none; overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(227,179,90,0.5);
+      animation: particleFloat linear infinite;
+      pointer-events: none;
+    }
+    @keyframes particleFloat {
+      0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-20px) translateX(var(--drift)); opacity: 0; }
+    }
+    #source-video {
+      width: 100%; height: 100%;
+      object-fit: contain; background: #000; display: block;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      pointer-events: none; z-index: 10;
+    }
+    .hero-phase {
+      position: absolute; opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    #phase-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(56px, 9vw, 96px); font-weight: 300;
+      letter-spacing: 20px;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      text-align: center; white-space: nowrap;
+    }
+    #phase-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px; font-style: italic; font-weight: 300;
+      color: #c9b896;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      text-align: center; width: 80%;
+    }
+    #phase-ppp {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(42px, 7vw, 72px); font-weight: 300;
+      letter-spacing: 12px;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      text-align: center; white-space: nowrap;
+    }
+    #phase-corner {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px; letter-spacing: 4px; text-transform: uppercase;
+      color: #c9b896;
+      top: 10%; left: 8%;
+    }
+
+    /* ══════════════════════════════════════
+       PRODUCT EXPLAINER — sticky left image + scrolling right panels
+    ══════════════════════════════════════ */
+    .product-explainer {
+      display: flex;
+      background: #000;
+    }
+
+    /* LEFT — sticky, must have align-self:flex-start */
+    .product-left {
+      width: 50%;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      align-self: flex-start; /* CRITICAL — without this sticky breaks */
+    }
+    .product-img-layer {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 72%; max-width: 400px;
+      height: auto; object-fit: contain;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+      filter: drop-shadow(0 24px 80px rgba(227,179,90,0.35));
+    }
+    .product-img-layer.is-active {
+      opacity: 1;
+      animation: breathe 4s ease-in-out infinite; /* 7. BREATHING */
+    }
+    @keyframes breathe {
+      0%, 100% { transform: translate(-50%, -50%) scale(1);    filter: drop-shadow(0 20px 60px rgba(227,179,90,0.2)); }
+      50%      { transform: translate(-50%, -50%) scale(1.02); filter: drop-shadow(0 30px 80px rgba(227,179,90,0.35)); }
+    }
+
+    /* RIGHT — three 100vh panels */
+    .product-right { width: 50%; }
+    .product-panel {
+      height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 8% 0 6%;
+      border-top: 1px solid rgba(227,179,90,0.1);
+    }
+    .product-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+      color: rgba(227,179,90,0.55);
+      margin-bottom: 1.2rem;
+    }
+    .product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(56px, 8vw, 80px); font-weight: 300;
+      letter-spacing: 12px; text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+    .product-divider {
+      width: 36px; height: 1px;
+      background: #e3b35a; margin-bottom: 1.4rem;
+    }
+    .product-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 3vw, 28px); font-style: italic; font-weight: 300;
+      color: #f0e8d8;
+      margin-bottom: 1.2rem; line-height: 1.4;
+    }
+    .product-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 300;
+      color: #c9b896; line-height: 1.8;
+      max-width: 360px;
+    }
+
+    /* ══════════════════════════════════════
+       HORIZONTAL COLLECTION RAIL
+    ══════════════════════════════════════ */
+    /* .h-sticky has NO height — GSAP pin adds it */
+    .h-track {
+      display: flex;
+      width: 400vw; height: 100vh;
+    }
+    .h-panel {
+      width: 100vw; height: 100vh;
+      flex-shrink: 0; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .h-bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+    }
+    .h-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.55);
+    }
+    .h-panel-content { position: relative; z-index: 2; text-align: center; }
+    .h-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
+      color: rgba(227,179,90,0.55); margin-bottom: 1rem; display: block;
+    }
+    .h-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(52px, 8vw, 96px); font-weight: 300;
+      letter-spacing: 16px; display: block;
+    }
+    .h-product {
+      width: 100vw; height: 100vh;
+      flex-shrink: 0; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      background: #000; overflow: hidden;
+    }
+    .h-product img {
+      height: 68vh; width: auto;
+      object-fit: contain; position: relative; z-index: 1;
+      filter: drop-shadow(0 24px 80px rgba(227,179,90,0.35));
+      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), filter 0.6s ease; /* 8. HOVER DEPTH */
+    }
+    .h-product:hover img {
+      transform: scale(1.05) translateY(-8px);
+      filter: drop-shadow(0 40px 100px rgba(227,179,90,0.4));
+    }
+    .h-product-label {
+      position: absolute; bottom: 3rem; left: 4rem; z-index: 2;
+    }
+    .h-pname {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px; letter-spacing: 6px; text-transform: uppercase;
+      display: block;
+    }
+    .h-psub {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; color: #c9b896; margin-top: 4px;
+    }
+
+    /* ══════════════════════════════════════
+       RITUAL CARDS
+    ══════════════════════════════════════ */
+    .ritual-section {
+      padding: 10vh 0 30vh;
+      background: #000; position: relative;
+    }
+    .ritual-card {
+      width: 70%; max-width: 800px;
+      height: 70vh; margin: 0 auto 2rem;
+      position: sticky;
+      border: 1px solid rgba(227,179,90,0.2);
+      border-radius: 2px; overflow: hidden;
+    }
+    .ritual-card:nth-child(1) { top: 10vh; }
+    .ritual-card:nth-child(2) { top: 15vh; }
+    .ritual-card:nth-child(3) { top: 20vh; }
+    .ritual-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .ritual-vignette {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.75) 100%);
+      z-index: 1;
+    }
+    .ritual-fade {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      z-index: 2;
+    }
+    .ritual-text {
+      position: absolute; inset: 0; z-index: 3;
+      display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 2.5rem 3rem;
+    }
+    .ritual-accent { width: 28px; height: 1px; background: #e3b35a; margin-bottom: 0.8rem; }
+    .ritual-num {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; letter-spacing: 3px;
+      color: rgba(227,179,90,0.5); margin-bottom: 0.4rem;
+    }
+    .ritual-word {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(64px, 10vw, 110px); font-weight: 300;
+      line-height: 0.9; margin-bottom: 0.8rem; display: block;
+    }
+    .ritual-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 300;
+      color: #c9b896; line-height: 1.7; max-width: 360px;
+    }
+
+    /* ══════════════════════════════════════
+       PARALLAX STATEMENT
+    ══════════════════════════════════════ */
+    .parallax-wrap {
+      height: 100vh; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .parallax-bg {
+      position: absolute; inset: -20%;
+      background-size: cover; background-position: center;
+    }
+    .parallax-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.72);
+    }
+    .parallax-content { position: relative; z-index: 2; text-align: center; }
+    .parallax-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 6vw, 80px); font-style: italic; font-weight: 300;
+      line-height: 1.25; display: block;
+    }
+    .parallax-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+      color: rgba(227,179,90,0.55); margin-top: 2rem; display: block;
+    }
+
+    /* ══════════════════════════════════════
+       SUN BAND — single full-width image + one quote
+    ══════════════════════════════════════ */
+    .sun-band {
+      height: 80vh; position: relative; overflow: hidden;
+    }
+    .sun-band-bg {
+      position: absolute; inset: -20%;
+      background-size: cover; background-position: center;
+    }
+    .sun-band-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
+    .sun-band-text {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center; z-index: 2;
+    }
+    .sun-band-text span {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 5vw, 64px); font-style: italic; font-weight: 300;
+      text-align: center; line-height: 1.3;
+    }
+
+    /* ══════════════════════════════════════
+       NEWSLETTER
+    ══════════════════════════════════════ */
+    .newsletter {
+      position: relative; padding: 8rem 2rem;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .nl-bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+    }
+    .nl-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.62); }
+    .nl-content { position: relative; z-index: 2; text-align: center; max-width: 540px; }
+    .nl-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+      color: rgba(227,179,90,0.55); margin-bottom: 1rem; display: block;
+    }
+    .nl-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 5vw, 52px); font-weight: 300;
+      margin-bottom: 2rem; display: block;
+    }
+    /* 12. SCROLL-TRIGGERED COUNTER STATS */
+    .nl-stats { display: flex; gap: 4rem; justify-content: center; margin-bottom: 3rem; }
+    .nl-stat { text-align: center; }
+    .nl-stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(48px, 6vw, 72px); font-weight: 300;
+      display: block;
+    }
+    .nl-stat-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(227,179,90,0.55);
+    }
+
+    .nl-form { display: flex; max-width: 420px; margin: 0 auto; }
+    .nl-input {
+      flex: 1; padding: 14px 20px;
+      background: rgba(245,240,235,0.07);
+      border: 1px solid rgba(227,179,90,0.25); border-right: none;
+      color: #f0e8d8; font-family: 'Inter', sans-serif; font-size: 13px; outline: none;
+    }
+    .nl-input::placeholder { color: rgba(227,179,90,0.35); }
+    .nl-btn {
+      padding: 14px 22px;
+      background: #D4853A; border: 1px solid #D4853A;
+      color: #000; font-family: 'Inter', sans-serif;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+      transition: background 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
+      box-shadow: 0 0 18px rgba(212,133,58,0.35);
+    }
+    .nl-btn:hover { background: #e3b35a; border-color: #e3b35a; color: #000; box-shadow: 0 0 28px rgba(227,179,90,0.55); }
+
+    /* per-panel inline image — mobile only */
+    .panel-mobile-img {
+      display: none;
+      width: 62%; max-width: 260px;
+      margin: 0 auto 2.5rem;
+      filter: drop-shadow(0 16px 48px rgba(227,179,90,0.15));
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer { background: #000; padding: 4rem 2rem; text-align: center; }
+    .ft-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px; letter-spacing: 8px; text-transform: uppercase;
+      margin-bottom: 1rem; display: block;
+    }
+    .ft-copy {
+      font-family: 'Inter', sans-serif; font-size: 12px; color: #666;
+    }
+    .ft-credit {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: #c9b896; margin-top: 1.5rem;
+    }
+    .ft-credit .lux-gold { font-family: 'Cormorant Garamond', serif; font-size: 14px; letter-spacing: 3px; }
+
+    /* ── SCROLL HINT ── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 20;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+    .scroll-hint-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, rgba(227,179,90,0.8), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    .scroll-hint-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      letter-spacing: 4px;
+      color: rgba(227,179,90,0.6);
+      text-transform: uppercase;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ══════════════════════════════════════
+       MOBILE — everything below 768px
+    ══════════════════════════════════════ */
+    @media (max-width: 768px) {
+
+      nav { padding: 1.5rem 1.5rem; }
+
+      /* hero text — smaller, allowed to wrap */
+      #phase-title   { font-size: 44px; letter-spacing: 10px; }
+      #phase-tagline { font-size: 20px; width: 88%; }
+      #phase-ppp     { font-size: 22px; letter-spacing: 5px;
+                       white-space: normal; width: 88%; line-height: 1.6; }
+      #phase-corner  { font-size: 10px; }
+
+      /* product explainer — single column, image inside each panel */
+      .product-explainer { flex-direction: column; }
+      .product-left  { display: none; }   /* sticky split needs a wide screen */
+      .product-right { width: 100%; }
+      .product-panel {
+        height: auto; min-height: 100vh;
+        padding: 5rem 1.8rem;
+        text-align: center;
+        align-items: center;
+      }
+      .panel-mobile-img { display: block; }
+      .product-name { font-size: 42px; letter-spacing: 6px; }
+      .product-desc { max-width: 100%; }
+      .product-divider { margin-left: auto; margin-right: auto; }
+
+      /* horizontal rail */
+      .h-title  { font-size: 40px; letter-spacing: 8px; }
+      .h-product img { height: 55vh; }
+      .h-product-label { left: 1.5rem; bottom: 2rem; }
+
+      /* ritual cards */
+      .ritual-card { width: 92%; height: 62vh; }
+      .ritual-text { padding: 1.6rem 1.4rem; }
+      .ritual-word { font-size: 56px; }
+      .ritual-desc { font-size: 12px; }
+
+      /* parallax + sun band */
+      .parallax-quote { font-size: 34px; }
+      .sun-band-text span { font-size: 30px; }
+
+      /* newsletter — stacked form */
+      .nl-form { flex-direction: column; gap: 0.8rem; }
+      .nl-input {
+        border-right: 1px solid rgba(227,179,90,0.25);
+        text-align: center;
+      }
+      .nl-btn { width: 100%; }
+
+      /* newsletter stats — tighter on mobile */
+      .nl-stats { gap: 1.5rem; }
+      .nl-stat-num { font-size: 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. CINEMATIC INTRO OVERLAY -->
+  <div id="intro-overlay">
+    <div id="intro-logo" class="lux-gold">SOLIS</div>
+    <div id="intro-line"></div>
+    <div id="intro-tagline">Born from sun-drenched groves.</div>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div id="progress-bar"></div>
+
+  <!-- NAV — exactly one -->
+  <nav>
+    <span class="nav-brand lux-gold">SOLIS</span>
+    <a href="#" class="nav-link lux-gold">SHOP</a>
+  </nav>
+
+  <!-- ════════════════════════════
+       HERO VIDEO SCRUB
+  ════════════════════════════ -->
+  <div class="hero-scroll-track" style="height:550vh; position:relative;">
+    <div class="hero-sticky" style="position:sticky; top:0; height:100vh; overflow:hidden;">
+      <video id="source-video"
+        src="orange-story.mp4"
+        muted playsinline preload="auto"
+        style="width:100%; height:100%; object-fit:contain; background:#000; display:block;">
+      </video>
+      <div class="hero-overlay">
+        <div class="hero-phase lux-gold" id="phase-title">SOLIS</div>
+        <div class="hero-phase" id="phase-tagline">Born from sun-drenched groves.</div>
+        <div class="hero-phase lux-gold" id="phase-ppp">PRESS · POUR · PERFECT</div>
+        <div class="hero-phase" id="phase-corner">One fruit changed everything.</div>
+      </div>
+      <!-- 5. AMBIENT GOLDEN PARTICLES -->
+      <div id="particles"></div>
+      <div class="scroll-hint" id="scroll-hint">
+        <span class="scroll-hint-line"></span>
+        <span class="scroll-hint-text">SCROLL</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       STICKY PRODUCT EXPLAINER
+       Left: sticky stacked images
+       Right: 3 × 100vh panels
+  ════════════════════════════ -->
+  <section class="product-explainer">
+
+    <div class="product-left">
+      <img class="product-img-layer is-active" data-key="dawn"  src="dawn-product.png"  alt="DAWN">
+      <img class="product-img-layer"           data-key="dusk"  src="dusk-product.png"  alt="DUSK">
+      <img class="product-img-layer"           data-key="night" src="night-product.png" alt="NIGHT">
+    </div>
+
+    <div class="product-right">
+
+      <div class="product-panel" data-key="dawn">
+        <img class="panel-mobile-img" src="dawn-product.png" alt="DAWN">
+        <span class="product-eyebrow">The Morning Edition</span>
+        <span class="product-name lux-gold">DAWN</span>
+        <div class="product-divider"></div>
+        <p class="product-headline">Your morning ritual, reimagined.</p>
+        <p class="product-desc">Cold-pressed at first light from Valencia oranges at peak sweetness. Each can captures the exact moment between night and morning — liquid clarity for an unrushed start.</p>
+      </div>
+
+      <div class="product-panel" data-key="dusk">
+        <img class="panel-mobile-img" src="dusk-product.png" alt="DUSK">
+        <span class="product-eyebrow">The Evening Edition</span>
+        <span class="product-name lux-gold">DUSK</span>
+        <div class="product-divider"></div>
+        <p class="product-headline">Golden hour in every drop.</p>
+        <p class="product-desc">Slow-pressed as the sun descends. Deeper, warmer, more complex — the oranges have had an entire day to concentrate their oils into something burnished and unhurried.</p>
+      </div>
+
+      <div class="product-panel" data-key="night">
+        <img class="panel-mobile-img" src="night-product.png" alt="NIGHT">
+        <span class="product-eyebrow">The Night Edition</span>
+        <span class="product-name lux-gold">NIGHT</span>
+        <div class="product-divider"></div>
+        <p class="product-headline">Cold-pressed while you sleep.</p>
+        <p class="product-desc">Pressed in absolute silence after midnight. The citrus rests, the flavour deepens, the pressure is slow and deliberate. This is restoration in a can.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════
+       HORIZONTAL COLLECTION RAIL
+  ════════════════════════════ -->
+  <div class="h-sticky">
+    <div class="h-track">
+
+      <div class="h-panel">
+        <div class="h-bg" style="background-image:url('collection-bg.png');"></div>
+        <div class="h-overlay"></div>
+        <div class="h-panel-content">
+          <span class="h-title lux-gold">THE COLLECTION</span>
+        </div>
+      </div>
+
+      <div class="h-product">
+        <img src="dawn-product.png" alt="DAWN">
+        <div class="h-product-label">
+          <span class="h-pname lux-gold">DAWN</span>
+          <span class="h-psub">Morning ritual</span>
+        </div>
+      </div>
+
+      <div class="h-product">
+        <img src="dusk-product.png" alt="DUSK">
+        <div class="h-product-label">
+          <span class="h-pname lux-gold">DUSK</span>
+          <span class="h-psub">Golden hour</span>
+        </div>
+      </div>
+
+      <div class="h-product">
+        <img src="night-product.png" alt="NIGHT">
+        <div class="h-product-label">
+          <span class="h-pname lux-gold">NIGHT</span>
+          <span class="h-psub">Deep restore</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       RITUAL CARDS
+       (uses clip-2, clip-4, clip-5 — files that actually exist)
+  ════════════════════════════ -->
+  <section class="ritual-section">
+
+    <div class="ritual-card">
+      <video class="ritual-video" src="clip-2.mp4" autoplay muted loop playsinline></video>
+      <div class="ritual-vignette"></div>
+      <div class="ritual-fade"></div>
+      <div class="ritual-text">
+        <div class="ritual-accent"></div>
+        <span class="ritual-num">01</span>
+        <span class="ritual-word lux-gold">PRESS</span>
+        <p class="ritual-desc">Each orange meets 2,000 pounds of cold pressure. No heat. No compromise. Just pure extraction.</p>
+      </div>
+    </div>
+
+    <div class="ritual-card">
+      <video class="ritual-video" src="clip-4.mp4" autoplay muted loop playsinline></video>
+      <div class="ritual-vignette"></div>
+      <div class="ritual-fade"></div>
+      <div class="ritual-text">
+        <div class="ritual-accent"></div>
+        <span class="ritual-num">02</span>
+        <span class="ritual-word lux-gold">POUR</span>
+        <p class="ritual-desc">Sealed within hours of pressing. No air. No additives. Nothing but the fruit and its moment.</p>
+      </div>
+    </div>
+
+    <div class="ritual-card">
+      <video class="ritual-video" src="clip-5.mp4" autoplay muted loop playsinline></video>
+      <div class="ritual-vignette"></div>
+      <div class="ritual-fade"></div>
+      <div class="ritual-text">
+        <div class="ritual-accent"></div>
+        <span class="ritual-num">03</span>
+        <span class="ritual-word lux-gold">PERFECT</span>
+        <p class="ritual-desc">From grove to glass in under 24 hours. This is what orange juice was always meant to be.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ════════════════════════════
+       PARALLAX STATEMENT
+  ════════════════════════════ -->
+  <div class="parallax-wrap">
+    <div class="parallax-bg" id="parallax-bg" style="background-image:url('collection-bg.png');"></div>
+    <div class="parallax-overlay"></div>
+    <div class="parallax-content">
+      <span class="parallax-quote lux-gold">Drink what<br>the sun intended.</span>
+      <span class="parallax-sub">SOLIS — Since the first harvest.</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       SUN BAND — one wide image, one quote
+  ════════════════════════════ -->
+  <div class="sun-band">
+    <div class="sun-band-bg" id="sun-band-bg" style="background-image:url('newsletter-bg.png');"></div>
+    <div class="sun-band-overlay"></div>
+    <div class="sun-band-text"><span class="lux-gold">Born from the sun.</span></div>
+  </div>
+
+  <!-- ════════════════════════════
+       NEWSLETTER
+  ════════════════════════════ -->
+  <section class="newsletter">
+    <div class="nl-bg" style="background-image:url('newsletter-bg.png');"></div>
+    <div class="nl-overlay"></div>
+    <div class="nl-content">
+      <span class="nl-eyebrow">The Inner Circle</span>
+      <span class="nl-title lux-gold">JOIN THE RITUAL</span>
+      <!-- 12. SCROLL-TRIGGERED COUNTER -->
+      <div class="nl-stats">
+        <div class="nl-stat"><span class="nl-stat-num lux-gold" data-target="100">0</span><span class="nl-stat-label">% Cold-Pressed</span></div>
+        <div class="nl-stat"><span class="nl-stat-num lux-gold" data-target="24">0</span><span class="nl-stat-label">hr Grove to Glass</span></div>
+        <div class="nl-stat"><span class="nl-stat-num lux-gold" data-target="3">0</span><span class="nl-stat-label">Editions</span></div>
+      </div>
+      <form class="nl-form" onsubmit="return false;">
+        <input class="nl-input" type="email" placeholder="your@email.com">
+        <button class="nl-btn">SUBSCRIBE</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════
+       FOOTER
+  ════════════════════════════ -->
+  <footer>
+    <span class="ft-brand lux-gold">SOLIS</span>
+    <p class="ft-copy">© 2026 SOLIS. All rights reserved.</p>
+    <p class="ft-credit">Created by <span class="lux-gold">Shani Gorgov</span></p>
+  </footer>
+
+  <!-- ════════════════════════════
+       SCRIPTS
+  ════════════════════════════ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
+  <script>
+
+  /* ── Touch / cursor capability detection ── */
+  const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+
+  /* ════════════════════════════════════════
+     1. CINEMATIC INTRO SEQUENCE (GSAP timeline)
+  ════════════════════════════════════════ */
+  (() => {
+    const overlay = document.getElementById("intro-overlay");
+    if (!overlay) return;
+    // lock scroll during intro
+    document.body.style.overflow = "hidden";
+    const tl = gsap.timeline({
+      onComplete: () => {
+        overlay.style.display = "none";
+        document.body.style.overflow = "";
+        ScrollTrigger.refresh();
+      }
+    });
+    tl.to("#intro-logo",   { opacity: 1, duration: 1.0, ease: "power2.out" }, 0.2)
+      .to("#intro-line",   { width: "260px", duration: 1.0, ease: "power3.inOut" }, 0.6)
+      .to("#intro-tagline",{ opacity: 1, duration: 0.9, ease: "power2.out" }, 1.2)
+      .to("#intro-overlay",{ opacity: 0, duration: 0.7, ease: "power2.inOut" }, 2.1);
+    // safety total ~2.8s
+  })();
+
+  /* ════════════════════════════════════════
+     2. CUSTOM LUXURY CURSOR (desktop only)
+  ════════════════════════════════════════ */
+  if (!isTouch) {
+    const dot  = document.createElement("div"); dot.id  = "cursor-dot";
+    const ring = document.createElement("div"); ring.id = "cursor-ring";
+    document.body.appendChild(dot);
+    document.body.appendChild(ring);
+
+    const dotX  = gsap.quickTo(dot,  "left", { duration: 0.15, ease: "power3" });
+    const dotY  = gsap.quickTo(dot,  "top",  { duration: 0.15, ease: "power3" });
+    const ringX = gsap.quickTo(ring, "left", { duration: 0.45, ease: "power3" });
+    const ringY = gsap.quickTo(ring, "top",  { duration: 0.45, ease: "power3" });
+
+    window.addEventListener("mousemove", (e) => {
+      dotX(e.clientX);  dotY(e.clientY);
+      ringX(e.clientX); ringY(e.clientY);
+    });
+
+    const hoverTargets = "a, button, .nav-link, .nl-btn, .h-product, input";
+    document.querySelectorAll(hoverTargets).forEach(el => {
+      el.addEventListener("mouseenter", () => {
+        dot.classList.add("cursor-hidden");
+        ring.classList.add("cursor-grow");
+      });
+      el.addEventListener("mouseleave", () => {
+        dot.classList.remove("cursor-hidden");
+        ring.classList.remove("cursor-grow");
+      });
+    });
+  }
+
+  /* ════════════════════════════════════════
+     5. AMBIENT GOLDEN PARTICLES (desktop only)
+  ════════════════════════════════════════ */
+  if (!isTouch) {
+    const field = document.getElementById("particles");
+    if (field) {
+      for (let i = 0; i < 20; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        const size = (2 + Math.random() * 2).toFixed(1);          // 2-4px
+        p.style.width  = size + "px";
+        p.style.height = size + "px";
+        p.style.left   = (Math.random() * 100) + "%";
+        p.style.animationDuration = (8 + Math.random() * 12) + "s"; // 8-20s
+        p.style.animationDelay    = (Math.random() * 10) + "s";     // 0-10s
+        p.style.setProperty("--drift", (Math.random() * 60 - 30) + "px"); // -30..30
+        field.appendChild(p);
+      }
+    }
+  }
+
+  /* ── Lenis (desktop only — touch devices use native scroll) ── */
+  let lenis;
+  if (!isTouch) {
+    lenis = new Lenis({ lerp: 0.075, smoothWheel: true });
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
+  } else {
+    ScrollTrigger.normalizeScroll(true);
+  }
+
+  /* ── Progress bar ───────────────────────── */
+  window.addEventListener("scroll", () => {
+    const p = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    document.getElementById("progress-bar").style.height = (p * 100) + "vh";
+  }, { passive: true });
+
+  /* ── Hide scroll hint after first scroll ── */
+  const scrollHint = document.getElementById("scroll-hint");
+  if (scrollHint) {
+    window.addEventListener("scroll", function hideHint() {
+      if (window.scrollY > 50) {
+        scrollHint.style.opacity = "0";
+        window.removeEventListener("scroll", hideHint);
+      }
+    }, { passive: true });
+  }
+
+  /* ── Hero video scrub ────────────────────── */
+  (() => {
+    const track = document.querySelector(".hero-scroll-track");
+    const video = document.getElementById("source-video");
+    if (!track || !video) return;
+    let ticking = false, duration = 0, initialized = false;
+    const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+
+    function updatePhases(p) {
+      const show = (id, lo, hi) => {
+        document.getElementById(id).style.opacity = (p >= lo && p <= hi) ? "1" : "0";
+      };
+      show("phase-title",   0.15, 0.28);
+      show("phase-tagline", 0.35, 0.48);
+      show("phase-ppp",     0.55, 0.68);
+      show("phase-corner",  0.70, 0.82);
+    }
+
+    function update() {
+      if (!initialized || !duration || !Number.isFinite(duration)) return;
+      const total    = track.offsetHeight - window.innerHeight;
+      const rect     = track.getBoundingClientRect();
+      const passed   = clamp(-rect.top, 0, total);
+      const progress = total > 0 ? passed / total : 0;
+      if (video.readyState >= 2)
+        video.currentTime = clamp(progress * duration, 0, duration);
+      updatePhases(progress);
+    }
+
+    function requestTick() {
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(() => { update(); ticking = false; });
+    }
+
+    function initScrub() {
+      duration = video.duration;
+      if (!duration || !Number.isFinite(duration)) return;
+      video.pause(); video.currentTime = 0; initialized = true;
+      window.addEventListener("scroll", requestTick, { passive: true });
+      window.addEventListener("resize", requestTick);
+      if (typeof lenis !== "undefined") lenis.on("scroll", requestTick);
+      requestTick();
+    }
+
+    if (video.readyState >= 2) initScrub();
+    else {
+      video.addEventListener("loadedmetadata", initScrub, { once: true });
+      video.addEventListener("loadeddata",     initScrub, { once: true });
+      video.load();
+    }
+  })();
+
+  /* ── Product explainer — stacked cross-fade ── */
+  (() => {
+    const layers = document.querySelectorAll(".product-img-layer");
+    const panels = document.querySelectorAll(".product-panel[data-key]");
+    if (!layers.length || !panels.length) return;
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        layers.forEach(l =>
+          l.classList.toggle("is-active", l.dataset.key === e.target.dataset.key));
+      });
+    }, { threshold: 0.5 });
+    panels.forEach(p => io.observe(p));
+  })();
+
+  /* ── Horizontal collection rail ─────────── */
+  (() => {
+    const track = document.querySelector(".h-track");
+    if (!track) return;
+    gsap.to(track, {
+      x: () => -(track.scrollWidth - window.innerWidth),
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".h-sticky",
+        pin: true, scrub: 1,
+        start: "top top",
+        end: () => "+=" + (track.scrollWidth - window.innerWidth),
+        invalidateOnRefresh: true,
+      }
+    });
+  })();
+
+  /* ── Parallax statement ─────────────────── */
+  (() => {
+    const bg = document.getElementById("parallax-bg");
+    if (!bg) return;
+    gsap.to(bg, {
+      yPercent: 15, ease: "none",
+      scrollTrigger: {
+        trigger: ".parallax-wrap",
+        start: "top bottom", end: "bottom top", scrub: true,
+      }
+    });
+  })();
+
+  /* ── Sun band parallax ──────────────────── */
+  (() => {
+    const el = document.getElementById("sun-band-bg");
+    if (!el) return;
+    gsap.fromTo(el,
+      { yPercent: -8 },
+      { yPercent:  8, ease: "none",
+        scrollTrigger: {
+          trigger: ".sun-band",
+          start: "top bottom", end: "bottom top", scrub: true,
+        }
+      }
+    );
+  })();
+
+  /* ── Text entrance animations ── */
+  const fadeUpEls = document.querySelectorAll(
+    '.product-eyebrow, .product-headline, .product-desc, .product-divider, ' +
+    '.ritual-num, .ritual-word, .ritual-desc, .ritual-accent, ' +
+    '.parallax-quote, .parallax-sub, .nl-eyebrow, .nl-title'
+  );
+  fadeUpEls.forEach(el => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 28 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.9, ease: "power2.out",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 88%",
+          toggleActions: "play none none none",
+        }
+      }
+    );
+  });
+
+  /* ════════════════════════════════════════
+     3. LETTER-BY-LETTER TEXT REVEAL
+  ════════════════════════════════════════ */
+  (() => {
+    const targets = document.querySelectorAll(".product-name, #phase-title");
+    targets.forEach(el => {
+      const text = el.textContent;
+      el.textContent = "";
+      const spans = [];
+      [...text].forEach(ch => {
+        const span = document.createElement("span");
+        span.className = "reveal-letter";
+        span.textContent = ch === " " ? " " : ch;
+        el.appendChild(span);
+        spans.push(span);
+      });
+      gsap.fromTo(spans,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1, y: 0,
+          stagger: 0.04, duration: 0.6, ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 88%", toggleActions: "play none none none" }
+        }
+      );
+    });
+  })();
+
+  /* ════════════════════════════════════════
+     4. MAGNETIC SUBSCRIBE BUTTON
+  ════════════════════════════════════════ */
+  (() => {
+    const btn = document.querySelector(".nl-btn");
+    if (!btn || isTouch) return;
+    btn.addEventListener("mousemove", (e) => {
+      const rect = btn.getBoundingClientRect();
+      const offsetX = e.clientX - (rect.left + rect.width / 2);
+      const offsetY = e.clientY - (rect.top + rect.height / 2);
+      gsap.to(btn, { x: offsetX * 0.3, y: offsetY * 0.3, duration: 0.3 });
+    });
+    btn.addEventListener("mouseleave", () => {
+      gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1,0.3)" });
+    });
+  })();
+
+  /* ════════════════════════════════════════
+     6. GLASSMORPHISM NAV ON SCROLL
+  ════════════════════════════════════════ */
+  (() => {
+    const nav = document.querySelector("nav");
+    if (!nav) return;
+    const onScroll = () => {
+      nav.classList.toggle("nav-scrolled", window.scrollY > 80);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  })();
+
+  /* ════════════════════════════════════════
+     9. RITUAL CARD STAGGER ENTRANCE
+  ════════════════════════════════════════ */
+  gsap.fromTo(".ritual-card",
+    { opacity: 0, y: 60, scale: 0.95 },
+    {
+      opacity: 1, y: 0, scale: 1,
+      duration: 1.0, ease: "power3.out",
+      stagger: 0.15,
+      scrollTrigger: { trigger: ".ritual-section", start: "top 75%" }
+    }
+  );
+
+  /* ════════════════════════════════════════
+     12. SCROLL-TRIGGERED STAT COUNTER
+  ════════════════════════════════════════ */
+  document.querySelectorAll(".nl-stat-num").forEach(el => {
+    const target = +el.dataset.target;
+    ScrollTrigger.create({
+      trigger: el,
+      start: "top 85%",
+      once: true,
+      onEnter: () => {
+        gsap.to({ val: 0 }, {
+          val: target, duration: 1.5, ease: "power2.out",
+          onUpdate: function () { el.textContent = Math.round(this.targets()[0].val); }
+        });
+      }
+    });
+  });
+
+  /* ── END ─────────────────────────────────── */
+  ScrollTrigger.refresh();
+</script>
+
+</body>
+</html>
