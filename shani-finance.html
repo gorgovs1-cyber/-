@@ -1915,7 +1915,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260752;
+var APP_VER=20260753;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -6831,7 +6831,7 @@ function authGoogle(){
     if(e&&(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'||e.code==='auth/cancelled-popup-request')){
       fbAuth.signInWithRedirect(prov);
     } else if(e&&e.code==='auth/unauthorized-domain'){
-      authErr('כניסה עם Google לא זמינה כאן — נא להתחבר עם אימייל וסיסמה');
+      authErr('כניסה עם Google לא זמינה כאן — הכניסי את האימייל שלך ולחצי על "שכחתי סיסמה" לקבלת קישור הגדרת סיסמה');
       setTimeout(function(){document.getElementById('auth-email').focus();},100);
     } else { authErr(authMsg(e)); }
   });
