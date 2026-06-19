@@ -77,8 +77,8 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   to  {transform:rotate(360deg)}
 }
 @keyframes spPulse{
-  0%  {text-shadow:0 0 30px rgba(45,212,191,.6)}
-  100%{text-shadow:0 0 50px rgba(45,212,191,.9)}
+  0%  {text-shadow:0 0 8px rgba(45,212,191,.35)}
+  100%{text-shadow:0 0 14px rgba(45,212,191,.55)}
 }
 
 /* "My Money" neon text */
@@ -90,8 +90,8 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   animation:spFade .55s .75s both, spNameGlow 2.5s 1.5s ease-in-out infinite alternate;
 }
 @keyframes spNameGlow{
-  0%  {text-shadow:0 0 20px rgba(45,212,191,.5)}
-  100%{text-shadow:0 0 40px rgba(45,212,191,.85)}
+  0%  {text-shadow:0 0 6px rgba(45,212,191,.3)}
+  100%{text-shadow:0 0 12px rgba(45,212,191,.55)}
 }
 .sp-greet{
   position:relative;z-index:1;
@@ -119,7 +119,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .auth-logo{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:6px}
 .auth-mark{
   font-size:44px;font-weight:500;color:#2DD4BF;line-height:1;
-  text-shadow:0 0 20px rgba(45,212,191,.5);
+  text-shadow:0 0 12px rgba(45,212,191,.3);
 }
 .auth-title{font-size:20px;font-weight:500;font-style:italic;color:#2DD4BF;letter-spacing:.5px}
 .auth-sub{font-size:13px;color:var(--text2);margin-bottom:26px;line-height:1.5}
@@ -693,7 +693,7 @@ select option{background:#111D2C;color:#fff}
 .wiz-dot.on{background:var(--cyan)}
 .wiz-tip{display:flex;align-items:flex-start;gap:10px;text-align:right;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:13px;color:var(--text2);line-height:1.5}
 .ob-overlay{position:fixed;inset:0;z-index:9500;animation:fadeIn .3s}
-.ob-spot{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(5,13,24,.82),0 0 0 3px var(--cyan),0 0 26px rgba(45,212,191,.6);transition:all .4s cubic-bezier(.2,1,.3,1);pointer-events:none}
+.ob-spot{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(5,13,24,.82),0 0 0 2px var(--cyan),0 0 14px rgba(45,212,191,.35);transition:all .4s cubic-bezier(.2,1,.3,1);pointer-events:none}
 .ob-bubble{position:absolute;max-width:282px;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:16px 17px;box-shadow:0 14px 44px rgba(0,0,0,.55);z-index:9600;animation:obPop .4s cubic-bezier(.2,1.5,.4,1) both}
 @keyframes obPop{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}
 .ob-emoji{font-size:20px;margin-bottom:6px}
@@ -1912,7 +1912,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260756;
+var APP_VER=20260757;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
