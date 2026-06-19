@@ -1912,7 +1912,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260754;
+var APP_VER=20260755;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -3195,9 +3195,9 @@ function renderHome(){
   }else if(dMC>=0&&dMC<=5){
     var short=r.mcBill-(r.inc+r.doneAmt+r.planAmt-r.exp);
     if(short>0){
-      alertHtml='<div class="alert-card bad"><div class="a-body"><div class="a-title">חסר כיסוי למאסטרקארד</div><div class="a-sub">יורד בעוד '+dMC+' ימים · ₪'+fmt(r.mcBill)+'</div></div><div class="a-amt">₪'+fmt(short)+'</div></div>';
+      alertHtml='<div class="alert-card bad"><div class="a-body"><div class="a-title">מאסטרקארד יורד בעוד '+dMC+' ימים</div><div class="a-sub">חסר כיסוי · גרעון נוכחי ₪'+fmt(Math.max(0,r.exp-r.inc-r.doneAmt-r.planAmt))+'</div></div><div class="a-amt">₪'+fmt(r.mcBill)+'</div></div>';
     }else{
-      alertHtml='<div class="alert-card ok"><div class="a-body"><div class="a-title">כיסוי למאסטרקארד</div><div class="a-sub">יורד בעוד '+dMC+' ימים · ₪'+fmt(r.mcBill)+'</div></div><div class="a-amt">₪'+fmt(r.mcBill)+'</div></div>';
+      alertHtml='<div class="alert-card ok"><div class="a-body"><div class="a-title">כיסוי למאסטרקארד</div><div class="a-sub">יורד בעוד '+dMC+' ימים</div></div><div class="a-amt">₪'+fmt(r.mcBill)+'</div></div>';
     }
   }else if(r.balFull<0){
     alertHtml='<div class="alert-card bad"><div class="a-body"><div class="a-title">תחזית שלילית לסוף החודש</div><div class="a-sub">'+(r.mcDeduct>0?'מאסטרקארד ₪'+fmt(r.mcBill)+' ב-20':'')+' '+(r.vDeduct>0?'· ויזה ₪'+fmt(r.vBill)+' ב-15':'')+'</div></div><div class="a-amt">₪'+fmt(Math.abs(r.balFull))+'</div></div>';
