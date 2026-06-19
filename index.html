@@ -15,10 +15,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0A0814;--bg2:#120E1E;--card:#171321;--card2:#1F1A2E;
+  --bg:#0D1117;--bg2:#161B22;--card:#1C2128;--card2:#21262D;
   --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
-  --cyan:#1DE9B6;--pos:#5EFFC5;--neg:#FF6B8A;
-  --gold:#E8A83E;
+  --cyan:#2DD4BF;--pos:#22C55E;--neg:#F87171;
+  --gold:#F59E0B;
   --text:#fff;--text2:rgba(255,255,255,.75);--muted:rgba(255,255,255,.42);--muted2:rgba(255,255,255,.22);
   --r:18px;--rs:12px;--rl:18px;
 }
@@ -30,7 +30,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 /* ══ SPLASH ══════════════════════════════════════════════ */
 #splash{
   position:fixed;inset:0;z-index:9999;overflow:hidden;
-  background:#0A0814;
+  background:#0D1117;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   transition:opacity .7s ease;
 }
@@ -59,7 +59,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 /* ₪ drops from top while rotating */
 .sp-shekel{
   position:relative;z-index:1;
-  font-size:120px;line-height:1;color:#00FFD4;
+  font-size:120px;line-height:1;color:#2DD4BF;
   filter:brightness(1.15);
   animation:spDrop 1.1s cubic-bezier(.25,.85,.4,1) both,
             spPulse 2.2s 1.4s ease-in-out infinite alternate,
@@ -77,21 +77,21 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   to  {transform:rotate(360deg)}
 }
 @keyframes spPulse{
-  0%  {text-shadow:0 0 30px rgba(0,255,212,.6)}
-  100%{text-shadow:0 0 50px rgba(0,255,212,.9)}
+  0%  {text-shadow:0 0 30px rgba(45,212,191,.6)}
+  100%{text-shadow:0 0 50px rgba(45,212,191,.9)}
 }
 
 /* "My Money" neon text */
 .sp-name{
   position:relative;z-index:1;
   font-size:56px;font-weight:500;font-style:italic;
-  color:#00FFD4;margin-top:20px;line-height:1.05;letter-spacing:1px;
+  color:#2DD4BF;margin-top:20px;line-height:1.05;letter-spacing:1px;
   filter:brightness(1.1);
   animation:spFade .55s .75s both, spNameGlow 2.5s 1.5s ease-in-out infinite alternate;
 }
 @keyframes spNameGlow{
-  0%  {text-shadow:0 0 20px rgba(0,255,212,.5)}
-  100%{text-shadow:0 0 40px rgba(0,255,212,.85)}
+  0%  {text-shadow:0 0 20px rgba(45,212,191,.5)}
+  100%{text-shadow:0 0 40px rgba(45,212,191,.85)}
 }
 .sp-greet{
   position:relative;z-index:1;
@@ -111,17 +111,17 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   position:fixed;inset:0;z-index:9000;display:none;
   flex-direction:column;align-items:center;justify-content:center;
   padding:24px calc(20px + env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) calc(20px + env(safe-area-inset-left,0px));
-  background:radial-gradient(120% 80% at 50% 0%,#1A0F28 0%,#120E1E 55%,#0A0814 100%);
+  background:radial-gradient(120% 80% at 50% 0%,#1A0F28 0%,#120E1E 55%,#0D1117 100%);
   overflow-y:auto;
 }
 #auth-screen.show{display:flex;animation:spFade .4s ease both}
 .auth-card{width:100%;max-width:380px;text-align:center}
 .auth-logo{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:6px}
 .auth-mark{
-  font-size:44px;font-weight:500;color:#00FFD4;line-height:1;
-  text-shadow:0 0 20px rgba(0,255,212,.5);
+  font-size:44px;font-weight:500;color:#2DD4BF;line-height:1;
+  text-shadow:0 0 20px rgba(45,212,191,.5);
 }
-.auth-title{font-size:20px;font-weight:500;font-style:italic;color:#00FFD4;letter-spacing:.5px}
+.auth-title{font-size:20px;font-weight:500;font-style:italic;color:#2DD4BF;letter-spacing:.5px}
 .auth-sub{font-size:13px;color:var(--text2);margin-bottom:26px;line-height:1.5}
 .auth-google{
   width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
@@ -139,7 +139,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   padding:13px 15px;border:1.5px solid var(--border2);border-radius:12px;
   background:rgba(255,255,255,.06);color:var(--text);outline:none;
 }
-.auth-fields input:focus{border-color:var(--cyan);background:rgba(29,233,182,.06)}
+.auth-fields input:focus{border-color:var(--cyan);background:rgba(45,212,191,.06)}
 .auth-mode{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 2px 0}
 .auth-mode>span{font-size:13px;color:var(--text2);font-weight:400}
 .auth-mode-switch{display:flex;background:rgba(255,255,255,.06);border:1px solid var(--border2);border-radius:12px;padding:3px;gap:3px}
@@ -177,7 +177,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 /* ══ HERO ════════════════════════════════════════════════ */
 .hero{
   padding:16px 20px 24px;
-  background:linear-gradient(170deg,#0C1E30 0%,#0B1520 100%);
+  background:linear-gradient(170deg,#0C1E30 0%,#0D1117 100%);
 }
 .hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .backup-btn{
@@ -195,12 +195,12 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   transition:color .3s;
 }
 .hero-bal.pos{color:var(--pos);text-shadow:0 0 42px rgba(0,230,118,.22)}
-.hero-bal.neg{color:var(--neg);text-shadow:0 0 42px rgba(255,107,107,.22)}
+.hero-bal.neg{color:var(--neg);text-shadow:0 0 42px rgba(248,113,113,.22)}
 .hero-bal.settle{animation:settlePop .26s cubic-bezier(.2,1.4,.4,1)}
 @keyframes settlePop{50%{transform:scale(1.03)}}
 .hero-delta{display:inline-flex;align-items:center;gap:5px;margin:0 auto 12px;padding:4px 11px;border-radius:12px;font-size:11px;font-weight:500;font-variant-numeric:tabular-nums;width:fit-content}
 .hero-delta.up{background:rgba(0,230,118,.12);color:var(--pos)}
-.hero-delta.down{background:rgba(255,107,107,.12);color:var(--neg)}
+.hero-delta.down{background:rgba(248,113,113,.12);color:var(--neg)}
 .hero-delta-wrap{text-align:center}
 .hero-sub{font-size:13px;color:var(--muted);text-align:center;line-height:1.8}
 .hero-sub b{color:var(--text2)}
@@ -214,7 +214,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   border:1px solid rgba(255,255,255,.12);
 }
 .alert-card.ok {background:linear-gradient(135deg,#0D2E1A,#091C10);border-color:rgba(0,230,118,.3)}
-.alert-card.bad{background:linear-gradient(135deg,#2E0A0A,#1C0606);border-color:rgba(255,107,107,.35)}
+.alert-card.bad{background:rgba(248,113,113,.10);border-color:rgba(248,113,113,.28)}
 .a-body {flex:1;text-align:right}
 .a-title{font-size:13px;font-weight:500;color:rgba(200,180,255,.9);margin-bottom:4px}
 .alert-card.ok  .a-title{color:var(--pos)}
@@ -284,7 +284,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 /* ══ BANK CARD ════════════════════════════════════════════ */
 .bank-card{
   margin:0 16px 14px;background:linear-gradient(135deg,#1A0F0F,#260E0E);
-  border-radius:var(--r);border:1px solid rgba(255,107,107,.2);
+  border-radius:var(--r);border:1px solid rgba(248,113,113,.2);
   padding:16px 18px;display:flex;justify-content:space-between;align-items:center;
 }
 .bank-lbl{font-size:13px;font-weight:500;color:var(--muted)}
@@ -303,7 +303,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .toast-line{font-size:13px;font-weight:400;margin-top:8px;min-height:16px;color:var(--cyan)}
 
 /* ══ DETAIL SCREENS ══════════════════════════════════════ */
-.detail-hdr{display:flex;align-items:center;gap:12px;padding:16px 20px 14px;background:linear-gradient(180deg,#0C1D30,#0B1520)}
+.detail-hdr{display:flex;align-items:center;gap:12px;padding:16px 20px 14px;background:linear-gradient(180deg,#0C1D30,#0D1117)}
 .back-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);color:var(--text2);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .back-btn:active{opacity:.6}
 .detail-title{font-size:20px;font-weight:500;flex:1;font-family:'Rubik',sans-serif;color:var(--cyan);letter-spacing:-.3px}
@@ -354,15 +354,15 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .txn-desc{font-size:13px;font-weight:400;line-height:1.3}
 .txn-date{font-size:10px;color:var(--muted);margin-top:2px;font-weight:500;letter-spacing:.2px}
 .txn-method{display:inline-block;font-size:10px;font-weight:500;padding:2px 6px;border-radius:6px;margin-right:4px;vertical-align:middle}
-.txn-method.mc  {background:rgba(29,233,182,.15);color:var(--cyan)}
+.txn-method.mc  {background:rgba(45,212,191,.15);color:var(--cyan)}
 .txn-method.visa{background:rgba(30,91,168,.35);color:#6BA3FF}
 .txn-amt{font-size:15px;font-weight:500;font-variant-numeric:tabular-nums;flex-shrink:0}
 .txn-amt.neg {color:var(--neg)}
 .txn-amt.pos {color:var(--pos)}
 .txn-amt.dim {color:rgba(255,255,255,.35)}
 .txn-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
-.txn-chip{font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(29,233,182,.12);color:var(--cyan);font-weight:500;cursor:pointer;border:1px solid rgba(29,233,182,.2)}
-.txn-chip.active{background:rgba(29,233,182,.28);border-color:var(--cyan)}
+.txn-chip{font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(45,212,191,.12);color:var(--cyan);font-weight:500;cursor:pointer;border:1px solid rgba(45,212,191,.2)}
+.txn-chip.active{background:rgba(45,212,191,.28);border-color:var(--cyan)}
 .tag-filter-bar{display:flex;flex-wrap:wrap;gap:5px;padding:8px 14px 4px;min-height:0}
 .txn-biz{display:inline-flex;align-items:center;font-size:10px;padding:1px 5px;border-radius:6px;margin-right:3px;vertical-align:middle;cursor:pointer;user-select:none;background:rgba(255,214,60,.13);color:#FFD63C;border:1px solid rgba(255,214,60,.22)}
 .txn-biz.no{background:rgba(255,255,255,.05);color:var(--muted);border-color:transparent}
@@ -376,13 +376,13 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .bal-row-val{font-size:15px;font-weight:500;font-variant-numeric:tabular-nums}
 .bal-row-val.pos{color:var(--pos)}.bal-row-val.neg{color:var(--neg)}.bal-row-val.pur{color:var(--cyan)}.bal-row-val.amb{color:var(--gold)}.bal-row-val.red{color:var(--neg)}
 .bal-div{height:1px;background:var(--border);margin:6px 0 14px}
-.bal-total{display:flex;justify-content:space-between;align-items:center;padding:16px;border-radius:var(--r);background:linear-gradient(135deg,rgba(29,233,182,.1),rgba(29,233,182,.04));border:1px solid rgba(29,233,182,.22);margin-bottom:10px}
+.bal-total{display:flex;justify-content:space-between;align-items:center;padding:16px;border-radius:var(--r);background:linear-gradient(135deg,rgba(45,212,191,.1),rgba(45,212,191,.04));border:1px solid rgba(45,212,191,.22);margin-bottom:10px}
 .bal-total-lbl{font-size:13px;font-weight:500}
 .bal-total-val{font-size:20px;font-weight:500;letter-spacing:-1px;font-variant-numeric:tabular-nums}
 .bal-total-val.pos{color:var(--cyan)}.bal-total-val.neg{color:var(--neg)}
 
 /* ══ CLIENTS ══════════════════════════════════════════════ */
-.page-hdr{padding:16px 20px 6px;background:linear-gradient(170deg,#0C1E30,#0B1520)}
+.page-hdr{padding:16px 20px 6px;background:linear-gradient(170deg,#0C1E30,#0D1117)}
 .page-title{font-size:20px;font-weight:500;letter-spacing:-.5px}
 .page-sub  {font-size:13px;color:var(--muted);margin-top:3px}
 
@@ -407,12 +407,12 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .cal-grid {display:grid;grid-template-columns:repeat(7,1fr)}
 .cal-cell {min-height:50px;border-bottom:1px solid rgba(255,255,255,.04);border-right:1px solid rgba(255,255,255,.04);padding:4px 3px;cursor:pointer;transition:background .1s}
 .cal-cell:nth-child(7n+1){border-right:none}
-.cal-cell:hover{background:rgba(29,233,182,.06)}
+.cal-cell:hover{background:rgba(45,212,191,.06)}
 .cal-cell.empty{cursor:default;background:transparent!important}
 .cal-cell.today .cal-num{background:var(--cyan);color:#0A1520;border-radius:50%;font-weight:500}
 .cal-num{font-size:9px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;margin-bottom:2px;color:var(--muted2);font-weight:500}
 .cal-dot{font-size:9px;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:6px;padding:2px 4px;margin-bottom:2px;font-weight:500;letter-spacing:.2px}
-.cal-dot.done   {background:rgba(94,255,197,.15);color:#5EFFC5}
+.cal-dot.done   {background:rgba(34,197,94,.15);color:#22C55E}
 .cal-dot.planned{background:rgba(212,149,106,.18);color:#D4956A}
 
 /* ══ MODAL ════════════════════════════════════════════════ */
@@ -448,8 +448,8 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .mempty{font-size:13px;color:var(--muted);text-align:center;padding:26px 0;animation:fadeUp .4s ease both}
 .mempty::before{content:'✦';display:block;font-size:20px;color:var(--border2);margin-bottom:8px;animation:floatY 3s ease-in-out infinite}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-.sbtn.cancelled{background:rgba(255,107,107,.15);color:var(--neg)}
-.cal-dot.cancelled{background:rgba(255,107,138,.15);color:#FF6B8A}
+.sbtn.cancelled{background:rgba(248,113,113,.15);color:var(--neg)}
+.cal-dot.cancelled{background:rgba(255,107,138,.15);color:#F87171}
 .mc-amt.cancelled{color:var(--neg)}
 
 /* ══ TOP HEADER ═══════════════════════════════════════════ */
@@ -488,7 +488,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .drw-logo-mark { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:12px; background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; font-style:normal; font-weight:500; font-size:20px; box-shadow:0 2px 8px rgba(0,0,0,.25); }
 .drw-item { display:flex; align-items:center; gap:12px; padding:14px 20px; cursor:pointer; transition:background .15s; color:var(--text2); font-size:15px; font-weight:400; }
 .drw-item:hover { background:rgba(255,255,255,.05); }
-.drw-item.active { color:var(--cyan); background:rgba(29,233,182,.08); }
+.drw-item.active { color:var(--cyan); background:rgba(45,212,191,.08); }
 .drw-item .di-emoji { font-size:20px; width:28px; text-align:center; }
 .drw-item .di-icon { width:28px; height:24px; display:flex; align-items:center; justify-content:center; flex:0 0 28px; }
 .drw-item .di-icon svg { width:21px; height:21px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
@@ -561,8 +561,8 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .goal-add-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--text);font-family:'Rubik',sans-serif;font-size:11px;font-weight:500;padding:5px 12px;border-radius:12px;cursor:pointer;flex-shrink:0}
 .goal-del{position:absolute;top:10px;left:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 5px}
 .goal-del:hover{color:var(--neg)}
-.add-goal-card{background:rgba(29,233,182,.05);border:1.5px dashed rgba(29,233,182,.28);border-radius:var(--r);padding:18px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer}
-.add-goal-card:active{background:rgba(29,233,182,.1)}
+.add-goal-card{background:rgba(45,212,191,.05);border:1.5px dashed rgba(45,212,191,.28);border-radius:var(--r);padding:18px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer}
+.add-goal-card:active{background:rgba(45,212,191,.1)}
 .add-goal-lbl{font-size:13px;font-weight:500;color:var(--cyan)}
 .goals-sum{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 16px 12px}
 
@@ -577,14 +577,14 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .pp-del{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:13px;flex-shrink:0;padding:0 2px}
 .type-toggle{display:flex;border-radius:12px;overflow:hidden;border:1.5px solid var(--border2);margin-bottom:12px}
 .ttype{flex:1;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:9px;border:none;background:none;color:var(--muted);cursor:pointer;transition:all .13s}
-.ttype.on.expense{background:rgba(255,107,107,.18);color:var(--neg)}
+.ttype.on.expense{background:rgba(248,113,113,.18);color:var(--neg)}
 .ttype.on.income{background:rgba(0,230,118,.13);color:var(--pos)}
 .method-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
 .mchip{padding:6px 13px;border-radius:18px;border:1.5px solid var(--border2);background:none;color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .12s}
 .mchip.on.cash{background:rgba(255,179,71,.3);border-color:#FFB347;color:#FFB347}
-.mchip.on.bank{background:rgba(255,107,107,.2);border-color:var(--neg);color:var(--neg)}
+.mchip.on.bank{background:rgba(248,113,113,.2);border-color:var(--neg);color:var(--neg)}
 .mchip.on.visa{background:rgba(107,163,255,.25);border-color:#6BA3FF;color:#6BA3FF}
-.mchip.on.mc{background:rgba(29,233,182,.15);border-color:var(--cyan);color:var(--cyan)}
+.mchip.on.mc{background:rgba(45,212,191,.15);border-color:var(--cyan);color:var(--cyan)}
 .csv-hint{font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.75;background:rgba(255,255,255,.04);padding:8px 10px;border-radius:12px}
 .import-sum{font-size:11px;color:var(--cyan);font-weight:500}
 .add-panel{display:none}
@@ -639,7 +639,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 /* ══ CD MODAL ADD FORM ═══════════════════════════════════ */
 .cd-add-sep{height:1px;background:var(--border);margin:14px 0}
 .cd-add-ttl{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px}
-.cd-file-lbl{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--rs);background:rgba(255,255,255,.04);border:1.5px dashed rgba(29,233,182,.3);cursor:pointer;margin-bottom:6px}
+.cd-file-lbl{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--rs);background:rgba(255,255,255,.04);border:1.5px dashed rgba(45,212,191,.3);cursor:pointer;margin-bottom:6px}
 .cd-file-lbl span{font-size:13px;font-weight:500;color:var(--cyan)}
 
 select option{background:#111D2C;color:#fff}
@@ -651,16 +651,16 @@ select option{background:#111D2C;color:#fff}
 .advisor-card{background:var(--card2);border:1px solid var(--border2);border-radius:var(--r-xl,22px);padding:24px 20px;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6);position:relative}
 .advisor-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan);border-radius:var(--r-xl,22px) var(--r-xl,22px) 0 0;opacity:.7}
 .adv-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.adv-icon{width:44px;height:44px;border-radius:50%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.adv-icon{width:44px;height:44px;border-radius:50%;background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .adv-title{font-size:13px;font-weight:500;color:var(--cyan);letter-spacing:.5px}
 .adv-sub{font-size:11px;color:var(--muted);margin-top:1px}
 .adv-msg{font-size:13px;line-height:1.7;color:var(--text2);margin-bottom:18px}
 .adv-msg strong{color:var(--text);font-weight:500}
 .adv-actions{display:flex;gap:10px}
-.adv-btn-ok{flex:1;padding:11px;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);border-radius:var(--r);color:var(--cyan);font-size:13px;font-weight:500;cursor:pointer}
+.adv-btn-ok{flex:1;padding:11px;background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.3);border-radius:var(--r);color:var(--cyan);font-size:13px;font-weight:500;cursor:pointer}
 .adv-btn-dismiss{padding:11px 14px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:var(--r);color:var(--muted);font-size:13px;cursor:pointer}
 
-.fp-add-btn{display:block;width:calc(100% - 32px);margin:12px 16px;padding:14px;background:rgba(29,233,182,.1);border:1px dashed rgba(29,233,182,.35);border-radius:var(--r);color:var(--cyan);font-size:15px;font-weight:400;cursor:pointer;text-align:center;}
+.fp-add-btn{display:block;width:calc(100% - 32px);margin:12px 16px;padding:14px;background:rgba(45,212,191,.1);border:1px dashed rgba(45,212,191,.35);border-radius:var(--r);color:var(--cyan);font-size:15px;font-weight:400;cursor:pointer;text-align:center;}
 .fp-item{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(25,40,64,.4) 0%,var(--card) 65%);border:1px solid var(--border);border-radius:var(--r);margin:8px 16px;padding:14px;box-shadow:0 8px 20px -12px rgba(0,0,0,.65)}
 .fp-item-left{flex:1}
 .fp-name{font-size:15px;font-weight:400;color:var(--text)}
@@ -684,7 +684,7 @@ select option{background:#111D2C;color:#fff}
 .wiz-title{font-size:20px;font-weight:500;margin-bottom:8px}
 .wiz-sub{font-size:13px;color:var(--text2);margin-bottom:22px;line-height:1.6}
 .wiz-inp{width:100%;font-family:'Rubik',sans-serif;font-size:15px;text-align:right;padding:13px 15px;border:1.5px solid var(--border2);border-radius:12px;background:rgba(255,255,255,.06);color:var(--text);outline:none;box-sizing:border-box;margin-bottom:10px}
-.wiz-inp:focus{border-color:var(--cyan);background:rgba(29,233,182,.06)}
+.wiz-inp:focus{border-color:var(--cyan);background:rgba(45,212,191,.06)}
 .wiz-btn{width:100%;background:var(--cyan);color:#08131F;font-family:'Rubik',sans-serif;font-size:15px;font-weight:500;padding:14px;border:none;border-radius:12px;cursor:pointer;margin-top:8px;transition:transform .12s}
 .wiz-btn:active{transform:scale(.98)}
 .wiz-skip{font-size:13px;color:var(--muted);cursor:pointer;margin-top:12px;text-decoration:underline;text-decoration-color:rgba(255,255,255,.15)}
@@ -693,7 +693,7 @@ select option{background:#111D2C;color:#fff}
 .wiz-dot.on{background:var(--cyan)}
 .wiz-tip{display:flex;align-items:flex-start;gap:10px;text-align:right;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:13px;color:var(--text2);line-height:1.5}
 .ob-overlay{position:fixed;inset:0;z-index:9500;animation:fadeIn .3s}
-.ob-spot{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(5,13,24,.82),0 0 0 3px var(--cyan),0 0 26px rgba(29,233,182,.6);transition:all .4s cubic-bezier(.2,1,.3,1);pointer-events:none}
+.ob-spot{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(5,13,24,.82),0 0 0 3px var(--cyan),0 0 26px rgba(45,212,191,.6);transition:all .4s cubic-bezier(.2,1,.3,1);pointer-events:none}
 .ob-bubble{position:absolute;max-width:282px;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:16px 17px;box-shadow:0 14px 44px rgba(0,0,0,.55);z-index:9600;animation:obPop .4s cubic-bezier(.2,1.5,.4,1) both}
 @keyframes obPop{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}
 .ob-emoji{font-size:20px;margin-bottom:6px}
@@ -709,9 +709,9 @@ select option{background:#111D2C;color:#fff}
 
 /* ── GMAIL ── */
 .gp-btn{padding:7px 16px;border-radius:12px;border:1.5px solid var(--border2);background:none;color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
-.gp-btn.on{background:rgba(29,233,182,.15);border-color:rgba(29,233,182,.5);color:var(--cyan)}
+.gp-btn.on{background:rgba(45,212,191,.15);border-color:rgba(45,212,191,.5);color:var(--cyan)}
 .dup-badge{display:inline-block;font-size:9px;font-weight:500;padding:2px 7px;border-radius:6px;margin-right:4px;vertical-align:middle}
-.dup-exact{background:rgba(255,107,107,.2);color:#FF6B6B}
+.dup-exact{background:rgba(248,113,113,.2);color:#FF6B6B}
 .dup-close{background:rgba(255,179,71,.2);color:#FFB347}
 
 /* ── 1a. MINPUT ── */
@@ -740,7 +740,7 @@ select option{background:#111D2C;color:#fff}
 
 /* ── 5. DELETE TXN BTN ── */
 .txn-del{flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--muted2);font-size:13px;padding:4px 6px;transition:color .15s,background .15s;border-radius:6px;}
-.txn-del:active{color:var(--neg);background:rgba(255,107,107,.12);}
+.txn-del:active{color:var(--neg);background:rgba(248,113,113,.12);}
 
 /* ── 6. NAV PILL (legacy, kept for compat) ── */
 
@@ -773,7 +773,7 @@ html.theme-light .drw-panel { background:#112438; }
 .modal-close { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; }
 .inp { display:block; width:100%; font-family:'Rubik',sans-serif; font-size:13px; padding:10px 12px; border:1.5px solid var(--border2); border-radius:12px; background:rgba(255,255,255,.07); color:var(--text); outline:none; }
 .inp:focus { border-color:var(--cyan); }
-.btn-primary { width:100%; background:linear-gradient(135deg,#2AF0C2,#1DE9B6); color:#0A1520; font-family:'Rubik',sans-serif; font-size:13px; font-weight:500; padding:12px; border-radius:12px; border:none; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.2); transition:transform .12s,filter .12s; }
+.btn-primary { width:100%; background:linear-gradient(135deg,#2AF0C2,#2DD4BF); color:#0A1520; font-family:'Rubik',sans-serif; font-size:13px; font-weight:500; padding:12px; border-radius:12px; border:none; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.2); transition:transform .12s,filter .12s; }
 .btn-primary:active { transform:scale(.97); filter:brightness(.94); }
 
 /* private/business mode: hide client UI in private mode */
@@ -926,10 +926,10 @@ html.mode-private .biz-only{ display:none!important; }
   <div id="subs-alert-bar" style="display:none;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.1);padding:8px 16px;font-size:13px;font-weight:400;color:var(--text2);line-height:1.6;cursor:pointer" onclick="go('gmail')"></div>
   <div id="orders-alert-bar" style="display:none;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.1);padding:8px 16px;font-size:13px;font-weight:400;color:var(--text2);line-height:1.6;cursor:pointer" onclick="go('suppliers')"></div>
   <!-- Recurring expense suggestion banner (hidden until a candidate is detected) -->
-  <div id="recurring-banner" style="display:none;background:rgba(29,233,182,.10);border-bottom:1px solid rgba(29,233,182,.22);padding:10px 16px;font-size:13px;font-weight:400;color:var(--cyan);line-height:1.5;direction:rtl">
+  <div id="recurring-banner" style="display:none;background:rgba(45,212,191,.10);border-bottom:1px solid rgba(45,212,191,.22);padding:10px 16px;font-size:13px;font-weight:400;color:var(--cyan);line-height:1.5;direction:rtl">
     <div id="recurring-banner-text" style="margin-bottom:8px"></div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button type="button" id="recurring-yes-btn" onclick="addRecurringToFixed()" style="background:rgba(29,233,182,.22);border:1px solid rgba(29,233,182,.4);color:var(--cyan);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:8px 18px;border-radius:12px;cursor:pointer;min-height:36px">כן, הוסף</button>
+      <button type="button" id="recurring-yes-btn" onclick="addRecurringToFixed()" style="background:rgba(45,212,191,.22);border:1px solid rgba(45,212,191,.4);color:var(--cyan);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:8px 18px;border-radius:12px;cursor:pointer;min-height:36px">כן, הוסף</button>
       <button type="button" onclick="dismissRecurring()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--muted);font-family:Sora,sans-serif;font-size:13px;font-weight:400;padding:8px 18px;border-radius:12px;cursor:pointer;min-height:36px">התעלם</button>
     </div>
   </div>
@@ -1060,7 +1060,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="modal-sub">לחצי על סטטוס לשינוי</div>
     <div id="m-clients"></div>
     <!-- move-to-date panel (shown when 📅 is tapped) -->
-    <div id="move-panel" style="display:none;background:rgba(29,233,182,.06);border:1px solid rgba(29,233,182,.18);border-radius:12px;padding:14px 14px 12px;margin-bottom:14px">
+    <div id="move-panel" style="display:none;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);border-radius:12px;padding:14px 14px 12px;margin-bottom:14px">
       <div style="font-size:11px;color:var(--muted);margin-bottom:6px">תאריך חדש עבור <b id="move-name" style="color:var(--text)"></b>:</div>
       <input type="date" id="move-date"
         style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:10px 12px;color:var(--text);font-family:'Rubik',sans-serif;font-size:15px;box-sizing:border-box;margin-bottom:10px">
@@ -1090,7 +1090,7 @@ html.mode-private .biz-only{ display:none!important; }
   <div class="modal" id="cc-modal" style="height:92vh;max-height:92vh;display:flex;flex-direction:column;padding:0;overflow:hidden">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;flex-shrink:0;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:center;gap:12px">
-        <div id="cc-avatar" style="width:44px;height:44px;border-radius:50%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500;color:var(--cyan);flex-shrink:0"></div>
+        <div id="cc-avatar" style="width:44px;height:44px;border-radius:50%;background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.3);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500;color:var(--cyan);flex-shrink:0"></div>
         <div>
           <div class="modal-title" id="cc-title" style="margin:0;padding:0;font-size:15px"></div>
           <div id="cc-subtitle" style="font-size:11px;color:var(--muted);margin-top:1px"></div>
@@ -1326,7 +1326,7 @@ html.mode-private .biz-only{ display:none!important; }
     </div>
     <div class="mi-row" style="gap:8px;margin-top:12px">
       <button class="sbtn done" style="flex:1;padding:12px" onclick="saveBudget()">שמרי</button>
-      <button class="sbtn" style="flex:1;padding:12px;background:rgba(255,107,107,.15);color:#FF6B6B" onclick="removeBudget()">הסרי תקציב</button>
+      <button class="sbtn" style="flex:1;padding:12px;background:rgba(248,113,113,.15);color:#FF6B6B" onclick="removeBudget()">הסרי תקציב</button>
     </div>
   </div>
 </div>
@@ -1408,7 +1408,7 @@ html.mode-private .biz-only{ display:none!important; }
         <span style="font-size:11px;font-weight:500;color:var(--cyan);letter-spacing:.5px">עסקאות שנמצאו</span>
         <div id="gmail-dup-note" style="font-size:10px;color:var(--muted);margin-top:3px"></div>
       </div>
-      <button onclick="gmailImportAll()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:7px 14px;border-radius:12px;cursor:pointer">ייבאי מסומנות ✓</button>
+      <button onclick="gmailImportAll()" style="background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.3);color:var(--cyan);font-family:Sora,sans-serif;font-size:13px;font-weight:500;padding:7px 14px;border-radius:12px;cursor:pointer">ייבאי מסומנות ✓</button>
     </div>
     <div id="gmail-txns"></div>
     <!-- Subscriptions detected during scan -->
@@ -1600,7 +1600,7 @@ html.mode-private .biz-only{ display:none!important; }
         <div class="mfld" style="flex:1"><input type="number" id="cat-pprice" placeholder="&#x05DE;&#x05D7;&#x05D9;&#x05E8;" step="0.01"></div>
         <div class="mfld" style="flex:1"><input type="text" id="cat-punit" placeholder="&#x05D9;&#x05D7;. (&#x05D9;&#x05D7;/&#x05E7;&#x05D2;/&#x05E6;&#x05E4;...)"></div>
       </div>
-      <button onclick="addCatalogProduct()" style="width:100%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);border-radius:var(--rs);color:var(--cyan);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:8px;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05DC;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2;</button>
+      <button onclick="addCatalogProduct()" style="width:100%;background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.3);border-radius:var(--rs);color:var(--cyan);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:8px;cursor:pointer">+ &#x05D4;&#x05D5;&#x05E1;&#x05E3; &#x05DC;&#x05E7;&#x05D8;&#x05DC;&#x05D5;&#x05D2;</button>
     </div>
     <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--rs);padding:12px">
       <div style="font-size:11px;font-weight:500;color:var(--muted);margin-bottom:8px">&#x05D9;&#x05D9;&#x05D1;&#x05D5;&#x05D0; &#x05DE;&#x05D8;&#x05E7;&#x05E1;&#x05D8; &#x05D7;&#x05D5;&#x05E4;&#x05E9;&#x05D9;</div>
@@ -1791,9 +1791,9 @@ html.mode-private .biz-only{ display:none!important; }
       </div>
 
       <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">איך פותחים</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים על כפתור <span style="background:rgba(29,233,182,.15);color:var(--cyan);border-radius:6px;padding:2px 8px;font-size:13px">💡</span> בפינה השמאלית התחתונה. נפתח חלון שיחה שבו ניתן לשאול שאלות חופשיות, למשל: <em style="color:var(--text2)">"כמה הוצאתי על ציוד ברבעון האחרון?"</em> או <em style="color:var(--text2)">"מתי אגיע ליעד החופשה?"</em>.</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:12px">לוחצים על כפתור <span style="background:rgba(45,212,191,.15);color:var(--cyan);border-radius:6px;padding:2px 8px;font-size:13px">💡</span> בפינה השמאלית התחתונה. נפתח חלון שיחה שבו ניתן לשאול שאלות חופשיות, למשל: <em style="color:var(--text2)">"כמה הוצאתי על ציוד ברבעון האחרון?"</em> או <em style="color:var(--text2)">"מתי אגיע ליעד החופשה?"</em>.</div>
 
-      <div style="background:rgba(29,233,182,.07);border:1px solid rgba(29,233,182,.18);border-radius:12px;padding:12px 14px">
+      <div style="background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.18);border-radius:12px;padding:12px 14px">
         <div style="font-size:13px;color:var(--cyan);font-weight:600;margin-bottom:4px">טיפ לשימוש אפקטיבי</div>
         <div style="font-size:13px;color:var(--muted);line-height:1.6">ככל שיש יותר נתונים מתועדים, כך הניתוח מדויק יותר. מומלץ לתעד הוצאות שוטפות ולא לפספס חודשים — היועצת תזהה מגמות ארוכות טווח ותתן המלצות טובות יותר.</div>
       </div>
@@ -1849,7 +1849,7 @@ html.mode-private .biz-only{ display:none!important; }
     </div>
 
     <!-- CTA -->
-    <div style="background:rgba(29,233,182,.07);border:1px solid rgba(29,233,182,.2);border-radius:12px;padding:18px;text-align:center">
+    <div style="background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);border-radius:12px;padding:18px;text-align:center">
       <div style="font-size:13px;color:var(--cyan);margin-bottom:6px;font-weight:600">רוצה ניתוח כלכלי אישי?</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">היועצת מנתחת את ההוצאות, ההכנסות והיעדים שלך ומציעה תובנות לפי ההתנהלות האמיתית שלך — לא עצות גנריות.</div>
       <button onclick="openAdvisor();go('home')" style="background:var(--cyan);color:#0A1520;border:none;border-radius:12px;padding:11px 28px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Rubik',sans-serif">💡 פתחי יועצת כלכלית</button>
@@ -1868,7 +1868,7 @@ html.mode-private .biz-only{ display:none!important; }
   <div class="detail-hdr">
     <button class="back-btn" onclick="go('home')">‹</button>
     <div class="detail-title">🔐 פאנל אדמין</div>
-    <button onclick="exportUsersCSV()" style="background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);font-size:13px;font-weight:500;font-family:'Rubik',sans-serif;padding:6px 14px;border-radius:12px;cursor:pointer;border:none">ייצוא CSV</button>
+    <button onclick="exportUsersCSV()" style="background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.3);color:var(--cyan);font-size:13px;font-weight:500;font-family:'Rubik',sans-serif;padding:6px 14px;border-radius:12px;cursor:pointer;border:none">ייצוא CSV</button>
   </div>
   <div id="admin-content" style="padding:14px 14px 80px;direction:rtl">
     <div style="text-align:center;padding:30px;color:var(--muted);font-size:13px">טוען נתוני משתמשים...</div>
@@ -1912,7 +1912,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260755;
+var APP_VER=20260756;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2735,7 +2735,7 @@ function renderNetWorth(){
       '</span>'+
     '</div>';
   });
-  h+='<button onclick="document.getElementById(\'asset-mbg\').classList.add(\'open\')" style="margin-top:8px;width:100%;background:rgba(29,233,182,.1);border:1px solid rgba(29,233,182,.25);border-radius:var(--rs);color:var(--cyan);font-size:11px;font-weight:500;font-family:\'Sora\',sans-serif;padding:7px;cursor:pointer">+ הוסף נכס</button>';
+  h+='<button onclick="document.getElementById(\'asset-mbg\').classList.add(\'open\')" style="margin-top:8px;width:100%;background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.25);border-radius:var(--rs);color:var(--cyan);font-size:11px;font-weight:500;font-family:\'Sora\',sans-serif;padding:7px;cursor:pointer">+ הוסף נכס</button>';
   h+='</div>';
   // liabilities column
   h+='<div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:12px">';
@@ -2845,20 +2845,20 @@ function cat(d){
   if(/קנאביס/i.test(d))   return{bg:'rgba(0,200,100,.18)',co:'#00C864',lbl:'קנב'};
   if(/קפה|תה/i.test(d))   return{bg:'rgba(255,177,60,.18)',co:'#FFB347',lbl:'קפה'};
   if(/יין|בירה|קוקטייל/i.test(d)) return{bg:'rgba(255,255,255,.06)',co:'rgba(255,255,255,.6)',lbl:'בר'};
-  if(/וולט|אוכל|סלט|מרק|פסטה|נודלס|קוסקוס/i.test(d)) return{bg:'rgba(29,233,182,.1)',co:'rgba(29,233,182,.7)',lbl:'אוכל'};
-  if(/שכירות/i.test(d))   return{bg:'rgba(29,233,182,.18)',co:'#1DE9B6',lbl:'שכ"ד'};
+  if(/וולט|אוכל|סלט|מרק|פסטה|נודלס|קוסקוס/i.test(d)) return{bg:'rgba(45,212,191,.1)',co:'rgba(45,212,191,.7)',lbl:'אוכל'};
+  if(/שכירות/i.test(d))   return{bg:'rgba(45,212,191,.18)',co:'#2DD4BF',lbl:'שכ"ד'};
   if(/חשמל/i.test(d))     return{bg:'rgba(255,230,100,.18)',co:'#FFE064',lbl:'חשמל'};
   if(/ביטוח|קופת חולים/i.test(d)) return{bg:'rgba(107,163,255,.18)',co:'#6BA3FF',lbl:'ביטוח'};
-  if(/סופר|קניות/i.test(d)) return{bg:'rgba(29,233,182,.18)',co:'#1DE9B6',lbl:'קניות'};
+  if(/סופר|קניות/i.test(d)) return{bg:'rgba(45,212,191,.18)',co:'#2DD4BF',lbl:'קניות'};
   if(/טבק/i.test(d))      return{bg:'rgba(200,150,100,.18)',co:'#C89050',lbl:'טבק'};
-  if(/דלק/i.test(d))      return{bg:'rgba(29,233,182,.1)',co:'rgba(29,233,182,.7)',lbl:'דלק'};
+  if(/דלק/i.test(d))      return{bg:'rgba(45,212,191,.1)',co:'rgba(45,212,191,.7)',lbl:'דלק'};
   if(/אייפון|טלפון|כיסוי|מדבקה/i.test(d)) return{bg:'rgba(255,255,255,.06)',co:'rgba(255,255,255,.6)',lbl:'טלפון'};
   if(/מנוי|ספוטיפיי|נטפליקס|קלאוד/i.test(d)) return{bg:'rgba(107,163,255,.18)',co:'#6BA3FF',lbl:'מנוי'};
   if(/פרטנר/i.test(d))    return{bg:'rgba(107,163,255,.18)',co:'#6BA3FF',lbl:'פרטנר'};
-  if(/טסט/i.test(d))      return{bg:'rgba(29,233,182,.1)',co:'rgba(29,233,182,.7)',lbl:'טסט'};
+  if(/טסט/i.test(d))      return{bg:'rgba(45,212,191,.1)',co:'rgba(45,212,191,.7)',lbl:'טסט'};
   if(/מים|חשבון/i.test(d)) return{bg:'rgba(107,163,255,.18)',co:'#6BA3FF',lbl:'חשבון'};
-  if(/מונית/i.test(d))    return{bg:'rgba(29,233,182,.1)',co:'rgba(29,233,182,.7)',lbl:'נסיעה'};
-  if(/חניה/i.test(d))     return{bg:'rgba(29,233,182,.1)',co:'rgba(29,233,182,.7)',lbl:'חניה'};
+  if(/מונית/i.test(d))    return{bg:'rgba(45,212,191,.1)',co:'rgba(45,212,191,.7)',lbl:'נסיעה'};
+  if(/חניה/i.test(d))     return{bg:'rgba(45,212,191,.1)',co:'rgba(45,212,191,.7)',lbl:'חניה'};
   return{bg:'rgba(255,255,255,.08)',co:'rgba(255,255,255,.5)',lbl:'אחר'};
 }
 
@@ -3226,10 +3226,10 @@ function renderUpcoming(r){
     if(tD<2)  items.push({label:'שכירות',date:'02/'+String(r.m).padStart(2,'0'),days:2-tD,amt:4100,color:'#FF6B6B'});
     if(tD<15) items.push({label:'ויזה',date:'15/'+String(r.m).padStart(2,'0'),days:15-tD,amt:r.vBill,color:'#6BA3FF'});
     if(tD<20) items.push({label:'מאסטרקארד',date:'20/'+String(r.m).padStart(2,'0'),days:20-tD,amt:r.mcBill,color:'#B57BEE'});
-    if(tD<25) items.push({label:'ביטוח לאומי נכנס',date:'25/'+String(r.m).padStart(2,'0'),days:25-tD,amt:FIXED_MAP[r.m]||FIXED,color:'#1DE9B6',income:true});
+    if(tD<25) items.push({label:'ביטוח לאומי נכנס',date:'25/'+String(r.m).padStart(2,'0'),days:25-tD,amt:FIXED_MAP[r.m]||FIXED,color:'#2DD4BF',income:true});
     if(APP_MODE==='business') r.planList.forEach(function(c){
       var d=c.day,days=d-tD;
-      if(days>=0) items.push({label:c.name,date:String(d).padStart(2,'0')+'/'+String(r.m).padStart(2,'0'),days:days,amt:c.amount,color:'#1DE9B6',income:true});
+      if(days>=0) items.push({label:c.name,date:String(d).padStart(2,'0')+'/'+String(r.m).padStart(2,'0'),days:days,amt:c.amount,color:'#2DD4BF',income:true});
     });
     items.sort(function(a,b){return parseInt(a.date)-parseInt(b.date);});
   }
@@ -3265,7 +3265,7 @@ function renderPMCards(r){
       '<div class="pm-name">עו"ש</div>'+
       '<div class="pm-amt" style="color:#FF6B6B">₪'+fmt(CARDS.bank)+'</div>'+
       '<div class="pm-sub">הוצאות החודש: ₪'+fmt(bankTotal)+' · מסגרת: ₪'+fmt(CARDS.limit)+'</div>'+
-      (CARDS.bank>CARDS.limit?'<span class="pm-tag" style="background:rgba(255,107,107,.2);color:#FF6B6B">חריגה ₪'+fmt(CARDS.bank-CARDS.limit)+'</span>':'<span class="pm-tag" style="background:rgba(0,230,118,.1);color:var(--pos)">בתוך המסגרת</span>')+
+      (CARDS.bank>CARDS.limit?'<span class="pm-tag" style="background:rgba(248,113,113,.2);color:#FF6B6B">חריגה ₪'+fmt(CARDS.bank-CARDS.limit)+'</span>':'<span class="pm-tag" style="background:rgba(0,230,118,.1);color:var(--pos)">בתוך המסגרת</span>')+
     '</div>'+
     '<div class="pm-card" style="--pm-c:#B57BEE" onclick="showPMDetail(\'mc\')">'+
       '<div class="pm-name">מאסטרקארד</div>'+
@@ -3311,7 +3311,7 @@ function showPMDetail(method){
   });
   if(method==='bank'){
     var over=CARDS.bank-CARDS.limit;
-    h+='<div style="padding:12px 14px;border-radius:var(--rs);background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);margin-top:8px">'+
+    h+='<div style="padding:12px 14px;border-radius:var(--rs);background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);margin-top:8px">'+
       '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;font-weight:500;color:var(--muted)">יתרת חוב</span><span style="font-size:15px;font-weight:500;color:var(--neg)">-₪'+fmt(CARDS.bank)+'</span></div>'+
       '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;font-weight:500;color:var(--muted)">מסגרת אשראי</span><span style="font-size:13px;font-weight:500;color:var(--muted)">₪'+fmt(CARDS.limit)+'</span></div>'+
       (over>0?'<div style="display:flex;justify-content:space-between"><span style="font-size:11px;font-weight:500;color:var(--neg)">חריגה מהמסגרת</span><span style="font-size:13px;font-weight:500;color:var(--neg)">₪'+fmt(over)+'</span></div>':'<div style="font-size:11px;font-weight:500;color:var(--pos)">בתוך המסגרת</div>')+
@@ -3419,7 +3419,7 @@ function renderExpenses(){
   items.forEach(function(t){var c=cat(t.desc);if(!catTotals[c.lbl])catTotals[c.lbl]={amt:0,bg:c.bg,co:c.co};catTotals[c.lbl].amt+=t.a;});
   var catArr=Object.keys(catTotals).map(function(k){return{lbl:k,amt:catTotals[k].amt,bg:catTotals[k].bg,co:catTotals[k].co};}).sort(function(a,b){return b.amt-a.amt;});
   // resolve any 'var(--..)' colors to concrete hex so conic-gradient renders
-  var palette=['#1DE9B6','rgba(29,233,182,.55)','rgba(255,255,255,.5)','#6BA3FF','#FFB347','#FF6B6B','#00E676','rgba(29,233,182,.35)','#4DD0E1','#FFD060','#9CCC65','rgba(255,255,255,.3)'];
+  var palette=['#2DD4BF','rgba(45,212,191,.55)','rgba(255,255,255,.5)','#6BA3FF','#FFB347','#FF6B6B','#00E676','rgba(45,212,191,.35)','#4DD0E1','#FFD060','#9CCC65','rgba(255,255,255,.3)'];
   catArr.forEach(function(c,i){ if(!c.co||c.co.indexOf('var(')===0){c.co=palette[i%palette.length];} });
   var total=catArr.reduce(function(s,c){return s+c.amt;},0);
   var ch='';
@@ -3488,7 +3488,7 @@ function renderExpenses(){
         var on=_tagFilter===g;
         tf+='<span class="txn-chip'+(on?' active':'')+'" onclick="setTagFilter(\''+esc(g)+'\')">#'+esc(g)+'</span>';
       });
-      if(_tagFilter)tf+='<span class="txn-chip" style="background:rgba(255,107,107,.15);color:var(--neg);border-color:rgba(255,107,107,.3)" onclick="setTagFilter(null)">✕ נקה</span>';
+      if(_tagFilter)tf+='<span class="txn-chip" style="background:rgba(248,113,113,.15);color:var(--neg);border-color:rgba(248,113,113,.3)" onclick="setTagFilter(null)">✕ נקה</span>';
       tfEl.innerHTML=tf;
     }
   }
@@ -3611,7 +3611,7 @@ function renderCatChart(){
     });
   });
   var topCats=Object.keys(catSum).sort(function(a,b){return catSum[b]-catSum[a];}).slice(0,6);
-  var palette=['rgba(0,200,100,.75)','rgba(181,123,238,.75)','rgba(255,179,71,.75)','rgba(29,233,182,.75)','rgba(255,109,53,.75)','rgba(107,163,255,.75)'];
+  var palette=['rgba(0,200,100,.75)','rgba(181,123,238,.75)','rgba(255,179,71,.75)','rgba(45,212,191,.75)','rgba(255,109,53,.75)','rgba(107,163,255,.75)'];
   var datasets=topCats.map(function(lbl,idx){
     return{
       label:lbl,
@@ -3647,7 +3647,7 @@ function renderIncome(){
   var items=RAW.income[r.m]||[];
   var fixedAmt=FIXED_MAP[r.m]||FIXED;
   var h='<div class="txn-group-hdr">הכנסות קבועות</div>';
-  h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(29,233,182,.18);color:#1DE9B6">לאומי</div><div class="txn-body"><div class="txn-desc">ביטוח לאומי</div><div class="txn-date">קבוע חודשי</div></div><div class="txn-amt pos">+₪'+fmt(fixedAmt)+'</div></div>';
+  h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(45,212,191,.18);color:#2DD4BF">לאומי</div><div class="txn-body"><div class="txn-desc">ביטוח לאומי</div><div class="txn-date">קבוע חודשי</div></div><div class="txn-amt pos">+₪'+fmt(fixedAmt)+'</div></div>';
   FIXED_INCOME.filter(function(fi){return fi.active!==false;}).forEach(function(fi){
     h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(255,213,79,.18);color:var(--gold)">קבועה</div><div class="txn-body"><div class="txn-desc">'+esc(fi.name)+'</div><div class="txn-date">יום '+fi.day+' · קבוע חודשי</div></div><div class="txn-amt pos">+₪'+fmt(fi.amount)+'</div><button onclick="deleteFI('+fi.id+')" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:0 4px">🗑</button><button onclick="openFIModal('+fi.id+')" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:0 4px">✏️</button></div>';
   });
@@ -3657,11 +3657,11 @@ function renderIncome(){
   }
   if(r.doneList.length){
     h+='<div class="txn-group-hdr">לקוחות — בוצע</div>';
-    r.doneList.forEach(function(c){h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(29,233,182,.12);color:var(--cyan)">לקוחה</div><div class="txn-body"><div class="txn-desc">'+esc(c.name)+'</div><div class="txn-date">יום '+c.day+'</div></div><div class="txn-amt pos">+₪'+fmt(c.amount)+'</div></div>';});
+    r.doneList.forEach(function(c){h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(45,212,191,.12);color:var(--cyan)">לקוחה</div><div class="txn-body"><div class="txn-desc">'+esc(c.name)+'</div><div class="txn-date">יום '+c.day+'</div></div><div class="txn-amt pos">+₪'+fmt(c.amount)+'</div></div>';});
   }
   if(r.planList.length){
     h+='<div class="txn-group-hdr">לקוחות — מתוכנן</div>';
-    r.planList.forEach(function(c){h+='<div class="txn-item" style="opacity:.65"><div class="txn-icon" style="background:rgba(29,233,182,.08);color:var(--cyan)">לקוחה</div><div class="txn-body"><div class="txn-desc">'+esc(c.name)+'</div><div class="txn-date">יום '+c.day+'</div></div><div class="txn-amt dim">+₪'+fmt(c.amount)+'</div></div>';});
+    r.planList.forEach(function(c){h+='<div class="txn-item" style="opacity:.65"><div class="txn-icon" style="background:rgba(45,212,191,.08);color:var(--cyan)">לקוחה</div><div class="txn-body"><div class="txn-desc">'+esc(c.name)+'</div><div class="txn-date">יום '+c.day+'</div></div><div class="txn-amt dim">+₪'+fmt(c.amount)+'</div></div>';});
   }
   document.getElementById('inc-list').innerHTML=h;
 }
@@ -3787,10 +3787,10 @@ function renderMC(){
   document.getElementById('m-clients').innerHTML=list.map(function(c,i){
     var rec=CLIENT_RECORDS[c.name]||{cancellations:[],history:[]};
     var nc=(rec.cancellations||[]).length;
-    var badge=nc>0?'<span style="background:rgba(255,107,107,.15);color:var(--neg);font-size:9px;padding:2px 6px;border-radius:6px;margin-right:4px"> &#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC;&#x05D9;&#x05DD;: '+nc+'</span>':'';
+    var badge=nc>0?'<span style="background:rgba(248,113,113,.15);color:var(--neg);font-size:9px;padding:2px 6px;border-radius:6px;margin-right:4px"> &#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC;&#x05D9;&#x05DD;: '+nc+'</span>':'';
     var sLabel=c.status==='done'?'&#x2713; &#x05D1;&#x05D5;&#x05E6;&#x05E2;':c.status==='cancelled'?'&#x2715; &#x05D1;&#x05D5;&#x05D8;&#x05DC;':'&#x23F3; &#x05DE;&#x05DE;&#x05EA;&#x05D9;&#x05DF;';
     var amtClass='mc-amt '+c.status;
-    return '<div class="mc-row"><div class="mc-name" onclick="openClientCard(\''+esc(c.name)+'\')" style="cursor:pointer;text-decoration:underline dotted var(--muted)">'+esc(c.name)+badge+(c.treat?' <span style="font-size:11px;color:var(--muted)">&#xB7; '+esc(c.treat)+'</span>':'')+'</div><button class="sbtn '+c.status+'" onclick="toggleC('+i+')">'+sLabel+'</button><div class="'+amtClass+'">&#x20AA;'+fmt(c.amount)+'</div><button class="mv-btn" onclick="startMove('+i+')" title="&#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9; &#x05DC;&#x05EA;&#x05D0;&#x05E8;&#x05D9;&#x05DA; &#x05D0;&#x05D7;&#x05E8;" style="background:rgba(29,233,182,.12);border:1px solid rgba(29,233,182,.25);color:var(--cyan);font-size:11px;font-weight:500;padding:5px 10px;border-radius:6px;cursor:pointer;margin-left:4px">&#128197; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9;</button><button class="del-btn" onclick="delC('+i+')">&#x2715;</button></div>';
+    return '<div class="mc-row"><div class="mc-name" onclick="openClientCard(\''+esc(c.name)+'\')" style="cursor:pointer;text-decoration:underline dotted var(--muted)">'+esc(c.name)+badge+(c.treat?' <span style="font-size:11px;color:var(--muted)">&#xB7; '+esc(c.treat)+'</span>':'')+'</div><button class="sbtn '+c.status+'" onclick="toggleC('+i+')">'+sLabel+'</button><div class="'+amtClass+'">&#x20AA;'+fmt(c.amount)+'</div><button class="mv-btn" onclick="startMove('+i+')" title="&#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9; &#x05DC;&#x05EA;&#x05D0;&#x05E8;&#x05D9;&#x05DA; &#x05D0;&#x05D7;&#x05E8;" style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.25);color:var(--cyan);font-size:11px;font-weight:500;padding:5px 10px;border-radius:6px;cursor:pointer;margin-left:4px">&#128197; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9;</button><button class="del-btn" onclick="delC('+i+')">&#x2715;</button></div>';
   }).join('');
 }
 function toggleC(idx){
@@ -3904,7 +3904,7 @@ function confirmMove(){
   panel.style.display='block';
   panel.innerHTML='<div style="font-size:13px;color:var(--muted);margin-bottom:10px">מי ביטל את התור המקורי?</div>'
     +'<div style="display:flex;gap:8px">'
-    +'<button onclick="doneWhoCancel(true)" style="flex:1;background:rgba(255,107,107,.15);color:var(--neg);font-family:\'Sora\',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:12px;border:1px solid rgba(255,107,107,.25);cursor:pointer">ביטלתי אני (העסק)</button>'
+    +'<button onclick="doneWhoCancel(true)" style="flex:1;background:rgba(248,113,113,.15);color:var(--neg);font-family:\'Sora\',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:12px;border:1px solid rgba(248,113,113,.25);cursor:pointer">ביטלתי אני (העסק)</button>'
     +'<button onclick="doneWhoCancel(false)" style="flex:1;background:rgba(255,179,71,.12);color:#FFB347;font-family:\'Sora\',sans-serif;font-size:13px;font-weight:500;padding:10px;border-radius:12px;border:1px solid rgba(255,179,71,.25);cursor:pointer">ביטלה הלקוחה</button>'
     +'</div>'
     +'<button onclick="cancelMove()" style="display:block;width:100%;text-align:center;font-size:13px;color:var(--muted);margin-top:10px;background:none;border:none;font-family:\'Sora\',sans-serif;cursor:pointer">דלג / לא רלוונטי</button>';
@@ -4066,7 +4066,7 @@ function renderClientCard(name){
     var first=doneAppts[0],latest=doneAppts[doneAppts.length-1];
     if(latest.amount>first.amount&&first.amount>0){
       var pct=Math.round((latest.amount-first.amount)/first.amount*100);
-      trendHtml='<span style="background:rgba(94,255,197,.12);color:var(--pos);font-size:11px;padding:2px 8px;border-radius:12px;margin-right:6px">↑ '+pct+'% מהתחלה</span>';
+      trendHtml='<span style="background:rgba(34,197,94,.12);color:var(--pos);font-size:11px;padding:2px 8px;border-radius:12px;margin-right:6px">↑ '+pct+'% מהתחלה</span>';
     }
   }
   document.getElementById('cc-subtitle').innerHTML='ביקור אחרון: '+lastVisitStr+' '+trendHtml;
@@ -4102,7 +4102,7 @@ function renderClientCard(name){
     +' style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;color:var(--text);font-size:13px;font-family:Rubik,sans-serif;resize:none;line-height:1.5">'+esc(prof.notes||'')+'</textarea>'
     +'</div>';
   html+='</div>';
-  html+='<button onclick="saveClientProfile()" style="margin-top:10px;width:100%;background:rgba(29,233,182,.15);border:1px solid rgba(29,233,182,.3);color:var(--cyan);border-radius:6px;padding:9px;font-size:13px;font-weight:500;cursor:pointer;font-family:Rubik,sans-serif">שמור פרטים</button>';
+  html+='<button onclick="saveClientProfile()" style="margin-top:10px;width:100%;background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.3);color:var(--cyan);border-radius:6px;padding:9px;font-size:13px;font-weight:500;cursor:pointer;font-family:Rubik,sans-serif">שמור פרטים</button>';
   html+='</div>';
 
   // ── STATS ──
@@ -4116,11 +4116,11 @@ function renderClientCard(name){
   html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px">';
   html+='<button onclick="openWhatsApp(\''+esc(name)+'\')" style="background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
     +'<span style="font-size:20px">💬</span><span style="font-size:10px;color:#25D366;font-family:Rubik,sans-serif">וואטסאפ</span></button>';
-  html+='<button onclick="manualSMS(\''+esc(name)+'\')" style="background:'+(hasTwilio?'rgba(29,233,182,.1)':'rgba(255,255,255,.05)')+';border:1px solid '+(hasTwilio?'rgba(29,233,182,.25)':'rgba(255,255,255,.1)')+';border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
+  html+='<button onclick="manualSMS(\''+esc(name)+'\')" style="background:'+(hasTwilio?'rgba(45,212,191,.1)':'rgba(255,255,255,.05)')+';border:1px solid '+(hasTwilio?'rgba(45,212,191,.25)':'rgba(255,255,255,.1)')+';border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
     +'<span style="font-size:20px">📱</span><span style="font-size:10px;color:'+(hasTwilio?'var(--cyan)':'var(--muted)')+';font-family:Rubik,sans-serif">SMS</span></button>';
   html+='<button onclick="manualInvoice(\''+esc(name)+'\')" style="background:'+(hasMorning?'rgba(232,168,62,.1)':'rgba(255,255,255,.05)')+';border:1px solid '+(hasMorning?'rgba(232,168,62,.25)':'rgba(255,255,255,.1)')+';border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
     +'<span style="font-size:20px">🧾</span><span style="font-size:10px;color:'+(hasMorning?'var(--gold)':'var(--muted)')+';font-family:Rubik,sans-serif">חשבונית</span></button>';
-  html+='<button onclick="closeClientCard();openQuickAdd()" style="background:rgba(29,233,182,.12);border:1px solid rgba(29,233,182,.28);border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
+  html+='<button onclick="closeClientCard();openQuickAdd()" style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.28);border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
     +'<span style="font-size:20px">➕</span><span style="font-size:10px;color:var(--cyan);font-family:Rubik,sans-serif">תור חדש</span></button>';
   html+='</div>';
 
@@ -4201,7 +4201,7 @@ function renderTrends(){
     data:{
       labels:labels,
       datasets:[
-        {label:'הכנסות',data:incArr,backgroundColor:'rgba(29,233,182,.5)',borderColor:'rgba(29,233,182,.9)',borderWidth:1.5,borderRadius:6,borderSkipped:false},
+        {label:'הכנסות',data:incArr,backgroundColor:'rgba(45,212,191,.5)',borderColor:'rgba(45,212,191,.9)',borderWidth:1.5,borderRadius:6,borderSkipped:false},
         {label:'הוצאות',data:expArr,backgroundColor:'rgba(255,109,53,.45)',borderColor:'rgba(255,109,53,.9)',borderWidth:1.5,borderRadius:6,borderSkipped:false}
       ]
     },
@@ -4221,7 +4221,7 @@ function renderTrends(){
 
 // ── GOALS ─────────────────────────────────────────────────
 var activeGoalIdx=-1;
-var GOAL_COLORS=['#1DE9B6','rgba(255,255,255,.55)','#FFB347','#6BA3FF','#00E676','#FF6B6B','rgba(29,233,182,.65)'];
+var GOAL_COLORS=['#2DD4BF','rgba(255,255,255,.55)','#FFB347','#6BA3FF','#00E676','#FF6B6B','rgba(45,212,191,.65)'];
 
 function renderGoals(){
   var totalT=GOALS.reduce(function(s,g){return s+g.target;},0);
@@ -4816,7 +4816,7 @@ function renderAnnual(){
       if(x.recurring) h+='<div style="font-size:10px;color:var(--cyan);margin-top:2px">חוזר שנתי</div>';
       h+='</div>';
       h+='<div style="font-size:15px;font-weight:500;color:var(--neg);margin:0 10px">₪'+fmt(x.amount)+'</div>';
-      h+='<button onclick="delAnnual('+x.id+')" style="background:rgba(255,107,107,.13);border:none;color:var(--neg);font-size:13px;padding:5px 10px;border-radius:6px;cursor:pointer;font-family:\'Sora\',sans-serif">מחק</button>';
+      h+='<button onclick="delAnnual('+x.id+')" style="background:rgba(248,113,113,.13);border:none;color:var(--neg);font-size:13px;padding:5px 10px;border-radius:6px;cursor:pointer;font-family:\'Sora\',sans-serif">מחק</button>';
       h+='</div>';
     });
     h+='</div></div>';
@@ -5692,7 +5692,7 @@ function renderSuppliers(){
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">' +
       '<div style="font-size:15px;font-weight:500;color:var(--text)">' + esc(s.name) + '</div>' +
       '<div style="display:flex;gap:6px">' +
-      '<button onclick="openCatalog(\'' + s.id + '\')" style="background:rgba(29,233,182,.12);border:1px solid rgba(29,233,182,.25);border-radius:var(--rs);color:var(--cyan);font-size:11px;font-weight:500;font-family:\'Sora\',sans-serif;padding:5px 10px;cursor:pointer">קטלוג</button>' +
+      '<button onclick="openCatalog(\'' + s.id + '\')" style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.25);border-radius:var(--rs);color:var(--cyan);font-size:11px;font-weight:500;font-family:\'Sora\',sans-serif;padding:5px 10px;cursor:pointer">קטלוג</button>' +
       '<button onclick="openSupplierModal(\'' + s.id + '\')" style="background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:11px;font-family:\'Sora\',sans-serif;padding:5px 8px;cursor:pointer">עריכה</button>' +
       '<button onclick="delSupplier(\'' + s.id + '\')" style="background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.25);border-radius:var(--rs);color:var(--neg);font-size:11px;font-family:\'Sora\',sans-serif;padding:5px 8px;cursor:pointer">מחק</button>' +
       '</div></div>' +
@@ -5957,7 +5957,7 @@ function renderOrders(){
     var supName = sup ? sup.name : '(ספק נמחק)';
     var statusMap = {open:'פתוח',received:'התקבל',paid:'שולם'};
     var statusCol = {open:'var(--muted)',received:'var(--cyan)',paid:'var(--pos)'};
-    var statusBg = {open:'rgba(255,255,255,.07)',received:'rgba(29,233,182,.12)',paid:'rgba(100,220,100,.12)'};
+    var statusBg = {open:'rgba(255,255,255,.07)',received:'rgba(45,212,191,.12)',paid:'rgba(100,220,100,.12)'};
     var st = o.status||'open';
     var dueWarn = '';
     if(st!=='paid' && o.dueDate){
@@ -5977,7 +5977,7 @@ function renderOrders(){
       '<div style="display:flex;align-items:center;gap:7px;margin-top:6px">' +
       '<span style="background:'+statusBg[st]+';color:'+statusCol[st]+';border:1px solid '+statusCol[st]+'40;border-radius:12px;font-size:10px;font-weight:500;padding:3px 10px">'+statusMap[st]+'</span>';
     if(st==='open'){
-      h+='<button onclick="setOrderStatus(\''+o.id+'\',\'received\')" style="background:rgba(29,233,182,.1);border:1px solid rgba(29,233,182,.2);border-radius:var(--rs);color:var(--cyan);font-size:10px;font-family:\'Sora\',sans-serif;font-weight:500;padding:4px 9px;cursor:pointer">התקבל</button>';
+      h+='<button onclick="setOrderStatus(\''+o.id+'\',\'received\')" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.2);border-radius:var(--rs);color:var(--cyan);font-size:10px;font-family:\'Sora\',sans-serif;font-weight:500;padding:4px 9px;cursor:pointer">התקבל</button>';
     } else if(st==='received'){
       h+='<button onclick="setOrderStatus(\''+o.id+'\',\'paid\')" style="background:rgba(100,220,100,.12);border:1px solid rgba(100,220,100,.25);border-radius:var(--rs);color:var(--pos);font-size:10px;font-family:\'Sora\',sans-serif;font-weight:500;padding:4px 9px;cursor:pointer">שולם</button>';
     }
