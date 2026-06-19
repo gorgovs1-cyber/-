@@ -249,11 +249,11 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--tc,var(--cyan))}
 .tile:active{transform:scale(.95);opacity:.75}
 .tile-ico{display:none}
-.tile-val{font-size:15px;font-weight:500;letter-spacing:-.5px;font-variant-numeric:tabular-nums;text-align:center;margin-top:4px}
+.tile-val{font-size:20px;font-weight:700;letter-spacing:-.5px;font-variant-numeric:tabular-nums;text-align:center;margin-top:4px}
 .tile-val.pos   {color:var(--cyan)}
 .tile-val.neg   {color:var(--neg)}
 .tile-val.orange{color:var(--neg)}
-.tile-lbl{font-size:10px;color:var(--muted);text-align:center;font-weight:500;line-height:1.3}
+.tile-lbl{font-size:10px;color:var(--muted);text-align:center;font-weight:400;line-height:1.3;letter-spacing:.5px;text-transform:uppercase}
 
 /* ══ SECTION LABEL ════════════════════════════════════════ */
 .sec-row{display:flex;justify-content:space-between;align-items:center;padding:0 20px 10px}
@@ -1913,7 +1913,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260758;
+var APP_VER=20260759;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
