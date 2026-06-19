@@ -208,13 +208,13 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 /* ══ ALERT ═══════════════════════════════════════════════ */
 .alert-wrap{padding:14px 16px 0}
 .alert-card{
-  border-radius:var(--r);padding:17px 18px;
+  border-radius:18px;padding:17px 18px;
   display:flex;align-items:center;gap:12px;
   background:linear-gradient(135deg,#2A1060,#1A0840);
-  border:1px solid rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.07);
 }
-.alert-card.ok {background:linear-gradient(135deg,#0D2E1A,#091C10);border-color:rgba(0,230,118,.3)}
-.alert-card.bad{background:rgba(248,113,113,.10);border-color:rgba(248,113,113,.28)}
+.alert-card.ok {background:rgba(34,197,94,.10);border-color:rgba(34,197,94,.22)}
+.alert-card.bad{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.25)}
 .a-body {flex:1;text-align:right}
 .a-title{font-size:13px;font-weight:500;color:rgba(200,180,255,.9);margin-bottom:4px}
 .alert-card.ok  .a-title{color:var(--pos)}
@@ -625,7 +625,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 
 /* ══ PAYMENT METHOD GRID ════════════════════════════════ */
 .pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 20px}
-.pm-card{background:var(--card);border:1px solid rgba(255,255,255,.10);border-radius:var(--r);padding:19px 18px 17px;cursor:pointer;transition:transform .15s,opacity .15s;position:relative;overflow:hidden;box-shadow:0 8px 20px -12px rgba(0,0,0,.5)}
+.pm-card{background:var(--card);border:1px solid rgba(255,255,255,.10);border-right:3px solid var(--pm-c,var(--cyan));border-radius:var(--r);padding:19px 18px 17px;cursor:pointer;transition:transform .15s,opacity .15s;position:relative;overflow:hidden;box-shadow:0 8px 20px -12px rgba(0,0,0,.5)}
 .pm-card:active{transform:scale(.97);opacity:.8}
 .pm-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--pm-c,var(--cyan))}
 .pm-name{font-size:9px;font-weight:500;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
@@ -1913,7 +1913,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260760;
+var APP_VER=20260761;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
