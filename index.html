@@ -9,8 +9,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>My Money</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B1520'/%3E%3Ctext x='32' y='50' font-family='Arial,sans-serif' font-size='44' font-weight='900' fill='%2300FFD4' text-anchor='middle'%3E%E2%82%AA%3C/text%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230B1520'/%3E%3Ctext x='90' y='138' font-family='Arial,sans-serif' font-size='124' font-weight='900' fill='%2300FFD4' text-anchor='middle'%3E%E2%82%AA%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1914,7 +1915,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260751;
+var APP_VER=20260752;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -6756,6 +6757,7 @@ function authMsg(e){
   if(c==='auth/user-not-found')        return 'לא נמצא חשבון כזה — הרשמי';
   if(c==='auth/too-many-requests')     return 'יותר מדי ניסיונות — נסי שוב בעוד רגע';
   if(c==='auth/network-request-failed')return 'אין חיבור לאינטרנט';
+  if(c==='auth/unauthorized-domain')   return 'כניסה עם Google לא זמינה כאן — נא להתחבר עם אימייל וסיסמה';
   if(c==='auth/popup-closed-by-user')  return '';
   return 'שגיאה: '+((e&&e.message)||c);
 }
@@ -6828,6 +6830,9 @@ function authGoogle(){
   }).catch(function(e){
     if(e&&(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'||e.code==='auth/cancelled-popup-request')){
       fbAuth.signInWithRedirect(prov);
+    } else if(e&&e.code==='auth/unauthorized-domain'){
+      authErr('כניסה עם Google לא זמינה כאן — נא להתחבר עם אימייל וסיסמה');
+      setTimeout(function(){document.getElementById('auth-email').focus();},100);
     } else { authErr(authMsg(e)); }
   });
 }
