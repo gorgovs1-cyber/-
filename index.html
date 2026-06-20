@@ -707,6 +707,8 @@ select option{background:#111D2C;color:#fff}
 .wiz-inp:focus{border-color:var(--cyan);background:rgba(45,212,191,.06)}
 .wiz-btn{width:100%;background:var(--cyan);color:#08131F;font-family:'Rubik',sans-serif;font-size:15px;font-weight:500;padding:14px;border:none;border-radius:12px;cursor:pointer;margin-top:8px;transition:transform .12s}
 .wiz-btn:active{transform:scale(.98)}
+.wiz-prof-btn{background:rgba(255,255,255,.06);border:1.5px solid var(--border2);color:var(--text2);font-family:'Rubik',sans-serif;font-size:12px;padding:9px 6px;border-radius:10px;cursor:pointer;transition:all .15s;text-align:center}
+.wiz-prof-btn.sel{background:rgba(45,212,191,.15);border-color:var(--cyan);color:var(--cyan);font-weight:500}
 .wiz-skip{font-size:13px;color:var(--muted);cursor:pointer;margin-top:12px;text-decoration:underline;text-decoration-color:rgba(255,255,255,.15)}
 .wiz-dots{display:flex;justify-content:center;gap:6px;margin-bottom:20px}
 .wiz-dot{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:background .2s}
@@ -882,6 +884,16 @@ html.mode-private .biz-only{ display:none!important; }
       <div style="display:flex;background:rgba(255,255,255,.06);border:1px solid var(--border2);border-radius:12px;padding:3px;gap:3px;margin-bottom:6px">
         <button id="wiz-biz" onclick="wizPickMode('business')" style="flex:1;background:var(--cyan);color:#08131F;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;border:none;padding:9px;border-radius:12px;cursor:pointer">עסקי</button>
         <button id="wiz-prv" onclick="wizPickMode('private')" style="flex:1;background:none;color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;border:none;padding:9px;border-radius:12px;cursor:pointer">פרטי</button>
+      </div>
+      <!-- Profession selector — shown in business mode -->
+      <div id="wiz-prof-wrap" style="margin-bottom:8px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-align:center">מה התחום שלך?</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <button class="wiz-prof-btn" id="wpb-hair" onclick="wizPickProf('hair')">✂️ מעצבת שיער</button>
+          <button class="wiz-prof-btn" id="wpb-nails" onclick="wizPickProf('nails')">💅 טכנאית ציפורניים</button>
+          <button class="wiz-prof-btn" id="wpb-cosm" onclick="wizPickProf('cosm')">🧖 קוסמטיקאית</button>
+          <button class="wiz-prof-btn" id="wpb-makeup" onclick="wizPickProf('makeup')">💄 מאפרת</button>
+        </div>
       </div>
       <button class="wiz-btn" onclick="wizStep(2)">הבא ›</button>
       <div class="wiz-skip" onclick="wizDone()">דלג על ההגדרה</div>
@@ -1935,7 +1947,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260765;
+var APP_VER=20260766;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -5767,6 +5779,36 @@ function showWelcomeWizard(){
   if(!wiz)return;
   wiz.style.display='flex';
 }
+var _wizProf='';
+var PROF_CATS={
+  hair:{
+    label:'מעצבת שיער',
+    expCats:['חומרים','צבע','קרטין','ציוד שיער','ביגוד מקצועי','השכלה','פרסום','ניקיון','שכ"ד סלון'],
+    incDesc:['החלקה','קרטין','צביעה','תספורת','שורש','מסגרת','טיפול שיער','הדגשות']
+  },
+  nails:{
+    label:'טכנאית ציפורניים',
+    expCats:['ג\'ל','אקריל','כלים','ציוד ציפורניים','ביגוד מקצועי','השכלה','פרסום','ניקיון'],
+    incDesc:['ג\'ל מלא','חידוש ג\'ל','פדיקור','עיטור','אקריל','הסרה']
+  },
+  cosm:{
+    label:'קוסמטיקאית',
+    expCats:['חומרים קוסמטיים','מכשירים','ציוד','ביגוד מקצועי','השכלה','פרסום','שמנים'],
+    incDesc:['טיפול פנים','גוף','הסרת שיער','עיצוב גבות','הלבנה','אנטי-אייג\'ינג']
+  },
+  makeup:{
+    label:'מאפרת',
+    expCats:['מוצרי איפור','מכחולים','ביגוד מקצועי','השכלה','פרסום','נסיעות לצילומים'],
+    incDesc:['איפור כלה','שידוך','צילומים','אירוע','קורס','הדרכה']
+  }
+};
+function wizPickProf(p){
+  _wizProf=p;
+  ['hair','nails','cosm','makeup'].forEach(function(k){
+    var b=document.getElementById('wpb-'+k);
+    if(b) b.classList.toggle('sel',k===p);
+  });
+}
 function wizPickMode(m){
   _wizMode=m;
   var b=document.getElementById('wiz-biz'), p=document.getElementById('wiz-prv');
@@ -5774,6 +5816,8 @@ function wizPickMode(m){
   var offS='flex:1;background:none;color:var(--muted);font-family:\'Rubik\',sans-serif;font-size:13px;border:none;padding:9px;border-radius:12px;cursor:pointer';
   if(b){ b.style.cssText=(m==='business'?'flex:1;'+onS:'flex:1;'+offS); }
   if(p){ p.style.cssText=(m==='private'?'flex:1;'+onS:'flex:1;'+offS); }
+  var pw=document.getElementById('wiz-prof-wrap');
+  if(pw) pw.style.display=(m==='business'?'block':'none');
 }
 function wizStep(n){
   for(var i=1;i<=3;i++){
@@ -5785,6 +5829,14 @@ function wizDone(){
   var nameVal=(document.getElementById('wiz-name').value||'').trim();
   var incVal=parseFloat(document.getElementById('wiz-income').value)||0;
   if(nameVal){ SETTINGS.userName=nameVal;saveSettings(); }
+  if(_wizProf && PROF_CATS[_wizProf]){
+    SETTINGS.profession=_wizProf;
+    var pc=PROF_CATS[_wizProf];
+    var extraCats=pc.expCats||[];
+    extraCats.forEach(function(c){ if(ALL_BUDGET_CATS.indexOf(c)===-1) ALL_BUDGET_CATS.push(c); });
+    saveSettings();
+    toast('קטגוריות מותאמות ל'+pc.label+' נטענו ✓');
+  }
   APP_MODE=_wizMode; localStorage.setItem('shani_mode',APP_MODE); applyMode();
   if(incVal>0){
     var mo=MONTHS[homeMi];
