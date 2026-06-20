@@ -1913,7 +1913,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260761;
+var APP_VER=20260762;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -3031,40 +3031,138 @@ function exportUsersCSV(){
 }
 
 function renderBizReport(){
-  var h='';
-  var grandTotal=0;
+  var confirmedTotal=0,pendingCount=0;
   var now=new Date();
   var curYear=now.getFullYear();
+  var bodyH='';
+
   MONTHS.forEach(function(mo){
-    var arr=(RAW.expense[mo.key]||[]).filter(function(t){
-      var yr=t.year||curYear;
-      return yr===curYear&&isBizExpense(t);
+    var allArr=(RAW.expense[mo.key]||[]).filter(function(t){
+      return (t.year||curYear)===curYear;
     });
-    if(!arr.length)return;
-    var total=arr.reduce(function(s,t){return s+t.a;},0);
-    grandTotal+=total;
-    h+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-    h+='<span style="font-size:13px;font-weight:500">'+mo.name+'</span>';
-    h+='<span style="font-size:15px;font-weight:500;color:#FFD63C">₪'+fmt(total)+'</span>';
-    h+='</div>';
-    arr.sort(function(a,b){return parseInt(a.d)-parseInt(b.d);}).forEach(function(t){
-      h+='<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-top:1px solid var(--border)">';
-      h+='<span style="color:var(--text2)">'+esc(t.desc)+'</span>';
-      h+='<span style="color:var(--neg)">₪'+fmt(t.a)+'</span>';
-      h+='</div>';
+    if(!allArr.length)return;
+
+    var monthConfirmed=0;
+    var rowsH='';
+    allArr.sort(function(a,b){return parseInt(a.d)-parseInt(b.d);}).forEach(function(t){
+      var isSuggested=false;
+      for(var i=0;i<BIZ_PATTERNS.length;i++){if(BIZ_PATTERNS[i].test(t.desc)){isSuggested=true;break;}}
+      var bizState=t.biz;
+      if(bizState===true){monthConfirmed+=t.a;confirmedTotal+=t.a;}
+      if(bizState===undefined&&isSuggested)pendingCount++;
+      var key=encodeURIComponent(mo.key+'|'+t.d+'|'+t.desc+'|'+t.a);
+      var btnTxt,btnSt,amtCol;
+      if(bizState===true){
+        btnTxt='💼 עסקי';btnSt='background:rgba(255,214,60,.2);color:#FFD63C;border:1px solid rgba(255,214,60,.4)';amtCol='#FFD63C';
+      }else if(bizState===false){
+        btnTxt='👤 פרטי';btnSt='background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.08)';amtCol='var(--muted)';
+      }else if(isSuggested){
+        btnTxt='🤖 AI מציע';btnSt='background:rgba(45,212,191,.12);color:var(--cyan);border:1px solid rgba(45,212,191,.3)';amtCol='var(--neg)';
+      }else{
+        btnTxt='— לא מסווג';btnSt='background:rgba(255,255,255,.04);color:var(--muted);border:1px solid rgba(255,255,255,.06)';amtCol='var(--muted)';
+      }
+      rowsH+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--border)">';
+      rowsH+='<div style="flex:1;min-width:0;padding-left:8px"><div style="font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(t.desc)+'</div>';
+      rowsH+='<div style="font-size:11px;color:var(--muted);margin-top:1px">'+t.d+' ב'+mo.label+'</div></div>';
+      rowsH+='<div style="display:flex;align-items:center;gap:7px;flex-shrink:0">';
+      rowsH+='<span style="font-size:13px;font-weight:600;color:'+amtCol+'">₪'+fmt(t.a)+'</span>';
+      rowsH+='<button onclick="cycleBizInReport(\''+key+'\')" style="'+btnSt+';font-size:10px;padding:4px 8px;border-radius:8px;cursor:pointer;white-space:nowrap;font-family:Rubik,sans-serif;line-height:1.4">'+btnTxt+'</button>';
+      rowsH+='</div></div>';
     });
-    h+='</div>';
+
+    bodyH+='<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px">';
+    bodyH+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+    bodyH+='<span style="font-size:13px;font-weight:500">'+mo.label+'</span>';
+    bodyH+=(monthConfirmed>0?'<span style="font-size:13px;font-weight:600;color:#FFD63C">₪'+fmt(monthConfirmed)+'</span>':'<span style="font-size:11px;color:var(--muted)">אין מאושרות</span>');
+    bodyH+='</div>'+rowsH+'</div>';
   });
-  if(!h){h='<div style="text-align:center;padding:40px;color:var(--muted);font-size:13px">לא נמצאו הוצאות עסקיות<br><span style="font-size:11px">הוצאות מסומנות ב-💼 יופיעו כאן</span></div>';}
-  else{
-    h='<div style="background:rgba(255,214,60,.1);border:1px solid rgba(255,214,60,.3);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">'+
-    '<div><div style="font-size:13px;font-weight:500;color:#FFD63C">סה"כ '+curYear+'</div><div style="font-size:11px;color:var(--muted);margin-top:2px">ניתן לדווח לרואה החשבון</div></div>'+
-    '<div style="font-size:20px;font-weight:500;color:#FFD63C">₪'+fmt(grandTotal)+'</div>'+
-    '</div>'+h;
+
+  if(!bodyH){bodyH='<div style="text-align:center;padding:40px;color:var(--muted);font-size:13px">לא נמצאו הוצאות לשנה הנוכחית</div>';}
+
+  var hdrH='<div style="background:rgba(255,214,60,.1);border:1px solid rgba(255,214,60,.3);border-radius:14px;padding:16px;margin-bottom:14px">';
+  hdrH+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">';
+  hdrH+='<div><div style="font-size:11px;color:#FFD63C;letter-spacing:.5px;text-transform:uppercase;font-weight:500">מאושר לדיווח '+curYear+'</div>';
+  hdrH+='<div style="font-size:26px;font-weight:700;color:#FFD63C;line-height:1.2">₪'+fmt(confirmedTotal)+'</div></div>';
+  if(pendingCount>0){
+    hdrH+='<button onclick="bizAiReview()" style="background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.35);color:var(--cyan);font-size:12px;font-weight:500;padding:9px 13px;border-radius:10px;cursor:pointer;font-family:Rubik,sans-serif;text-align:center;line-height:1.4">🤖 AI<br><span style="font-size:10px">'+pendingCount+' ממתינות</span></button>';
   }
+  hdrH+='</div><div style="font-size:11px;color:var(--muted)">לחצי על כל הוצאה לשינוי סיווג · ניתן לדווח לרואה החשבון</div></div>';
+
   var el=document.getElementById('biz-report-content');
-  if(el)el.innerHTML=h;
+  if(el)el.innerHTML=hdrH+bodyH;
+}
+
+function cycleBizInReport(encodedKey){
+  var parts=decodeURIComponent(encodedKey).split('|');
+  var moKey=parseInt(parts[0]),d=parts[1],desc=parts[2],a=parseFloat(parts[3]);
+  var arr=RAW.expense[moKey]||[];
+  for(var i=0;i<arr.length;i++){
+    if(arr[i].d===d&&arr[i].desc===desc&&arr[i].a===a){
+      var cur=arr[i].biz;
+      if(cur===undefined){arr[i].biz=true;track('tag_biz',{action:'confirm',desc:desc});toast('סומן כהוצאה עסקית 💼');}
+      else if(cur===true){arr[i].biz=false;track('tag_biz',{action:'personal',desc:desc});toast('סומן כהוצאה פרטית 👤');}
+      else{delete arr[i].biz;track('tag_biz',{action:'auto',desc:desc});toast('חזר לסיווג אוטומטי 🤖');}
+      save();renderBizReport();return;
+    }
+  }
+}
+
+function bizAiReview(){
+  var now=new Date();var curYear=now.getFullYear();
+  var suggs=[];
+  MONTHS.forEach(function(mo){
+    (RAW.expense[mo.key]||[]).forEach(function(t){
+      if(t.biz===true||t.biz===false)return;
+      if((t.year||curYear)!==curYear)return;
+      for(var i=0;i<BIZ_PATTERNS.length;i++){
+        if(BIZ_PATTERNS[i].test(t.desc)){suggs.push({mo:mo,t:t});break;}
+      }
+    });
+  });
+  if(!suggs.length){toast('אין הוצאות ממתינות לסיווג');return;}
+  var keys=suggs.map(function(s){return encodeURIComponent(s.mo.key+'|'+s.t.d+'|'+s.t.desc+'|'+s.t.a);});
+  var h='<div style="position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:3100;display:flex;align-items:flex-end;justify-content:center" onclick="closeBizAiModal()">';
+  h+='<div onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:20px 20px 0 0;padding:20px 16px;width:100%;max-width:430px;max-height:76dvh;overflow-y:auto;direction:rtl">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
+  h+='<div style="font-size:15px;font-weight:600">🤖 הצעות AI לסיווג</div>';
+  h+='<button onclick="closeBizAiModal()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1">✕</button>';
+  h+='</div>';
+  h+='<div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6">ה-AI זיהה '+suggs.length+' הוצאות שנראות עסקיות לפי דפוסים. <strong style="color:var(--text)">האישור הסופי שלך</strong> — אשרי או דחי כל אחת:</div>';
+  suggs.forEach(function(s){
+    var key=encodeURIComponent(s.mo.key+'|'+s.t.d+'|'+s.t.desc+'|'+s.t.a);
+    h+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px">';
+    h+='<div style="flex:1;min-width:0"><div style="font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(s.t.desc)+'</div>';
+    h+='<div style="font-size:11px;color:var(--muted);margin-top:2px">'+s.t.d+' ב'+s.mo.label+' · ₪'+fmt(s.t.a)+'</div></div>';
+    h+='<div style="display:flex;gap:5px;flex-shrink:0">';
+    h+='<button onclick="confirmBizItem(\''+key+'\',true)" style="background:rgba(255,214,60,.15);color:#FFD63C;border:1px solid rgba(255,214,60,.3);font-size:11px;padding:6px 9px;border-radius:8px;cursor:pointer;font-family:Rubik,sans-serif">💼 עסקי</button>';
+    h+='<button onclick="confirmBizItem(\''+key+'\',false)" style="background:rgba(248,113,113,.1);color:var(--neg);border:1px solid rgba(248,113,113,.2);font-size:11px;padding:6px 9px;border-radius:8px;cursor:pointer;font-family:Rubik,sans-serif">👤 פרטי</button>';
+    h+='</div></div>';
+  });
+  h+='<button onclick="bizConfirmAll('+JSON.stringify(keys)+')" style="width:100%;background:rgba(255,214,60,.15);color:#FFD63C;border:1px solid rgba(255,214,60,.3);font-size:13px;font-weight:600;padding:13px;border-radius:12px;cursor:pointer;font-family:Rubik,sans-serif;margin-top:6px">✅ אשרי את כולן כעסקיות</button>';
+  h+='</div></div>';
+  var el=document.createElement('div');el.id='biz-ai-modal';el.innerHTML=h;document.body.appendChild(el);
+}
+
+function closeBizAiModal(){var el=document.getElementById('biz-ai-modal');if(el)el.remove();}
+
+function confirmBizItem(encodedKey,isBiz){
+  var parts=decodeURIComponent(encodedKey).split('|');
+  var moKey=parseInt(parts[0]),d=parts[1],desc=parts[2],a=parseFloat(parts[3]);
+  var arr=RAW.expense[moKey]||[];
+  for(var i=0;i<arr.length;i++){
+    if(arr[i].d===d&&arr[i].desc===desc&&arr[i].a===a){arr[i].biz=isBiz;save();break;}
+  }
+  closeBizAiModal();bizAiReview();renderBizReport();
+}
+
+function bizConfirmAll(keys){
+  keys.forEach(function(encodedKey){
+    var parts=decodeURIComponent(encodedKey).split('|');
+    var moKey=parseInt(parts[0]),d=parts[1],desc=parts[2],a=parseFloat(parts[3]);
+    var arr=RAW.expense[moKey]||[];
+    for(var i=0;i<arr.length;i++){if(arr[i].d===d&&arr[i].desc===desc&&arr[i].a===a){arr[i].biz=true;break;}}
+  });
+  save();closeBizAiModal();renderBizReport();toast('סווגו '+keys.length+' הוצאות כעסקיות 💼');
 }
 
 // ── COUNT-UP ANIMATION ───────────────────────────────────
