@@ -1991,13 +1991,14 @@ html.mode-private .biz-only{ display:none!important; }
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
 <script>
 'use strict';
-// Global error trap — shows first uncaught JS error as a toast for mobile debugging
-window.onerror=function(msg,src,line){
-  var el=document.getElementById('home-greet');
-  if(el)el.textContent='⚠️ JS ERR: '+msg+' ('+String(src).split('/').pop()+':'+line+')';
-};
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260787;
+var APP_VER=20260788;
+// These globals must be initialized before any function that reads them.
+// (var hoisting makes them undefined until the declaration line executes.)
+var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
+var APP_MODE       = localStorage.getItem('shani_mode')||'business';
+var CLIENT_PROFILES= JSON.parse(localStorage.getItem('shani_cp')||'{}');
+var CLIENT_RECORDS = {};
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -4565,10 +4566,7 @@ setTimeout(_mcFix180626, 3100);
 })();
 initSplash();
 applyTheme();
-try{renderHome();}catch(e){
-  var _el=document.getElementById('home-bal');
-  if(_el)_el.textContent='ERR: '+e.message;
-}
+renderHome();
 updateBaseIncDisplay();
 updateBizTypeDisplay();
 updateBottomNav('home');
@@ -6337,16 +6335,13 @@ function updateBottomNav(name) {
 }
 
 // ── CLIENT PROFILES ──────────────────────────────────────
-var CLIENT_PROFILES = JSON.parse(localStorage.getItem('shani_cp')||'{}');
 function saveCPs() { localStorage.setItem('shani_cp', JSON.stringify(CLIENT_PROFILES)); cloudPush(); }
 
 // ── CLIENT RECORDS (cancellation tracking + history) ─────
-var CLIENT_RECORDS = {};
 try { var _cr = localStorage.getItem('pf_client_records'); if(_cr) CLIENT_RECORDS = JSON.parse(_cr); } catch(e) {}
 function saveClientRecords() { try { localStorage.setItem('pf_client_records', JSON.stringify(CLIENT_RECORDS)); } catch(e) {} cloudPush(); }
 
 // ── SETTINGS ─────────────────────────────────────────────
-var SETTINGS = JSON.parse(localStorage.getItem('shani_settings')||'{}');
 function saveSettings() { localStorage.setItem('shani_settings', JSON.stringify(SETTINGS)); cloudPush(); }
 function openSettings() {
   closeDrawer();
@@ -6629,7 +6624,6 @@ function toggleTheme() {
 }
 
 // ── PRIVATE / BUSINESS MODE ──────────────────────────────
-var APP_MODE = localStorage.getItem('shani_mode')||'business';
 function applyMode() {
   document.documentElement.classList.toggle('mode-private', APP_MODE==='private');
   var b=document.getElementById('mode-biz'), p=document.getElementById('mode-priv');
