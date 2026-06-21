@@ -724,14 +724,16 @@ select option{background:#111D2C;color:#fff}
 .pw-billing-btn{font-family:Rubik,sans-serif;font-size:12px;font-weight:600;padding:7px 16px;border-radius:8px;border:none;cursor:pointer;background:transparent;color:var(--muted);transition:all .18s;-webkit-tap-highlight-color:transparent}
 .pw-billing-btn.active{background:var(--cyan);color:#08131F}
 .pw-save-badge{background:rgba(34,197,94,.15);color:var(--pos);font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-right:5px;vertical-align:middle}
-.pw-plan-row{display:flex;gap:10px;margin:4px 0 18px}
-.pw-plan{flex:1;border-radius:16px;padding:14px 12px;border:2px solid var(--border2);text-align:right;cursor:pointer;transition:all .18s ease;-webkit-tap-highlight-color:transparent;opacity:.65}
-.pw-plan:active{transform:scale(.97)}
-.pw-plan.hero{border-color:var(--cyan);background:rgba(45,212,191,.12);box-shadow:0 0 0 3px rgba(45,212,191,.18);opacity:1}
-.pw-plan-badge{background:var(--gold);color:#08131F;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:6px;letter-spacing:.3px}
-.pw-plan-name{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:4px}
-.pw-plan-price{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-1px}
-.pw-plan-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.pw-plan-row{display:flex;flex-direction:column;gap:10px;margin:4px 0 16px}
+.pw-plan{border-radius:16px;padding:14px 16px;border:2px solid var(--border2);text-align:right;cursor:pointer;transition:all .18s ease;-webkit-tap-highlight-color:transparent;opacity:.72}
+.pw-plan:active{transform:scale(.98)}
+.pw-plan.hero{border-color:var(--cyan);background:rgba(45,212,191,.09);box-shadow:0 0 0 3px rgba(45,212,191,.15);opacity:1}
+.pw-plan-badge{background:var(--gold);color:#08131F;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:4px;letter-spacing:.3px}
+.pw-plan-name{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:2px}
+.pw-plan-price{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-1px}
+.pw-plan-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.pw-plan-feats{font-size:11px;color:var(--muted);line-height:1.8;margin-top:10px;border-top:1px solid rgba(255,255,255,.07);padding-top:10px}
+.pw-plan.hero .pw-plan-feats{color:var(--text2)}
 .pw-feats{font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:20px;text-align:right}
 .pw-feats span{color:var(--cyan);margin-left:5px}
 .pw-cta{display:block;width:100%;background:var(--cyan);color:#0D1117;font-family:'Rubik',sans-serif;font-size:15px;font-weight:600;padding:14px;border-radius:14px;border:none;cursor:pointer;text-align:center;margin-bottom:10px}
@@ -2150,7 +2152,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260809;
+var APP_VER=20260810;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -5079,23 +5081,45 @@ function showPaywall(feat){
       '</div>'+
       '<div class="pw-plan-row">'+
         '<div class="pw-plan" id="pw-p-personal" onclick="pwSelectPlan(this,\'personal\')">'+
-          '<div class="pw-plan-name">פרטי</div>'+
-          '<div class="pw-plan-price" id="pw-price-personal">₪29<span style="font-size:11px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
-          '<div class="pw-plan-sub" id="pw-sub-personal">₪249 לשנה</div>'+
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start">'+
+            '<div>'+
+              '<div class="pw-plan-name">פרטי</div>'+
+              '<div style="font-size:11px;color:var(--muted);margin-top:2px">מעקב פיננסי אישי בסיסי</div>'+
+            '</div>'+
+            '<div style="text-align:left;flex-shrink:0;margin-right:4px">'+
+              '<div class="pw-plan-price" id="pw-price-personal">₪29<span style="font-size:11px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
+              '<div class="pw-plan-sub" id="pw-sub-personal" style="text-align:left">₪249 לשנה</div>'+
+            '</div>'+
+          '</div>'+
+          '<div class="pw-plan-feats">'+
+            '<div>✓ מעקב הכנסות והוצאות</div>'+
+            '<div>✓ דוח חודשי בסיסי</div>'+
+            '<div>✓ AI ייעוץ כלכלי — עד 5 שאלות ביום</div>'+
+            '<div>✓ גיבוי ענן — מכשיר אחד</div>'+
+          '</div>'+
         '</div>'+
         '<div class="pw-plan hero" id="pw-p-business" onclick="pwSelectPlan(this,\'business\')">'+
-          '<div class="pw-plan-badge">עסקי ⭐</div>'+
-          '<div class="pw-plan-price" id="pw-price-business">₪49<span style="font-size:11px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
-          '<div class="pw-plan-sub" id="pw-sub-business">₪499 לשנה</div>'+
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start">'+
+            '<div>'+
+              '<div class="pw-plan-badge">עסקי ⭐</div>'+
+              '<div style="font-size:11px;color:var(--muted);margin-top:3px">לעצמאי/ת עם עוסק מורשה/פטור</div>'+
+            '</div>'+
+            '<div style="text-align:left;flex-shrink:0;margin-right:4px">'+
+              '<div class="pw-plan-price" id="pw-price-business">₪49<span style="font-size:11px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
+              '<div class="pw-plan-sub" id="pw-sub-business" style="text-align:left">₪499 לשנה</div>'+
+            '</div>'+
+          '</div>'+
+          '<div class="pw-plan-feats">'+
+            '<div>✓ הכל מתוכנית פרטי</div>'+
+            '<div>✓ AI ייעוץ כלכלי ללא הגבלה</div>'+
+            '<div>✓ ייצוא CSV לרואה חשבון</div>'+
+            '<div>✓ דוחות מע"מ + תכנון מס</div>'+
+            '<div>✓ ניהול ספקים והזמנות</div>'+
+            '<div>✓ היסטוריה מלאה ללא הגבלה</div>'+
+            '<div>✓ גיבוי ענן + ריבוי מכשירים</div>'+
+            '<div>✓ תמיכה מועדפת</div>'+
+          '</div>'+
         '</div>'+
-      '</div>'+
-      '<div class="pw-feats">'+
-        '<div><span>✓</span>AI ייעוץ כלכלי ללא הגבלה</div>'+
-        '<div><span>✓</span>ייצוא CSV לרואה חשבון</div>'+
-        '<div><span>✓</span>דוחות מע"מ + תכנון מס</div>'+
-        '<div><span>✓</span>היסטוריה מלאה (כל החודשים)</div>'+
-        '<div><span>✓</span>גיבוי ענן + ריבוי מכשירים</div>'+
-        '<div style="color:var(--gold)"><span>⭐</span>עסקי: ניהול ספקים מלא + תמיכה מועדפת</div>'+
       '</div>'+
       '<button class="pw-cta" id="pw-cta-btn" onclick="contactForUpgrade()">📱 שדרג/י עסקי שנתי ₪49 דרך WhatsApp</button>'+
       '<button class="pw-dismiss" onclick="closePaywall()">המשיכ/י בחינם</button>'+
