@@ -849,6 +849,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="drw-item" onclick="exportData();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span><span>גיבוי נתונים</span></div>
     <div class="drw-item" onclick="openSettings()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M5 7h8"/><circle cx="16.5" cy="7" r="2.3"/><path d="M19 17h-8"/><circle cx="7.5" cy="17" r="2.3"/></svg></span><span>הגדרות</span></div>
     <div class="drw-item" onclick="editBaseIncome()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8"/><path d="M8.5 11h7"/><path d="M8.5 13h7"/></svg></span><span>הכנסה קבועה: <span id="drw-base-inc">—</span></span></div>
+    <div class="drw-item" onclick="editBizType()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2.5"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></span><span>סוג עוסק: <span id="drw-biz-type">—</span></span></div>
     <div class="drw-item" onclick="toggleTheme()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></span><span id="theme-lbl">מצב ים</span></div>
     <div class="drw-item" id="drw-admin" style="display:none" onclick="go('admin');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>פאנל אדמין</span></div>
     <div class="drw-item" id="drw-logout" style="display:none" onclick="authLogout()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M14 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H14"/><path d="M18 15.5 21.5 12 18 8.5"/><path d="M21 12h-10"/></svg></span><span>התנתקות</span></div>
@@ -895,6 +896,12 @@ html.mode-private .biz-only{ display:none!important; }
           <button class="wiz-prof-btn" id="wpb-nails" onclick="wizPickProf('nails')">💅 טכנאית ציפורניים</button>
           <button class="wiz-prof-btn" id="wpb-cosm" onclick="wizPickProf('cosm')">🧖 קוסמטיקאית</button>
           <button class="wiz-prof-btn" id="wpb-makeup" onclick="wizPickProf('makeup')">💄 מאפרת</button>
+        </div>
+        <!-- Dealer type -->
+        <div style="font-size:11px;color:var(--muted);margin:10px 0 6px;text-align:center">סוג עוסק:</div>
+        <div style="display:flex;gap:6px">
+          <button class="wiz-prof-btn sel" id="wpb-patur" onclick="wizPickBizType('patur')" style="flex:1">עוסק פטור</button>
+          <button class="wiz-prof-btn" id="wpb-murshe" onclick="wizPickBizType('murshe')" style="flex:1">עוסק מורשה</button>
         </div>
       </div>
       <button class="wiz-btn" onclick="wizStep(2)">הבא ›</button>
@@ -1951,7 +1958,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260771;
+var APP_VER=20260772;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2345,16 +2352,21 @@ function exportData(){
   toast('גיבוי הורד');
 }
 
-// ── ACCOUNTANT CSV EXPORT (עוסק פטור) ────────────────────
-// עוסק פטור: לא גובה מע"מ, לא מנכה מע"מ, לא מגיש דוחות מע"מ.
-// הדוח מיועד לצורכי מס הכנסה וביטוח לאומי בלבד.
+// ── ACCOUNTANT CSV EXPORT ─────────────────────────────────
 function exportAccountantCSV(){
+  var isMurshe=(SETTINGS.bizType==='murshe');
+  var VAT=0.17;
   var MONTH_NAMES=['','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
   var year=new Date().getFullYear();
-  var rows=['﻿'+'-- דוח עוסק פטור לצורכי מס הכנסה -- '+year+' --'];
-  rows.push('הערה: עוסק פטור אינו גובה מע"מ ואינו מנכה מע"מ על הוצאות');
+  var typeLabel=isMurshe?'עוסק מורשה':'עוסק פטור';
+  var rows=['﻿'+'-- דוח '+typeLabel+' לצורכי מס הכנסה -- '+year+' --'];
+  rows.push(isMurshe
+    ?'הערה: עוסק מורשה — כולל חישוב מע"מ 17% לניכוי על הוצאות עסקיות'
+    :'הערה: עוסק פטור אינו גובה מע"מ ואינו מנכה מע"מ על הוצאות');
   rows.push('');
-  rows.push('תאריך,חודש,תיאור,סכום,סיווג,קטגוריה');
+  rows.push(isMurshe
+    ?'תאריך,חודש,תיאור,סכום כולל מע"מ,מע"מ (17%),סכום נטו,סיווג,קטגוריה'
+    :'תאריך,חודש,תיאור,סכום,סיווג,קטגוריה');
 
   // All expense rows
   for(var m=1;m<=12;m++){
@@ -2365,7 +2377,13 @@ function exportAccountantCSV(){
       var category=cat(t.desc||'').lbl||'אחר';
       var parts=(t.d||'01/'+String(m).padStart(2,'0')).split('/');
       var fullDate=(parts[0]||'01')+'/'+(parts[1]||String(m).padStart(2,'0'))+'/'+year;
-      rows.push([fullDate,MONTH_NAMES[m],'"'+(t.desc||'').replace(/"/g,'""')+'"',total,cls,'"'+category+'"'].join(','));
+      if(isMurshe){
+        var vat=Math.round(total*VAT*100)/100;
+        var net=Math.round((total-vat)*100)/100;
+        rows.push([fullDate,MONTH_NAMES[m],'"'+(t.desc||'').replace(/"/g,'""')+'"',total,vat,net,cls,'"'+category+'"'].join(','));
+      } else {
+        rows.push([fullDate,MONTH_NAMES[m],'"'+(t.desc||'').replace(/"/g,'""')+'"',total,cls,'"'+category+'"'].join(','));
+      }
     });
   }
 
@@ -2394,6 +2412,9 @@ function exportAccountantCSV(){
   rows.push('-- סיכום שנתי --');
   rows.push('סה"כ הכנסות '+year+','+Math.round(totalAnnualInc));
   rows.push('סה"כ הוצאות עסקיות מוכרות,'+Math.round(totalBizExp));
+  if(isMurshe){
+    rows.push('מע"מ תשומות לניכוי (17%),'+Math.round(totalBizExp*VAT));
+  }
   rows.push('הכנסה חייבת במס הכנסה (הערכה),'+taxableInc);
   rows.push('');
   rows.push('הערה: לא כולל ניכויים אישיים — יש לאמת עם רואה חשבון');
@@ -2401,7 +2422,7 @@ function exportAccountantCSV(){
   var blob=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8'});
   var a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='דוח-עוסק-פטור-'+year+'.csv';
+  a.download='דוח-'+typeLabel.replace(/ /g,'-')+'-'+year+'.csv';
   a.click();URL.revokeObjectURL(a.href);
   toast('✓ הדוח הורד — שלחי לרואה החשבון');
 }
@@ -2837,7 +2858,7 @@ function calcBituachLeumi(annualInc){
 function renderOsekPatur(){
   var el=document.getElementById('home-osek');
   if(!el)return;
-  if(APP_MODE!=='business'){el.innerHTML='';return;}
+  if(APP_MODE!=='business'||SETTINGS.bizType==='murshe'){el.innerHTML='';return;}
   var LIMIT=120000;
   var ann=calcAnnualIncome();
   var pct=Math.min(Math.round(ann/LIMIT*100),100);
@@ -4309,6 +4330,7 @@ initSplash();
 applyTheme();
 renderHome();
 updateBaseIncDisplay();
+updateBizTypeDisplay();
 updateBottomNav('home');
 showSubsAlerts();
 showOrderAlerts();
@@ -5861,6 +5883,14 @@ var _tourIdx=0;
 
 // ── WELCOME WIZARD ────────────────────────────────────────
 var _wizMode='business';
+var _wizBizType='patur';
+function wizPickBizType(t){
+  _wizBizType=t;
+  ['patur','murshe'].forEach(function(k){
+    var b=document.getElementById('wpb-'+k);
+    if(b) b.classList.toggle('sel',k===t);
+  });
+}
 function showWelcomeWizard(){
   if(localStorage.getItem('pf_welcomed'))return;
   var wiz=document.getElementById('wiz-overlay');
@@ -5916,7 +5946,9 @@ function wizStep(n){
 function wizDone(){
   var nameVal=(document.getElementById('wiz-name').value||'').trim();
   var incVal=parseFloat(document.getElementById('wiz-income').value)||0;
-  if(nameVal){ SETTINGS.userName=nameVal;saveSettings(); }
+  if(nameVal){ SETTINGS.userName=nameVal; }
+  SETTINGS.bizType=_wizBizType;
+  saveSettings();
   if(_wizProf && PROF_CATS[_wizProf]){
     SETTINGS.profession=_wizProf;
     var pc=PROF_CATS[_wizProf];
@@ -6532,10 +6564,25 @@ function updateAccountUI(user){
   var ad=document.getElementById('drw-admin');
   if(ad) ad.style.display=(user&&(user.uid===ADMIN_UID||ADMIN_UID==='REPLACE_WITH_YOUR_UID'))?'flex':'none';
   updateBaseIncDisplay();
+  updateBizTypeDisplay();
 }
 function updateBaseIncDisplay(){
   var el=document.getElementById('drw-base-inc');
   if(el) el.textContent=FIXED>0?'₪'+fmt(FIXED):'לא הוגדר';
+}
+function updateBizTypeDisplay(){
+  var el=document.getElementById('drw-biz-type');
+  if(el) el.textContent=(SETTINGS.bizType==='murshe')?'עוסק מורשה':'עוסק פטור';
+}
+function editBizType(){
+  closeDrawer&&closeDrawer();
+  var cur=SETTINGS.bizType==='murshe'?'עוסק מורשה':'עוסק פטור';
+  var choice=window.confirm('סוג עוסק נוכחי: '+cur+'\n\nלחצי אישור לעוסק פטור, ביטול לעוסק מורשה.');
+  SETTINGS.bizType=choice?'patur':'murshe';
+  saveSettings();
+  updateBizTypeDisplay();
+  renderHome();
+  toast('סוג עוסק עודכן: '+(SETTINGS.bizType==='patur'?'עוסק פטור':'עוסק מורשה'));
 }
 function editBaseIncome(){
   closeDrawer&&closeDrawer();
