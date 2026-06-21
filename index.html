@@ -2023,7 +2023,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260792;
+var APP_VER=20260793;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2035,12 +2035,12 @@ var CLIENT_RECORDS = {};
 var PLAN_DATA = (function(){
   var isPaid = localStorage.getItem('shani_plan')==='paid';
   var stored = parseInt(localStorage.getItem('shani_trial_start')||'0');
-  // Auto-start 14-day trial for any previously-onboarded user
+  // Auto-start 30-day trial (first month free) for any previously-onboarded user
   if(!stored && !isPaid && localStorage.getItem('pf_welcomed')){
     stored = Date.now();
     localStorage.setItem('shani_trial_start',String(stored));
   }
-  var daysLeft = stored > 0 ? Math.max(0, 14 - Math.floor((Date.now()-stored)/86400000)) : 0;
+  var daysLeft = stored > 0 ? Math.max(0, 30 - Math.floor((Date.now()-stored)/86400000)) : 0;
   var inTrial = !isPaid && daysLeft > 0;
   return {isPaid:isPaid, inTrial:inTrial, daysLeft:daysLeft};
 })();
