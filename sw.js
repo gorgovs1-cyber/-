@@ -1,4 +1,4 @@
-var CACHE = 'shani-money-v20260777';
+var CACHE = 'shani-money-v20260783';
 var SHELL = [
   '/',
   '/index.html',
