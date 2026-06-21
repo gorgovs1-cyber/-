@@ -1436,7 +1436,7 @@ html.mode-private .biz-only{ display:none!important; }
       </div>
       <label style="display:flex;align-items:center;gap:9px;margin-bottom:14px;cursor:pointer;user-select:none">
         <input type="checkbox" id="sf-private" style="width:16px;height:16px;accent-color:var(--muted);cursor:pointer;flex-shrink:0">
-        <span style="font-size:12px;color:var(--muted)">🏠 פרטי — לא יופיע בייצוא לרו"ח</span>
+        <span style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="m10.73 10.73a3 3 0 1 0 4.24 4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>פרטי — לא יופיע בייצוא לרו"ח</span>
       </label>
       <button onclick="addSingleTxn()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
     </div>
@@ -2150,7 +2150,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260807;
+var APP_VER=20260808;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
