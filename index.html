@@ -1298,6 +1298,7 @@ html.mode-private .biz-only{ display:none!important; }
     </div>
     <div class="cal-grid" id="cl-cal"></div>
   </div>
+  <div id="cl-followup"></div>
 </div>
 
 <!-- ══ DAY MODAL ══════════════════════════════════════════ -->
@@ -2176,7 +2177,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260822;
+var APP_VER=20260823;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -3944,6 +3945,50 @@ function renderBalance(){
 var curCMi=MAY_IDX;
 function moveCM(d){curCMi=Math.max(0,Math.min(MONTHS.length-1,curCMi+d));renderClients();}
 
+function parseClientDate(s){
+  var p=(s||'').split('/');
+  if(p.length===3) return new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));
+  return new Date(0);
+}
+function renderClientFollowup(){
+  var el=document.getElementById('cl-followup');
+  if(!el) return;
+  var now=new Date();
+  var results=[];
+  for(var name in CLIENT_RECORDS){
+    var rec=CLIENT_RECORDS[name];
+    var hist=(rec.history||[]).filter(function(h){return h.status==='done';});
+    if(hist.length<2) continue;
+    var sorted=hist.slice().sort(function(a,b){return parseClientDate(b.date)-parseClientDate(a.date);});
+    var daysSince=Math.floor((now-parseClientDate(sorted[0].date))/86400000);
+    if(daysSince<40) continue;
+    var totalSpent=hist.reduce(function(s,h){return s+safeN(h.amount);},0);
+    results.push({name:name,daysSince:daysSince,visitCount:hist.length,totalSpent:totalSpent});
+  }
+  if(!results.length){el.innerHTML='';return;}
+  results.sort(function(a,b){return b.daysSince-a.daysSince;});
+  var top=results.slice(0,4);
+  var h='<div style="padding:14px 16px 0"><div class="s-hdr" style="margin-bottom:10px"><span class="s-hdr-lbl">לחזרה</span><span style="font-size:10px;color:var(--muted)">'+results.length+' לקוחות</span></div>';
+  top.forEach(function(c){
+    var urgent=c.daysSince>90;
+    var co=urgent?'var(--neg)':'var(--gold)';
+    var init=(c.name||'?').split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2);
+    h+='<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);direction:rtl">'+
+      '<div style="width:36px;height:36px;border-radius:50%;background:rgba(45,212,191,.12);color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0">'+init+'</div>'+
+      '<div style="flex:1">'+
+        '<div style="font-size:13px;font-weight:500">'+esc(c.name)+'</div>'+
+        '<div style="font-size:10px;color:var(--muted)">'+c.visitCount+' ביקורים · ₪'+fmt(c.totalSpent)+' סה"כ</div>'+
+      '</div>'+
+      '<div style="text-align:center;flex-shrink:0">'+
+        '<div style="font-size:15px;font-weight:700;color:'+co+'">'+c.daysSince+'</div>'+
+        '<div style="font-size:9px;color:var(--muted)">ימים</div>'+
+      '</div>'+
+    '</div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+
 function renderClients(){
   var ml=MONTHS[curCMi], m=ml.key;
   var all=CLIENTS[m]||[];
@@ -3976,6 +4021,7 @@ function renderClients(){
     h+='<div class="cal-cell'+(isT?' today':'')+'" onclick="openModal('+d+','+curCMi+')"><div class="cal-num">'+d+'</div>'+dots+'</div>';
   }
   document.getElementById('cl-cal').innerHTML=h;
+  renderClientFollowup();
 }
 
 // ── MODAL ────────────────────────────────────────────────
