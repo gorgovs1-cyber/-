@@ -1948,7 +1948,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260767;
+var APP_VER=20260768;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -1979,6 +1979,13 @@ var firebaseConfig={
   setInterval(checkVer,60000); // re-check every minute, even as a home-screen app
 })();
 // ── CONSTANTS ────────────────────────────────────────────
+// One-time migration: existing users (shani_cv===20) get ₪4,588 base income
+(function(){
+  if(localStorage.getItem('pf_base_income')===null &&
+     localStorage.getItem('shani_cv')==='20'){
+    localStorage.setItem('pf_base_income','4588');
+  }
+})();
 var FIXED = parseInt(localStorage.getItem('pf_base_income')||'0');
 var FIXED_MAP = {};
 var MONTHS = [
