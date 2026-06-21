@@ -2126,7 +2126,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260801;
+var APP_VER=20260802;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -3046,7 +3046,7 @@ function renderHome(){
       '<div style="font-size:36px;margin-bottom:10px">💸</div>'+
       '<div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">התחילי לעקוב אחרי הכסף שלך</div>'+
       '<div style="font-size:13px;color:var(--muted);margin-bottom:16px">לחצי על <b style="color:var(--cyan)">+</b> כדי להוסיף הוצאה או הכנסה ראשונה</div>'+
-      '<button onclick="openFab()" style="background:var(--cyan);color:#08131F;font-family:Rubik,sans-serif;font-size:14px;font-weight:500;padding:12px 28px;border-radius:12px;border:none;cursor:pointer">+ הוסיפי עסקה ראשונה</button>'+
+      '<button onclick="fabTap()" style="background:var(--cyan);color:#08131F;font-family:Rubik,sans-serif;font-size:14px;font-weight:500;padding:12px 28px;border-radius:12px;border:none;cursor:pointer">+ הוסיפ/י עסקה ראשונה</button>'+
       '</div>';
   } else {
     var bCls=r.balFull>=0?'pos':'neg';
@@ -3722,18 +3722,6 @@ function renderBalance(){
   document.getElementById('bal-detail').innerHTML=h;
 }
 
-// ── UPDATE ────────────────────────────────────────────────
-function updCards(){
-  var v=pa(document.getElementById('bal-visa').value);
-  var mc=pa(document.getElementById('bal-mc').value);
-  var b=pa(document.getElementById('bal-bank').value);
-  if(v) CARDS.visa=v; if(mc) CARDS.mc=mc; if(b) CARDS.bank=b;
-  ['bal-visa','bal-mc','bal-bank'].forEach(function(id){document.getElementById(id).value='';});
-  save(); renderHome();
-  document.getElementById('bal-toast').textContent='✓ יתרות עודכנו';
-  toast('✓ יתרות עודכנו');
-}
-
 // ── CLIENTS ──────────────────────────────────────────────
 var curCMi=MAY_IDX;
 function moveCM(d){curCMi=Math.max(0,Math.min(MONTHS.length-1,curCMi+d));renderClients();}
@@ -4205,49 +4193,6 @@ function saveQA(){
 }
 
 // ── TRENDS CHART ─────────────────────────────────────────
-var trendsChart=null;
-function renderTrends(){
-  var ctx=document.getElementById('trends-chart');
-  if(!ctx||typeof Chart==='undefined')return;
-  var labels=[],incArr=[],expArr=[];
-  var start=Math.max(0,homeMi-4);
-  for(var i=start;i<=homeMi;i++){
-    var ml=MONTHS[i];
-    labels.push(ml.label.slice(0,3)+"'"+String(ml.year).slice(2));
-    var r=calc(i);
-    incArr.push(r.inc+r.doneAmt+r.planAmt);
-    expArr.push(r.exp);
-  }
-  document.getElementById('trends-sub').textContent=MONTHS[start].label+' — '+MONTHS[homeMi].label+' '+MONTHS[homeMi].year;
-  if(trendsChart){
-    trendsChart.data.labels=labels;
-    trendsChart.data.datasets[0].data=incArr;
-    trendsChart.data.datasets[1].data=expArr;
-    trendsChart.update('none');return;
-  }
-  trendsChart=new Chart(ctx,{
-    type:'bar',
-    data:{
-      labels:labels,
-      datasets:[
-        {label:'הכנסות',data:incArr,backgroundColor:'rgba(45,212,191,.5)',borderColor:'rgba(45,212,191,.9)',borderWidth:1.5,borderRadius:6,borderSkipped:false},
-        {label:'הוצאות',data:expArr,backgroundColor:'rgba(255,109,53,.45)',borderColor:'rgba(255,109,53,.9)',borderWidth:1.5,borderRadius:6,borderSkipped:false}
-      ]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{labels:{color:'rgba(255,255,255,.65)',font:{family:'Rubik',size:10},boxWidth:10,padding:12}},
-        tooltip:{callbacks:{label:function(c){return c.dataset.label+': ₪'+Math.round(c.raw).toLocaleString('he-IL');}}}
-      },
-      scales:{
-        x:{ticks:{color:'rgba(255,255,255,.5)',font:{family:'Rubik',size:9}},grid:{color:'rgba(255,255,255,.04)'}},
-        y:{ticks:{color:'rgba(255,255,255,.5)',font:{family:'Rubik',size:9},callback:function(v){return v>=1000?'₪'+(v/1000).toFixed(0)+'k':'₪'+v;}},grid:{color:'rgba(255,255,255,.06)'}}
-      }
-    }
-  });
-}
-
 // ── GOALS ─────────────────────────────────────────────────
 var activeGoalIdx=-1;
 var GOAL_COLORS=['#2DD4BF','rgba(255,255,255,.55)','#FFB347','#6BA3FF','#00E676','#FF6B6B','rgba(45,212,191,.65)'];
@@ -5095,7 +5040,7 @@ function lpSelectPlan(el, plan){
   sessionStorage.setItem('preferred_plan', plan);
 }
 function lpScrollToSignup(){
-  var btn=document.getElementById('auth-google');
+  var btn=document.querySelector('.auth-google');
   if(btn) btn.scrollIntoView({behavior:'smooth',block:'center'});
 }
 function contactForUpgrade(){
