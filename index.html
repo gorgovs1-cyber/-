@@ -1957,7 +1957,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260773;
+var APP_VER=20260774;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2294,8 +2294,8 @@ function initSplash(){
   setTimeout(function(){
     var sp=document.getElementById('splash');
     sp.classList.add('out');
-    setTimeout(function(){sp.style.display='none';},500);
-  },800);
+    setTimeout(function(){sp.style.display='none';},400);
+  },300);
 }
 
 // ── PERSIST ──────────────────────────────────────────────
@@ -5214,9 +5214,13 @@ function detectRecurring(){
 function showRecurringSuggestion(){
   var el=document.getElementById('recurring-banner');
   if(!el)return;
+  var alertEl=document.getElementById('home-alert');
+  if(alertEl&&alertEl.innerHTML.trim()){el.style.display='none';return;}
   var candidate=detectRecurring();
   _recurringCandidate=candidate;
   if(!candidate){el.style.display='none';return;}
+  var incEl=document.getElementById('income-recurring-banner');
+  if(incEl)incEl.style.display='none';
   var amtStr='₪'+fmt(candidate.avg);
   var textEl=document.getElementById('recurring-banner-text');
   if(textEl)textEl.innerHTML='זיהינו <strong>'+esc(candidate.origDesc)+'</strong> כהוצאה חוזרת ('+amtStr+' לחודש) — להוסיף לתשלומים קבועים?';
@@ -5319,6 +5323,10 @@ function detectRecurringIncome(){
 function showRecurringIncomeSuggestion(){
   var el=document.getElementById('income-recurring-banner');
   if(!el)return;
+  var alertEl=document.getElementById('home-alert');
+  if(alertEl&&alertEl.innerHTML.trim()){el.style.display='none';return;}
+  var expEl=document.getElementById('recurring-banner');
+  if(expEl&&expEl.style.display!=='none'){el.style.display='none';return;}
   var candidate=detectRecurringIncome();
   _incomeCandidate=candidate;
   if(!candidate){el.style.display='none';return;}
