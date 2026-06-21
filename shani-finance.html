@@ -845,6 +845,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="drw-item" onclick="openAdvisor();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span><span>יועצת כלכלית</span></div>
     <div class="drw-item" data-page="guide" onclick="go('guide');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span>מדריך ועזרה</span></div>
     <div class="drw-item" onclick="go('biz-report');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span><span>דוח הוצאות עסקיות</span></div>
+    <div class="drw-item biz-only" onclick="exportAccountantCSV();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg></span><span>ייצוא לרואה חשבון CSV</span></div>
     <div class="drw-item" onclick="exportData();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span><span>גיבוי נתונים</span></div>
     <div class="drw-item" onclick="openSettings()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M5 7h8"/><circle cx="16.5" cy="7" r="2.3"/><path d="M19 17h-8"/><circle cx="7.5" cy="17" r="2.3"/></svg></span><span>הגדרות</span></div>
     <div class="drw-item" onclick="editBaseIncome()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8"/><path d="M8.5 11h7"/><path d="M8.5 13h7"/></svg></span><span>הכנסה קבועה: <span id="drw-base-inc">—</span></span></div>
@@ -1917,6 +1918,7 @@ html.mode-private .biz-only{ display:none!important; }
   <div class="detail-hdr">
     <button class="back-btn" onclick="go('home')">‹</button>
     <div class="detail-title" style="display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>דוח הוצאות עסקיות</div>
+    <button onclick="exportAccountantCSV()" style="background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.3);color:var(--cyan);font-family:Rubik,sans-serif;font-size:12px;font-weight:500;padding:6px 12px;border-radius:10px;cursor:pointer;white-space:nowrap">⬇ CSV</button>
   </div>
   <div id="biz-report-content" style="padding:14px 14px 80px;direction:rtl"></div>
 </div>
@@ -1949,7 +1951,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260769;
+var APP_VER=20260770;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2250,11 +2252,12 @@ function saveBudgetSettings(){
 }
 
 // ── HELPERS ──────────────────────────────────────────────
-function fmt(n){ return Math.round(n).toLocaleString('he-IL'); }
+function fmt(n){ var v=parseFloat(n); return isNaN(v)?'0':Math.round(v).toLocaleString('he-IL'); }
+function safeN(v){ var n=parseFloat(v); return (isNaN(n)||!isFinite(n))?0:n; }
 function esc(s){ if(s==null) return ''; return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 function pa(s){ return parseFloat(String(s).replace(/,/g,'').replace(/[^\d.]/g,''))||0; }
-function sumE(m){ return (RAW.expense[m]||[]).reduce(function(s,t){return s+t.a;},0); }
-function sumI(m){ return (RAW.income[m]||[]).reduce(function(s,t){return s+t.a;},0)+(FIXED_MAP[m]||FIXED); }
+function sumE(m){ return (RAW.expense[m]||[]).reduce(function(s,t){return s+safeN(t.a);},0); }
+function sumI(m){ return (RAW.income[m]||[]).reduce(function(s,t){return s+safeN(t.a);},0)+safeN(FIXED_MAP[m]||FIXED); }
 
 // ── CATEGORY BADGE ───────────────────────────────────────
 function cat(d){
@@ -2340,6 +2343,59 @@ function exportData(){
   a.download='shani-finance-'+new Date().toISOString().slice(0,10)+'.json';
   a.click();URL.revokeObjectURL(a.href);
   toast('גיבוי הורד');
+}
+
+// ── ACCOUNTANT CSV EXPORT ─────────────────────────────────
+function exportAccountantCSV(){
+  var VAT_RATE=0.17;
+  var MONTH_NAMES=['','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+  var year=new Date().getFullYear();
+  var rows=['﻿'+'תאריך,חודש,תיאור,סכום כולל מע"מ,מע"מ (17%),סכום ללא מע"מ,סיווג,קטגוריה'];
+
+  // Expense rows
+  for(var m=1;m<=12;m++){
+    var items=RAW.expense[m]||[];
+    items.forEach(function(t){
+      var total=safeN(t.a);
+      var vat=Math.round(total*VAT_RATE*100)/100;
+      var net=Math.round((total-vat)*100)/100;
+      var cls=t.biz===true?'עסקי':t.biz===false?'פרטי':(isBizExpense(t)?'עסקי (אוטו)':'פרטי');
+      var category=cat(t.desc||'').lbl||'אחר';
+      var dateStr=(t.d||'01/'+String(m).padStart(2,'0'));
+      // Convert DD/MM to DD/MM/YYYY
+      var parts=dateStr.split('/');
+      var fullDate=(parts[0]||'01')+'/'+(parts[1]||String(m).padStart(2,'0'))+'/'+year;
+      rows.push([fullDate,MONTH_NAMES[m],'"'+(t.desc||'').replace(/"/g,'""')+'"',total,vat,net,cls,'"'+category+'"'].join(','));
+    });
+  }
+
+  // Monthly income summary
+  rows.push('');
+  rows.push('חודש,סה"כ הכנסות');
+  for(var mi=1;mi<=12;mi++){
+    var inc=sumI(mi);
+    if(inc>0) rows.push(MONTH_NAMES[mi]+','+inc);
+  }
+
+  // Totals
+  var totalExp=0,totalBizExp=0;
+  for(var tm=1;tm<=12;tm++){
+    (RAW.expense[tm]||[]).forEach(function(t){
+      totalExp+=safeN(t.a);
+      if(t.biz===true||(t.biz===undefined&&isBizExpense(t))) totalBizExp+=safeN(t.a);
+    });
+  }
+  rows.push('');
+  rows.push('סה"כ הוצאות,'+Math.round(totalExp));
+  rows.push('סה"כ הוצאות עסקיות,'+Math.round(totalBizExp));
+  rows.push('מע"מ על הוצאות עסקיות,'+Math.round(totalBizExp*VAT_RATE));
+
+  var blob=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='דוח-רואה-חשבון-'+year+'.csv';
+  a.click();URL.revokeObjectURL(a.href);
+  toast('✓ הדוח הורד — שלחי לרואה החשבון');
 }
 
 // ── TOAST ────────────────────────────────────────────────
@@ -2612,9 +2668,9 @@ function calc(mi){
   var all=CLIENTS[m]||[];
   var doneList=all.filter(function(c){return c.status==='done';});
   var planList=all.filter(function(c){return c.status==='planned';});
-  var doneAmt=doneList.reduce(function(s,c){return s+c.amount;},0);
-  var planAmt=planList.reduce(function(s,c){return s+c.amount;},0);
-  var mcBill=(CARDS.mc_charge&&CARDS.mc_charge>0)?CARDS.mc_charge:CARDS.mc,vBill=CARDS.visa;
+  var doneAmt=doneList.reduce(function(s,c){return s+safeN(c.amount);},0);
+  var planAmt=planList.reduce(function(s,c){return s+safeN(c.amount);},0);
+  var mcBill=safeN((CARDS.mc_charge&&CARDS.mc_charge>0)?CARDS.mc_charge:CARDS.mc),vBill=safeN(CARDS.visa);
 
   // Smart deduction: only subtract bills that haven't been paid yet this month
   var today=new Date();
@@ -2645,7 +2701,7 @@ function calc(mi){
     var futureFixed=(tD<25)?(FIXED_MAP[m]||FIXED):0;
     var futureRawInc=(RAW.income[m]||[]).filter(function(t){return parseInt(t.d.split('/')[0])>tD;}).reduce(function(s,t){return s+t.a;},0);
     var futureExpAmt=(RAW.expense[m]||[]).filter(function(t){return parseInt(t.d.split('/')[0])>tD;}).reduce(function(s,t){return s+t.a;},0);
-    balFull=-CARDS.bank+futureFixed+futureRawInc+planAmt-futureExpAmt-mcDeduct-vDeduct;
+    balFull=-safeN(CARDS.bank)+futureFixed+futureRawInc+planAmt-futureExpAmt-mcDeduct-vDeduct;
   }
 
   return {m:m,ml:ml,inc:inc,exp:exp,doneList:doneList,planList:planList,doneAmt:doneAmt,planAmt:planAmt,
