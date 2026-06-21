@@ -1951,7 +1951,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260770;
+var APP_VER=20260771;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2345,55 +2345,63 @@ function exportData(){
   toast('גיבוי הורד');
 }
 
-// ── ACCOUNTANT CSV EXPORT ─────────────────────────────────
+// ── ACCOUNTANT CSV EXPORT (עוסק פטור) ────────────────────
+// עוסק פטור: לא גובה מע"מ, לא מנכה מע"מ, לא מגיש דוחות מע"מ.
+// הדוח מיועד לצורכי מס הכנסה וביטוח לאומי בלבד.
 function exportAccountantCSV(){
-  var VAT_RATE=0.17;
   var MONTH_NAMES=['','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
   var year=new Date().getFullYear();
-  var rows=['﻿'+'תאריך,חודש,תיאור,סכום כולל מע"מ,מע"מ (17%),סכום ללא מע"מ,סיווג,קטגוריה'];
+  var rows=['﻿'+'-- דוח עוסק פטור לצורכי מס הכנסה -- '+year+' --'];
+  rows.push('הערה: עוסק פטור אינו גובה מע"מ ואינו מנכה מע"מ על הוצאות');
+  rows.push('');
+  rows.push('תאריך,חודש,תיאור,סכום,סיווג,קטגוריה');
 
-  // Expense rows
+  // All expense rows
   for(var m=1;m<=12;m++){
     var items=RAW.expense[m]||[];
     items.forEach(function(t){
       var total=safeN(t.a);
-      var vat=Math.round(total*VAT_RATE*100)/100;
-      var net=Math.round((total-vat)*100)/100;
       var cls=t.biz===true?'עסקי':t.biz===false?'פרטי':(isBizExpense(t)?'עסקי (אוטו)':'פרטי');
       var category=cat(t.desc||'').lbl||'אחר';
-      var dateStr=(t.d||'01/'+String(m).padStart(2,'0'));
-      // Convert DD/MM to DD/MM/YYYY
-      var parts=dateStr.split('/');
+      var parts=(t.d||'01/'+String(m).padStart(2,'0')).split('/');
       var fullDate=(parts[0]||'01')+'/'+(parts[1]||String(m).padStart(2,'0'))+'/'+year;
-      rows.push([fullDate,MONTH_NAMES[m],'"'+(t.desc||'').replace(/"/g,'""')+'"',total,vat,net,cls,'"'+category+'"'].join(','));
+      rows.push([fullDate,MONTH_NAMES[m],'"'+(t.desc||'').replace(/"/g,'""')+'"',total,cls,'"'+category+'"'].join(','));
     });
   }
 
   // Monthly income summary
   rows.push('');
-  rows.push('חודש,סה"כ הכנסות');
+  rows.push('-- הכנסות לפי חודש --');
+  rows.push('חודש,הכנסות');
+  var totalAnnualInc=0;
   for(var mi=1;mi<=12;mi++){
     var inc=sumI(mi);
-    if(inc>0) rows.push(MONTH_NAMES[mi]+','+inc);
+    if(inc>0){ rows.push(MONTH_NAMES[mi]+','+Math.round(inc)); totalAnnualInc+=inc; }
   }
 
-  // Totals
-  var totalExp=0,totalBizExp=0;
+  // Annual totals
+  var totalExp=0,totalBizExp=0,totalPrivExp=0;
   for(var tm=1;tm<=12;tm++){
     (RAW.expense[tm]||[]).forEach(function(t){
-      totalExp+=safeN(t.a);
-      if(t.biz===true||(t.biz===undefined&&isBizExpense(t))) totalBizExp+=safeN(t.a);
+      var a=safeN(t.a);
+      totalExp+=a;
+      if(t.biz===true||(t.biz===undefined&&isBizExpense(t))){ totalBizExp+=a; }
+      else{ totalPrivExp+=a; }
     });
   }
+  var taxableInc=Math.max(0,Math.round(totalAnnualInc-totalBizExp));
   rows.push('');
-  rows.push('סה"כ הוצאות,'+Math.round(totalExp));
-  rows.push('סה"כ הוצאות עסקיות,'+Math.round(totalBizExp));
-  rows.push('מע"מ על הוצאות עסקיות,'+Math.round(totalBizExp*VAT_RATE));
+  rows.push('-- סיכום שנתי --');
+  rows.push('סה"כ הכנסות '+year+','+Math.round(totalAnnualInc));
+  rows.push('סה"כ הוצאות עסקיות מוכרות,'+Math.round(totalBizExp));
+  rows.push('הכנסה חייבת במס הכנסה (הערכה),'+taxableInc);
+  rows.push('');
+  rows.push('הערה: לא כולל ניכויים אישיים — יש לאמת עם רואה חשבון');
 
   var blob=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8'});
   var a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='דוח-רואה-חשבון-'+year+'.csv';
+  a.download='דוח-עוסק-פטור-'+year+'.csv';
   a.click();URL.revokeObjectURL(a.href);
   toast('✓ הדוח הורד — שלחי לרואה החשבון');
 }
