@@ -964,10 +964,10 @@ html.mode-private .biz-only{ display:none!important; }
       <div id="wiz-prof-wrap" style="margin-bottom:8px">
         <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-align:center">מה התחום שלך?</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-          <button class="wiz-prof-btn" id="wpb-hair" onclick="wizPickProf('hair')">✂️ מעצבת שיער</button>
-          <button class="wiz-prof-btn" id="wpb-nails" onclick="wizPickProf('nails')">💅 טכנאית ציפורניים</button>
-          <button class="wiz-prof-btn" id="wpb-cosm" onclick="wizPickProf('cosm')">🧖 קוסמטיקאית</button>
-          <button class="wiz-prof-btn" id="wpb-makeup" onclick="wizPickProf('makeup')">💄 מאפרת</button>
+          <button class="wiz-prof-btn" id="wpb-hair" onclick="wizPickProf('hair')">✂️ עיצוב שיער</button>
+          <button class="wiz-prof-btn" id="wpb-nails" onclick="wizPickProf('nails')">💅 טכנאי/ת ציפורניים</button>
+          <button class="wiz-prof-btn" id="wpb-cosm" onclick="wizPickProf('cosm')">🧖 קוסמטיקאי/ת</button>
+          <button class="wiz-prof-btn" id="wpb-makeup" onclick="wizPickProf('makeup')">💄 איפור מקצועי</button>
         </div>
         <!-- Dealer type -->
         <div style="font-size:11px;color:var(--muted);margin:10px 0 6px;text-align:center">סוג עוסק:</div>
@@ -1019,8 +1019,8 @@ html.mode-private .biz-only{ display:none!important; }
 
     <!-- Tagline -->
     <div class="lp-hero">
-      <div class="lp-tagline">ניהול כסף חכם<br>ל<span>עצמאיות בישראל</span></div>
-      <div class="lp-sub">הכנסות, הוצאות, לקוחות ומע"מ — כל מה שצריכה לדוח השנתי, במקום אחד.</div>
+      <div class="lp-tagline">ניהול כסף חכם<br>ל<span>אנשי יופי עצמאיים</span></div>
+      <div class="lp-sub">הכנסות, הוצאות, לקוחות ומע"מ — כל מה שצריך לדוח השנתי, במקום אחד.<br><span style="font-size:12px;color:var(--muted)">פחות מ-2 קפה בחודש. ₪29 בלבד.</span></div>
     </div>
 
     <!-- Feature bullets -->
@@ -1060,7 +1060,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="lp-trial-badge">🎁 חודש ראשון חינמי — ללא כרטיס אשראי</div>
 
     <!-- Login / Signup -->
-    <div class="auth-sub" id="auth-sub" style="margin-bottom:14px">התחברי כדי לסנכרן את הנתונים בכל המכשירים</div>
+    <div class="auth-sub" id="auth-sub" style="margin-bottom:14px">כניסה — לסנכרון הנתונים בכל המכשירים</div>
 
     <button class="auth-google" onclick="authGoogle()">
       <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.5-2.1 14.3-5.6l-6.6-5.6C29.6 34.6 26.9 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.6 5.1C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.4l6.6 5.6C39.9 41.4 44 36.3 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
@@ -1084,7 +1084,7 @@ html.mode-private .biz-only{ display:none!important; }
 
     <button class="auth-primary" id="auth-primary-btn" onclick="authSubmit()">התחברי</button>
     <div class="auth-err" id="auth-err"></div>
-    <div class="auth-toggle" id="auth-toggle" onclick="authToggleMode()">אין לך חשבון? <b>הרשמי</b></div>
+    <div class="auth-toggle" id="auth-toggle" onclick="authToggleMode()">אין לך חשבון? <b>הרשמ/י בחינם</b></div>
     <div style="font-size:11px;color:var(--muted);margin-top:18px;line-height:1.6;text-align:center">🔒 הנתונים שלך מוצפנים ומאובטחים<br>כל משתמש רואה רק את הנתונים שלו</div>
 
   </div>
@@ -2107,7 +2107,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260798;
+var APP_VER=20260799;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -7055,9 +7055,9 @@ function hideAuthScreen(){ var a=document.getElementById('auth-screen'); if(a)a.
 function authToggleMode(){
   _authMode = _authMode==='login'?'signup':'login';
   var su=_authMode==='signup';
-  document.getElementById('auth-primary-btn').textContent = su?'הרשמה — צרי חשבון':'התחברי';
-  document.getElementById('auth-toggle').innerHTML = su?'יש לך חשבון? <b>התחברי</b>':'אין לך חשבון? <b>הרשמי בחינם</b>';
-  document.getElementById('auth-sub').textContent = su?'כל משתמש/ת עם חשבון נפרד ומאובטח':'התחברי כדי לסנכרן את הנתונים בכל המכשירים';
+  document.getElementById('auth-primary-btn').textContent = su?'הרשמה — פתח/י חשבון':'כניסה';
+  document.getElementById('auth-toggle').innerHTML = su?'יש לך חשבון? <b>התחבר/י</b>':'אין לך חשבון? <b>הרשמ/י בחינם</b>';
+  document.getElementById('auth-sub').textContent = su?'כל משתמש/ת עם חשבון נפרד ומאובטח':'כניסה — לסנכרון הנתונים בכל המכשירים';
   document.getElementById('auth-mode-wrap').style.display = su?'flex':'none';
   document.getElementById('auth-forgot').style.display = su?'none':'block';
   document.getElementById('auth-pass').setAttribute('autocomplete', su?'new-password':'current-password');
