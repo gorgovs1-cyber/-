@@ -712,9 +712,9 @@ select option{background:#111D2C;color:#fff}
 .pw-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9500;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .25s}
 .pw-sheet{background:var(--bg2);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:32px 22px calc(40px + env(safe-area-inset-bottom,0px));max-height:92dvh;overflow-y:auto;border-top:2px solid rgba(45,212,191,.35)}
 .pw-plan-row{display:flex;gap:10px;margin:20px 0}
-.pw-plan{flex:1;border-radius:16px;padding:16px 14px;border:2px solid var(--border2);text-align:right;cursor:pointer;transition:all .18s ease;-webkit-tap-highlight-color:transparent}
+.pw-plan{flex:1;border-radius:16px;padding:16px 14px;border:2px solid var(--border2);text-align:right;cursor:pointer;transition:all .18s ease;-webkit-tap-highlight-color:transparent;opacity:.65}
 .pw-plan:active{transform:scale(.97)}
-.pw-plan.hero{border-color:var(--cyan);background:rgba(45,212,191,.09);box-shadow:0 0 0 3px rgba(45,212,191,.12)}
+.pw-plan.hero{border-color:var(--cyan);background:rgba(45,212,191,.12);box-shadow:0 0 0 3px rgba(45,212,191,.18);opacity:1}
 .pw-plan-badge{background:var(--cyan);color:#08131F;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:6px;letter-spacing:.3px}
 .pw-plan-name{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:3px}
 .pw-plan-price{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-1px}
@@ -1070,7 +1070,7 @@ html.mode-private .biz-only{ display:none!important; }
       <div class="lp-plan" onclick="lpSelectPlan(this,'free')">
         <div class="lp-plan-name">חינמי</div>
         <div class="lp-plan-price">₪0</div>
-        <div class="lp-plan-feat">מעקב בסיסי<br>3 שאלות AI</div>
+        <div class="lp-plan-feat">מעקב בסיסי<br>10 ניתוחי AI/יום</div>
         <button class="lp-plan-btn" onclick="lpScrollToSignup()">התחל/י</button>
       </div>
     </div>
@@ -2126,7 +2126,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260800;
+var APP_VER=20260801;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2152,18 +2152,21 @@ function canUse(feat){
   var p=getPlan();
   if(p==='paid'||p==='trial') return true;
   if(feat==='advisor'){
-    var k='shani_adv_mo_'+new Date().getFullYear()+'_'+(new Date().getMonth()+1);
-    return parseInt(localStorage.getItem(k)||'0')<3;
+    var d=new Date();
+    var k='shani_adv_day_'+d.getFullYear()+'_'+(d.getMonth()+1)+'_'+d.getDate();
+    return parseInt(localStorage.getItem(k)||'0')<10;
   }
   return false; // csv, biz_report → paid/trial only
 }
 function _advTrackUse(){
-  var k='shani_adv_mo_'+new Date().getFullYear()+'_'+(new Date().getMonth()+1);
+  var d=new Date();
+  var k='shani_adv_day_'+d.getFullYear()+'_'+(d.getMonth()+1)+'_'+d.getDate();
   localStorage.setItem(k,String(parseInt(localStorage.getItem(k)||'0')+1));
 }
 function _advRemaining(){
-  var k='shani_adv_mo_'+new Date().getFullYear()+'_'+(new Date().getMonth()+1);
-  return Math.max(0, 3 - parseInt(localStorage.getItem(k)||'0'));
+  var d=new Date();
+  var k='shani_adv_day_'+d.getFullYear()+'_'+(d.getMonth()+1)+'_'+d.getDate();
+  return Math.max(0, 10 - parseInt(localStorage.getItem(k)||'0'));
 }
 
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
@@ -5031,12 +5034,12 @@ function fabTap(){
 function showPaywall(feat){
   var plan=getPlan();
   var head={
-    advisor:'השתמשת ב-3 שאלות AI החינמיות החודש 🔒',
+    advisor:'השתמשת ב-10 ניתוחי AI החינמיים היום 🔒',
     csv:'ייצוא לרואה חשבון — גרסה מלאה בלבד 🔒',
     biz_report:'הדוח העסקי המלא — גרסה מלאה בלבד 🔒'
   }[feat]||'תכונה זו דורשת שדרוג 🔒';
   var sub={
-    advisor:'בגרסה החינמית: 3 שאלות AI לחודש. בגרסה המלאה: ניתוח ללא הגבלה.',
+    advisor:'בגרסה החינמית: עד 10 ניתוחים ביום. בגרסה המלאה: ניתוח ללא הגבלה.',
     csv:'ייצוא מסווג לקטגוריות עם חישוב מע"מ — מוכן לרואה חשבון.',
     biz_report:'דוח הוצאות עסקיות עם ניכויי מס וסיווג אוטומטי.'
   }[feat]||'שדרגי לגרסה המלאה לגישה לכל התכונות.';
@@ -5117,7 +5120,7 @@ function renderTrialBar(){
   } else {
     // free — expired trial or never started
     wrap.innerHTML='<div class="trial-bar" style="background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.2)">'+
-      '<div class="trial-bar-txt" style="color:var(--gold)">גרסה חינמית — 3 שאלות AI לחודש, אין ייצוא</div>'+
+      '<div class="trial-bar-txt" style="color:var(--gold)">גרסה חינמית — עד 10 ניתוחי AI ביום, אין ייצוא</div>'+
       '<button class="trial-bar-btn" style="background:var(--gold)" onclick="showPaywall(\'free\')">שדרגי</button>'+
     '</div>';
   }
