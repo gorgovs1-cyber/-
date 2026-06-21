@@ -44,9 +44,17 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 }
 /* JS adds .out → fade out */
 #splash.out{opacity:0;pointer-events:none}
-/* Safety net: if JS never adds .out (old cached version / error), CSS hides after 1.5s */
+/* Safety net: if JS never adds .out, CSS hides after 4s */
 @keyframes splashSafe{to{opacity:0;pointer-events:none;visibility:hidden}}
-#splash:not(.out){animation:splashSafe .5s ease 3s both}
+#splash:not(.out){animation:splashSafe .5s ease 4s both}
+/* Security notice on auth screen */
+@keyframes secNoticeAnim{
+  0%{opacity:0;max-height:0;padding-top:0;padding-bottom:0;margin-bottom:0}
+  12%{opacity:1;max-height:60px;padding-top:8px;padding-bottom:8px;margin-bottom:14px}
+  78%{opacity:1;max-height:60px;padding-top:8px;padding-bottom:8px;margin-bottom:14px}
+  100%{opacity:0;max-height:0;padding-top:0;padding-bottom:0;margin-bottom:0}
+}
+.sec-notice{background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.22);border-radius:10px;padding:8px 14px;font-size:11px;color:var(--cyan);text-align:center;overflow:hidden;animation:secNoticeAnim 7s ease 1s both;pointer-events:none}
 
 /* sparkle stars */
 .sp-star{
@@ -934,6 +942,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div style="border-top:1px solid var(--border);margin:8px 0 4px"></div>
     <div class="drw-item" onclick="shareReferral()" style="color:#25D366"><span class="di-icon"><svg viewBox="0 0 24 24" stroke="#25D366"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span><span>שתפי חברה — חודש חינמי 🎁</span></div>
     <div class="drw-item" onclick="openSettings()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M5 7h8"/><circle cx="16.5" cy="7" r="2.3"/><path d="M19 17h-8"/><circle cx="7.5" cy="17" r="2.3"/></svg></span><span>הגדרות</span></div>
+    <div class="drw-item" onclick="showPrivacy()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span>פרטיות ואבטחה 🔒</span></div>
     <div class="drw-item" onclick="toggleTheme()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></span><span id="theme-lbl">מצב ים</span></div>
     <div class="drw-item" id="drw-logout" style="display:none" onclick="authLogout()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M14 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H14"/><path d="M18 15.5 21.5 12 18 8.5"/><path d="M21 12h-10"/></svg></span><span>התנתקות</span></div>
     <div class="drw-account" id="drw-account" style="display:none"><span class="sync-dot" id="sync-dot"></span><span id="drw-account-email"></span></div>
@@ -1024,6 +1033,9 @@ html.mode-private .biz-only{ display:none!important; }
 
 <div id="auth-screen">
   <div class="auth-card">
+
+    <!-- Security notice — animates in/out automatically -->
+    <div class="sec-notice">🔒 הנתונים שלך מוצפנים ומאובטחים — Firebase / Google</div>
 
     <!-- Logo -->
     <div class="auth-logo"><span class="auth-mark">₪</span><span class="auth-title">My Money</span></div>
@@ -2129,7 +2141,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260803;
+var APP_VER=20260804;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2510,7 +2522,7 @@ function initSplash(){
     var sp=document.getElementById('splash');
     sp.classList.add('out');
     setTimeout(function(){sp.style.display='none';},400);
-  },1500);
+  },2500);
 }
 
 // ── PERSIST ──────────────────────────────────────────────
@@ -5054,6 +5066,28 @@ function lpSelectPlan(el, plan){
 function lpScrollToSignup(){
   var btn=document.querySelector('.auth-google');
   if(btn) btn.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function showPrivacy(){
+  closeDrawer();
+  var html='<div id="prv-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9500;display:flex;align-items:flex-end;justify-content:center" onclick="if(event.target===this)document.getElementById(\'prv-overlay\').remove()">'+
+    '<div style="background:var(--bg2);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:28px 20px calc(40px + env(safe-area-inset-bottom,0px));max-height:88dvh;overflow-y:auto;border-top:2px solid rgba(45,212,191,.25)">'+
+      '<div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:18px;text-align:right">🔒 אבטחה ופרטיות</div>'+
+      '<div style="font-size:13px;color:var(--muted);line-height:2;text-align:right">'+
+        '<div style="color:var(--text2);font-weight:600;margin-bottom:3px">📂 איפה הנתונים שלך?</div>'+
+        'כל הנתונים מאוחסנים ב-<strong style="color:var(--cyan)">Firebase (Google Cloud)</strong> עם הצפנה מלאה — גם בתעבורה וגם באחסון.<br><br>'+
+        '<div style="color:var(--text2);font-weight:600;margin-bottom:3px">🔑 מי יכול לגשת?</div>'+
+        'רק את/ה — עם חשבון ה-Google האישי. אפילו אנחנו לא יכולים לראות את הנתונים ללא רשותך.<br><br>'+
+        '<div style="color:var(--text2);font-weight:600;margin-bottom:3px">🚫 מה אנחנו לא עושים?</div>'+
+        'לא מוכרים מידע · לא שולחים פרסומות · לא שותפים עם צד שלישי<br><br>'+
+        '<div style="color:var(--text2);font-weight:600;margin-bottom:3px">📱 גיבוי ידני</div>'+
+        'בכל עת: תפריט ← <strong style="color:var(--text2)">גיבוי נתונים</strong> — קובץ JSON לשמירה ב-Google Drive או iCloud.'+
+      '</div>'+
+      '<button onclick="document.getElementById(\'prv-overlay\').remove()" style="display:block;width:100%;margin-top:22px;background:rgba(255,255,255,.07);border:1px solid var(--border2);color:var(--text2);font-family:Rubik,sans-serif;font-size:14px;font-weight:600;padding:13px;border-radius:14px;cursor:pointer">סגירה</button>'+
+    '</div>'+
+  '</div>';
+  var ex=document.getElementById('prv-overlay');
+  if(ex) ex.remove();
+  document.body.insertAdjacentHTML('beforeend',html);
 }
 function contactForUpgrade(){
   var lbl=_pwPlan==='business'?'עסקי ₪59/חודש':_pwPlan==='personal'?'אישי ₪29/חודש':'ללא התחייבות ₪49/חודש';
