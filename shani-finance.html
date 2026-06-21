@@ -2176,7 +2176,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260821;
+var APP_VER=20260822;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -5141,29 +5141,29 @@ function runAdvisor(){
   var insights=[];
 
   // Wolt / deliveries
-  if(wolt>300) insights.push({emoji:'🛵',msg:'שילמת כבר <strong>₪'+Math.round(wolt)+'</strong> על משלוחי וולט החודש. בממוצע משלוח עולה ₪80 — בישול ביתי יכול לחסוך לך מעל <strong>₪'+(Math.round(wolt*0.7))+'</strong> לחודש.',tip:'שקלי להכין ב-3 ימים בשבוע ולחסוך.'});
-  else if(wolt>150) insights.push({emoji:'🛵',msg:'הוצאת <strong>₪'+Math.round(wolt)+'</strong> על משלוחים עד כה. עדיין ב-track סביר, אבל שימי לב שלא יצא מהיד.',tip:'יעד טוב: מתחת ל-₪300 בחודש.'});
+  if(wolt>300) insights.push({emoji:'🛵',msg:'וולט ומשלוחים: <strong>₪'+Math.round(wolt)+'</strong> החודש — ₪'+Math.round(wolt/new Date().getDate())+' ביום בממוצע.',tip:'₪'+Math.round(wolt*12)+' בשנה בקצב זה. רוצה לראות איך זה משפיע על המאזן?'});
+  else if(wolt>150) insights.push({emoji:'🛵',msg:'משלוחים: <strong>₪'+Math.round(wolt)+'</strong> עד כה החודש.',tip:'₪'+Math.round(wolt*12)+' בשנה אם הקצב ימשיך.'});
 
   // Cannabis
-  if(cannabis>500) insights.push({emoji:'🌿',msg:'ההוצאה על קנאביס החודש: <strong>₪'+Math.round(cannabis)+'</strong>. זה <strong>'+Math.round(cannabis/totalExp*100)+'%</strong> מסך ההוצאות שלך.',tip:'הפחתה של 30% תחסוך לך ₪'+(Math.round(cannabis*0.3))+' בחודש — כ-₪'+(Math.round(cannabis*0.3*12))+' בשנה.'});
+  if(cannabis>500) insights.push({emoji:'🌿',msg:'קנאביס: <strong>₪'+Math.round(cannabis)+'</strong> החודש — <strong>'+Math.round(cannabis/totalExp*100)+'%</strong> מסך ההוצאות.',tip:'₪'+Math.round(cannabis*12)+' בשנה בקצב זה.'});
 
   // Alcohol
-  if(alcohol>400) insights.push({emoji:'🍷',msg:'אלכוהול החודש: <strong>₪'+Math.round(alcohol)+'</strong>. יין ובירה הם הוצאה שקטה שמצטברת מהר.',tip:'שקלי להגדיר "ימי שתייה" קבועים ולצמצם לסוף שבוע בלבד.'});
+  if(alcohol>400) insights.push({emoji:'🍷',msg:'אלכוהול: <strong>₪'+Math.round(alcohol)+'</strong> החודש — <strong>₪'+Math.round(alcohol*12)+'</strong> בשנה בקצב זה.',tip:'הוצאה שצומחת בשקט מחודש לחודש.'});
 
   // Tobacco
-  if(tobacco>200) insights.push({emoji:'🚬',msg:'טבק: <strong>₪'+Math.round(tobacco)+'</strong> החודש — <strong>₪'+Math.round(tobacco*12)+'</strong> בשנה.',tip:'הפחתה של מחצית תשאיר לך ₪'+(Math.round(tobacco*6))+' נוספים בשנה.'});
+  if(tobacco>200) insights.push({emoji:'🚬',msg:'טבק: <strong>₪'+Math.round(tobacco)+'</strong> החודש — <strong>₪'+Math.round(tobacco*12)+'</strong> בשנה.',tip:'הוצאה קבועה שכדאי לדעת.'});
 
   // Coffee
-  if(coffee>150) insights.push({emoji:'☕',msg:'קפות בחוץ: <strong>₪'+Math.round(coffee)+'</strong> החודש.',tip:'מכונת קפה ביתית מחזירה את עצמה תוך 2 חודשים.'});
+  if(coffee>150) insights.push({emoji:'☕',msg:'קפות בחוץ: <strong>₪'+Math.round(coffee)+'</strong> החודש — <strong>₪'+Math.round(coffee*12)+'</strong> בשנה.',tip:'הוצאה קטנה שמצטברת לסכום משמעותי.'});
 
   // Taxis
-  if(taxis>300) insights.push({emoji:'🚖',msg:'מוניות ופנגו: <strong>₪'+Math.round(taxis)+'</strong> החודש.',tip:'שקלי תחבורה ציבורית לנסיעות קבועות.'});
+  if(taxis>300) insights.push({emoji:'🚖',msg:'נסיעות (מוניות/פנגו): <strong>₪'+Math.round(taxis)+'</strong> החודש.',tip:'₪'+Math.round(taxis*12)+' בשנה על נסיעות.'});
 
   // Overall deficit
-  if(r.balFull<0 && r.isNow) insights.push({emoji:'⚠️',msg:'התחזית לסוף החודש היא <strong>גרעון של ₪'+Math.round(Math.abs(r.balFull))+'</strong>.',tip:'עצרי הוצאות לא הכרחיות עד סוף החודש.'});
+  if(r.balFull<0 && r.isNow) insights.push({emoji:'⚠️',msg:'התחזית לסוף החודש: <strong>גרעון של ₪'+Math.round(Math.abs(r.balFull))+'</strong>.',tip:'עדכני את ההכנסות אם יש תורים נוספים שלא נרשמו.'});
 
   // Great month
-  if(r.balFull>2000 && r.isNow && insights.length===0) insights.push({emoji:'✅',msg:'הכל נראה טוב החודש! תחזית חיובית של <strong>₪'+Math.round(r.balFull)+'</strong> לסוף החודש.',tip:'שקלי להעביר חלק לחסכון או להשקעה.'});
+  if(r.balFull>2000 && r.isNow && insights.length===0) insights.push({emoji:'✅',msg:'חודש מעולה! תחזית חיובית של <strong>₪'+Math.round(r.balFull)+'</strong> לסוף '+r.ml.label+'.',tip:'מומלץ לראות אם יש מה לשים בצד לחיסכון.'});
 
   if(!insights.length) return;
 
@@ -5413,7 +5413,7 @@ function renderAdvisorCard(){
     '<div class="advisor-card">'+
       '<div class="adv-head">'+
         '<div class="adv-icon">'+ins.emoji+'</div>'+
-        '<div><div class="adv-title">יועץ כלכלי AI</div>'+
+        '<div><div class="adv-title">יועצת כלכלית AI</div>'+
         '<div class="adv-sub">תובנה '+(_advCur+1)+' מתוך '+total+'</div></div>'+
       '</div>'+
       '<div class="adv-msg">'+ins.msg+'<br><br><span style="color:var(--cyan);font-size:13px">💡 '+ins.tip+'</span></div>'+
