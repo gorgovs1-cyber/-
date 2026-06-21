@@ -1302,13 +1302,19 @@ html.mode-private .biz-only{ display:none!important; }
     </div>
     <!-- CSV panel -->
     <div id="add-panel-csv" class="add-panel">
-      <div class="csv-hint">עמודות: תאריך, סכום, תיאור, סוג (expense/income), אמצעי (mc/visa/bank/cash)<br>ניתן להדביק ישירות מ-Excel / Google Sheets (Tab מופרד)</div>
-      <textarea id="csv-text" class="parse-area" style="min-height:90px" placeholder="תאריך,סכום,תיאור,סוג,אמצעי&#10;03/05,4100,שכירות,expense,bank&#10;11/05,1200,נטלי,income,cash"></textarea>
+      <div class="csv-hint">העלי קובץ CSV מהבנק <strong>או</strong> הדביקי את תוכנו ישירות. תומך בפורמט לאומי, הפועלים, דיסקונט, ישראכרט/CAL ו-Tab/פסיק.</div>
+      <label style="display:flex;align-items:center;gap:8px;background:rgba(45,212,191,.07);border:1px dashed rgba(45,212,191,.3);border-radius:12px;padding:10px 14px;cursor:pointer;margin-bottom:8px">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span style="color:var(--cyan);font-size:13px;font-weight:500">העלי קובץ CSV מהבנק</span>
+        <input type="file" id="csv-file-inp" accept=".csv,.txt,.xls,.xlsx" style="display:none" onchange="loadBankFile(this)">
+      </label>
+      <textarea id="csv-text" class="parse-area" style="min-height:80px" placeholder="הדביקי CSV מהבנק כאן (תאריך, תיאור, חיוב, זכות...)"></textarea>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
         <span id="csv-count" class="import-sum"></span>
         <button onclick="parseCSV()" style="background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:8px 16px;border-radius:12px;cursor:pointer">נתחי ›</button>
       </div>
-      <button onclick="importParsed()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:10px">ייבא ✓</button>
+      <div id="csv-preview" class="pp-preview"></div>
+      <button onclick="importCSVParsed()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer;margin-top:10px">ייבא ✓</button>
     </div>
     <button class="mclose" onclick="closeMbg('atxn-mbg')">ביטול</button>
   </div>
@@ -1976,7 +1982,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260779;
+var APP_VER=20260780;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -3126,31 +3132,14 @@ function importBankFile(input){
   if(!file)return;
   var reader=new FileReader();
   reader.onload=function(e){
-    var text=e.target.result;
-    var lines=text.split('\n').filter(Boolean);
     var r=calc(homeMi);
-    var added=0;
-    lines.forEach(function(line,idx){
-      if(idx===0)return;
-      var cols=line.includes(';')?line.split(';'):line.split(',');
-      cols=cols.map(function(c){return c.trim().replace(/^"|"$/g,'');});
-      if(cols.length<3)return;
-      var date=cols[0]||'';
-      var desc=cols[1]||cols[2]||'';
-      var debit=0;
-      for(var i=2;i<cols.length;i++){
-        var v=parseFloat(cols[i].replace(/[^0-9.-]/g,''));
-        if(v>0){debit=v;break;}
-        if(v<0){debit=Math.abs(v);break;}
-      }
-      if(!debit||!desc.trim())return;
-      var d=date.slice(0,5).replace(/-/g,'/');
-      RAW.expense[r.m]=RAW.expense[r.m]||[];
-      RAW.expense[r.m].push({d:d,desc:desc.trim(),a:debit});
-      added++;
+    var txns=parseBankCSV(e.target.result, r.m);
+    txns.forEach(function(t){
+      if(t.type==='expense'){RAW.expense[r.m]=RAW.expense[r.m]||[];RAW.expense[r.m].push({d:t.date,desc:t.desc,a:t.amount});}
+      else{RAW.income[r.m]=RAW.income[r.m]||[];RAW.income[r.m].push({d:t.date,desc:t.desc,a:t.amount});}
     });
     save();
-    document.getElementById('cd-import-status').textContent=added>0?added+' עסקאות יובאו':'לא נמצאו עסקאות — בדקי פורמט';
+    document.getElementById('cd-import-status').textContent=txns.length>0?txns.length+' עסקאות יובאו':'לא נמצאו עסקאות — בדקי פורמט';
     showPMDetail(curPMMethod);
     renderHome();
   };
@@ -4236,27 +4225,89 @@ function cycleTxnMethod(key){
   }
 }
 
+var _csvParsed=[];
+function parseBankCSV(text,moKey){
+  var lines=text.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+  if(lines.length<1)return[];
+  var sep=lines[0].indexOf('\t')>=0?'\t':lines[0].indexOf(';')>=0?';':',';
+  var rows=lines.map(function(l){return l.split(sep).map(function(c){return c.trim().replace(/^["'“”]+|["'“”]+$/g,'').trim();});});
+  // Detect header
+  var hdrIdx=-1,dateCol=-1,descCol=-1,debitCol=-1,creditCol=-1;
+  for(var r=0;r<Math.min(rows.length,5);r++){
+    var row=rows[r],found=false;
+    row.forEach(function(c,i){
+      if(/תאריך|date/i.test(c)&&dateCol<0){dateCol=i;found=true;}
+      if(/תיאור|פירוט|שם.?בית|מסחר|description|פרטים/i.test(c)&&descCol<0){descCol=i;found=true;}
+      if(/חיוב|debit/i.test(c)&&debitCol<0)debitCol=i;
+      if(/זכות|credit/i.test(c)&&creditCol<0)creditCol=i;
+      if(/סכום.?עסקה|סכום(?!.*יתרה)/i.test(c)&&debitCol<0)debitCol=i;
+    });
+    if(found){hdrIdx=r;break;}
+  }
+  if(dateCol<0)dateCol=0;
+  if(descCol<0)descCol=1;
+  if(debitCol<0)debitCol=2;
+  var results=[],startRow=hdrIdx>=0?hdrIdx+1:0;
+  var mo=MONTHS[homeMi];
+  rows.slice(startRow).forEach(function(row){
+    if(row.length<2)return;
+    var rawDate=row[dateCol]||'';
+    var dp=rawDate.match(/(\d{1,2})[\/\-\.](\d{1,2})/);
+    var dateStr=dp?(dp[1].padStart(2,'0')+'/'+dp[2].padStart(2,'0')):(String(new Date().getDate()).padStart(2,'0')+'/'+String(mo.key).padStart(2,'0'));
+    var desc='';
+    for(var di=0;di<row.length;di++){
+      if(di===dateCol||di===debitCol||di===creditCol)continue;
+      var v=row[di]; if(!v||v.length<2)continue;
+      if(isNaN(parseFloat(v.replace(/[^0-9.-]/g,'')))||/[א-ת]/.test(v)){desc=v;break;}
+    }
+    if(!desc&&descCol>=0)desc=row[descCol]||'';
+    desc=desc.trim(); if(!desc||/סה.?כ|total|יתרה/i.test(desc))return;
+    var amt=0,type='expense';
+    if(debitCol>=0&&row[debitCol]){var dv=parseFloat(row[debitCol].replace(/[^0-9.-]/g,''));if(!isNaN(dv)&&dv!==0){amt=Math.abs(dv);type=dv<0?'income':'expense';}}
+    if(!amt&&creditCol>=0&&row[creditCol]){var cv=parseFloat(row[creditCol].replace(/[^0-9.-]/g,''));if(!isNaN(cv)&&cv>0){amt=cv;type='income';}}
+    if(!amt)return;
+    results.push({date:dateStr,desc:desc,amount:amt,type:type,monthKey:moKey});
+  });
+  return results;
+}
+function loadBankFile(inp){
+  var file=inp.files[0]; if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){document.getElementById('csv-text').value=e.target.result;parseCSV();};
+  reader.readAsText(file,'UTF-8');
+  inp.value='';
+}
+function renderCSVPreview(){
+  var h='';
+  _csvParsed.forEach(function(t,i){
+    var col=t.type==='income'?'var(--pos)':'var(--neg)';
+    var sign=t.type==='income'?'+':'-';
+    h+='<div class="pp-row"><span style="color:var(--muted);font-size:10px;flex-shrink:0">'+t.date+'</span><span style="flex:1">'+esc(t.desc)+'</span><span style="font-weight:500;color:'+col+'">'+sign+'₪'+fmt(t.amount)+'</span><button class="pp-del" onclick="removeCP('+i+')">✕</button></div>';
+  });
+  if(!h)h='<div style="font-size:11px;color:var(--muted);padding:8px 0">לא זוהו עסקאות — בדקי שהקובץ מכיל עמודות תאריך/סכום/תיאור</div>';
+  document.getElementById('csv-count').textContent=_csvParsed.length>0?_csvParsed.length+' רשומות זוהו':'';
+  document.getElementById('csv-preview').innerHTML=h;
+}
 function parseCSV(){
   var raw=document.getElementById('csv-text').value.trim();
   if(!raw)return;
-  var lines=raw.split('\n').filter(Boolean);
+  _csvParsed=parseBankCSV(raw,MONTHS[homeMi].key);
+  renderCSVPreview();
+}
+function removeCP(i){_csvParsed.splice(i,1);renderCSVPreview();}
+function importCSVParsed(){
+  if(!_csvParsed.length){toast('אין רשומות לייבא');return;}
   var mo=MONTHS[homeMi];
-  var results=[];
-  lines.forEach(function(line,idx){
-    if(idx===0&&/תאריך|date/i.test(line))return;
-    var cols=line.includes('\t')?line.split('\t'):line.split(',');
-    cols=cols.map(function(c){return c.trim().replace(/^"|"$/g,'');});
-    var date=cols[0]||(String(new Date().getDate()).padStart(2,'0')+'/'+String(mo.key).padStart(2,'0'));
-    var amt=pa(cols[1]);var desc=(cols[2]||'').trim();
-    var type=(cols[3]||'').toLowerCase().includes('inc')?'income':'expense';
-    var method=(cols[4]||'').toLowerCase().trim();
-    if(!['mc','visa','bank','cash'].includes(method))method=addMethod;
-    if(!amt||!desc)return;
-    results.push({date:date,desc:desc,amount:amt,method:method,type:type,monthKey:mo.key});
+  _csvParsed.forEach(function(t){
+    if(t.type==='expense'){RAW.expense[mo.key]=RAW.expense[mo.key]||[];RAW.expense[mo.key].push({d:t.date,desc:t.desc,a:t.amount});}
+    else{RAW.income[mo.key]=RAW.income[mo.key]||[];RAW.income[mo.key].push({d:t.date,desc:t.desc,a:t.amount});}
   });
-  addParsed=results;
-  document.getElementById('csv-count').textContent=results.length+' רשומות זוהו';
-  renderPP();
+  var count=_csvParsed.length; _csvParsed=[];
+  save(); closeMbg('atxn-mbg');
+  document.getElementById('csv-text').value='';
+  document.getElementById('csv-preview').innerHTML='';
+  renderHome(); toast('✓ '+count+' עסקאות יובאו');
+  showRecurringSuggestion();
 }
 function renderPP(){
   var h='';
