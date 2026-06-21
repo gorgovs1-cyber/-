@@ -2152,7 +2152,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260813;
+var APP_VER=20260814;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -3807,13 +3807,13 @@ function renderClients(){
   var pendingPay=done.filter(function(c){return c.payStatus!=='paid';});
   var pendingAmt=pendingPay.reduce(function(s,c){return s+c.amount;},0);
   var r=calc(curCMi);
-  var bCls=r.balFull>=0?'cyn':'neg';
-  var bSign=r.balFull>=0?'+':'';
+  var clientForecast=doneAmt+planAmt;
   var pendingCard=pendingPay.length>0?'<div class="cl-sum-card" style="border-color:rgba(245,158,11,.3)"><div class="cls-title" style="color:var(--gold)">ממתין תשלום</div><div class="cls-val" style="color:var(--gold)">₪'+fmt(pendingAmt)+'</div><div class="cls-sub">'+pendingPay.length+' לקוחות</div></div>':'';
+  var forecastSub=(doneAmt>0&&planAmt>0)?'₪'+fmt(doneAmt)+' בוצע · ₪'+fmt(planAmt)+' מתוכנן':(doneAmt>0?(done.length+' לקוחות בוצעו'):(plan.length+' לקוחות מתוכננות'));
   document.getElementById('cl-summary').innerHTML=
     '<div class="cl-sum-card done-c"><div class="cls-title">בוצע</div><div class="cls-val pos">₪'+fmt(doneAmt)+'</div><div class="cls-sub">'+done.length+' לקוחות'+(done.length>0?' · '+done.map(function(c){return esc(c.name.split(' ')[0]);}).join(', '):'')+'</div></div>'+
     pendingCard+
-    '<div class="cl-sum-card plan-c"><div class="cls-title">צפי סוף חודש</div><div class="cls-val '+bCls+'">'+bSign+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="cls-sub">'+plan.length+' לקוחות צפויות<br>+₪'+fmt(planAmt)+' נוסף</div></div>';
+    '<div class="cl-sum-card plan-c"><div class="cls-title">צפי סוף חודש</div><div class="cls-val cyn">+₪'+fmt(clientForecast)+'</div><div class="cls-sub">'+forecastSub+'</div></div>';
   var today=new Date();
   var isNow=today.getMonth()+1===m&&today.getFullYear()===ml.year;
   var byDay={};
