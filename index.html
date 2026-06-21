@@ -388,6 +388,10 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .txn-biz{display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:2px 6px;border-radius:6px;margin-right:3px;vertical-align:middle;cursor:pointer;user-select:none;background:rgba(255,214,60,.13);color:#FFD63C;border:1px solid rgba(255,214,60,.22)}
 .txn-biz svg{stroke:#FFD63C}
 .txn-biz.no{background:rgba(255,255,255,.05);color:var(--muted);border-color:transparent}
+.txn-vat{display:inline-flex;font-size:9px;padding:2px 6px;border-radius:6px;margin-right:2px;vertical-align:middle;cursor:pointer;user-select:none;letter-spacing:.2px}
+.txn-vat.yes{background:rgba(34,197,94,.12);color:var(--pos);border:1px solid rgba(34,197,94,.25)}
+.txn-vat.no{background:rgba(248,113,113,.1);color:var(--neg);border:1px solid rgba(248,113,113,.22)}
+.txn-vat.auto{background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.12)}
 .biz-summary-card{background:rgba(255,214,60,.08);border:1px solid rgba(255,214,60,.2);border-radius:12px;margin:0 14px 10px;padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer}
 .biz-summary-card.active{background:rgba(255,214,60,.16);border-color:rgba(255,214,60,.4)}
 
@@ -1983,7 +1987,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260781;
+var APP_VER=20260782;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2392,7 +2396,7 @@ function exportAccountantCSV(){
     :'הערה: עוסק פטור אינו גובה מע"מ ואינו מנכה מע"מ על הוצאות');
   rows.push('');
   rows.push(isMurshe
-    ?'תאריך,חודש,תיאור,סכום כולל מע"מ,מע"מ (17%),סכום נטו,סיווג,קטגוריה'
+    ?'תאריך,חודש,תיאור,סכום,מע"מ (17%),סכום נטו,סיווג,ניכוי מע"מ,קטגוריה'
     :'תאריך,חודש,תיאור,סכום,סיווג,קטגוריה');
 
   // All expense rows
@@ -2400,14 +2404,18 @@ function exportAccountantCSV(){
     var items=RAW.expense[m]||[];
     items.forEach(function(t){
       var total=safeN(t.a);
-      var cls=t.biz===true?'עסקי':t.biz===false?'פרטי':(isBizExpense(t)?'עסקי (אוטו)':'פרטי');
+      var isBiz2=t.biz===true||(t.biz===undefined&&isBizExpense(t));
+      var cls=t.biz===true?'עסקי':t.biz===false?'פרטי':(isBiz2?'עסקי (אוטו)':'פרטי');
       var category=cat(t.desc||'').lbl||'אחר';
       var parts=(t.d||'01/'+String(m).padStart(2,'0')).split('/');
       var fullDate=(parts[0]||'01')+'/'+(parts[1]||String(m).padStart(2,'0'))+'/'+year;
       if(isMurshe){
-        var vat=Math.round(total*VAT*100)/100;
-        var net=Math.round((total-vat)*100)/100;
-        rows.push([fullDate,MONTH_NAMES[m],'"'+(t.desc||'').replace(/"/g,'""')+'"',total,vat,net,cls,'"'+category+'"'].join(','));
+        var isVatDed=isBiz2&&(t.vatDed===true||(t.vatDed===undefined));
+        if(t.vatDed===false) isVatDed=false;
+        var vat=isVatDed?Math.round(total*VAT*100)/100:0;
+        var net=Math.round((total/(1+VAT))*100)/100;
+        var vatLbl=isVatDed?'ניתן':t.vatDed===false?'לא ניתן':'אוטו';
+        rows.push([fullDate,MONTH_NAMES[m],'"'+(t.desc||'').replace(/"/g,'""')+'"',total,vat,net,cls,vatLbl,'"'+category+'"'].join(','));
       } else {
         rows.push([fullDate,MONTH_NAMES[m],'"'+(t.desc||'').replace(/"/g,'""')+'"',total,cls,'"'+category+'"'].join(','));
       }
@@ -2425,13 +2433,17 @@ function exportAccountantCSV(){
   }
 
   // Annual totals
-  var totalExp=0,totalBizExp=0,totalPrivExp=0;
+  var totalExp=0,totalBizExp=0,totalPrivExp=0,totalVatDedBase=0;
   for(var tm=1;tm<=12;tm++){
     (RAW.expense[tm]||[]).forEach(function(t){
       var a=safeN(t.a);
       totalExp+=a;
-      if(t.biz===true||(t.biz===undefined&&isBizExpense(t))){ totalBizExp+=a; }
-      else{ totalPrivExp+=a; }
+      var isBiz3=t.biz===true||(t.biz===undefined&&isBizExpense(t));
+      if(isBiz3){
+        totalBizExp+=a;
+        var vatDed3=t.vatDed!==false&&isBiz3;
+        if(vatDed3) totalVatDedBase+=a;
+      } else { totalPrivExp+=a; }
     });
   }
   var taxableInc=Math.max(0,Math.round(totalAnnualInc-totalBizExp));
@@ -2440,7 +2452,8 @@ function exportAccountantCSV(){
   rows.push('סה"כ הכנסות '+year+','+Math.round(totalAnnualInc));
   rows.push('סה"כ הוצאות עסקיות מוכרות,'+Math.round(totalBizExp));
   if(isMurshe){
-    rows.push('מע"מ תשומות לניכוי (17%),'+Math.round(totalBizExp*VAT));
+    rows.push('בסיס מע"מ תשומות לניכוי,'+Math.round(totalVatDedBase));
+    rows.push('מע"מ תשומות לניכוי (17%),'+Math.round(totalVatDedBase*VAT));
   }
   rows.push('הכנסה חייבת במס הכנסה (הערכה),'+taxableInc);
   rows.push('');
@@ -3266,12 +3279,19 @@ function renderExpenses(){
       var isBiz=isBizExpense(t);
       var bizSvg='<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>';
       var bizBadge='<span class="txn-biz'+(t.biz===false?' no':'')+'" title="הוצאה עסקית — לחצי לשינוי" onclick="event.stopPropagation();cycleBizFlag(\''+key+'\')">'+(isBiz?bizSvg+' עסקי':'')+'</span>';
+      var vatBadge='';
+      if(APP_MODE==='business'&&SETTINGS.bizType==='murshe'&&isBiz){
+        var vd=t.vatDed;
+        var vCls=vd===true?'yes':vd===false?'no':'auto';
+        var vLbl=vd===true?'מע"מ ✓':vd===false?'מע"מ ✗':'מע"מ';
+        vatBadge='<span class="txn-vat '+vCls+'" title="ניכוי מע"מ — לחצי לשינוי" onclick="event.stopPropagation();cycleVatDed(\''+key+'\')">'+vLbl+'</span>';
+      }
       var chips='';
       if(t.tags&&t.tags.length)chips='<div class="txn-chips">'+t.tags.map(function(g){return'<span class="txn-chip" data-tag="'+esc(g)+'" onclick="setTagFilter(this.dataset.tag)">#'+esc(g)+'</span>';}).join('')+'</div>';
       var rKey=t.d+'|'+t.desc+'|'+t.a;
       var hasRec=!!RECEIPTS[rKey];
       var recBtn='<button class="txn-receipt'+(hasRec?' has':'')+'" onclick="event.stopPropagation();'+(hasRec?'viewReceipt':'uploadReceipt')+'(\''+encodeURIComponent(rKey)+'\')" title="'+(hasRec?'צפי בקבלה':'צרפי קבלה')+'">📎</button>';
-      h+='<div class="txn-item stagger" style="--si:'+ti+'"><div class="txn-icon" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="txn-body"><div class="txn-desc">'+esc(t.desc)+mt+bizBadge+'</div><div class="txn-date">'+esc(dt)+'</div>'+chips+'</div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div>'+recBtn+'<button class="txn-del" onclick="delExpTxn(\''+key+'\')">✕</button></div>';
+      h+='<div class="txn-item stagger" style="--si:'+ti+'"><div class="txn-icon" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="txn-body"><div class="txn-desc">'+esc(t.desc)+mt+bizBadge+vatBadge+'</div><div class="txn-date">'+esc(dt)+'</div>'+chips+'</div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div>'+recBtn+'<button class="txn-del" onclick="delExpTxn(\''+key+'\')">✕</button></div>';
       ti++;
     });
   });
@@ -3318,6 +3338,21 @@ function cycleBizFlag(key){
       if(cur===undefined){arr[i].biz=true;track('tag_biz',{action:'set',desc:desc});toast('סומן כהוצאה עסקית 💼');}
       else if(cur===true){arr[i].biz=false;track('tag_biz',{action:'clear',desc:desc});toast('סומן כהוצאה לא עסקית');}
       else{delete arr[i].biz;track('tag_biz',{action:'auto',desc:desc});toast('חזר לזיהוי אוטומטי');}
+      save();renderExpenses();return;
+    }
+  }
+}
+function cycleVatDed(key){
+  var parts=decodeURIComponent(key).split('|');
+  var d=parts[0],desc=parts[1],a=parseFloat(parts[2]);
+  var m=MONTHS[homeMi].key;
+  var arr=RAW.expense[m]||[];
+  for(var i=0;i<arr.length;i++){
+    if(arr[i].d===d&&arr[i].desc===desc&&arr[i].a===a){
+      var cur=arr[i].vatDed;
+      if(cur===undefined){arr[i].vatDed=true;toast('מע"מ: ניתן לניכוי ✓');}
+      else if(cur===true){arr[i].vatDed=false;toast('מע"מ: לא ניתן לניכוי ✗');}
+      else{delete arr[i].vatDed;toast('מע"מ: אוטו');}
       save();renderExpenses();return;
     }
   }
