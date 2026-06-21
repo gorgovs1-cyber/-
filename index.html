@@ -934,6 +934,7 @@ html.mode-private .biz-only{ display:none!important; }
       <div class="drw-item" onclick="openGoogleConnections();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18" stroke-width="1.2"/><path d="M12 3a9 9 0 0 1 6.36 2.64M12 3A9 9 0 0 0 5.64 5.64" stroke-width="1.2"/></svg></span><span>חיבורי Google</span></div>
       <div class="drw-item" data-page="guide" onclick="go('guide');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span>מדריך ועזרה</span></div>
       <div class="drw-item" onclick="exportData();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span><span>גיבוי נתונים</span></div>
+      <div class="drw-item" onclick="importData();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 15 5 17 10"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span><span>שחזור מגיבוי</span></div>
       <div class="drw-item" onclick="editBaseIncome()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8"/><path d="M8.5 11h7"/><path d="M8.5 13h7"/></svg></span><span>הכנסה קבועה: <span id="drw-base-inc">—</span></span></div>
       <div class="drw-item" onclick="editBizType()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2.5"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></span><span>סוג עוסק: <span id="drw-biz-type">—</span></span></div>
       <div class="drw-item" id="drw-admin" style="display:none" onclick="go('admin');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>פאנל אדמין</span></div>
@@ -2141,7 +2142,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260804;
+var APP_VER=20260805;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2571,12 +2572,53 @@ function load(){
   }catch(e){}
 }
 function exportData(){
-  var blob=new Blob([JSON.stringify({clients:CLIENTS,expense:RAW.expense,income:RAW.income,cards:CARDS},null,2)],{type:'application/json'});
+  var data={
+    clients:CLIENTS, expense:RAW.expense, income:RAW.income, cards:CARDS,
+    goals:GOALS, budgets:BUDGETS, fixedPayments:FIXED_PAYMENTS,
+    annual:ANNUAL, assets:ASSETS, suppliers:SUPPLIERS, orders:ORDERS,
+    fixedIncome:FIXED_INCOME, clientRecords:CLIENT_RECORDS,
+    receipts:RECEIPTS, settings:SETTINGS,
+    exportedAt:new Date().toISOString(), appVer:APP_VER
+  };
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   var a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='shani-finance-'+new Date().toISOString().slice(0,10)+'.json';
+  a.download='my-money-backup-'+new Date().toISOString().slice(0,10)+'.json';
   a.click();URL.revokeObjectURL(a.href);
-  toast('גיבוי הורד');
+  toast('גיבוי מלא הורד ✓');
+}
+function importData(){
+  var inp=document.createElement('input');
+  inp.type='file'; inp.accept='.json,application/json';
+  inp.onchange=function(){
+    var file=inp.files[0]; if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(e){
+      try{
+        var d=JSON.parse(e.target.result);
+        if(!d.expense&&!d.clients){toast('קובץ לא תקין');return;}
+        if(d.clients)     localStorage.setItem('shani_clients',JSON.stringify(d.clients));
+        if(d.expense)     localStorage.setItem('shani_expense',JSON.stringify(d.expense));
+        if(d.income)      localStorage.setItem('shani_income', JSON.stringify(d.income));
+        if(d.cards)       localStorage.setItem('shani_cards',  JSON.stringify(d.cards));
+        if(d.goals)       localStorage.setItem('shani_goals',  JSON.stringify(d.goals));
+        if(d.budgets)     localStorage.setItem('shani_budgets',JSON.stringify(d.budgets));
+        if(d.fixedPayments) localStorage.setItem('shani_fp',  JSON.stringify(d.fixedPayments));
+        if(d.annual)      localStorage.setItem('pf_annual',    JSON.stringify(d.annual));
+        if(d.assets)      localStorage.setItem('pf_assets',    JSON.stringify(d.assets));
+        if(d.suppliers)   localStorage.setItem('pf_suppliers', JSON.stringify(d.suppliers));
+        if(d.orders)      localStorage.setItem('pf_orders',    JSON.stringify(d.orders));
+        if(d.fixedIncome) localStorage.setItem('pf_fixed_income',JSON.stringify(d.fixedIncome));
+        if(d.clientRecords) localStorage.setItem('pf_client_records',JSON.stringify(d.clientRecords));
+        if(d.receipts)    localStorage.setItem('pf_receipts',  JSON.stringify(d.receipts));
+        if(d.settings)    localStorage.setItem('shani_settings',JSON.stringify(d.settings));
+        toast('שחזור הושלם — טוענת מחדש...');
+        setTimeout(function(){location.reload();},1200);
+      }catch(ex){toast('שגיאה בקריאת הקובץ');}
+    };
+    reader.readAsText(file,'UTF-8');
+  };
+  inp.click();
 }
 
 // ── ACCOUNTANT CSV EXPORT ─────────────────────────────────
@@ -2763,7 +2805,7 @@ function exportUsersCSV(){
   var a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   a.download='users_'+new Date().toISOString().slice(0,10)+'.csv';
-  a.click();
+  a.click();URL.revokeObjectURL(a.href);
 }
 
 function renderBizReport(){
@@ -4430,18 +4472,18 @@ function parseBankCSV(text,moKey){
   if(lines.length<1)return[];
   var sep=lines[0].indexOf('\t')>=0?'\t':lines[0].indexOf(';')>=0?';':',';
   var rows=lines.map(function(l){return l.split(sep).map(function(c){return c.trim().replace(/^["'“”]+|["'“”]+$/g,'').trim();});});
-  // Detect header
+  // Detect header — require at least date OR desc column found
   var hdrIdx=-1,dateCol=-1,descCol=-1,debitCol=-1,creditCol=-1;
   for(var r=0;r<Math.min(rows.length,5);r++){
-    var row=rows[r],found=false;
+    var row=rows[r],foundDate=false,foundDesc=false;
     row.forEach(function(c,i){
-      if(/תאריך|date/i.test(c)&&dateCol<0){dateCol=i;found=true;}
-      if(/תיאור|פירוט|שם.?בית|מסחר|description|פרטים/i.test(c)&&descCol<0){descCol=i;found=true;}
+      if(/תאריך|date/i.test(c)&&dateCol<0){dateCol=i;foundDate=true;}
+      if(/תיאור|פירוט|שם.?בית|מסחר|description|פרטים/i.test(c)&&descCol<0){descCol=i;foundDesc=true;}
       if(/חיוב|debit/i.test(c)&&debitCol<0)debitCol=i;
       if(/זכות|credit/i.test(c)&&creditCol<0)creditCol=i;
       if(/סכום.?עסקה|סכום(?!.*יתרה)/i.test(c)&&debitCol<0)debitCol=i;
     });
-    if(found){hdrIdx=r;break;}
+    if(foundDate&&foundDesc){hdrIdx=r;break;}
   }
   if(dateCol<0)dateCol=0;
   if(descCol<0)descCol=1;
@@ -4451,8 +4493,18 @@ function parseBankCSV(text,moKey){
   rows.slice(startRow).forEach(function(row){
     if(row.length<2)return;
     var rawDate=row[dateCol]||'';
-    var dp=rawDate.match(/(\d{1,2})[\/\-\.](\d{1,2})/);
-    var dateStr=dp?(dp[1].padStart(2,'0')+'/'+dp[2].padStart(2,'0')):(String(new Date().getDate()).padStart(2,'0')+'/'+String(mo.key).padStart(2,'0'));
+    // Match DD/MM/YYYY or YYYY-MM-DD or DD/MM
+    var dp=rawDate.match(/(\d{1,4})[\/\-\.](\d{1,2})(?:[\/\-\.](\d{2,4}))?/);
+    var dateStr;
+    if(dp){
+      var a=dp[1],b=dp[2];
+      // YYYY-MM-DD format: year first (4 digits)
+      if(a.length===4){dateStr=b.padStart(2,'0')+'/'+a.slice(-2);}
+      // DD/MM or DD/MM/YYYY
+      else{dateStr=a.padStart(2,'0')+'/'+b.padStart(2,'0');}
+    } else {
+      dateStr=String(new Date().getDate()).padStart(2,'0')+'/'+String(mo.key).padStart(2,'0');
+    }
     var desc='';
     for(var di=0;di<row.length;di++){
       if(di===dateCol||di===debitCol||di===creditCol)continue;
