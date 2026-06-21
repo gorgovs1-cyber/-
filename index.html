@@ -992,8 +992,9 @@ html.mode-private .biz-only{ display:none!important; }
 
   <div class="mnav">
     <button class="marrow" onclick="moveHM(-1)">›</button>
-    <div class="mlabel"    id="home-mlbl">יוני 2026</div>
+    <div class="mlabel" id="home-mlbl" onclick="goToToday()" style="cursor:pointer">יוני 2026</div>
     <button class="marrow" onclick="moveHM(1)">‹</button>
+    <button id="today-btn" onclick="goToToday()" style="display:none;font-size:11px;font-weight:500;font-family:Rubik,sans-serif;background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.3);color:var(--cyan);padding:4px 10px;border-radius:8px;cursor:pointer">היום</button>
   </div>
 
   <div class="tiles" id="home-tiles"></div>
@@ -1948,7 +1949,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260768;
+var APP_VER=20260769;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2279,14 +2280,13 @@ function cat(d){
 
 // ── SPLASH ───────────────────────────────────────────────
 function initSplash(){
-  var h=new Date().getHours();
-  var gr=h<5?'לילה טוב':h<12?'בוקר טוב':h<17?'צהריים טובים':'ערב טוב';
-  document.getElementById('sp-greet').textContent=gr+(SETTINGS.userName?' '+SETTINGS.userName:'');
+  var name=SETTINGS.userName||'';
+  document.getElementById('sp-greet').textContent='ברוכה הבאה'+(name?' '+name:'');
   setTimeout(function(){
     var sp=document.getElementById('splash');
     sp.classList.add('out');
-    setTimeout(function(){sp.style.display='none';},650);
-  },4000);
+    setTimeout(function(){sp.style.display='none';},500);
+  },800);
 }
 
 // ── PERSIST ──────────────────────────────────────────────
@@ -2603,6 +2603,8 @@ function addRipple(el,e){
 // ── CALC ─────────────────────────────────────────────────
 var homeMi=MAY_IDX;
 function moveHM(d){homeMi=Math.max(0,Math.min(MONTHS.length-1,homeMi+d));renderHome();}
+function goToToday(){homeMi=NOW_IDX;renderHome();}
+function updateTodayBtn(){var b=document.getElementById('today-btn');if(b)b.style.display=(homeMi===NOW_IDX?'none':'inline-block');}
 
 function calc(mi){
   var ml=MONTHS[mi],m=ml.key;
@@ -2717,17 +2719,30 @@ function renderHome(){
   }
   wrap.innerHTML=alertHtml;
 
-  // Tiles
-  var bCls=r.balFull>=0?'pos':'neg';
-  document.getElementById('home-tiles').innerHTML=
-    '<div class="tile stagger" style="--tc:var(--pos);--si:0" onclick="go(\'income\')" onpointerdown="addRipple(this,event)"><div class="tile-val pos">₪'+fmt(r.inc+r.doneAmt)+'</div><div class="tile-lbl">הכנסות</div></div>'+
-    '<div class="tile stagger" style="--tc:var(--neg);--si:1" onclick="go(\'expenses\')" onpointerdown="addRipple(this,event)"><div class="tile-val orange">₪'+fmt(r.exp)+'</div><div class="tile-lbl">הוצאות</div></div>'+
-    '<div class="tile stagger" style="--tc:var(--cyan);--si:2" onclick="go(\'balance\')" onpointerdown="addRipple(this,event)"><div class="tile-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="tile-lbl">'+(r.isNow?'עו"ש צפוי סוף חודש':'ישאר בסוף החודש')+'</div></div>';
+  // Empty state — no data yet
+  var hasAnyData=(r.inc+r.doneAmt+r.exp)>0 || FIXED>0;
+  if(!hasAnyData && r.isNow){
+    document.getElementById('home-tiles').innerHTML=
+      '<div style="grid-column:1/-1;text-align:center;padding:28px 16px 12px;direction:rtl">'+
+      '<div style="font-size:36px;margin-bottom:10px">💸</div>'+
+      '<div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">התחילי לעקוב אחרי הכסף שלך</div>'+
+      '<div style="font-size:13px;color:var(--muted);margin-bottom:16px">לחצי על <b style="color:var(--cyan)">+</b> כדי להוסיף הוצאה או הכנסה ראשונה</div>'+
+      '<button onclick="openFab()" style="background:var(--cyan);color:#08131F;font-family:Rubik,sans-serif;font-size:14px;font-weight:500;padding:12px 28px;border-radius:12px;border:none;cursor:pointer">+ הוסיפי עסקה ראשונה</button>'+
+      '</div>';
+  } else {
+    // Tiles
+    var bCls=r.balFull>=0?'pos':'neg';
+    document.getElementById('home-tiles').innerHTML=
+      '<div class="tile stagger" style="--tc:var(--pos);--si:0" onclick="go(\'income\')" onpointerdown="addRipple(this,event)"><div class="tile-val pos">₪'+fmt(r.inc+r.doneAmt)+'</div><div class="tile-lbl">הכנסות</div></div>'+
+      '<div class="tile stagger" style="--tc:var(--neg);--si:1" onclick="go(\'expenses\')" onpointerdown="addRipple(this,event)"><div class="tile-val orange">₪'+fmt(r.exp)+'</div><div class="tile-lbl">הוצאות</div></div>'+
+      '<div class="tile stagger" style="--tc:var(--cyan);--si:2" onclick="go(\'balance\')" onpointerdown="addRipple(this,event)"><div class="tile-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="tile-lbl">'+(r.isNow?'עו"ש צפוי סוף חודש':'ישאר בסוף החודש')+'</div></div>';
+  }
 
   renderUpcoming(r);
   renderPMCards(r);
   renderNetWorth();
   renderOsekPatur();
+  updateTodayBtn();
   showRecurringIncomeSuggestion();
 }
 
@@ -3056,7 +3071,7 @@ function renderExpenses(){
       var tf='<span style="font-size:10px;color:var(--muted);align-self:center;margin-left:4px">סנן לפי תגית:</span>';
       tagKeys.forEach(function(g){
         var on=_tagFilter===g;
-        tf+='<span class="txn-chip'+(on?' active':'')+'" onclick="setTagFilter(\''+esc(g)+'\')">#'+esc(g)+'</span>';
+        tf+='<span class="txn-chip'+(on?' active':'')+'" data-tag="'+esc(g)+'" onclick="setTagFilter(this.dataset.tag)">#'+esc(g)+'</span>';
       });
       if(_tagFilter)tf+='<span class="txn-chip" style="background:rgba(248,113,113,.15);color:var(--neg);border-color:rgba(248,113,113,.3)" onclick="setTagFilter(null)">✕ נקה</span>';
       tfEl.innerHTML=tf;
@@ -3097,7 +3112,7 @@ function renderExpenses(){
       var bizSvg='<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>';
       var bizBadge='<span class="txn-biz'+(t.biz===false?' no':'')+'" title="הוצאה עסקית — לחצי לשינוי" onclick="event.stopPropagation();cycleBizFlag(\''+key+'\')">'+(isBiz?bizSvg+' עסקי':'')+'</span>';
       var chips='';
-      if(t.tags&&t.tags.length)chips='<div class="txn-chips">'+t.tags.map(function(g){return'<span class="txn-chip" onclick="setTagFilter(\''+esc(g)+'\')">#'+esc(g)+'</span>';}).join('')+'</div>';
+      if(t.tags&&t.tags.length)chips='<div class="txn-chips">'+t.tags.map(function(g){return'<span class="txn-chip" data-tag="'+esc(g)+'" onclick="setTagFilter(this.dataset.tag)">#'+esc(g)+'</span>';}).join('')+'</div>';
       h+='<div class="txn-item stagger" style="--si:'+ti+'"><div class="txn-icon" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="txn-body"><div class="txn-desc">'+esc(t.desc)+mt+bizBadge+'</div><div class="txn-date">'+esc(dt)+'</div>'+chips+'</div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div><button class="txn-del" onclick="delExpTxn(\''+key+'\')">✕</button></div>';
       ti++;
     });
@@ -3361,7 +3376,7 @@ function renderMC(){
     var badge=nc>0?'<span style="background:rgba(248,113,113,.15);color:var(--neg);font-size:9px;padding:2px 6px;border-radius:6px;margin-right:4px"> &#x05D1;&#x05D9;&#x05D8;&#x05D5;&#x05DC;&#x05D9;&#x05DD;: '+nc+'</span>':'';
     var sLabel=c.status==='done'?'&#x2713; &#x05D1;&#x05D5;&#x05E6;&#x05E2;':c.status==='cancelled'?'&#x2715; &#x05D1;&#x05D5;&#x05D8;&#x05DC;':'&#x23F3; &#x05DE;&#x05DE;&#x05EA;&#x05D9;&#x05DF;';
     var amtClass='mc-amt '+c.status;
-    return '<div class="mc-row"><div class="mc-name" onclick="openClientCard(\''+esc(c.name)+'\')" style="cursor:pointer;text-decoration:underline dotted var(--muted)">'+esc(c.name)+badge+(c.treat?' <span style="font-size:11px;color:var(--muted)">&#xB7; '+esc(c.treat)+'</span>':'')+'</div><button class="sbtn '+c.status+'" onclick="toggleC('+i+')">'+sLabel+'</button><div class="'+amtClass+'">&#x20AA;'+fmt(c.amount)+'</div><button class="mv-btn" onclick="startMove('+i+')" title="&#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9; &#x05DC;&#x05EA;&#x05D0;&#x05E8;&#x05D9;&#x05DA; &#x05D0;&#x05D7;&#x05E8;" style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.25);color:var(--cyan);font-size:11px;font-weight:500;padding:5px 10px;border-radius:6px;cursor:pointer;margin-left:4px">&#128197; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9;</button><button class="del-btn" onclick="delC('+i+')">&#x2715;</button></div>';
+    return '<div class="mc-row"><div class="mc-name" data-n="'+esc(c.name)+'" onclick="openClientCard(this.dataset.n)" style="cursor:pointer;text-decoration:underline dotted var(--muted)">'+esc(c.name)+badge+(c.treat?' <span style="font-size:11px;color:var(--muted)">&#xB7; '+esc(c.treat)+'</span>':'')+'</div><button class="sbtn '+c.status+'" onclick="toggleC('+i+')">'+sLabel+'</button><div class="'+amtClass+'">&#x20AA;'+fmt(c.amount)+'</div><button class="mv-btn" onclick="startMove('+i+')" title="&#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9; &#x05DC;&#x05EA;&#x05D0;&#x05E8;&#x05D9;&#x05DA; &#x05D0;&#x05D7;&#x05E8;" style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.25);color:var(--cyan);font-size:11px;font-weight:500;padding:5px 10px;border-radius:6px;cursor:pointer;margin-left:4px">&#128197; &#x05D4;&#x05E2;&#x05D1;&#x05E8;&#x05D9;</button><button class="del-btn" onclick="delC('+i+')">&#x2715;</button></div>';
   }).join('');
 }
 function toggleC(idx){
@@ -3685,11 +3700,11 @@ function renderClientCard(name){
 
   // ── QUICK ACTIONS ──
   html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px">';
-  html+='<button onclick="openWhatsApp(\''+esc(name)+'\')" style="background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
+  html+='<button data-n="'+esc(name)+'" onclick="openWhatsApp(this.dataset.n)" style="background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
     +'<span style="font-size:20px">💬</span><span style="font-size:10px;color:#25D366;font-family:Rubik,sans-serif">וואטסאפ</span></button>';
-  html+='<button onclick="manualSMS(\''+esc(name)+'\')" style="background:'+(hasTwilio?'rgba(45,212,191,.1)':'rgba(255,255,255,.05)')+';border:1px solid '+(hasTwilio?'rgba(45,212,191,.25)':'rgba(255,255,255,.1)')+';border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
+  html+='<button data-n="'+esc(name)+'" onclick="manualSMS(this.dataset.n)" style="background:'+(hasTwilio?'rgba(45,212,191,.1)':'rgba(255,255,255,.05)')+';border:1px solid '+(hasTwilio?'rgba(45,212,191,.25)':'rgba(255,255,255,.1)')+';border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
     +'<span style="font-size:20px">📱</span><span style="font-size:10px;color:'+(hasTwilio?'var(--cyan)':'var(--muted)')+';font-family:Rubik,sans-serif">SMS</span></button>';
-  html+='<button onclick="manualInvoice(\''+esc(name)+'\')" style="background:'+(hasMorning?'rgba(232,168,62,.1)':'rgba(255,255,255,.05)')+';border:1px solid '+(hasMorning?'rgba(232,168,62,.25)':'rgba(255,255,255,.1)')+';border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
+  html+='<button data-n="'+esc(name)+'" onclick="manualInvoice(this.dataset.n)" style="background:'+(hasMorning?'rgba(232,168,62,.1)':'rgba(255,255,255,.05)')+';border:1px solid '+(hasMorning?'rgba(232,168,62,.25)':'rgba(255,255,255,.1)')+';border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
     +'<span style="font-size:20px">🧾</span><span style="font-size:10px;color:'+(hasMorning?'var(--gold)':'var(--muted)')+';font-family:Rubik,sans-serif">חשבונית</span></button>';
   html+='<button onclick="closeClientCard();openQuickAdd()" style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.28);border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
     +'<span style="font-size:20px">➕</span><span style="font-size:10px;color:var(--cyan);font-family:Rubik,sans-serif">תור חדש</span></button>';
@@ -3723,7 +3738,7 @@ function renderClientCard(name){
       html+='<div style="display:flex;align-items:center;gap:6px;margin-top:6px">'
         +'<input id="cc-note-'+hi+'" type="text" placeholder="הוסיפי הערה לפגישה..." value="'+esc(h.note||'')+'"'
         +' style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:5px 8px;color:var(--text2);font-size:11px;font-family:Rubik,sans-serif">'
-        +'<button onclick="saveSessionNote(\''+esc(name)+'\','+hi+')" style="background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer;white-space:nowrap;font-family:Rubik,sans-serif">שמור</button>'
+        +'<button data-n="'+esc(name)+'" data-hi="'+hi+'" onclick="saveSessionNote(this.dataset.n,+this.dataset.hi)" style="background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer;white-space:nowrap;font-family:Rubik,sans-serif">שמור</button>'
         +'</div>';
       html+='</div>';
     }
