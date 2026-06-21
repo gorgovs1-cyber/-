@@ -452,7 +452,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 /* ══ MODAL ════════════════════════════════════════════════ */
 .mbg {display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:500;align-items:flex-end;justify-content:center}
 .mbg.open{display:flex}
-.modal{background:#111D2C;border-radius:18px 24px 0 0;width:100%;max-width:430px;padding:8px 20px calc(36px + env(safe-area-inset-bottom,0px));animation:slideUp .22s ease;border-top:1px solid var(--border2)}
+.modal{background:#111D2C;border-radius:18px 24px 0 0;width:100%;max-width:430px;max-height:82dvh;overflow-y:auto;padding:8px 20px calc(36px + env(safe-area-inset-bottom,0px));animation:slideUp .22s ease;border-top:1px solid var(--border2)}
 .modal::before{content:'';display:block;width:36px;height:4px;background:var(--border2);border-radius:3px;margin:14px auto 18px}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .mbg.closing,.cd-mbg.closing{animation:fadeOut .2s ease both}
@@ -2002,7 +2002,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260789;
+var APP_VER=20260790;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -4493,6 +4493,25 @@ function _apptFix180626(){
   }
 }
 setTimeout(_apptFix180626, 2500);
+
+// One-time: move הילה → 22/06 ₪800, נועם → 25/06 ₪900
+function _apptFix210626(){
+  if(localStorage.getItem('_apptfix210626'))return;
+  var changed=false;
+  var jun=CLIENTS[6]||CLIENTS['6']||[];
+  jun.forEach(function(ap){
+    if(ap.name==='הילה'&&ap.status!=='done'){ap.day=22;ap.amount=800;changed=true;}
+    if(ap.name==='נועם'&&ap.status!=='done'){ap.day=25;ap.amount=900;changed=true;}
+  });
+  if(changed){
+    save();cloudPush();
+    localStorage.setItem('_apptfix210626','1');
+    try{renderClients();}catch(e){}
+    try{renderHome();}catch(e){}
+    toast('✓ תורים הועברו: הילה→22/06, נועם→25/06');
+  }
+}
+setTimeout(_apptFix210626, 2700);
 
 // One-time: set bank balance to 9980 (overdrawn — stored as positive)
 function _balFix180626(){
