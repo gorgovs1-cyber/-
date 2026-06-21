@@ -840,6 +840,10 @@ html.mode-private .biz-only{ display:none!important; }
 .mode-switch{ display:flex; gap:6px; margin:10px 20px 4px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:4px; }
 .mode-opt{ flex:1; text-align:center; padding:8px 0; border-radius:12px; font-family:'Rubik',sans-serif; font-size:13px; font-weight:500; color:var(--muted); cursor:pointer; border:none; background:none; transition:all .18s; }
 .mode-opt.on{ background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; }
+.drw-section-hdr{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;padding:14px 20px 4px;opacity:.7}
+.drw-more-toggle{display:flex;align-items:center;gap:8px;padding:10px 20px;font-size:13px;color:var(--muted);cursor:pointer;font-family:'Rubik',sans-serif;user-select:none}
+.drw-more-toggle:hover{color:var(--text2)}
+.drw-more-arrow{transition:transform .2s;display:inline-block;font-size:11px}
 
 /* accessibility: respect reduced-motion preference */
 @media (prefers-reduced-motion: reduce){
@@ -865,28 +869,41 @@ html.mode-private .biz-only{ display:none!important; }
       <button class="mode-opt" id="mode-biz" onclick="setMode('business')">עסקי</button>
       <button class="mode-opt" id="mode-priv" onclick="setMode('private')">פרטי</button>
     </div>
+    <!-- ═══ CORE ═══ -->
+    <div class="drw-section-hdr">ניווט</div>
     <div class="drw-item" data-page="home" onclick="go('home');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-9"/><path d="M9.5 20v-5.5h5V20"/></svg></span><span>בית</span></div>
     <div class="drw-item biz-only" data-page="clients" onclick="go('clients');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 5.6"/><path d="M16.2 13.4a5.5 5.5 0 0 1 4.3 6.1"/></svg></span><span>לקוחות</span></div>
-    <div class="drw-item" data-page="goals" onclick="go('goals');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg></span><span>מטרות</span></div>
-    <div class="drw-item" data-page="fixed" onclick="go('fixed');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/><path d="M6 14.5h4"/></svg></span><span>תשלומים קבועים</span></div>
-    <div class="drw-item" data-page="annual" onclick="go('annual');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M7 13h4"/><path d="M7 17h6"/></svg></span><span>הוצאות שנתיות</span></div>
-    <div class="drw-item" data-page="suppliers" onclick="go('suppliers');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2.5"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12v4"/><path d="M8 14h8"/></svg></span><span>ספקים והזמנות</span></div>
-    <div class="drw-item" onclick="openGoogleConnections();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18" stroke-width="1.2"/><path d="M12 3a9 9 0 0 1 6.36 2.64M12 3A9 9 0 0 0 5.64 5.64" stroke-width="1.2"/></svg></span><span>חיבורי Google</span></div>
     <div class="drw-item" data-page="income" onclick="go('income');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 16.5V8"/><path d="m8.5 11.5 3.5-3.5 3.5 3.5"/></svg></span><span>הכנסות</span></div>
     <div class="drw-item" data-page="expenses" onclick="go('expenses');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V16"/><path d="m8.5 12.5 3.5 3.5 3.5-3.5"/></svg></span><span>הוצאות</span></div>
     <div class="drw-item" data-page="balance" onclick="go('balance');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><rect x="5" y="10" width="3.4" height="8" rx="1"/><rect x="10.3" y="5.5" width="3.4" height="12.5" rx="1"/><rect x="15.6" y="13" width="3.4" height="5" rx="1"/></svg></span><span>מאזן</span></div>
-    <div style="border-top:1px solid var(--border);margin:8px 0"></div>
-    <div class="drw-item" onclick="openAdvisor();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span><span id="adv-drw-lbl">יועצת כלכלית</span></div>
-    <div class="drw-item" data-page="guide" onclick="go('guide');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span>מדריך ועזרה</span></div>
-    <div class="drw-item" onclick="go('biz-report');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span><span>דוח הוצאות עסקיות</span></div>
-    <div class="drw-item biz-only" onclick="exportAccountantCSV();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg></span><span>ייצוא לרואה חשבון CSV</span></div>
-    <div class="drw-item" onclick="exportData();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span><span>גיבוי נתונים</span></div>
+    <!-- ═══ TOOLS ═══ -->
+    <div class="drw-section-hdr">כלים</div>
+    <div class="drw-item" onclick="openAdvisor();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span><span id="adv-drw-lbl">יועצת כלכלית AI</span></div>
+    <div class="drw-item" onclick="go('biz-report');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span><span>דוח עסקי</span></div>
+    <div class="drw-item biz-only" onclick="exportAccountantCSV();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg></span><span>ייצוא לרו"ח CSV</span></div>
+    <!-- ═══ MORE (collapsed) ═══ -->
+    <div style="border-top:1px solid var(--border);margin:6px 0 2px"></div>
+    <div class="drw-more-toggle" id="drw-more-toggle" onclick="toggleDrawerMore()">
+      <span class="drw-more-arrow" id="drw-more-arrow">▸</span>
+      <span>עוד תכונות</span>
+    </div>
+    <div id="drw-more-wrap" style="display:none">
+      <div class="drw-item" data-page="goals" onclick="go('goals');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg></span><span>יעדי חיסכון</span></div>
+      <div class="drw-item" data-page="fixed" onclick="go('fixed');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/><path d="M6 14.5h4"/></svg></span><span>תשלומים קבועים</span></div>
+      <div class="drw-item" data-page="annual" onclick="go('annual');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M7 13h4"/><path d="M7 17h6"/></svg></span><span>הוצאות שנתיות</span></div>
+      <div class="drw-item" data-page="suppliers" onclick="go('suppliers');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2.5"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M12 12v4"/><path d="M8 14h8"/></svg></span><span>ספקים והזמנות</span></div>
+      <div class="drw-item" onclick="openGoogleConnections();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18" stroke-width="1.2"/><path d="M12 3a9 9 0 0 1 6.36 2.64M12 3A9 9 0 0 0 5.64 5.64" stroke-width="1.2"/></svg></span><span>חיבורי Google</span></div>
+      <div class="drw-item" data-page="guide" onclick="go('guide');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span>מדריך ועזרה</span></div>
+      <div class="drw-item" onclick="exportData();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span><span>גיבוי נתונים</span></div>
+      <div class="drw-item" onclick="editBaseIncome()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8"/><path d="M8.5 11h7"/><path d="M8.5 13h7"/></svg></span><span>הכנסה קבועה: <span id="drw-base-inc">—</span></span></div>
+      <div class="drw-item" onclick="editBizType()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2.5"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></span><span>סוג עוסק: <span id="drw-biz-type">—</span></span></div>
+      <div class="drw-item" id="drw-admin" style="display:none" onclick="go('admin');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>פאנל אדמין</span></div>
+    </div>
+    <!-- ═══ BOTTOM ═══ -->
+    <div style="border-top:1px solid var(--border);margin:8px 0 4px"></div>
     <div class="drw-item" onclick="shareReferral()" style="color:#25D366"><span class="di-icon"><svg viewBox="0 0 24 24" stroke="#25D366"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span><span>שתפי חברה — חודש חינמי 🎁</span></div>
     <div class="drw-item" onclick="openSettings()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M5 7h8"/><circle cx="16.5" cy="7" r="2.3"/><path d="M19 17h-8"/><circle cx="7.5" cy="17" r="2.3"/></svg></span><span>הגדרות</span></div>
-    <div class="drw-item" onclick="editBaseIncome()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8"/><path d="M8.5 11h7"/><path d="M8.5 13h7"/></svg></span><span>הכנסה קבועה: <span id="drw-base-inc">—</span></span></div>
-    <div class="drw-item" onclick="editBizType()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2.5"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></span><span>סוג עוסק: <span id="drw-biz-type">—</span></span></div>
     <div class="drw-item" onclick="toggleTheme()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></span><span id="theme-lbl">מצב ים</span></div>
-    <div class="drw-item" id="drw-admin" style="display:none" onclick="go('admin');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>פאנל אדמין</span></div>
     <div class="drw-item" id="drw-logout" style="display:none" onclick="authLogout()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M14 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H14"/><path d="M18 15.5 21.5 12 18 8.5"/><path d="M21 12h-10"/></svg></span><span>התנתקות</span></div>
     <div class="drw-account" id="drw-account" style="display:none"><span class="sync-dot" id="sync-dot"></span><span id="drw-account-email"></span></div>
   </nav>
@@ -2023,7 +2040,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260793;
+var APP_VER=20260794;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -6530,6 +6547,14 @@ function openDrawer() {
   }
 }
 function closeDrawer() { document.getElementById('drw-bg').classList.remove('open'); var h=document.querySelector('.hdr-ham'); if(h)h.classList.remove('open'); }
+function toggleDrawerMore(){
+  var wrap=document.getElementById('drw-more-wrap');
+  var arrow=document.getElementById('drw-more-arrow');
+  if(!wrap) return;
+  var open=wrap.style.display!=='none';
+  wrap.style.display=open?'none':'block';
+  if(arrow) arrow.textContent=open?'▸':'▾';
+}
 function updateDrawerActive() {
   document.querySelectorAll('.drw-item').forEach(function(el) {
     el.classList.toggle('active', el.dataset.page === _prevScreen);
