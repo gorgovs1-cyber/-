@@ -2150,7 +2150,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260808;
+var APP_VER=20260809;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -5095,7 +5095,7 @@ function showPaywall(feat){
         '<div><span>✓</span>דוחות מע"מ + תכנון מס</div>'+
         '<div><span>✓</span>היסטוריה מלאה (כל החודשים)</div>'+
         '<div><span>✓</span>גיבוי ענן + ריבוי מכשירים</div>'+
-        '<div style="color:var(--gold)"><span>⭐</span>עסקי: ניהול עובדים + תמיכה מועדפת</div>'+
+        '<div style="color:var(--gold)"><span>⭐</span>עסקי: ניהול ספקים מלא + תמיכה מועדפת</div>'+
       '</div>'+
       '<button class="pw-cta" id="pw-cta-btn" onclick="contactForUpgrade()">📱 שדרג/י עסקי שנתי ₪49 דרך WhatsApp</button>'+
       '<button class="pw-dismiss" onclick="closePaywall()">המשיכ/י בחינם</button>'+
