@@ -2152,7 +2152,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260814;
+var APP_VER=20260815;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2498,7 +2498,12 @@ function safeN(v){ var n=parseFloat(v); return (isNaN(n)||!isFinite(n))?0:n; }
 function esc(s){ if(s==null) return ''; return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 function pa(s){ return parseFloat(String(s).replace(/,/g,'').replace(/[^\d.]/g,''))||0; }
 function sumE(m){ return (RAW.expense[m]||[]).reduce(function(s,t){return s+safeN(t.a);},0); }
-function sumI(m){ return (RAW.income[m]||[]).reduce(function(s,t){return s+safeN(t.a);},0)+safeN(FIXED_MAP[m]||FIXED); }
+function sumI(m){
+  var raw=(RAW.income[m]||[]).reduce(function(s,t){return s+safeN(t.a);},0);
+  var base=safeN(FIXED_MAP[m]||FIXED);
+  var extra=FIXED_INCOME.filter(function(fi){return fi.active!==false;}).reduce(function(s,fi){return s+safeN(fi.amount);},0);
+  return raw+base+extra;
+}
 
 // ── CATEGORY BADGE ───────────────────────────────────────
 function cat(d){
@@ -3620,6 +3625,20 @@ function cycleVatDed(key){
   }
 }
 
+// ── DELETE INCOME ─────────────────────────────────────────
+function delIncTxn(key){
+  var parts=decodeURIComponent(key).split('|');
+  var d=parts[0],desc=parts[1],a=parseFloat(parts[2]);
+  var m=MONTHS[homeMi].key;
+  var arr=RAW.income[m]||[];
+  var idx=-1;
+  for(var i=0;i<arr.length;i++){if(arr[i].d===d&&arr[i].desc===desc&&arr[i].a===a){idx=i;break;}}
+  if(idx<0)return;
+  arr.splice(idx,1);
+  save();renderIncome();renderHome();
+  toast('נמחק');
+}
+
 // ── DELETE EXPENSE ────────────────────────────────────────
 function delExpTxn(key){
   var parts=decodeURIComponent(key).split('|');
@@ -3721,7 +3740,13 @@ function renderIncome(){
   });
   if(items.length){
     h+='<div class="txn-group-hdr">הכנסות נוספות</div>';
-    items.forEach(function(t){h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(0,230,118,.15);color:#00E676">הכנסה</div><div class="txn-body"><div class="txn-desc">'+esc(t.desc)+'</div><div class="txn-date">'+esc(t.d)+'</div></div><div class="txn-amt pos">+₪'+fmt(t.a)+'</div></div>';});
+    var fiNames=FIXED_INCOME.filter(function(fi){return fi.active!==false;}).map(function(fi){return fi.name.trim().toLowerCase();});
+    items.forEach(function(t){
+      var key=encodeURIComponent(t.d+'|'+t.desc+'|'+t.a);
+      var isDup=fiNames.some(function(n){return t.desc.trim().toLowerCase().indexOf(n)>=0||n.indexOf(t.desc.trim().toLowerCase())>=0;});
+      var dupWarn=isDup?'<span style="font-size:10px;color:var(--gold);margin-right:4px" title="קיים גם בהכנסות קבועות — ניתן למחוק">⚠ כפול</span>':'';
+      h+='<div class="txn-item"><div class="txn-icon" style="background:rgba(0,230,118,.15);color:#00E676">הכנסה</div><div class="txn-body"><div class="txn-desc">'+dupWarn+esc(t.desc)+'</div><div class="txn-date">'+esc(t.d)+'</div></div><div class="txn-amt pos">+₪'+fmt(t.a)+'</div><button class="txn-del" onclick="delIncTxn(\''+key+'\')">✕</button></div>';
+    });
   }
   if(r.doneList.length){
     h+='<div class="txn-group-hdr">לקוחות — בוצע</div>';
