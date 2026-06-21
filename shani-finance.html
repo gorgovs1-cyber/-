@@ -1957,7 +1957,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260774;
+var APP_VER=20260775;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -6396,19 +6396,36 @@ function cloudSnapshot(){
   };
 }
 
-// Apply a cloud snapshot to the live app + mirror into localStorage
+// Merge month-keyed object: cloud month only applied when it has entries
+function _mergeMonthObj(target, src){
+  if(!src||typeof src!=='object') return;
+  Object.keys(src).forEach(function(k){
+    var a=src[k];
+    if(Array.isArray(a)&&a.length>0) target[k]=a;
+  });
+}
+
+// Merge flat object: cloud wins for defined non-null fields; local kept otherwise
+function _mergeObj(target, src){
+  if(!src||typeof src!=='object') return;
+  Object.keys(src).forEach(function(k){
+    if(src[k]!==null&&src[k]!==undefined) target[k]=src[k];
+  });
+}
+
+// Apply a cloud snapshot — 3-way merge so empty cloud fields never delete local data
 function applyCloud(d){
   if(!d) return;
-  _replaceObj(CLIENTS, d.clients);
-  _replaceObj(RAW.expense, d.expense);
-  _replaceObj(RAW.income, d.income);
-  _replaceObj(CARDS, d.cards); if(!CARDS.limit)CARDS.limit=10000; if(CARDS.mc_charge>4500||!CARDS.mc_charge)CARDS.mc_charge=4094.40;
-  _replaceObj(BUDGETS, d.budgets);
-  _replaceObj(CLIENT_PROFILES, d.cp);
-  _replaceObj(SETTINGS, d.settings);
-  if(d.cr) _replaceObj(CLIENT_RECORDS, d.cr);
-  if(Array.isArray(d.goals)) GOALS=d.goals;
-  if(Array.isArray(d.fp))    FIXED_PAYMENTS=d.fp;
+  _mergeMonthObj(CLIENTS,     d.clients);
+  _mergeMonthObj(RAW.expense, d.expense);
+  _mergeMonthObj(RAW.income,  d.income);
+  _mergeObj(CARDS, d.cards); if(!CARDS.limit)CARDS.limit=10000; if(CARDS.mc_charge>4500||!CARDS.mc_charge)CARDS.mc_charge=4094.40;
+  _mergeObj(BUDGETS, d.budgets);
+  _mergeObj(CLIENT_PROFILES, d.cp);
+  _mergeObj(SETTINGS, d.settings);
+  if(d.cr) _mergeObj(CLIENT_RECORDS, d.cr);
+  if(Array.isArray(d.goals)&&d.goals.length>0) GOALS=d.goals;
+  if(Array.isArray(d.fp)&&d.fp.length>0)       FIXED_PAYMENTS=d.fp;
   if(d.mode){ APP_MODE=d.mode; localStorage.setItem('shani_mode',APP_MODE); applyMode(); }
   if(d.theme){ _theme=d.theme; localStorage.setItem('shani_theme',_theme); applyTheme(); }
   // mirror to localStorage without re-triggering a cloud push
