@@ -2002,7 +2002,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260790;
+var APP_VER=20260791;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -4494,24 +4494,33 @@ function _apptFix180626(){
 }
 setTimeout(_apptFix180626, 2500);
 
-// One-time: move הילה → 22/06 ₪800, נועם → 25/06 ₪900
+// One-time: move נועם → 25/06 ₪900 (update planned) + ensure הילה on 22/06 ₪800
 function _apptFix210626(){
   if(localStorage.getItem('_apptfix210626'))return;
   var changed=false;
   var jun=CLIENTS[6]||CLIENTS['6']||[];
   jun.forEach(function(ap){
-    if(ap.name==='הילה'&&ap.status!=='done'){ap.day=22;ap.amount=800;changed=true;}
-    if(ap.name==='נועם'&&ap.status!=='done'){ap.day=25;ap.amount=900;changed=true;}
+    if(ap.name==='נועם'&&ap.status!=='done'&&ap.status!=='cancelled'){ap.day=25;ap.amount=900;changed=true;}
   });
-  if(changed){
-    save();cloudPush();
-    localStorage.setItem('_apptfix210626','1');
-    try{renderClients();}catch(e){}
-    try{renderHome();}catch(e){}
-    toast('✓ תורים הועברו: הילה→22/06, נועם→25/06');
-  }
+  localStorage.setItem('_apptfix210626','1');
 }
 setTimeout(_apptFix210626, 2700);
+// v2: ensure הילה appears on 22/06 even if she had no planned entry
+function _apptFix210626b(){
+  if(localStorage.getItem('_apptfix210626b'))return;
+  var jun=CLIENTS[6]||CLIENTS['6']||[];
+  var hilaOn22=jun.filter(function(ap){return ap.name==='הילה'&&ap.day===22&&ap.status==='planned';});
+  if(hilaOn22.length===0){
+    jun.push({day:22,name:'הילה',amount:800,status:'planned',payMethod:'',payStatus:''});
+    CLIENTS[6]=jun;
+    save();cloudPush();
+    try{renderClients();}catch(e){}
+    try{renderHome();}catch(e){}
+    toast('✓ הילה נוספה: 22/06 ₪800');
+  }
+  localStorage.setItem('_apptfix210626b','1');
+}
+setTimeout(_apptFix210626b, 2900);
 
 // One-time: set bank balance to 9980 (overdrawn — stored as positive)
 function _balFix180626(){
