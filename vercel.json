@@ -1,10 +1,11 @@
 {
   "version": 2,
   "framework": null,
-  "buildCommand": "mkdir -p dist; cp index.html dist/index.html; cp manifest.json dist/ 2>/dev/null; cp favicon.png dist/ 2>/dev/null; cp icon-*.png dist/ 2>/dev/null; cp shani-finance.html dist/ 2>/dev/null; true",
+  "buildCommand": "mkdir -p dist; cp index.html dist/index.html; cp landing.html dist/ 2>/dev/null; cp manifest.json dist/ 2>/dev/null; cp favicon.png dist/ 2>/dev/null; cp icon-*.png dist/ 2>/dev/null; cp shani-finance.html dist/ 2>/dev/null; true",
   "outputDirectory": "dist",
   "installCommand": "echo skip",
   "rewrites": [
+    { "source": "/landing.html", "destination": "/landing.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
