@@ -43,9 +43,6 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   pointer-events:none;
 }
 #splash.out{opacity:0;pointer-events:none}
-/* Safety net: auto-hide splash after 1.5s even if JS is slow/blocked */
-@keyframes splashAutoHide{0%{opacity:1}85%{opacity:1}100%{opacity:0;pointer-events:none}}
-#splash{animation:splashAutoHide 1.8s ease forwards}
 
 /* sparkle stars */
 .sp-star{
@@ -1006,13 +1003,13 @@ html.mode-private .biz-only{ display:none!important; }
   <div class="hero">
     <div class="hero-top">
       <div class="hero-right">
-        <div class="hero-greet" id="home-greet">ברוכה הבאה ✨</div>
+        <div class="hero-greet" id="home-greet"></div>
         <div class="hero-date"  id="home-date"></div>
       </div>
       <div></div>
     </div>
     <div class="hero-lbl">מאזן צפוי — <span id="home-m-name">יוני</span></div>
-    <div class="hero-bal pos" id="home-bal">טוען...</div>
+    <div class="hero-bal pos" id="home-bal"></div>
     <div class="hero-delta-wrap"><span id="home-delta"></span></div>
     <div class="hero-sub"     id="home-sub"></div>
   </div>
@@ -1990,7 +1987,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260783;
+var APP_VER=20260784;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
