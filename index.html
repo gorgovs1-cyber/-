@@ -798,6 +798,8 @@ select option{background:#111D2C;color:#fff}
 .wiz-btn:active{transform:scale(.98)}
 .wiz-prof-btn{background:rgba(255,255,255,.06);border:1.5px solid var(--border2);color:var(--text2);font-family:'Rubik',sans-serif;font-size:12px;padding:9px 6px;border-radius:10px;cursor:pointer;transition:all .15s;text-align:center}
 .wiz-prof-btn.sel{background:rgba(45,212,191,.15);border-color:var(--cyan);color:var(--cyan);font-weight:500}
+.wiz-days-btn{flex:1;background:rgba(255,255,255,.06);border:1.5px solid var(--border2);color:var(--text2);font-family:'Rubik',sans-serif;font-size:15px;font-weight:600;padding:11px 6px;border-radius:10px;cursor:pointer;transition:all .15s;text-align:center}
+.wiz-days-btn.sel{background:rgba(45,212,191,.15);border-color:var(--cyan);color:var(--cyan)}
 .wiz-skip{font-size:13px;color:var(--muted);cursor:pointer;margin-top:12px;text-decoration:underline;text-decoration-color:rgba(255,255,255,.15)}
 .wiz-dots{display:flex;justify-content:center;gap:6px;margin-bottom:20px}
 .wiz-dot{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:background .2s}
@@ -1020,10 +1022,18 @@ html.mode-private .biz-only{ display:none!important; }
     </div>
     <!-- Step 2 -->
     <div class="wiz-step" id="wiz-s2">
-      <div class="wiz-icon">💰</div>
-      <div class="wiz-title">הכנסה חודשית</div>
-      <div class="wiz-sub">כמה בערך ₪ נכנסים לך בחודש?<br>(ביטוח לאומי + לקוחות + כל מקור)</div>
-      <input class="wiz-inp" id="wiz-income" placeholder="למשל: 8000" type="number" inputmode="numeric">
+      <div class="wiz-icon">💅</div>
+      <div class="wiz-title">קצת על העסק שלך</div>
+      <div class="wiz-sub">כך נחשב תחזיות מדויקות<br>ונדע כמה לקוחות חסרות לך לסגור חודש</div>
+      <div style="text-align:right;font-size:11px;color:var(--muted);margin-bottom:4px;direction:rtl">מחיר ממוצע לטיפול (₪)</div>
+      <input class="wiz-inp" id="wiz-avg-price" placeholder="למשל: 200" type="number" inputmode="numeric" style="margin-bottom:14px">
+      <div style="text-align:right;font-size:11px;color:var(--muted);margin-bottom:6px;direction:rtl">ימי עבודה בשבוע</div>
+      <div style="display:flex;gap:6px;margin-bottom:16px;direction:rtl">
+        <button class="wiz-days-btn" id="wdb-3" onclick="wizPickDays(3)">3</button>
+        <button class="wiz-days-btn" id="wdb-4" onclick="wizPickDays(4)">4</button>
+        <button class="wiz-days-btn sel" id="wdb-5" onclick="wizPickDays(5)">5</button>
+        <button class="wiz-days-btn" id="wdb-6" onclick="wizPickDays(6)">6</button>
+      </div>
       <button class="wiz-btn" onclick="wizStep(3)">הבא ›</button>
       <div class="wiz-skip" onclick="wizDone()">דלג</div>
     </div>
@@ -2166,7 +2176,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260820;
+var APP_VER=20260821;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -6716,6 +6726,7 @@ function showWelcomeWizard(){
   wiz.style.display='flex';
 }
 var _wizProf='';
+var _wizDays=5;
 var PROF_CATS={
   hair:{
     label:'מעצבת שיער',
@@ -6745,6 +6756,13 @@ function wizPickProf(p){
     if(b) b.classList.toggle('sel',k===p);
   });
 }
+function wizPickDays(d){
+  _wizDays=d;
+  for(var i=3;i<=6;i++){
+    var b=document.getElementById('wdb-'+i);
+    if(b) b.classList.toggle('sel',i===d);
+  }
+}
 function wizPickMode(m){
   _wizMode=m;
   var b=document.getElementById('wiz-biz'), p=document.getElementById('wiz-prv');
@@ -6763,9 +6781,11 @@ function wizStep(n){
 }
 function wizDone(){
   var nameVal=(document.getElementById('wiz-name').value||'').trim();
-  var incVal=parseFloat(document.getElementById('wiz-income').value)||0;
+  var avgPriceVal=parseFloat(document.getElementById('wiz-avg-price')?document.getElementById('wiz-avg-price').value:0)||0;
   if(nameVal){ SETTINGS.userName=nameVal; }
   SETTINGS.bizType=_wizBizType;
+  if(avgPriceVal>0) SETTINGS.avgPrice=Math.round(avgPriceVal);
+  if(_wizDays) SETTINGS.workDays=_wizDays;
   saveSettings();
   if(_wizProf && PROF_CATS[_wizProf]){
     SETTINGS.profession=_wizProf;
@@ -6776,10 +6796,6 @@ function wizDone(){
     toast('קטגוריות מותאמות ל'+pc.label+' נטענו ✓');
   }
   APP_MODE=_wizMode; localStorage.setItem('shani_mode',APP_MODE); applyMode();
-  if(incVal>0){
-    localStorage.setItem('pf_base_income',String(Math.round(incVal)));
-    FIXED=Math.round(incVal);
-  }
   var wiz=document.getElementById('wiz-overlay'); if(wiz){wiz.style.opacity='0';wiz.style.transition='opacity .3s';setTimeout(function(){wiz.style.display='none';},300);}
   localStorage.setItem('pf_welcomed','1');
   track('onboarding_complete',{mode:APP_MODE,has_income:incVal>0?1:0});
