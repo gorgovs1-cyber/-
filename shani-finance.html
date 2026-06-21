@@ -165,24 +165,32 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .auth-forgot{font-size:13px;color:var(--muted);cursor:pointer;text-align:left;margin-top:6px;text-decoration:underline;text-decoration-color:rgba(255,255,255,.2)}
 .auth-forgot:hover{color:var(--text2)}
 /* Landing page sections inside auth-screen */
-.lp-hero{text-align:center;padding:10px 0 22px}
-.lp-tagline{font-size:26px;font-weight:700;color:var(--text);line-height:1.25;margin-bottom:8px;letter-spacing:-.5px}
-.lp-tagline span{color:var(--cyan)}
-.lp-sub{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:22px}
-.lp-feats{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;text-align:right}
+.lp-hero{text-align:center;padding:10px 0 18px}
+.lp-tagline{font-size:30px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:8px;letter-spacing:-.8px}
+.lp-tagline span{color:var(--cyan);text-shadow:0 0 22px rgba(45,212,191,.28)}
+.lp-sub{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:18px}
+.lp-cta-hero{display:block;width:100%;background:var(--cyan);color:#08131F;font-family:'Rubik',sans-serif;font-size:16px;font-weight:700;padding:15px 16px;border-radius:14px;border:none;cursor:pointer;margin-bottom:20px;box-shadow:0 6px 22px rgba(45,212,191,.32);transition:transform .12s,box-shadow .12s;text-align:center;line-height:1.3}
+.lp-cta-hero small{display:block;font-size:11px;font-weight:400;margin-top:3px;opacity:.85}
+.lp-cta-hero:active{transform:scale(.97);box-shadow:0 2px 10px rgba(45,212,191,.2)}
+.lp-feats{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;text-align:right}
 .lp-feat{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text2);line-height:1.5}
 .lp-feat-icon{width:20px;height:20px;border-radius:50%;background:rgba(45,212,191,.18);color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
-.lp-story{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:18px 18px 16px;margin-bottom:22px;text-align:right}
+.lp-story{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:18px 18px 16px;margin-bottom:20px;text-align:right}
 .lp-story-text{font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:10px;font-style:italic}
 .lp-story-attr{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
 .lp-story-attr::before{content:'';flex:1;height:1px;background:var(--border)}
-.lp-pricing{display:flex;gap:10px;margin-bottom:22px}
-.lp-plan{flex:1;border-radius:14px;padding:14px 12px;border:1px solid var(--border2);text-align:right}
-.lp-plan.best{border-color:rgba(45,212,191,.4);background:rgba(45,212,191,.06)}
+.lp-pricing{display:flex;gap:9px;margin-bottom:14px}
+.lp-plan{flex:1;border-radius:14px;padding:13px 11px;border:2px solid var(--border2);text-align:right;cursor:pointer;transition:all .18s ease;-webkit-tap-highlight-color:transparent}
+.lp-plan:active{transform:scale(.97)}
+.lp-plan.best{border-color:rgba(45,212,191,.45);background:rgba(45,212,191,.07)}
+.lp-plan.selected{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(45,212,191,.15)}
+.lp-plan-badge{background:var(--cyan);color:#08131F;font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;display:inline-block;margin-bottom:5px;letter-spacing:.3px}
 .lp-plan-name{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;margin-bottom:4px}
 .lp-plan-price{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-1px;line-height:1.1}
-.lp-plan-price sub{font-size:12px;font-weight:400;color:var(--muted);letter-spacing:0}
+.lp-plan-price sub{font-size:11px;font-weight:400;color:var(--muted);letter-spacing:0}
 .lp-plan-feat{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.6}
+.lp-plan-btn{display:block;width:100%;margin-top:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--text2);font-family:'Rubik',sans-serif;font-size:11px;font-weight:600;padding:7px 4px;border-radius:9px;cursor:pointer;text-align:center}
+.lp-plan.best .lp-plan-btn{background:var(--cyan);color:#08131F;border-color:transparent}
 .lp-trial-badge{text-align:center;font-size:12px;color:var(--cyan);margin-bottom:16px;padding:8px;background:rgba(45,212,191,.08);border-radius:10px;border:1px solid rgba(45,212,191,.2)}
 .auth-sep{display:flex;flex-direction:column;gap:2px;margin-bottom:4px;text-align:right}
 .auth-sep-lbl{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:4px}
@@ -704,8 +712,10 @@ select option{background:#111D2C;color:#fff}
 .pw-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9500;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .25s}
 .pw-sheet{background:var(--bg2);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:32px 22px calc(40px + env(safe-area-inset-bottom,0px));max-height:92dvh;overflow-y:auto;border-top:2px solid rgba(45,212,191,.35)}
 .pw-plan-row{display:flex;gap:10px;margin:20px 0}
-.pw-plan{flex:1;border-radius:16px;padding:16px 14px;border:1px solid var(--border2);text-align:right;cursor:pointer;transition:border-color .2s}
-.pw-plan.hero{border-color:var(--cyan);background:rgba(45,212,191,.07)}
+.pw-plan{flex:1;border-radius:16px;padding:16px 14px;border:2px solid var(--border2);text-align:right;cursor:pointer;transition:all .18s ease;-webkit-tap-highlight-color:transparent}
+.pw-plan:active{transform:scale(.97)}
+.pw-plan.hero{border-color:var(--cyan);background:rgba(45,212,191,.09);box-shadow:0 0 0 3px rgba(45,212,191,.12)}
+.pw-plan-badge{background:var(--cyan);color:#08131F;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:6px;letter-spacing:.3px}
 .pw-plan-name{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:3px}
 .pw-plan-price{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-1px}
 .pw-plan-sub{font-size:11px;color:var(--muted);margin-top:2px}
@@ -1020,15 +1030,20 @@ html.mode-private .biz-only{ display:none!important; }
     <!-- Tagline -->
     <div class="lp-hero">
       <div class="lp-tagline">ניהול כסף חכם<br>ל<span>אנשי יופי עצמאיים</span></div>
-      <div class="lp-sub">הכנסות, הוצאות, לקוחות ומע"מ — כל מה שצריך לדוח השנתי, במקום אחד.<br><span style="font-size:12px;color:var(--muted)">פחות מ-2 קפה בחודש. ₪29 בלבד.</span></div>
+      <div class="lp-sub">הכנסות, הוצאות, לקוחות ומע"מ — כל מה שצריך לדוח השנתי, במקום אחד.</div>
     </div>
+
+    <!-- Hero CTA -->
+    <button class="lp-cta-hero" onclick="lpScrollToSignup()">
+      הרשמ/י בחינם — חודש ראשון עלינו
+      <small>ללא כרטיס אשראי · בטל/י בכל עת</small>
+    </button>
 
     <!-- Feature bullets -->
     <div class="lp-feats">
       <div class="lp-feat"><div class="lp-feat-icon">✓</div><div>מעקב לקוחות ותורים — מי שילם ומי עוד חייב</div></div>
-      <div class="lp-feat"><div class="lp-feat-icon">✓</div><div>ייצוא CSV לרואה חשבון עם פירוט מע"מ</div></div>
-      <div class="lp-feat"><div class="lp-feat-icon">✓</div><div>צפי עו"ש לסוף החודש — לא תופתעי</div></div>
-      <div class="lp-feat"><div class="lp-feat-icon">✓</div><div>יועצת AI שמבינה עוסק פטור ומורשה</div></div>
+      <div class="lp-feat"><div class="lp-feat-icon">✓</div><div>ייצוא CSV לרואה חשבון + פירוט מע"מ מלא</div></div>
+      <div class="lp-feat"><div class="lp-feat-icon">✓</div><div>יועץ/ת AI + צפי עו"ש לסוף החודש</div></div>
     </div>
 
     <!-- Founder story -->
@@ -1039,25 +1054,29 @@ html.mode-private .biz-only{ display:none!important; }
 
     <!-- Pricing -->
     <div class="lp-pricing">
-      <div class="lp-plan">
+      <div class="lp-plan" onclick="lpSelectPlan(this,'personal')">
         <div class="lp-plan-name">אישי</div>
         <div class="lp-plan-price">₪29<sub>/חודש</sub></div>
         <div class="lp-plan-feat">מעקב מלא<br>ייצוא CSV</div>
+        <button class="lp-plan-btn" onclick="lpScrollToSignup()">בחר/י</button>
       </div>
-      <div class="lp-plan best">
+      <div class="lp-plan best" onclick="lpSelectPlan(this,'business')">
+        <div class="lp-plan-badge">הכי פופולרי</div>
         <div class="lp-plan-name">עסקי ⭐</div>
         <div class="lp-plan-price">₪59<sub>/חודש</sub></div>
         <div class="lp-plan-feat">הכל + מע"מ<br>AI ללא הגבלה</div>
+        <button class="lp-plan-btn" onclick="lpScrollToSignup()">בחר/י</button>
       </div>
-      <div class="lp-plan">
+      <div class="lp-plan" onclick="lpSelectPlan(this,'free')">
         <div class="lp-plan-name">חינמי</div>
         <div class="lp-plan-price">₪0</div>
         <div class="lp-plan-feat">מעקב בסיסי<br>3 שאלות AI</div>
+        <button class="lp-plan-btn" onclick="lpScrollToSignup()">התחל/י</button>
       </div>
     </div>
 
-    <!-- Trial badge -->
-    <div class="lp-trial-badge">🎁 חודש ראשון חינמי — ללא כרטיס אשראי</div>
+    <!-- Trial note -->
+    <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:18px">פחות מ-2 קפה בחודש · ₪29 בלבד · בטל/י בכל עת</div>
 
     <!-- Login / Signup -->
     <div class="auth-sub" id="auth-sub" style="margin-bottom:14px">כניסה — לסנכרון הנתונים בכל המכשירים</div>
@@ -2107,7 +2126,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260799;
+var APP_VER=20260800;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -5028,13 +5047,14 @@ function showPaywall(feat){
         '<div style="font-size:13px;color:var(--muted);line-height:1.65">'+sub+'</div>'+
       '</div>'+
       '<div class="pw-plan-row">'+
-        '<div class="pw-plan">'+
+        '<div class="pw-plan" onclick="pwSelectPlan(this,\'personal\')">'+
           '<div class="pw-plan-name">אישי</div>'+
           '<div class="pw-plan-price" style="font-size:20px">₪29<span style="font-size:12px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
           '<div class="pw-plan-sub">₪249 לשנה · חיסכון 28%</div>'+
         '</div>'+
-        '<div class="pw-plan hero">'+
-          '<div class="pw-plan-name">עסקי ⭐ <span style="font-size:10px;color:var(--cyan)">הכי פופולרי</span></div>'+
+        '<div class="pw-plan hero" onclick="pwSelectPlan(this,\'business\')">'+
+          '<div class="pw-plan-badge">הכי פופולרי</div>'+
+          '<div class="pw-plan-name">עסקי ⭐</div>'+
           '<div class="pw-plan-price">₪59<span style="font-size:12px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
           '<div class="pw-plan-sub">₪499 לשנה · חיסכון 30%</div>'+
         '</div>'+
@@ -5047,8 +5067,8 @@ function showPaywall(feat){
         '<div><span>✓</span>יומן לקוחות + SMS תזכורות</div>'+
         '<div><span>✓</span>גיבוי ענן + ריבוי מכשירים</div>'+
       '</div>'+
-      '<button class="pw-cta" onclick="contactForUpgrade()">📱 שדרגי עכשיו דרך WhatsApp</button>'+
-      '<button class="pw-dismiss" onclick="closePaywall()">המשיכי בחינם</button>'+
+      '<button class="pw-cta" id="pw-cta-btn" onclick="contactForUpgrade()">📱 שדרג/י עכשיו דרך WhatsApp</button>'+
+      '<button class="pw-dismiss" onclick="closePaywall()">המשיכ/י בחינם</button>'+
     '</div>'+
   '</div>';
   var ex=document.getElementById('pw-overlay');
@@ -5057,6 +5077,23 @@ function showPaywall(feat){
 function closePaywall(){
   var el=document.getElementById('pw-overlay');
   if(el) el.remove();
+}
+function pwSelectPlan(el, plan){
+  var plans=document.querySelectorAll('#pw-overlay .pw-plan');
+  for(var i=0;i<plans.length;i++) plans[i].classList.remove('hero');
+  el.classList.add('hero');
+  var btn=document.getElementById('pw-cta-btn');
+  if(btn) btn.textContent='📱 שדרג/י ל'+(plan==='business'?'עסקי ₪59':'אישי ₪29')+' דרך WhatsApp';
+}
+function lpSelectPlan(el, plan){
+  var plans=document.querySelectorAll('.lp-plan');
+  for(var i=0;i<plans.length;i++) plans[i].classList.remove('selected');
+  el.classList.add('selected');
+  sessionStorage.setItem('preferred_plan', plan);
+}
+function lpScrollToSignup(){
+  var btn=document.getElementById('auth-google');
+  if(btn) btn.scrollIntoView({behavior:'smooth',block:'center'});
 }
 function contactForUpgrade(){
   var msg=encodeURIComponent('היי! אני רוצה לשדרג את My Money לגרסה המלאה 🌟');
