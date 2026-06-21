@@ -167,6 +167,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .sync-dot.ok{background:var(--pos);box-shadow:none}
 .sync-dot.err{background:var(--neg)}
 .sync-dot.busy{background:#FFB347;animation:syncPulse 1s ease-in-out infinite}
+.sync-dot[title="אין חיבור לאינטרנט"]{animation:syncPulse 2s ease-in-out infinite}
 @keyframes syncPulse{50%{opacity:.4}}
 
 /* ══ SCREENS ═════════════════════════════════════════════ */
@@ -1961,7 +1962,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260776;
+var APP_VER=20260777;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -6740,6 +6741,20 @@ function onSignedIn(user){
       else { FB_UID=null; updateAccountUI(null); setSyncDot(''); showAuthScreen(); }
     });
   }catch(e){ hideAuthScreen(); }
+})();
+
+// ── SERVICE WORKER + OFFLINE INDICATOR ──────────────────
+(function(){
+  if(!('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.register('/sw.js').catch(function(){});
+  function setOffline(offline){
+    setSyncDot(offline?'err':'');
+    var dot=document.getElementById('sync-dot');
+    if(dot) dot.title=offline?'אין חיבור לאינטרנט':'';
+  }
+  window.addEventListener('online',  function(){ setOffline(false); cloudPush&&cloudPush(); });
+  window.addEventListener('offline', function(){ setOffline(true); });
+  if(!navigator.onLine) setOffline(true);
 })();
 </script>
 </body>
