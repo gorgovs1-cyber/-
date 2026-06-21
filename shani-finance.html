@@ -1431,9 +1431,13 @@ html.mode-private .biz-only{ display:none!important; }
       <div class="mi-row" style="margin-bottom:10px">
         <div class="mfld"><label>תאריך (אופציונלי)</label><input type="date" id="sf-date"></div>
       </div>
-      <div class="mi-row" style="margin-bottom:14px">
+      <div class="mi-row" style="margin-bottom:10px">
         <div class="mfld"><label>תגיות (אופציונלי, מופרדות בפסיק)</label><input type="text" id="sf-tags" placeholder="מזון, בית, חיסכון..."></div>
       </div>
+      <label style="display:flex;align-items:center;gap:9px;margin-bottom:14px;cursor:pointer;user-select:none">
+        <input type="checkbox" id="sf-private" style="width:16px;height:16px;accent-color:var(--muted);cursor:pointer;flex-shrink:0">
+        <span style="font-size:12px;color:var(--muted)">🏠 פרטי — לא יופיע בייצוא לרו"ח</span>
+      </label>
       <button onclick="addSingleTxn()" style="width:100%;background:var(--cyan);color:#0A1520;font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer">הוסף ✓</button>
     </div>
     <!-- Screenshot panel -->
@@ -2146,7 +2150,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260806;
+var APP_VER=20260807;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2642,10 +2646,11 @@ function exportAccountantCSV(){
     ?'תאריך,חודש,תיאור,סכום,מע"מ (17%),סכום נטו,סיווג,ניכוי מע"מ,קטגוריה'
     :'תאריך,חודש,תיאור,סכום,סיווג,קטגוריה');
 
-  // All expense rows
+  // All expense rows (private transactions excluded)
   for(var m=1;m<=12;m++){
     var items=RAW.expense[m]||[];
     items.forEach(function(t){
+      if(t.priv) return; // פרטי — לא לייצוא
       var total=safeN(t.a);
       var isBiz2=t.biz===true||(t.biz===undefined&&isBizExpense(t));
       var cls=t.biz===true?'עסקי':t.biz===false?'פרטי':(isBiz2?'עסקי (אוטו)':'פרטי');
@@ -2679,6 +2684,7 @@ function exportAccountantCSV(){
   var totalExp=0,totalBizExp=0,totalPrivExp=0,totalVatDedBase=0;
   for(var tm=1;tm<=12;tm++){
     (RAW.expense[tm]||[]).forEach(function(t){
+      if(t.priv) return;
       var a=safeN(t.a);
       totalExp+=a;
       var isBiz3=t.biz===true||(t.biz===undefined&&isBizExpense(t));
@@ -4619,10 +4625,13 @@ function addSingleTxn(){
   var tagsVal=document.getElementById('sf-tags').value.trim();
   var tags=tagsVal?tagsVal.split(',').map(function(s){return s.trim();}).filter(Boolean):[];
   if(tags.length)entry.tags=tags;
+  var privEl=document.getElementById('sf-private');
+  if(privEl&&privEl.checked&&addType==='expense') entry.priv=1;
   if(addType==='expense'){RAW.expense[mo.key]=RAW.expense[mo.key]||[];RAW.expense[mo.key].push(entry);}
   else{RAW.income[mo.key]=RAW.income[mo.key]||[];RAW.income[mo.key].push(entry);}
   save();
   document.getElementById('sf-desc').value='';document.getElementById('sf-amt').value='';document.getElementById('sf-tags').value='';
+  if(privEl)privEl.checked=false;
   closeMbg('atxn-mbg');
   renderHome();toast('✓ '+desc+' נוסף');
   track('add_transaction',{method:'form',type:addType,payment_method:addMethod,amount:amt});
@@ -6008,8 +6017,9 @@ function renderSuppliers(){
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">' +
       '<div style="font-size:15px;font-weight:500;color:var(--text)">' + esc(s.name) + '</div>' +
       '<div style="display:flex;gap:6px">' +
-      '<button onclick="openCatalog(\'' + s.id + '\')" style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.25);border-radius:var(--rs);color:var(--cyan);font-size:11px;font-weight:500;font-family:\'Rubik\',sans-serif;padding:5px 10px;cursor:pointer">קטלוג</button>' +
-      '<button onclick="openSupplierModal(\'' + s.id + '\')" style="background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:11px;font-family:\'Rubik\',sans-serif;padding:5px 8px;cursor:pointer">עריכה</button>' +
+      '<button onclick="openOrderModal(\'' + s.id + '\')" style="background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.3);border-radius:var(--rs);color:var(--cyan);font-size:11px;font-weight:600;font-family:\'Rubik\',sans-serif;padding:5px 11px;cursor:pointer">+ הזמנה</button>' +
+      '<button onclick="openCatalog(\'' + s.id + '\')" style="background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:11px;font-family:\'Rubik\',sans-serif;padding:5px 8px;cursor:pointer">קטלוג</button>' +
+      '<button onclick="openSupplierModal(\'' + s.id + '\')" style="background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:11px;font-family:\'Rubik\',sans-serif;padding:5px 8px;cursor:pointer">עריכה</button>' +
       '<button onclick="delSupplier(\'' + s.id + '\')" style="background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.25);border-radius:var(--rs);color:var(--neg);font-size:11px;font-family:\'Rubik\',sans-serif;padding:5px 8px;cursor:pointer">מחק</button>' +
       '</div></div>' +
       '<div style="display:flex;gap:14px;font-size:11px;color:var(--muted)">' +
@@ -6303,7 +6313,7 @@ function renderOrders(){
   el.innerHTML=h;
 }
 
-function openOrderModal(){
+function openOrderModal(preSupId){
   _orderItems=[];
   document.getElementById('ord-items-list').innerHTML='';
   document.getElementById('ord-total-disp').textContent='0';
@@ -6318,13 +6328,15 @@ function openOrderModal(){
     opt.value=s.id; opt.textContent=s.name;
     sel.appendChild(opt);
   });
-  sel.value='';
+  sel.value = preSupId || '';
   document.getElementById('ord-catalog-chips').style.display='none';
   // default dates
   var now = new Date();
   var today = now.getFullYear()+'-'+(now.getMonth()<9?'0':'')+(now.getMonth()+1)+'-'+(now.getDate()<10?'0':'')+now.getDate();
   document.getElementById('ord-date-inp').value=today;
   document.getElementById('ord-due-inp').value=today;
+  document.getElementById('ord-catalog-chips').style.display='none';
+  if(preSupId) pickOrderSupplier();
   document.getElementById('ord-mbg').classList.add('open');
 }
 
