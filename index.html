@@ -1991,8 +1991,13 @@ html.mode-private .biz-only{ display:none!important; }
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
 <script>
 'use strict';
+// Global error trap — shows first uncaught JS error as a toast for mobile debugging
+window.onerror=function(msg,src,line){
+  var el=document.getElementById('home-greet');
+  if(el)el.textContent='⚠️ JS ERR: '+msg+' ('+String(src).split('/').pop()+':'+line+')';
+};
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260786;
+var APP_VER=20260787;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -4560,7 +4565,10 @@ setTimeout(_mcFix180626, 3100);
 })();
 initSplash();
 applyTheme();
-renderHome();
+try{renderHome();}catch(e){
+  var _el=document.getElementById('home-bal');
+  if(_el)_el.textContent='ERR: '+e.message;
+}
 updateBaseIncDisplay();
 updateBizTypeDisplay();
 updateBottomNav('home');
