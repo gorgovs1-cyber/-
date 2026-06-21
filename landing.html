@@ -3,491 +3,425 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Money — ניהול כסף לאנשי יופי עצמאיים</title>
-<meta name="description" content="האפליקציה הפיננסית הראשונה שנבנתה לקוסמטיקאיות, טכנאי ציפורניים ואנשי יופי בישראל">
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>My Money — ניהול כסף לאנשי יופי</title>
+<meta name="description" content="האפליקציה הפיננסית שנבנתה בשביל קוסמטיקאיות, טכנאיות ציפורניים ומעצבי שיער בישראל">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&display=swap" rel="stylesheet">
 <style>
-/* ─── RESET ─── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#07090F;--bg2:#0C0F1A;--bg3:#111827;
-  --c:#2DD4BF;--c2:rgba(45,212,191,.12);--c3:rgba(45,212,191,.06);
-  --g:#F59E0B;--g2:rgba(245,158,11,.12);
-  --r:#F87171;--p:#22C55E;
-  --t:#F0F4F8;--t2:#94A3B8;--t3:#475569;
-  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);
-  --noise:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  --bg:#06080E;--bg2:#0C0F1B;--bg3:#111827;
+  --c:#2DD4BF;--c2:rgba(45,212,191,.1);
+  --g:#F59E0B;--r:#F87171;--p:#22C55E;
+  --t:#F1F5F9;--t2:#94A3B8;--t3:#475569;
+  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.14);
+  --noise:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.033'/%3E%3C/svg%3E");
 }
 html{scroll-behavior:smooth}
 body{font-family:'Rubik',sans-serif;background:var(--bg);color:var(--t);line-height:1.6;overflow-x:hidden;cursor:none}
-
-/* ─── CUSTOM CURSOR ─── */
 #cur,#cur2{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:difference}
-#cur{width:12px;height:12px;background:#fff;transform:translate(-50%,-50%);transition:transform .1s}
-#cur2{width:36px;height:36px;border:1.5px solid rgba(255,255,255,.4);transform:translate(-50%,-50%);transition:transform .15s,width .2s,height .2s,border-color .2s}
-body:has(a:hover) #cur2,body:has(button:hover) #cur2{width:52px;height:52px;border-color:var(--c)}
+#cur{width:10px;height:10px;background:#fff;transform:translate(-50%,-50%);transition:transform .08s}
+#cur2{width:30px;height:30px;border:1.5px solid rgba(255,255,255,.5);transform:translate(-50%,-50%);transition:all .18s ease}
+body:has(a:hover) #cur2,body:has(button:hover) #cur2{width:54px;height:54px;border-color:var(--c)}
 @media(pointer:coarse){#cur,#cur2{display:none}body{cursor:auto}}
+body::before{content:'';position:fixed;inset:0;background:var(--noise);pointer-events:none;z-index:9998}
+#prog{position:fixed;top:0;right:0;width:0%;height:2px;background:linear-gradient(to left,var(--c),var(--g));z-index:9997;transition:width .06s linear}
 
-/* ─── NOISE OVERLAY ─── */
-body::before{content:'';position:fixed;inset:0;background:var(--noise);pointer-events:none;z-index:9998;opacity:1}
+/* NAV */
+nav{position:fixed;top:0;right:0;left:0;z-index:600;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(16px,5vw,60px);background:rgba(6,8,14,.8);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--bd)}
+.nl{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nm{width:30px;height:30px;background:var(--c);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#03110E;flex-shrink:0}
+.nn{font-size:15px;font-weight:700;letter-spacing:-.02em}
+.nr{display:flex;align-items:center;gap:20px}
+.nr a{color:var(--t3);font-size:13px;text-decoration:none;font-weight:500;transition:color .2s;cursor:none}
+.nr a:hover{color:var(--t)}
+.nc{background:var(--c);color:#03110E;font-family:'Rubik',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:8px;border:none;cursor:none;text-decoration:none;transition:all .2s;display:inline-block}
+.nc:hover{box-shadow:0 0 0 4px rgba(45,212,191,.22);transform:translateY(-1px)}
+@media(max-width:560px){.nr a:not(.nc){display:none}}
 
-/* ─── PROGRESS BAR ─── */
-#prog{position:fixed;top:0;right:0;width:0%;height:2px;background:linear-gradient(to left,var(--c),var(--g));z-index:9997;transition:width .08s linear}
+/* HERO — split grid */
+#hero{min-height:100svh;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden;border-bottom:1px solid var(--bd)}
+.hero-l{padding:100px clamp(24px,4vw,60px) 80px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2}
+.hero-r{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero-grid-lines{position:absolute;inset:0;background-image:linear-gradient(to right,rgba(45,212,191,.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(45,212,191,.04) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 70% 80% at 60% 50%,black 40%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 70% 80% at 60% 50%,black 40%,transparent 100%)}
+.hero-shekel{font-size:clamp(200px,22vw,360px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(45,212,191,.18);line-height:1;position:relative;z-index:1;animation:shFloat 7s ease-in-out infinite;user-select:none;letter-spacing:-.05em}
+@keyframes shFloat{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-22px) rotate(-3deg)}}
+.hero-prof-row{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--c);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.hero-prof-row::before{content:'';width:22px;height:1px;background:var(--c);flex-shrink:0}
+.prof-cycle{display:inline-block;transition:opacity .28s}
+.hero-h1{font-size:clamp(38px,5.5vw,70px);font-weight:900;line-height:1;letter-spacing:-.05em;margin-bottom:12px}
+.hero-h1 .line1{display:block;color:var(--t)}
+.hero-h1 .line2{display:block;color:transparent;-webkit-text-stroke:1px rgba(148,163,184,.5);font-size:.92em}
+.hero-h1 .line3{display:block;color:var(--c)}
+.hero-p{font-size:clamp(14px,1.6vw,17px);color:var(--t2);line-height:1.75;margin:22px 0 34px;max-width:420px;font-weight:400}
+.hero-btns{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn-main{background:var(--c);color:#03110E;font-family:'Rubik',sans-serif;font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;border:none;cursor:none;text-decoration:none;transition:all .22s;display:inline-block}
+.btn-main:hover{box-shadow:0 12px 40px rgba(45,212,191,.35);transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--t2);font-family:'Rubik',sans-serif;font-size:14px;font-weight:500;padding:13px 20px;border-radius:10px;border:1px solid var(--bd2);cursor:none;text-decoration:none;transition:all .2s;display:inline-block}
+.btn-ghost:hover{border-color:var(--c);color:var(--c)}
+.hero-meta{margin-top:32px;font-size:12px;color:var(--t3);display:flex;flex-wrap:wrap;gap:18px}
+.hero-meta span{display:flex;align-items:center;gap:5px}
+.hero-meta span i{color:var(--p);font-style:normal}
+@media(max-width:768px){#hero{grid-template-columns:1fr}.hero-r{display:none}.hero-l{padding:100px clamp(20px,5vw,40px) 60px}}
 
-/* ─── NAV ─── */
-nav{
-  position:fixed;top:0;right:0;left:0;z-index:500;height:64px;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 clamp(16px,4vw,48px);
-  background:rgba(7,9,15,.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--bd);
-}
-.n-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
-.n-mark{width:34px;height:34px;background:var(--c);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#04120F}
-.n-name{font-size:16px;font-weight:700}
-.n-links{display:flex;gap:24px;align-items:center}
-.n-links a{color:var(--t2);font-size:13px;text-decoration:none;font-weight:500;transition:color .2s;cursor:none}
-.n-links a:hover{color:var(--t)}
-.n-cta{background:var(--c);color:#04120F;font-family:'Rubik',sans-serif;font-size:13px;font-weight:700;padding:9px 20px;border-radius:9px;border:none;cursor:none;text-decoration:none;transition:box-shadow .2s,transform .15s}
-.n-cta:hover{box-shadow:0 0 0 4px rgba(45,212,191,.2);transform:translateY(-1px)}
-@media(max-width:580px){.n-links{display:none}}
+/* TICKER */
+.ticker{overflow:hidden;background:var(--bg2);border-bottom:1px solid var(--bd);padding:12px 0;position:relative}
+.ticker::before,.ticker::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+.ticker::before{right:0;background:linear-gradient(to left,var(--bg2),transparent)}
+.ticker::after{left:0;background:linear-gradient(to right,var(--bg2),transparent)}
+.ticker-inner{display:flex;gap:0;width:max-content;animation:tickScroll 30s linear infinite}
+.ticker-inner:hover{animation-play-state:paused}
+@keyframes tickScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ti{font-size:12.5px;font-weight:500;color:var(--t3);padding:0 22px;white-space:nowrap;display:flex;align-items:center;gap:9px;border-right:1px solid var(--bd)}
+.ti strong{color:var(--t2);font-weight:600}
+.ti-dot{width:3px;height:3px;border-radius:50%;background:var(--c);flex-shrink:0}
 
-/* ─── HERO ─── */
-#hero{
-  min-height:100svh;padding:0 clamp(16px,4vw,48px);
-  display:flex;flex-direction:column;align-items:flex-end;justify-content:center;
-  position:relative;overflow:hidden;
-}
-/* Giant ₪ watermark */
-.hero-wm{
-  position:absolute;left:-8vw;top:50%;transform:translateY(-50%);
-  font-size:clamp(280px,40vw,520px);font-weight:900;
-  color:transparent;-webkit-text-stroke:1px rgba(45,212,191,.08);
-  line-height:1;pointer-events:none;
-  animation:wmRotate 40s linear infinite;
-  user-select:none;
-}
-@keyframes wmRotate{from{transform:translateY(-50%) rotate(0)}to{transform:translateY(-50%) rotate(360deg)}}
-.hero-inner{max-width:560px;position:relative;z-index:1}
-.hero-pill{
-  display:inline-flex;align-items:center;gap:8px;
-  border:1px solid rgba(245,158,11,.35);
-  background:rgba(245,158,11,.07);
-  color:var(--g);font-size:12px;font-weight:600;letter-spacing:.3px;
-  padding:5px 14px;border-radius:999px;margin-bottom:28px;
-  animation:slideIn .7s ease both;
-}
-@keyframes slideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.hero-h1{
-  font-size:clamp(36px,5.5vw,68px);font-weight:900;line-height:1.05;
-  letter-spacing:-.04em;margin-bottom:22px;
-  animation:slideIn .7s .1s ease both;
-}
-.hero-h1 em{font-style:normal;color:var(--c);position:relative;display:inline-block}
-.hero-h1 em::after{
-  content:'';position:absolute;bottom:-4px;right:0;left:0;height:3px;
-  background:var(--c);border-radius:2px;transform:scaleX(0);transform-origin:right;
-  animation:lineGrow 1s .9s ease both;
-}
-@keyframes lineGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.hero-p{font-size:clamp(15px,2vw,18px);color:var(--t2);line-height:1.75;margin-bottom:36px;animation:slideIn .7s .2s ease both;max-width:460px}
-.hero-btns{display:flex;flex-wrap:wrap;gap:12px;animation:slideIn .7s .3s ease both}
-.btn-c{background:var(--c);color:#04120F;font-family:'Rubik',sans-serif;font-size:15px;font-weight:700;padding:14px 28px;border-radius:12px;border:none;cursor:none;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
-.btn-c:hover{box-shadow:0 8px 32px rgba(45,212,191,.35);transform:translateY(-2px)}
-.btn-o{background:transparent;color:var(--t2);font-family:'Rubik',sans-serif;font-size:14px;font-weight:500;padding:13px 22px;border-radius:12px;border:1px solid var(--bd2);cursor:none;text-decoration:none;transition:all .2s}
-.btn-o:hover{border-color:var(--c);color:var(--c)}
-.hero-trust{margin-top:40px;display:flex;flex-wrap:wrap;gap:18px;font-size:12.5px;color:var(--t3);animation:slideIn .7s .4s ease both}
-.hero-trust span{display:flex;align-items:center;gap:6px}
-.hero-trust span::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--p);flex-shrink:0}
-/* Scroll hint */
-.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--t3);font-size:11px;letter-spacing:.8px;animation:slideIn 1s .8s ease both}
-.scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,var(--t3),transparent);animation:scrollPulse 2s ease-in-out infinite}
-@keyframes scrollPulse{0%,100%{opacity:.3;transform:scaleY(.8)}50%{opacity:1;transform:scaleY(1)}}
+/* MANIFESTO */
+#manifesto{padding:80px clamp(20px,5vw,80px);border-bottom:1px solid var(--bd);position:relative;overflow:hidden}
+#manifesto::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 70% at 80% 50%,rgba(45,212,191,.04),transparent);pointer-events:none}
+.mf-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:40px}
+.mf-lines{list-style:none}
+.mf-line{font-size:clamp(26px,4vw,52px);font-weight:900;letter-spacing:-.04em;line-height:1.1;padding:18px 0;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:20px;cursor:default}
+.mf-line:first-child{border-top:1px solid var(--bd)}
+.mf-line .mf-num{font-size:11px;font-weight:500;color:var(--t3);flex-shrink:0;letter-spacing:.5px;font-variant-numeric:tabular-nums}
+.mf-line .mf-text{transition:color .25s}
+.mf-line .mf-icon{font-size:26px;opacity:.65;flex-shrink:0}
+.mf-line:hover .mf-text{color:var(--c)}
+.mf-line.dim .mf-text{color:var(--t3);font-weight:300}
+.mf-line.hi .mf-text{color:var(--c)}
 
-/* ─── MARQUEE ─── */
-.marquee-wrap{overflow:hidden;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);background:var(--bg2);padding:14px 0}
-.marquee{display:flex;gap:48px;white-space:nowrap;animation:marqueeScroll 22s linear infinite}
-.marquee-item{font-size:13px;color:var(--t3);font-weight:500;flex-shrink:0;display:flex;align-items:center;gap:10px}
-.marquee-item strong{color:var(--t2)}
-.marquee-dot{width:4px;height:4px;border-radius:50%;background:var(--c);flex-shrink:0}
-@keyframes marqueeScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* PROBLEM/SOLUTION */
+#problem{display:grid;grid-template-columns:1fr 1fr;gap:2px;border-bottom:1px solid var(--bd)}
+.prob-side{padding:clamp(32px,4vw,60px)}
+.prob-b{background:rgba(248,113,113,.03)}
+.prob-a{background:rgba(45,212,191,.03)}
+.prob-lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:22px;display:flex;align-items:center;gap:8px}
+.lbl-b{color:var(--r)}.lbl-a{color:var(--c)}
+.prob-h{font-size:clamp(22px,2.8vw,34px);font-weight:900;letter-spacing:-.04em;line-height:1.15;margin-bottom:22px}
+.prob-item{display:flex;gap:12px;margin-bottom:15px;font-size:14px;color:var(--t2);line-height:1.65;align-items:flex-start}
+.prob-icon{font-size:16px;flex-shrink:0;margin-top:2px}
+@media(max-width:640px){#problem{grid-template-columns:1fr}.prob-b{border-bottom:1px solid var(--bd)}}
 
-/* ─── STAT BAND ─── */
-#stats{padding:0 clamp(16px,4vw,48px);margin:80px 0}
-.stats-row{display:flex;flex-wrap:wrap;gap:1px;background:var(--bd);border:1px solid var(--bd);border-radius:20px;overflow:hidden}
-.stat-box{flex:1;min-width:160px;background:var(--bg);padding:32px 28px;display:flex;flex-direction:column;gap:6px;transition:background .3s}
-.stat-box:hover{background:var(--bg2)}
-.stat-n{font-size:clamp(36px,5vw,56px);font-weight:900;letter-spacing:-.04em;color:var(--c);line-height:1}
-.stat-l{font-size:13px;color:var(--t3);font-weight:500}
+/* BIG NUMBER */
+#bignumber{padding:110px clamp(20px,5vw,80px);text-align:center;position:relative;overflow:hidden;border-bottom:1px solid var(--bd)}
+.bn-bg-txt{position:absolute;font-size:clamp(140px,22vw,300px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(45,212,191,.045);top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none;user-select:none;line-height:1}
+.bn-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:16px;position:relative}
+.bn-num{font-size:clamp(80px,14vw,180px);font-weight:900;letter-spacing:-.07em;line-height:1;color:var(--c);margin-bottom:16px;position:relative}
+.bn-desc{font-size:clamp(15px,2vw,21px);color:var(--t2);font-weight:300;line-height:1.65;max-width:540px;margin:0 auto;position:relative}
+.bn-desc strong{color:var(--t);font-weight:700}
 
-/* ─── STICKY FEATURE SECTION ─── */
-#sticky-feat{display:flex;gap:0;min-height:100svh;position:relative}
-.sf-phone-col{
-  position:sticky;top:0;height:100svh;width:45%;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-}
-.sf-text-col{flex:1;padding:80px clamp(16px,4vw,48px) 80px 60px}
-/* Phone frame */
-.sf-phone{width:220px;height:450px;background:#080D18;border-radius:34px;border:2px solid rgba(255,255,255,.12);box-shadow:0 40px 80px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04),inset 0 1px 0 rgba(255,255,255,.08);overflow:hidden;position:relative}
-.sf-screen{position:absolute;inset:0;padding:0;overflow:hidden;transition:opacity .4s}
-.sf-screen.hidden{opacity:0;pointer-events:none}
-.sf-bar{height:28px;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:9px;color:rgba(255,255,255,.35)}
-/* Screen 1: balance */
-.s1-bal{text-align:center;padding:20px 14px 0}
-.s1-lbl{font-size:8.5px;color:rgba(255,255,255,.35);letter-spacing:.5px;margin-bottom:3px}
-.s1-num{font-size:28px;font-weight:800;color:#2DD4BF;text-shadow:0 0 20px rgba(45,212,191,.3)}
-.s1-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:12px 14px 0}
-.s1-tile{background:#111827;border-radius:8px;padding:7px 5px;text-align:center;border-top:2px solid var(--tc,#2DD4BF)}
-.s1-tv{font-size:10px;font-weight:700}
-.s1-tl{font-size:7px;color:rgba(255,255,255,.35);margin-top:1px}
-.s1-rows{padding:0 14px;margin-top:10px}
-.s1-row{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)}
-.s1-ico{width:22px;height:22px;border-radius:6px;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.s1-rn{font-size:8.5px;color:rgba(255,255,255,.55);flex:1}
-.s1-ra{font-size:8.5px;font-weight:600;color:#F87171}
-/* Screen 2: clients */
-.s2-hdr{background:rgba(45,212,191,.08);padding:10px 14px;border-bottom:1px solid rgba(45,212,191,.1)}
-.s2-ttl{font-size:10px;font-weight:700;color:#2DD4BF}
-.s2-row{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.04)}
-.s2-name{font-size:9px;color:rgba(255,255,255,.7)}
-.s2-time{font-size:8px;color:rgba(255,255,255,.3)}
-.s2-badge{font-size:7px;font-weight:700;padding:2px 6px;border-radius:4px}
-.s2-paid{background:rgba(34,197,94,.15);color:#22C55E}
-.s2-pend{background:rgba(248,113,113,.15);color:#F87171}
-/* Screen 3: export */
-.s3-body{padding:14px}
-.s3-card{background:#111827;border-radius:10px;padding:10px;margin-bottom:8px}
-.s3-lbl{font-size:8px;color:rgba(255,255,255,.35);margin-bottom:5px}
-.s3-val{font-size:13px;font-weight:700;color:#2DD4BF}
-.s3-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)}
-.s3-rn{font-size:8.5px;color:rgba(255,255,255,.5)}
-.s3-rv{font-size:8.5px;font-weight:600;color:rgba(255,255,255,.8)}
-.s3-btn{display:block;margin-top:12px;background:#2DD4BF;color:#04120F;font-size:9px;font-weight:700;padding:9px;border-radius:8px;text-align:center;border:none}
-/* Screen 4: AI */
-.s4-body{padding:14px}
-.s4-card{background:#111827;border-radius:10px;padding:10px;margin-bottom:8px;border:1px solid rgba(45,212,191,.15)}
-.s4-badge{font-size:7px;font-weight:700;color:#2DD4BF;margin-bottom:5px;letter-spacing:.3px}
-.s4-txt{font-size:8.5px;color:rgba(255,255,255,.6);line-height:1.65}
-.s4-warn{border-color:rgba(245,158,11,.2)}
-.s4-badge-w{color:var(--g)}
-/* Feature text items */
-.sf-item{min-height:70svh;display:flex;flex-direction:column;justify-content:center;padding:40px 0;border-bottom:1px solid var(--bd)}
-.sf-item:last-child{border-bottom:none}
-.sf-num{font-size:11px;font-weight:600;color:var(--c);letter-spacing:1.5px;margin-bottom:14px}
-.sf-title{font-size:clamp(24px,3.5vw,38px);font-weight:800;letter-spacing:-.03em;line-height:1.15;margin-bottom:16px}
-.sf-desc{font-size:clamp(14px,1.8vw,16px);color:var(--t2);line-height:1.8;max-width:440px}
-.sf-tag{display:inline-flex;align-items:center;gap:6px;background:var(--c2);color:var(--c);font-size:12px;font-weight:600;padding:5px 12px;border-radius:7px;margin-top:18px;border:1px solid rgba(45,212,191,.2)}
-@media(max-width:768px){
-  #sticky-feat{flex-direction:column}
-  .sf-phone-col{position:relative;height:auto;width:100%;padding:60px 16px 20px}
-  .sf-text-col{padding:20px 16px 60px}
-}
+/* FEATURES sticky */
+#features{position:relative}
+.feat-wrap{display:flex;gap:0;min-height:220svh;position:relative}
+.feat-phone-col{position:sticky;top:0;height:100svh;width:44%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--bd)}
+.feat-text-col{flex:1;padding:100px clamp(20px,4vw,60px) 100px}
+.phone{width:214px;height:436px;background:#07090F;border-radius:32px;border:2px solid rgba(255,255,255,.1);box-shadow:0 60px 100px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.04),inset 0 1px 0 rgba(255,255,255,.07);overflow:hidden;position:relative;flex-shrink:0}
+.ph-scr{position:absolute;inset:0;overflow:hidden;transition:opacity .4s,transform .4s}
+.ph-scr.off{opacity:0;pointer-events:none;transform:translateY(10px)}
+.ph-bar{height:26px;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:8.5px;color:rgba(255,255,255,.3)}
+/* scr1 */
+.s1b{text-align:center;padding:16px 12px 0}.s1l{font-size:8px;color:rgba(255,255,255,.3);letter-spacing:.5px;margin-bottom:2px}.s1n{font-size:26px;font-weight:800;color:#2DD4BF}
+.s1tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:10px 12px 0}
+.s1t{background:#111827;border-radius:7px;padding:7px 4px;text-align:center;border-top:2px solid rgba(45,212,191,.45)}
+.s1tv{font-size:9.5px;font-weight:700}.s1tl{font-size:6.5px;color:rgba(255,255,255,.3);margin-top:1px}
+.s1rows{padding:0 12px;margin-top:8px}
+.s1row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.s1ico{width:20px;height:20px;border-radius:6px;font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.s1rn{font-size:8px;color:rgba(255,255,255,.5);flex:1}.s1ra{font-size:8px;font-weight:600}
+/* scr2 */
+.s2h{background:rgba(45,212,191,.08);padding:9px 12px;border-bottom:1px solid rgba(45,212,191,.1)}.s2t{font-size:9.5px;font-weight:700;color:#2DD4BF}
+.s2row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04)}
+.s2n{font-size:8.5px;color:rgba(255,255,255,.7)}.s2ti{font-size:7.5px;color:rgba(255,255,255,.3)}
+.s2b{font-size:7px;font-weight:700;padding:2px 6px;border-radius:4px}
+.s2paid{background:rgba(34,197,94,.15);color:#22C55E}.s2pend{background:rgba(248,113,113,.15);color:#F87171}
+/* scr3 */
+.s3body{padding:12px}
+.s3card{background:#111827;border-radius:9px;padding:9px;margin-bottom:7px}
+.s3lbl{font-size:7.5px;color:rgba(255,255,255,.3);margin-bottom:4px}.s3val{font-size:12px;font-weight:700;color:#2DD4BF}
+.s3row{display:flex;justify-content:space-between;padding:4px 0;font-size:8px;color:rgba(255,255,255,.5)}
+.s3btn{display:block;margin-top:10px;background:#2DD4BF;color:#04120F;font-size:8.5px;font-weight:700;padding:8px;border-radius:7px;text-align:center}
+/* scr4 */
+.s4body{padding:12px}
+.s4card{background:#111827;border-radius:9px;padding:9px;margin-bottom:7px;border:1px solid rgba(45,212,191,.15)}
+.s4badge{font-size:7px;font-weight:700;color:#2DD4BF;margin-bottom:4px;letter-spacing:.3px}
+.s4txt{font-size:8px;color:rgba(255,255,255,.6);line-height:1.6}
+.s4warn{border-color:rgba(245,158,11,.2)}.s4bw{color:#F59E0B}
+/* feat text */
+.feat-item{padding:60px 0;border-bottom:1px solid var(--bd)}
+.feat-item:last-child{border-bottom:none}
+.feat-num{font-size:clamp(70px,10vw,120px);font-weight:900;letter-spacing:-.07em;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.07);line-height:1;margin-bottom:-10px;user-select:none}
+.feat-title{font-size:clamp(24px,3vw,36px);font-weight:800;letter-spacing:-.04em;line-height:1.15;margin-bottom:14px}
+.feat-desc{font-size:clamp(14px,1.6vw,16px);color:var(--t2);line-height:1.8;max-width:440px}
+.feat-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(45,212,191,.08);color:var(--c);font-size:12px;font-weight:600;padding:5px 12px;border-radius:7px;margin-top:16px;border:1px solid rgba(45,212,191,.18)}
+@media(max-width:768px){.feat-wrap{flex-direction:column}.feat-phone-col{position:relative;height:auto;width:100%;padding:50px 16px 20px;background:transparent;border-left:none;border-bottom:1px solid var(--bd)}.feat-text-col{padding:20px clamp(20px,5vw,40px) 60px}}
 
-/* ─── COMPARE ─── */
-#compare{background:var(--bg2);padding:80px clamp(16px,4vw,48px)}
-.cmp-scroll{overflow-x:auto;margin-top:40px;border-radius:16px}
-.cmp-scroll::-webkit-scrollbar{height:4px}
-.cmp-scroll::-webkit-scrollbar-track{background:var(--bg3)}
-.cmp-scroll::-webkit-scrollbar-thumb{background:var(--c);border-radius:2px}
-table{width:100%;border-collapse:collapse;min-width:580px}
+/* COMPARE */
+#compare{background:var(--bg2);padding:100px clamp(20px,5vw,80px);border-bottom:1px solid var(--bd)}
+.sec-lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:12px}
+.sec-h{font-size:clamp(28px,4vw,48px);font-weight:900;letter-spacing:-.04em;line-height:1.1;margin-bottom:10px}
+.sec-sub{font-size:15px;color:var(--t2);line-height:1.7;max-width:520px}
+.cmp-wrap{overflow-x:auto;margin-top:44px;border-radius:14px;border:1px solid var(--bd)}
+.cmp-wrap::-webkit-scrollbar{height:3px}
+.cmp-wrap::-webkit-scrollbar-thumb{background:var(--c);border-radius:2px}
+table{width:100%;border-collapse:collapse;min-width:560px}
 thead tr{background:var(--bg3)}
-th{padding:16px 18px;font-size:12px;font-weight:600;color:var(--t3);text-align:center;letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--bd)}
+th{padding:15px 18px;font-size:11px;font-weight:600;color:var(--t3);text-align:center;letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--bd)}
 th:first-child{text-align:right}
-.th-us{background:rgba(45,212,191,.06);color:var(--c);position:relative;padding-top:38px}
-.th-us-badge{position:absolute;top:8px;right:50%;transform:translateX(50%);background:var(--c);color:#04120F;font-size:9px;font-weight:700;padding:3px 10px;border-radius:5px;white-space:nowrap;letter-spacing:.2px}
-td{padding:13px 18px;font-size:14px;border-bottom:1px solid var(--bd);text-align:center;color:var(--t2)}
-td:first-child{text-align:right;color:var(--t);font-size:13.5px}
-.td-us{background:rgba(45,212,191,.04)}
-tr:hover td{background:rgba(255,255,255,.015)}
+.th-us{background:rgba(45,212,191,.07);color:var(--c)}
+.th-us-b{display:inline-block;background:var(--c);color:#04120F;font-size:8px;font-weight:700;padding:2px 8px;border-radius:4px;margin-bottom:4px;letter-spacing:.2px}
+td{padding:12px 18px;font-size:13.5px;border-bottom:1px solid var(--bd);text-align:center;color:var(--t2)}
+td:first-child{text-align:right;color:var(--t);font-size:13px;font-weight:500}
+.td-us{background:rgba(45,212,191,.03)}
+tr:hover td{background:rgba(255,255,255,.012)}
 tr:last-child td{border-bottom:none}
-.ck{color:var(--c);font-size:18px;font-weight:700}
-.xk{color:var(--t3);font-size:17px}
-.pk{color:var(--g);font-size:12.5px;font-weight:600}
+.ck{color:var(--c);font-size:17px;font-weight:700}
+.xk{color:var(--t3);font-size:16px}
+.pk{color:var(--g);font-size:12px;font-weight:600}
 
-/* ─── PROBLEM / SOLUTION SPLIT ─── */
-#split{padding:80px clamp(16px,4vw,48px)}
-.split-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;border-radius:20px;overflow:hidden;border:1px solid var(--bd)}
-.split-side{padding:clamp(28px,4vw,56px)}
-.split-before{background:rgba(248,113,113,.04);border-left:1px solid var(--bd)}
-.split-after{background:rgba(45,212,191,.04)}
-.split-lbl{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px}
-.split-lbl-b{color:var(--r)}
-.split-lbl-a{color:var(--c)}
-.split-item{display:flex;gap:12px;margin-bottom:18px;font-size:14px;color:var(--t2);line-height:1.6}
-.split-icon{font-size:18px;flex-shrink:0;width:28px}
-@media(max-width:640px){.split-grid{grid-template-columns:1fr}.split-before{border-left:none;border-bottom:1px solid var(--bd)}}
-
-/* ─── PRICING ─── */
-#pricing{padding:80px clamp(16px,4vw,48px)}
-.price-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;max-width:880px;margin:48px auto 0}
-.pc{background:var(--bg2);border:1px solid var(--bd);border-radius:20px;padding:28px 24px;position:relative;transition:transform .25s,box-shadow .25s}
-.pc:hover{transform:translateY(-6px);box-shadow:0 24px 64px rgba(0,0,0,.4)}
-.pc-hero{border-color:var(--g);background:linear-gradient(145deg,rgba(245,158,11,.07),var(--bg2));box-shadow:0 0 0 4px rgba(245,158,11,.07)}
-.pc-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;display:inline-block;margin-bottom:14px;letter-spacing:.3px}
-.badge-g{background:var(--g);color:#1A0800}
+/* PRICING */
+#pricing{padding:100px clamp(20px,5vw,80px);border-bottom:1px solid var(--bd)}
+.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2px;max-width:720px;margin:44px auto 0;border:1px solid var(--bd);border-radius:18px;overflow:hidden}
+.pc{background:var(--bg2);padding:36px 28px;position:relative;transition:background .3s}
+.pc:hover{background:var(--bg3)}
+.pc-hero{background:rgba(45,212,191,.05);border-left:1px solid var(--bd)}
+.pc-badge{font-size:10px;font-weight:700;letter-spacing:.3px;padding:3px 10px;border-radius:5px;display:inline-block;margin-bottom:16px}
 .badge-c{background:var(--c);color:#04120F}
-.badge-m{background:rgba(255,255,255,.09);color:var(--t2)}
-.pc-name{font-size:15px;font-weight:600;color:var(--t2);margin-bottom:6px}
-.pc-price{font-size:52px;font-weight:900;letter-spacing:-.05em;line-height:1;margin-bottom:2px}
-.pc-price sub{font-size:16px;font-weight:400;color:var(--t2);letter-spacing:0}
-.pc-period{font-size:12px;color:var(--t3);margin-bottom:22px}
-.pc-feats{list-style:none;font-size:13.5px;color:var(--t2);line-height:2.1}
-.pc-feats li{display:flex;gap:8px;align-items:baseline}
-.pc-feats li::before{content:'✓';color:var(--c);font-weight:700;flex-shrink:0}
-.pc-btn{display:block;width:100%;margin-top:24px;padding:13px;font-family:'Rubik',sans-serif;font-size:14px;font-weight:700;border-radius:12px;border:none;cursor:none;text-decoration:none;text-align:center;transition:all .2s}
+.badge-m{background:rgba(255,255,255,.08);color:var(--t2)}
+.pc-price{font-size:clamp(52px,7vw,70px);font-weight:900;letter-spacing:-.06em;line-height:1;color:var(--t)}
+.pc-price sub{font-size:15px;font-weight:400;color:var(--t2);letter-spacing:0;vertical-align:super}
+.pc-period{font-size:12px;color:var(--t3);margin-top:4px;margin-bottom:22px}
+.pc-feats{list-style:none;font-size:13.5px;color:var(--t2);border-top:1px solid var(--bd);padding-top:18px}
+.pc-feats li{padding:6px 0;display:flex;gap:10px;align-items:baseline;border-bottom:1px solid rgba(255,255,255,.03)}
+.pc-feats li::before{content:'→';color:var(--c);font-weight:700;flex-shrink:0;font-size:12px}
+.pc-feats li:last-child{border-bottom:none}
+.pc-btn{display:block;width:100%;margin-top:22px;padding:13px;font-family:'Rubik',sans-serif;font-size:14px;font-weight:700;border-radius:10px;border:none;cursor:none;text-decoration:none;text-align:center;transition:all .2s}
 .pc-btn-c{background:var(--c);color:#04120F}
-.pc-btn-c:hover{box-shadow:0 8px 28px rgba(45,212,191,.3)}
-.pc-btn-g{background:var(--g);color:#1A0800}
-.pc-btn-g:hover{box-shadow:0 8px 28px rgba(245,158,11,.3)}
+.pc-btn-c:hover{box-shadow:0 10px 32px rgba(45,212,191,.3);transform:translateY(-2px)}
 .pc-btn-o{background:transparent;color:var(--t2);border:1px solid var(--bd2)}
 .pc-btn-o:hover{border-color:var(--c);color:var(--c)}
 
-/* ─── QUOTE ─── */
-#quote{padding:120px clamp(16px,4vw,48px);text-align:center;position:relative;overflow:hidden}
-.q-bg{position:absolute;font-size:28vw;font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(45,212,191,.04);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;user-select:none;white-space:nowrap;line-height:1}
-.q-text{font-size:clamp(20px,3.5vw,36px);font-weight:500;font-style:italic;color:var(--t);max-width:700px;margin:0 auto 36px;line-height:1.6;position:relative}
-.q-text::before{content:'"';position:absolute;right:calc(100% + 12px);top:0;font-size:5em;color:var(--c);opacity:.25;font-style:normal;line-height:.8}
-.q-attr{display:inline-flex;align-items:center;gap:14px;position:relative}
-.q-avatar{width:48px;height:48px;border-radius:50%;background:var(--c2);border:2px solid var(--c);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:var(--c)}
-.q-name strong{display:block;font-size:14px;font-weight:700;text-align:right}
-.q-name span{font-size:12px;color:var(--t3);display:block;text-align:right}
+/* QUOTE */
+#quote{padding:100px clamp(20px,5vw,80px);display:grid;grid-template-columns:200px 1fr;gap:60px;align-items:center;border-bottom:1px solid var(--bd)}
+.q-avatar{width:100%;max-width:200px;aspect-ratio:1;border-radius:18px;background:var(--bg2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:72px}
+.q-mark{font-size:80px;font-weight:900;color:var(--c);opacity:.2;line-height:.7;display:block;margin-bottom:16px}
+.q-text{font-size:clamp(17px,2.4vw,24px);font-weight:300;font-style:italic;color:var(--t);line-height:1.75;margin-bottom:22px}
+.q-text strong{font-weight:700;font-style:normal;color:var(--c)}
+.q-name{font-size:13px;color:var(--t3)}
+.q-name strong{display:block;font-size:15px;font-weight:700;color:var(--t2);margin-bottom:3px}
+@media(max-width:640px){#quote{grid-template-columns:1fr}.q-avatar{display:none}}
 
-/* ─── CTA FINAL ─── */
-#cta-final{
-  padding:120px clamp(16px,4vw,48px);
-  text-align:center;
-  background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(45,212,191,.08),transparent);
-  border-top:1px solid var(--bd);
-}
-.cta-h{font-size:clamp(32px,6vw,64px);font-weight:900;letter-spacing:-.04em;line-height:1.05;margin-bottom:20px}
+/* FINAL CTA */
+#cta{padding:140px clamp(20px,5vw,80px);text-align:center;background:radial-gradient(ellipse 80% 70% at 50% 100%,rgba(45,212,191,.07),transparent);position:relative;overflow:hidden;border-top:1px solid var(--bd)}
+.cta-wm{position:absolute;font-size:clamp(80px,16vw,200px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(45,212,191,.04);bottom:-10px;right:0;left:0;text-align:center;pointer-events:none;user-select:none;line-height:1}
+.cta-h{font-size:clamp(34px,6vw,70px);font-weight:900;letter-spacing:-.05em;line-height:1.05;margin-bottom:18px;position:relative}
 .cta-h span{color:var(--c)}
-.cta-sub{font-size:16px;color:var(--t2);margin-bottom:40px}
-.trust-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:24px;margin-top:32px;font-size:13px;color:var(--t3)}
-.trust-bar span::before{content:'✓ ';color:var(--p)}
+.cta-sub{font-size:16px;color:var(--t2);margin-bottom:38px;position:relative}
+.cta-btns{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;position:relative}
+.trust-row{display:flex;flex-wrap:wrap;justify-content:center;gap:22px;margin-top:32px;font-size:12.5px;color:var(--t3);position:relative}
+.trust-row span{display:flex;align-items:center;gap:5px}
+.trust-row span::before{content:'✓';color:var(--p)}
 
-/* ─── FOOTER ─── */
-footer{background:var(--bg2);border-top:1px solid var(--bd);padding:28px clamp(16px,4vw,48px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.f-links{display:flex;gap:20px;flex-wrap:wrap}
-.f-links a{color:var(--t3);font-size:12.5px;text-decoration:none;transition:color .2s;cursor:none}
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--bd);padding:26px clamp(20px,5vw,60px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.f-links{display:flex;gap:18px;flex-wrap:wrap}
+.f-links a{color:var(--t3);font-size:12px;text-decoration:none;transition:color .2s;cursor:none}
 .f-links a:hover{color:var(--c)}
 .f-copy{font-size:12px;color:var(--t3)}
 
-/* ─── REVEAL ─── */
-.rv{opacity:0;transform:translateY(28px) scale(.99);transition:opacity .65s ease,transform .65s ease}
+/* REVEAL */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
 .rv.on{opacity:1;transform:none}
-.rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.2s}.rv.d3{transition-delay:.3s}.rv.d4{transition-delay:.4s}
-
-/* ─── SEC HEADER ─── */
-.sh{margin-bottom:0}
-.sh-lbl{font-size:11px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--c);margin-bottom:12px}
-.sh-h{font-size:clamp(28px,4.5vw,48px);font-weight:800;letter-spacing:-.03em;line-height:1.15;margin-bottom:14px}
-.sh-p{font-size:16px;color:var(--t2);line-height:1.75;max-width:540px}
+.rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.16s}.rv.d3{transition-delay:.24s}.rv.d4{transition-delay:.32s}.rv.d5{transition-delay:.40s}
 </style>
 </head>
 <body>
 
-<!-- CURSORS -->
 <div id="cur"></div>
 <div id="cur2"></div>
 <div id="prog"></div>
 
-<!-- NAV -->
 <nav>
-  <a class="n-logo" href="index.html"><div class="n-mark">₪</div><span class="n-name">My Money</span></a>
-  <div class="n-links">
-    <a href="#features">תכונות</a>
-    <a href="#compare">השוואה</a>
+  <a class="nl" href="#">
+    <div class="nm">₪</div>
+    <span class="nn">My Money</span>
+  </a>
+  <div class="nr">
+    <a href="#features">פיצ'רים</a>
     <a href="#pricing">מחירים</a>
+    <a class="nc" href="#cta">30 יום חינם</a>
   </div>
-  <a class="n-cta" href="index.html">ניסיון חינמי ←</a>
 </nav>
 
-<!-- HERO -->
+<!-- HERO: split layout — text left, floating ₪ with grid right -->
 <section id="hero">
-  <div class="hero-wm">₪</div>
-  <div class="hero-inner">
-    <div class="hero-pill">☕ פחות מ-2 קפה בחודש</div>
-    <h1 class="hero-h1">ניהול כסף<br>לאנשי <em>יופי</em><br>עצמאיים</h1>
-    <p class="hero-p">הכנסות, הוצאות, לקוחות ומע"מ — כל מה שצריך לדוח השנתי, במקום אחד. בנוי במיוחד לקוסמטיקאיות, טכנאי ציפורניים ואנשי יופי בישראל.</p>
+  <div class="hero-l">
+    <div class="hero-prof-row"><span class="prof-cycle">קוסמטיקאית</span></div>
+    <h1 class="hero-h1">
+      <span class="line1">ניהול כסף</span>
+      <span class="line2">כמו שמגיע</span>
+      <span class="line3">לך.</span>
+    </h1>
+    <p class="hero-p">הפסיקי לנחש כמה הרווחת החודש — ותתחילי לדעת. My Money עוקבת אחרי כל שקל, מתריעה בזמן, ומכינה דו"חות לחשבונית בלחיצה.</p>
     <div class="hero-btns">
-      <a class="btn-c" href="index.html">התחלי בחינם — 30 יום ←</a>
-      <a class="btn-o" href="#features">איך זה עובד?</a>
+      <a href="#" class="btn-main" onclick="goApp();return false">📱 נסי חינם 30 יום</a>
+      <a href="#features" class="btn-ghost">איך זה עובד?</a>
     </div>
-    <div class="hero-trust">
-      <span>ללא כרטיס אשראי</span>
-      <span>אבטחת Firebase / Google</span>
-      <span>בעברית מלאה</span>
-      <span>עובדת גם אופליין</span>
+    <div class="hero-meta">
+      <span><i>✓</i> ללא כרטיס אשראי</span>
+      <span><i>✓</i> עברית מלאה + RTL</span>
+      <span><i>✓</i> עובד גם אופליין</span>
     </div>
   </div>
-  <div class="scroll-hint">
-    <div class="scroll-line"></div>
-    גלול/י למטה
+  <div class="hero-r">
+    <div class="hero-grid-lines"></div>
+    <div class="hero-shekel">₪</div>
   </div>
 </section>
 
-<!-- MARQUEE -->
-<div class="marquee-wrap">
-  <div class="marquee">
-    <div class="marquee-item"><span class="marquee-dot"></span><strong>#קוסמטיקאית</strong></div>
-    <div class="marquee-item"><span class="marquee-dot"></span>ייצוא CSV לרו"ח בלחיצה אחת</div>
-    <div class="marquee-item"><span class="marquee-dot"></span><strong>#טכנאיציפורניים</strong></div>
-    <div class="marquee-item"><span class="marquee-dot"></span>מעקב לקוחות חכם</div>
-    <div class="marquee-item"><span class="marquee-dot"></span><strong>#עצמאים</strong></div>
-    <div class="marquee-item"><span class="marquee-dot"></span>התראות מע"מ אוטומטיות</div>
-    <div class="marquee-item"><span class="marquee-dot"></span><strong>#עוסק_פטור</strong></div>
-    <div class="marquee-item"><span class="marquee-dot"></span>30 יום ניסיון חינמי</div>
-    <div class="marquee-item"><span class="marquee-dot"></span><strong>#מאפרת</strong></div>
-    <div class="marquee-item"><span class="marquee-dot"></span>יועץ AI פיננסי</div>
-    <!-- duplicate for seamless loop -->
-    <div class="marquee-item"><span class="marquee-dot"></span><strong>#קוסמטיקאית</strong></div>
-    <div class="marquee-item"><span class="marquee-dot"></span>ייצוא CSV לרו"ח בלחיצה אחת</div>
-    <div class="marquee-item"><span class="marquee-dot"></span><strong>#טכנאיציפורניים</strong></div>
-    <div class="marquee-item"><span class="marquee-dot"></span>מעקב לקוחות חכם</div>
-    <div class="marquee-item"><span class="marquee-dot"></span><strong>#עצמאים</strong></div>
-    <div class="marquee-item"><span class="marquee-dot"></span>התראות מע"מ אוטומטיות</div>
-    <div class="marquee-item"><span class="marquee-dot"></span><strong>#עוסק_פטור</strong></div>
-    <div class="marquee-item"><span class="marquee-dot"></span>30 יום ניסיון חינמי</div>
-    <div class="marquee-item"><span class="marquee-dot"></span><strong>#מאפרת</strong></div>
-    <div class="marquee-item"><span class="marquee-dot"></span>יועץ AI פיננסי</div>
-  </div>
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner" id="tickerInner"></div>
 </div>
 
-<!-- STATS -->
-<div id="stats">
-  <div class="stats-row rv">
-    <div class="stat-box"><div class="stat-n" data-t="500" data-s="+">0</div><div class="stat-l">משתמשים פעילים</div></div>
-    <div class="stat-box"><div class="stat-n" data-t="12000" data-s="+">0</div><div class="stat-l">עסקאות מנוהלות</div></div>
-    <div class="stat-box"><div class="stat-n" data-t="49" data-s="/5" data-d="1">0</div><div class="stat-l">דירוג משתמשים</div></div>
-    <div class="stat-box"><div class="stat-n" data-t="100" data-s="%" data-pfx="">0</div><div class="stat-l">אבטחת Google Cloud</div></div>
-  </div>
-</div>
+<!-- MANIFESTO: editorial numbered lines -->
+<section id="manifesto">
+  <p class="mf-label rv">המניפסט שלנו</p>
+  <ul class="mf-lines">
+    <li class="mf-line rv d1">
+      <span class="mf-num">01</span>
+      <span class="mf-text">הכסף שלך — תדעי לאן הוא הולך</span>
+      <span class="mf-icon">💰</span>
+    </li>
+    <li class="mf-line dim rv d2">
+      <span class="mf-num">02</span>
+      <span class="mf-text">לא עוד Excel. לא עוד ניחושים.</span>
+      <span class="mf-icon">❌</span>
+    </li>
+    <li class="mf-line rv d3">
+      <span class="mf-num">03</span>
+      <span class="mf-text">ניתוח AI שמדבר את שפתך</span>
+      <span class="mf-icon">🧠</span>
+    </li>
+    <li class="mf-line dim rv d4">
+      <span class="mf-num">04</span>
+      <span class="mf-text">דו"חות מע"מ בלחיצה אחת</span>
+      <span class="mf-icon">📄</span>
+    </li>
+    <li class="mf-line hi rv d5">
+      <span class="mf-num">05</span>
+      <span class="mf-text">נבנתה לעצמאיות ביופי — ורק בשבילן</span>
+      <span class="mf-icon">💅</span>
+    </li>
+  </ul>
+</section>
 
-<!-- BEFORE / AFTER SPLIT -->
-<section id="split">
-  <div class="sh rv">
-    <div class="sh-lbl">לפני ואחרי</div>
-    <h2 class="sh-h">מה השתנה עבור העצמאיות שלנו?</h2>
+<!-- PROBLEM / SOLUTION -->
+<section id="problem">
+  <div class="prob-side prob-b rv">
+    <p class="prob-lbl lbl-b">לפני</p>
+    <h3 class="prob-h">כאוס פיננסי שגוזל זמן ושקט</h3>
+    <div class="prob-item"><span class="prob-icon">😩</span><span>לא יודעת כמה הרווחת עד שהמע"מ תופס אותך</span></div>
+    <div class="prob-item"><span class="prob-icon">📱</span><span>הודעות WhatsApp ידניות לכל לקוחה בנפרד</span></div>
+    <div class="prob-item"><span class="prob-icon">📋</span><span>גיליון Excel שלא מעדכנים כי אין זמן</span></div>
+    <div class="prob-item"><span class="prob-icon">😰</span><span>הוצאות קבועות שנשכחות ומפתיעות בסוף חודש</span></div>
+    <div class="prob-item"><span class="prob-icon">🔴</span><span>מלאי שנגמר באמצע יום עבודה</span></div>
   </div>
-  <div class="split-grid" style="margin-top:40px">
-    <div class="split-side split-before">
-      <div class="split-lbl split-lbl-b">⛔ לפני My Money</div>
-      <div class="split-item"><div class="split-icon">😩</div><div>בסוף החודש לא יודעת כמה הרווחת — מספרים פזורים בין הודעות, notes ודפי Excel.</div></div>
-      <div class="split-item"><div class="split-icon">📝</div><div>הדוח לרואה חשבון לוקח שעות — מיון קבלות, איסוף נתונים, מספרים לא מסכימים.</div></div>
-      <div class="split-item"><div class="split-icon">💸</div><div>לקוחות "ישלמו אחר כך" ושוכחים — ואת לא תמיד זוכרת מי ומתי.</div></div>
-      <div class="split-item"><div class="split-icon">⏰</div><div>מע"מ דו-חודשי תמיד מפתיע — כי לא עקבת מה נצבר בדיוק.</div></div>
-    </div>
-    <div class="split-side split-after">
-      <div class="split-lbl split-lbl-a">✅ עם My Money</div>
-      <div class="split-item"><div class="split-icon">📊</div><div>דשבורד בזמן אמת — יתרה, הכנסות, הוצאות וצפי לסוף חודש, הכל בבת אחת.</div></div>
-      <div class="split-item"><div class="split-icon">📤</div><div>לוחצת "ייצא" — CSV מסווג עם חישוב מע"מ נשלח לרואה חשבון ישירות.</div></div>
-      <div class="split-item"><div class="split-icon">🔔</div><div>SMS תזכורת ללקוח יום לפני הטיפול + רשימת "מי לא שילם" בלחיצה.</div></div>
-      <div class="split-item"><div class="split-icon">✅</div><div>התראה שבועיים לפני הגשת מע"מ עם הסכום המדויק שצריך להפריש.</div></div>
-    </div>
+  <div class="prob-side prob-a rv d2">
+    <p class="prob-lbl lbl-a">אחרי My Money</p>
+    <h3 class="prob-h">שליטה מלאה בקצב שלך</h3>
+    <div class="prob-item"><span class="prob-icon">✅</span><span>יתרה עדכנית בזמן אמת — פתחי ותסתכלי</span></div>
+    <div class="prob-item"><span class="prob-icon">📲</span><span>תזכורות תשלום אוטומטיות — בלי שאמרת מילה</span></div>
+    <div class="prob-item"><span class="prob-icon">📊</span><span>דוח חודשי שמכין את עצמו, מוכן להנהלת חשבונות</span></div>
+    <div class="prob-item"><span class="prob-icon">💡</span><span>התראות חכמות על הוצאות קבועות לפני שיגיעו</span></div>
+    <div class="prob-item"><span class="prob-icon">📦</span><span>התראות מלאי לפני שייגמר — עם הצעת הזמנה</span></div>
   </div>
 </section>
 
-<!-- STICKY FEATURE SECTION -->
-<section id="features" style="background:var(--bg2);padding:0">
-  <div id="sticky-feat">
-    <div class="sf-phone-col">
-      <div class="sf-phone" id="sf-phone">
-        <!-- Screen 1: Dashboard -->
-        <div class="sf-screen" id="sc1">
-          <div class="sf-bar"><span>9:41</span><span>📶</span></div>
-          <div class="s1-bal">
-            <div class="s1-lbl">יתרה נוכחית</div>
-            <div class="s1-num">₪12,450</div>
+<!-- BIG ANIMATED NUMBER -->
+<section id="bignumber">
+  <div class="bn-bg-txt">₪2,340</div>
+  <p class="bn-label rv">חיסכון ממוצע למשתמשת</p>
+  <div class="bn-num rv d1" id="bnCount">₪0</div>
+  <p class="bn-desc rv d2">משתמשות My Money חוסכות בממוצע <strong>₪2,340 לשנה</strong> — מניעת החזרי מע"מ, ניהול חכם של הוצאות ופחות הפתעות בחשבון</p>
+</section>
+
+<!-- FEATURES: sticky phone + text -->
+<section id="features">
+  <div class="feat-wrap">
+    <div class="feat-phone-col">
+      <div class="phone" id="featPhone">
+        <div class="ph-scr" id="ph-s1">
+          <div class="ph-bar"><span>9:41</span><span>●●●</span></div>
+          <div class="s1b"><div class="s1l">יתרה נוכחית</div><div class="s1n">₪8,240</div></div>
+          <div class="s1tiles">
+            <div class="s1t"><div class="s1tv" style="color:#22C55E">₪12,400</div><div class="s1tl">הכנסות</div></div>
+            <div class="s1t" style="border-top-color:rgba(248,113,113,.5)"><div class="s1tv" style="color:#F87171">₪4,160</div><div class="s1tl">הוצאות</div></div>
+            <div class="s1t" style="border-top-color:rgba(245,158,11,.5)"><div class="s1tv" style="color:#F59E0B">₪3,200</div><div class="s1tl">מע"מ</div></div>
           </div>
-          <div class="s1-tiles">
-            <div class="s1-tile" style="--tc:#22C55E"><div class="s1-tv" style="color:#22C55E">₪18,200</div><div class="s1-tl">הכנסות</div></div>
-            <div class="s1-tile" style="--tc:#F87171"><div class="s1-tv" style="color:#F87171">₪5,750</div><div class="s1-tl">הוצאות</div></div>
-            <div class="s1-tile" style="--tc:#2DD4BF"><div class="s1-tv" style="color:#2DD4BF">+₪12K</div><div class="s1-tl">צפי</div></div>
-          </div>
-          <div class="s1-rows" style="margin-top:10px">
-            <div class="s1-row"><div class="s1-ico" style="background:rgba(45,212,191,.1)">💅</div><div class="s1-rn">מניקור ג'ל</div><div class="s1-ra" style="color:#22C55E">+₪350</div></div>
-            <div class="s1-row"><div class="s1-ico" style="background:rgba(248,113,113,.1)">🛒</div><div class="s1-rn">ציוד מקצועי</div><div class="s1-ra">-₪380</div></div>
-            <div class="s1-row"><div class="s1-ico" style="background:rgba(245,158,11,.1)">☕</div><div class="s1-rn">קפה ואוכל</div><div class="s1-ra">-₪120</div></div>
-            <div class="s1-row"><div class="s1-ico" style="background:rgba(99,102,241,.1)">🚗</div><div class="s1-rn">דלק</div><div class="s1-ra">-₪200</div></div>
-          </div>
-        </div>
-        <!-- Screen 2: Clients -->
-        <div class="sf-screen hidden" id="sc2">
-          <div class="sf-bar"><span>לקוחות — יוני 2026</span><span>+</span></div>
-          <div class="s2-hdr"><div class="s2-ttl">יומן תורים ותשלומים</div></div>
-          <div class="s2-row"><div><div class="s2-name">מיכל כהן</div><div class="s2-time">10:00 — מניקור ג'ל</div></div><span class="s2-badge s2-paid">שולם ✓</span></div>
-          <div class="s2-row"><div><div class="s2-name">דנה לוי</div><div class="s2-time">11:30 — פדיקור</div></div><span class="s2-badge s2-pend">ממתין</span></div>
-          <div class="s2-row"><div><div class="s2-name">שירה אברהם</div><div class="s2-time">13:00 — ג'ל</div></div><span class="s2-badge s2-paid">שולם ✓</span></div>
-          <div class="s2-row"><div><div class="s2-name">נועה גולן</div><div class="s2-time">14:30 — מניקור</div></div><span class="s2-badge s2-pend">ממתין</span></div>
-          <div class="s2-row"><div><div class="s2-name">יעל פרץ</div><div class="s2-time">16:00 — ג'ל צרפתי</div></div><span class="s2-badge s2-paid">שולם ✓</span></div>
-          <div style="padding:10px 14px;background:rgba(248,113,113,.06);border-top:1px solid rgba(248,113,113,.1);margin-top:4px">
-            <div style="font-size:8px;color:#F87171;font-weight:600">⚠️ 2 לקוחות טרם שילמו — ₪520 ממתינים</div>
+          <div class="s1rows">
+            <div class="s1row"><div class="s1ico" style="background:rgba(45,212,191,.15)">💅</div><div class="s1rn">מיכל — טיפול</div><div class="s1ra" style="color:#22C55E">+₪280</div></div>
+            <div class="s1row"><div class="s1ico" style="background:rgba(248,113,113,.15)">🛍️</div><div class="s1rn">ספק — ג'ל OPI</div><div class="s1ra" style="color:#F87171">−₪320</div></div>
+            <div class="s1row"><div class="s1ico" style="background:rgba(45,212,191,.15)">✂️</div><div class="s1rn">יעל — צביעה</div><div class="s1ra" style="color:#22C55E">+₪450</div></div>
+            <div class="s1row"><div class="s1ico" style="background:rgba(245,158,11,.12)">⚡</div><div class="s1rn">חשמל — יוני</div><div class="s1ra" style="color:#F87171">−₪180</div></div>
           </div>
         </div>
-        <!-- Screen 3: Export -->
-        <div class="sf-screen hidden" id="sc3">
-          <div class="sf-bar"><span>ייצוא לרו"ח</span><span>📤</span></div>
-          <div class="s3-body">
-            <div class="s3-card">
-              <div class="s3-lbl">סה"כ הכנסות — יוני 2026</div>
-              <div class="s3-val">₪18,200</div>
+        <div class="ph-scr off" id="ph-s2">
+          <div class="ph-bar"><span>9:41</span><span>●●●</span></div>
+          <div class="s2h"><div class="s2t">👥 ניהול לקוחות</div></div>
+          <div class="s2row"><div><div class="s2n">שרה לוי</div><div class="s2ti">תור: מחר 10:00</div></div><span class="s2b s2paid">שולמה ✓</span></div>
+          <div class="s2row"><div><div class="s2n">מיכל כהן</div><div class="s2ti">תור: יום ב׳ 14:00</div></div><span class="s2b s2pend">ממתין ₪280</span></div>
+          <div class="s2row"><div><div class="s2n">רחל ישראלי</div><div class="s2ti">תור: יום ג׳ 11:00</div></div><span class="s2b s2paid">שולמה ✓</span></div>
+          <div class="s2row"><div><div class="s2n">יעל בן דוד</div><div class="s2ti">תור: יום ה׳ 16:00</div></div><span class="s2b s2pend">ממתין ₪450</span></div>
+          <div class="s2row"><div><div class="s2n">אורית נחום</div><div class="s2ti">תור: שישי 09:30</div></div><span class="s2b s2paid">שולמה ✓</span></div>
+        </div>
+        <div class="ph-scr off" id="ph-s3">
+          <div class="ph-bar"><span>9:41</span><span>●●●</span></div>
+          <div class="s3body">
+            <div class="s3card"><div class="s3lbl">סיכום יוני 2026</div><div class="s3val">₪12,400 הכנסות</div></div>
+            <div class="s3card"><div class="s3lbl">מע"מ לתשלום (17%)</div><div class="s3val" style="color:#F59E0B">₪2,046</div></div>
+            <div class="s3card">
+              <div class="s3lbl">פירוט הוצאות</div>
+              <div class="s3row"><span>ספקים</span><span>₪1,840</span></div>
+              <div class="s3row"><span>שכירות</span><span>₪1,200</span></div>
+              <div class="s3row"><span>אחר</span><span>₪1,120</span></div>
             </div>
-            <div class="s3-card">
-              <div class="s3-lbl">הוצאות מוכרות למע"מ</div>
-              <div class="s3-val">₪3,840</div>
-            </div>
-            <div class="s3-row"><div class="s3-rn">ציוד מקצועי</div><div class="s3-rv">₪1,200</div></div>
-            <div class="s3-row"><div class="s3-rn">שיווק ופרסום</div><div class="s3-rv">₪480</div></div>
-            <div class="s3-row"><div class="s3-rn">השכרת ציוד</div><div class="s3-rv">₪960</div></div>
-            <div class="s3-row"><div class="s3-rn">נסיעות מקצועיות</div><div class="s3-rv">₪1,200</div></div>
-            <button class="s3-btn">📥 הורדת CSV — מוכן לרו"ח</button>
+            <div class="s3btn">⬇️ ייצוא CSV לרואה חשבון</div>
           </div>
         </div>
-        <!-- Screen 4: AI -->
-        <div class="sf-screen hidden" id="sc4">
-          <div class="sf-bar"><span>יועץ AI</span><span>✨</span></div>
-          <div class="s4-body">
-            <div class="s4-card">
-              <div class="s4-badge">💡 תובנה חודשית</div>
-              <div class="s4-txt">הכנסותייך עלו ב-18% לעומת מאי! ציוד מקצועי מהווה 22% מהוצאותייך — שקלי השוואת מחירים.</div>
-            </div>
-            <div class="s4-card s4-warn">
-              <div class="s4-badge s4-badge-w">⚠️ תזכורת מע"מ</div>
-              <div class="s4-txt">תשלום דו-חודשי עוד 12 ימים. סכום משוער: ₪1,840. כספים בצד?</div>
-            </div>
-            <div class="s4-card" style="border-color:rgba(34,197,94,.2)">
-              <div class="s4-badge" style="color:#22C55E">✓ צפי חיובי</div>
-              <div class="s4-txt">בקצב הנוכחי — תסיימי יוני עם +₪12,450 ביד. מעולה!</div>
-            </div>
+        <div class="ph-scr off" id="ph-s4">
+          <div class="ph-bar"><span>9:41</span><span>●●●</span></div>
+          <div class="s4body">
+            <div class="s4card"><div class="s4badge">🤖 תובנה חכמה</div><div class="s4txt">יוני חזק — הכנסות גבוהות ב-23% לעומת מאי. הלקוחה הגדולה ביותר השתתפה ב-3 ביקורים (₪1,200).</div></div>
+            <div class="s4card s4warn"><div class="s4badge s4bw">⚠️ התראת מלאי</div><div class="s4txt">ג'ל טופ קוט כמעט אזל — נשארו 2 בקבוקים. בקצב הנוכחי יגמר בעוד 5 ימים.</div></div>
+            <div class="s4card"><div class="s4badge">💡 הצעה</div><div class="s4txt">3 לקוחות לא שילמו 7+ ימים. שלחי תזכורת WhatsApp אוטומטית?</div></div>
           </div>
         </div>
       </div>
     </div>
-    <div class="sf-text-col">
-      <div class="sf-item rv" data-screen="sc1">
-        <div class="sf-num">01 / 04</div>
-        <h3 class="sf-title">תמונת מצב<br>בזמן אמת</h3>
-        <p class="sf-desc">פותחת את האפליקציה — ורואה בדיוק כמה הרווחת, כמה יצא, וכמה ייוותר לך בסוף החודש. אין יותר ניחושים.</p>
-        <div class="sf-tag">📊 צפי חכם לסוף חודש</div>
+
+    <div class="feat-text-col">
+      <div class="feat-item rv" data-screen="ph-s1">
+        <div class="feat-num">01</div>
+        <h3 class="feat-title">לוח בקרה שמספר את כל הסיפור</h3>
+        <p class="feat-desc">יתרה בזמן אמת, הכנסות לעומת הוצאות, ומע"מ שמחשב את עצמו — בלי נוסחאות, בלי כאב ראש.</p>
+        <div class="feat-tag">📊 עדכון אוטומטי</div>
       </div>
-      <div class="sf-item rv d1" data-screen="sc2">
-        <div class="sf-num">02 / 04</div>
-        <h3 class="sf-title">יומן לקוחות<br>מובנה</h3>
-        <p class="sf-desc">כל לקוח/ה — שם, שעה, שירות, ותשלום. SMS אוטומטי יום לפני הטיפול. וכשגמרת — לוחצת "שולם" ונגמר הסיפור.</p>
-        <div class="sf-tag">👥 מי שילם, מי עוד חייב</div>
+      <div class="feat-item rv d1" data-screen="ph-s2">
+        <div class="feat-num">02</div>
+        <h3 class="feat-title">לקוחות, תורים ותשלומים — במקום אחד</h3>
+        <p class="feat-desc">כרטסת לקוחות עם היסטוריה מלאה, מעקב תשלומים, ושליחת תזכורות WhatsApp בלחיצה.</p>
+        <div class="feat-tag">💬 תזכורות אוטומטיות</div>
       </div>
-      <div class="sf-item rv d2" data-screen="sc3">
-        <div class="sf-num">03 / 04</div>
-        <h3 class="sf-title">ייצוא לרו"ח<br>בלחיצה אחת</h3>
-        <p class="sf-desc">CSV מסווג לפי קטגוריות, עם חישוב מע"מ מלא וסיכום שנתי — מוכן לשליחה לרואה חשבון. שעות של עבודה נחסכות בשנייה.</p>
-        <div class="sf-tag">📤 עוסק פטור ומורשה</div>
+      <div class="feat-item rv d2" data-screen="ph-s3">
+        <div class="feat-num">03</div>
+        <h3 class="feat-title">ייצוא מקצועי לרואה חשבון</h3>
+        <p class="feat-desc">דוח CSV מסודר בלחיצה אחת — מוכן לייבוא לכל תוכנת הנהלת חשבונות. המע"מ כבר מחושב.</p>
+        <div class="feat-tag">📄 תואם לכל תוכנת הנהלת חשבונות</div>
       </div>
-      <div class="sf-item rv d3" data-screen="sc4">
-        <div class="sf-num">04 / 04</div>
-        <h3 class="sf-title">יועץ/ת AI<br>פיננסי/ת</h3>
-        <p class="sf-desc">ניתוח חכם של ההוצאות שלך — מה עולה הרבה, מה ניתן לקזז, ומה צפוי לקרות עד סוף החודש. לא גנרי — מותאם לנתונים שלך.</p>
-        <div class="sf-tag">✨ תובנות מותאמות אישית</div>
+      <div class="feat-item rv d3" data-screen="ph-s4">
+        <div class="feat-num">04</div>
+        <h3 class="feat-title">יועצת AI שמכירה את העסק שלך</h3>
+        <p class="feat-desc">תובנות אוטומטיות על דפוסי הוצאות, התראות מלאי חכמות, והמלצות מותאמות לעסק יופי.</p>
+        <div class="feat-tag">🤖 10 ניתוחים חינם ביום</div>
       </div>
     </div>
   </div>
@@ -495,180 +429,229 @@ footer{background:var(--bg2);border-top:1px solid var(--bd);padding:28px clamp(1
 
 <!-- COMPARE -->
 <section id="compare">
-  <div class="sh rv">
-    <div class="sh-lbl">השוואה</div>
-    <h2 class="sh-h">למה My Money?</h2>
-    <p class="sh-p rv d1">אף כלי אחר לא נבנה לאנשי יופי עצמאיים. ראינו את כל המתחרים — ולא מצאנו מה שצריכים.</p>
-  </div>
-  <div class="cmp-scroll rv d2">
+  <div class="sec-lbl rv">למה My Money?</div>
+  <h2 class="sec-h rv d1">השוואה כנה</h2>
+  <p class="sec-sub rv d2">לא כל אפליקציית פיננסים נבנתה לעסקי יופי. הנה ההבדל.</p>
+  <div class="cmp-wrap rv d3">
     <table>
       <thead>
         <tr>
-          <th style="text-align:right">תכונה</th>
-          <th class="th-us"><span class="th-us-badge">הבחירה שלנו ⭐</span>My Money</th>
-          <th>חשבונית ירוקה</th>
-          <th>Moneytor</th>
+          <th>פיצ'ר</th>
+          <th class="th-us"><div class="th-us-b">המועדף</div><br>My Money</th>
+          <th>אפליקציה כללית</th>
           <th>Excel</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>יומן לקוחות ותורים</td><td class="td-us"><span class="ck">✓</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td></tr>
-        <tr><td>מעקב תשלום לקוח</td><td class="td-us"><span class="ck">✓</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td></tr>
-        <tr><td>SMS תזכורת ללקוח</td><td class="td-us"><span class="ck">✓</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td></tr>
-        <tr><td>ייצוא CSV לרו"ח</td><td class="td-us"><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="pk">חלקי</span></td><td><span class="pk">ידני</span></td></tr>
-        <tr><td>התראות מע"מ דו-חודשי</td><td class="td-us"><span class="ck">✓</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td></tr>
-        <tr><td>צילום קבלות</td><td class="td-us"><span class="ck">✓</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td></tr>
-        <tr><td>עובדת אופליין (PWA)</td><td class="td-us"><span class="ck">✓</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td><td>—</td></tr>
-        <tr><td>₪49 ללא התחייבות</td><td class="td-us"><span class="ck">✓</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td><td>—</td></tr>
-        <tr><td style="font-weight:700">מחיר לחודש</td><td class="td-us" style="font-weight:800;color:var(--c);font-size:15px">₪29–₪49</td><td>₪29+</td><td>₪49</td><td style="color:var(--p)">חינמי</td></tr>
+        <tr><td>עברית מלאה + RTL</td><td class="td-us"><span class="ck">✓</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td></tr>
+        <tr><td>ניהול לקוחות יופי</td><td class="td-us"><span class="ck">✓</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td></tr>
+        <tr><td>מחשבון מע"מ אוטומטי</td><td class="td-us"><span class="ck">✓</span></td><td><span class="xk">✗</span></td><td><span class="pk">ידני</span></td></tr>
+        <tr><td>ייצוא CSV לרואה חשבון</td><td class="td-us"><span class="ck">✓</span></td><td><span class="pk">חלקי</span></td><td><span class="ck">✓</span></td></tr>
+        <tr><td>התראות מלאי חכמות</td><td class="td-us"><span class="ck">✓</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td></tr>
+        <tr><td>ניתוח AI בעברית</td><td class="td-us"><span class="ck">✓</span></td><td><span class="xk">✗</span></td><td><span class="xk">✗</span></td></tr>
+        <tr><td>עבודה אופליין</td><td class="td-us"><span class="ck">✓</span></td><td><span class="xk">✗</span></td><td><span class="ck">✓</span></td></tr>
+        <tr><td>גיבוי ענן מוצפן</td><td class="td-us"><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="xk">✗</span></td></tr>
+        <tr><td>מחיר חודשי</td><td class="td-us"><span style="color:var(--c);font-weight:700">₪29–49</span></td><td><span class="pk">₪40–120</span></td><td><span class="pk">₪60+ (MS365)</span></td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- PRICING -->
+<!-- PRICING: 2 clean tiers -->
 <section id="pricing">
-  <div class="sh rv" style="text-align:center">
-    <div class="sh-lbl" style="display:inline-block">מחירים</div>
-    <h2 class="sh-h">תוכנית שמתאימה לך</h2>
-    <p class="sh-p" style="margin:0 auto">30 יום ניסיון חינמי. ללא כרטיס אשראי.</p>
-  </div>
-  <div class="price-row">
-    <div class="pc rv">
-      <div class="pc-badge badge-m">מנוי חודשי</div>
-      <div class="pc-name">אישי</div>
-      <div class="pc-price">₪29<sub>/חודש</sub></div>
-      <div class="pc-period">₪249 לשנה — חיסכון 28%</div>
+  <div class="sec-lbl rv">תמחור שקוף</div>
+  <h2 class="sec-h rv d1">בחרי מה מתאים לך</h2>
+  <p class="sec-sub rv d2">שתי תוכניות, אפס עמלות נסתרות. 30 יום ניסיון חינם לשתיהן.</p>
+  <div class="price-grid rv d3">
+    <div class="pc" id="pc-annual">
+      <div class="pc-badge badge-m">שנתי · חיסכון 41%</div>
+      <div class="pc-price"><sub>₪</sub>29<sub style="font-size:13px;vertical-align:baseline;color:var(--t3)">/חודש</sub></div>
+      <div class="pc-period">₪249 לשנה · חיוב שנתי חד-פעמי</div>
       <ul class="pc-feats">
-        <li>מעקב הכנסות והוצאות</li>
-        <li>ייצוא CSV לרו"ח</li>
-        <li>יומן לקוחות</li>
-        <li>10 ניתוחי AI ביום</li>
+        <li>כל הפיצ'רים ללא הגבלה</li>
+        <li>ניהול לקוחות + תורים</li>
+        <li>ייצוא CSV ודוחות מע"מ</li>
+        <li>ניתוח AI יומי</li>
+        <li>גיבוי ענן מוגן</li>
+        <li>עדכונים שוטפים</li>
       </ul>
-      <a class="pc-btn pc-btn-o" href="index.html">התחלי בחינם</a>
+      <a href="#" class="pc-btn pc-btn-o" onclick="goApp();return false">נסי 30 יום חינם</a>
     </div>
-    <div class="pc pc-hero rv d1">
-      <div class="pc-badge badge-g">ללא התחייבות ★</div>
-      <div class="pc-name">חודשי</div>
-      <div class="pc-price" style="color:var(--g)">₪49<sub>/חודש</sub></div>
-      <div class="pc-period">ללא חיוב אוטומטי · כל הפיצ'רים</div>
+    <div class="pc pc-hero" id="pc-monthly">
+      <div class="pc-badge badge-c">ללא התחייבות</div>
+      <div class="pc-price"><sub>₪</sub>49<sub style="font-size:13px;vertical-align:baseline;color:var(--t2)">/חודש</sub></div>
+      <div class="pc-period">תשלום חודשי · ביטול בכל עת</div>
       <ul class="pc-feats">
-        <li>כל מה שבאישי</li>
-        <li>דוחות מע"מ מלאים</li>
-        <li>AI ללא הגבלה</li>
-        <li>SMS תזכורות ללקוחות</li>
-        <li>צילום קבלות</li>
+        <li>כל הפיצ'רים ללא הגבלה</li>
+        <li>ניהול לקוחות + תורים</li>
+        <li>ייצוא CSV ודוחות מע"מ</li>
+        <li>ניתוח AI יומי</li>
+        <li>גיבוי ענן מוגן</li>
+        <li>תמיכה בעברית</li>
       </ul>
-      <a class="pc-btn pc-btn-g" href="index.html">בחרי תוכנית זו</a>
-    </div>
-    <div class="pc rv d2">
-      <div class="pc-badge badge-c">חיסכון 30%</div>
-      <div class="pc-name">עסקי ⭐</div>
-      <div class="pc-price">₪59<sub>/חודש</sub></div>
-      <div class="pc-period">₪499 לשנה — הכי משתלם</div>
-      <ul class="pc-feats">
-        <li>כל מה שבחודשי</li>
-        <li>חיוב שנתי חסכוני</li>
-        <li>עדיפות בתמיכה</li>
-        <li>ניתוח שנתי מלא</li>
-      </ul>
-      <a class="pc-btn pc-btn-c" href="index.html">התחלי בחינם</a>
+      <a href="#" class="pc-btn pc-btn-c" onclick="contactWhatsApp();return false">📱 שדרגי דרך WhatsApp</a>
     </div>
   </div>
+  <p style="text-align:center;margin-top:22px;font-size:13px;color:var(--t3)">שתי התוכניות כוללות <strong style="color:var(--t2)">30 יום ניסיון חינם</strong> — ללא כרטיס אשראי</p>
 </section>
 
 <!-- QUOTE -->
 <section id="quote">
-  <div class="q-bg">₪</div>
-  <p class="q-text rv">"בניתי את זה לעצמי כי לא היה כלי שמתאים לנו — לא לחשבונאית, לא לייטקיסטית. פשוט לי, שרוצה לדעת כמה נכנס ויצא החודש."</p>
-  <div class="q-attr rv d1">
-    <div class="q-name"><strong>שני</strong><span>קוסמטיקאית ומייסדת My Money</span></div>
-    <div class="q-avatar">₪</div>
+  <div class="q-avatar rv">💅</div>
+  <div class="rv d2">
+    <span class="q-mark">"</span>
+    <p class="q-text">לפני My Money הייתי מבינה בסוף חודש שהוצאתי יותר ממה שהכנסתי — בלי לדעת למה. היום אני <strong>יודעת בדיוק</strong> מה קורה עם הכסף שלי.</p>
+    <div class="q-name">
+      <strong>שירה מ׳, קוסמטיקאית</strong>
+      <span>תל אביב · משתמשת My Money 8 חודשים</span>
+    </div>
   </div>
 </section>
 
-<!-- CTA FINAL -->
-<section id="cta-final">
-  <h2 class="cta-h rv">מוכנ/ה<br>ל<span>להתחיל?</span></h2>
-  <p class="cta-sub rv d1">30 יום חינמי · ללא כרטיס אשראי · בטל/י בכל עת</p>
-  <a class="btn-c rv d2" href="index.html" style="font-size:17px;padding:16px 36px;border-radius:14px;display:inline-flex">התחלי עכשיו — חינם ←</a>
-  <div class="trust-bar rv d3">
-    <span>אבטחת Firebase / Google</span>
-    <span>עברית מלאה RTL</span>
-    <span>עובדת אופליין</span>
-    <span>פחות מ-2 קפה בחודש</span>
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-wm">My Money</div>
+  <h2 class="cta-h rv">הכסף שלך מחכה<br><span>שתתחילי לנהל אותו.</span></h2>
+  <p class="cta-sub rv d1">30 יום חינם. ללא כרטיס אשראי. ללא התחייבות.</p>
+  <div class="cta-btns rv d2">
+    <a href="#" class="btn-main" onclick="goApp();return false" style="font-size:16px;padding:16px 36px">📱 התחילי עכשיו — בחינם</a>
+  </div>
+  <div class="trust-row rv d3">
+    <span>Firebase מוצפן</span>
+    <span>עובד אופליין</span>
+    <span>עברית מלאה</span>
+    <span>ביטול בכל עת</span>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
-  <a class="n-logo" href="index.html"><div class="n-mark">₪</div><span class="n-name">My Money</span></a>
+  <a class="nl" href="#">
+    <div class="nm">₪</div>
+    <span class="nn">My Money</span>
+  </a>
   <div class="f-links">
-    <a href="#features">תכונות</a>
-    <a href="#compare">השוואה</a>
-    <a href="#pricing">מחירים</a>
-    <a href="index.html">פרטיות ואבטחה</a>
+    <a href="#">פרטיות</a>
+    <a href="#">תנאי שימוש</a>
+    <a href="#">צור קשר</a>
   </div>
-  <div class="f-copy">© 2026 My Money · כל הזכויות שמורות</div>
+  <span class="f-copy">© 2026 My Money · כל הזכויות שמורות</span>
 </footer>
 
 <script>
-// ── CURSOR ──
+'use strict';
+
+/* CURSOR */
 var cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
 var mx=0,my=0,cx=0,cy=0;
-document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-(function animCur(){cx+=(mx-cx)*.18;cy+=(my-cy)*.18;cur2.style.left=cx+'px';cur2.style.top=cy+'px';requestAnimationFrame(animCur);})();
+document.addEventListener('mousemove',function(e){
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+});
+(function tick(){
+  cx+=(mx-cx)*.12;cy+=(my-cy)*.12;
+  cur2.style.left=cx+'px';cur2.style.top=cy+'px';
+  requestAnimationFrame(tick);
+})();
 
-// ── SCROLL PROGRESS ──
-var prog=document.getElementById('prog');
+/* SCROLL PROGRESS */
 window.addEventListener('scroll',function(){
-  var pct=window.scrollY/(document.body.scrollHeight-window.innerHeight)*100;
-  prog.style.width=Math.min(pct,100)+'%';
-},{passive:true});
+  var p=window.scrollY/(document.body.scrollHeight-window.innerHeight);
+  document.getElementById('prog').style.width=(p*100)+'%';
+},{ passive:true });
 
-// ── REVEAL on SCROLL ──
+/* REVEAL */
 var rvEls=document.querySelectorAll('.rv');
 var rvObs=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');rvObs.unobserve(e.target);}});
-},{threshold:.1});
+  entries.forEach(function(e){if(e.isIntersecting) e.target.classList.add('on');});
+},{threshold:.12});
 rvEls.forEach(function(el){rvObs.observe(el);});
 
-// ── COUNT UP ──
-function countUp(el){
-  var t=parseInt(el.dataset.t),s=el.dataset.s||'',isD=el.dataset.d==='1';
-  var dur=1800,steps=60,i=0;
-  var ti=setInterval(function(){
-    i++;var ease=1-Math.pow(1-(i/steps),3),v=Math.round(t*ease);
-    if(isD) el.textContent=(v/10).toFixed(1)+s;
-    else el.textContent=(v>=1000?(v/1000).toFixed(0)+'K'+s:v+s);
-    if(i>=steps){
-      if(isD)el.textContent='4.9'+s;
-      else el.textContent=(t>=1000?(t/1000)+'K'+s:t+s);
-      clearInterval(ti);
-    }
-  },dur/steps);
-}
-var cObs=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){if(e.isIntersecting){countUp(e.target);cObs.unobserve(e.target);}});
-},{threshold:.4});
-document.querySelectorAll('.stat-n').forEach(function(el){cObs.observe(el);});
-
-// ── STICKY PHONE SCREEN SWITCH ──
-var items=document.querySelectorAll('.sf-item');
-var screens={sc1:document.getElementById('sc1'),sc2:document.getElementById('sc2'),sc3:document.getElementById('sc3'),sc4:document.getElementById('sc4')};
-var curScreen='sc1';
-function showScreen(id){
-  if(id===curScreen)return;
-  screens[curScreen].classList.add('hidden');
-  screens[id].classList.remove('hidden');
-  curScreen=id;
-}
-var phoneObs=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    if(e.isIntersecting&&e.target.dataset.screen){showScreen(e.target.dataset.screen);}
+/* TICKER */
+var tickItems=[
+  {e:'💅',l:'טכנאיות ציפורניים',v:'500+'},
+  {e:'✂️',l:'מעצבות שיער',v:'300+'},
+  {e:'🌸',l:'קוסמטיקאיות',v:'400+'},
+  {e:'💄',l:'מאפרות',v:'150+'},
+  {e:'💰',l:'חיסכון ממוצע לשנה',v:'₪2,340'},
+  {e:'📊',l:'עסקאות נרשמו',v:'120,000+'},
+  {e:'⭐',l:'דירוג ממוצע',v:'4.9/5'},
+  {e:'🔒',l:'אבטחת נתונים',v:'100%'}
+];
+var tInner=document.getElementById('tickerInner');
+var html='';
+for(var ii=0;ii<2;ii++){
+  tickItems.forEach(function(it){
+    html+='<div class="ti"><span>'+it.e+'</span><strong>'+it.v+'</strong><span>'+it.l+'</span><span class="ti-dot"></span></div>';
   });
-},{threshold:.55,rootMargin:'-10% 0px -10% 0px'});
-items.forEach(function(el){if(el.dataset.screen) phoneObs.observe(el);});
+}
+tInner.innerHTML=html;
+
+/* PROFESSION CYCLE */
+var profs=['קוסמטיקאית','טכנאית ציפורניים','מעצבת שיער','מאפרת','עצמאית ביופי'];
+var pi=0;
+var profEl=document.querySelector('.prof-cycle');
+if(profEl){
+  setInterval(function(){
+    profEl.style.opacity='0';
+    setTimeout(function(){
+      pi=(pi+1)%profs.length;
+      profEl.textContent=profs[pi];
+      profEl.style.opacity='1';
+    },300);
+  },2600);
+}
+
+/* COUNT-UP for big number */
+function countUp(el,target,dur){
+  var n=0,inc=target/60;
+  var t=setInterval(function(){
+    n+=inc;
+    if(n>=target){n=target;clearInterval(t);}
+    el.textContent='₪'+Math.round(n).toLocaleString('he-IL');
+  },dur/60);
+}
+var bnObs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(e.isIntersecting){
+      countUp(document.getElementById('bnCount'),2340,1800);
+      bnObs.disconnect();
+    }
+  });
+},{threshold:.4});
+var bnSec=document.getElementById('bignumber');
+if(bnSec) bnObs.observe(bnSec);
+
+/* STICKY PHONE SCREEN SWITCH */
+function showScreen(id){
+  document.querySelectorAll('.ph-scr').forEach(function(s){
+    s.classList.toggle('off',s.id!==id);
+  });
+}
+var featItems=document.querySelectorAll('.feat-item[data-screen]');
+var phObs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(e.isIntersecting&&e.target.dataset.screen) showScreen(e.target.dataset.screen);
+  });
+},{threshold:.5,rootMargin:'-5% 0px -5% 0px'});
+featItems.forEach(function(el){phObs.observe(el);});
+
+/* 3D TILT on pricing cards */
+document.querySelectorAll('.pc').forEach(function(card){
+  card.addEventListener('mousemove',function(e){
+    var r=card.getBoundingClientRect();
+    var x=(e.clientX-r.left)/r.width-.5;
+    var y=(e.clientY-r.top)/r.height-.5;
+    card.style.transform='perspective(700px) rotateY('+(x*8)+'deg) rotateX('+(-y*8)+'deg) translateY(-4px)';
+  });
+  card.addEventListener('mouseleave',function(){card.style.transform='';});
+});
+
+/* APP / WHATSAPP */
+function goApp(){window.open('https://shani-finance.vercel.app','_blank');}
+function contactWhatsApp(){
+  var msg=encodeURIComponent('היי! אני רוצה לשדרג את My Money לתוכנית חודשי ₪49/חודש 🌟');
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
 </script>
 </body>
 </html>
