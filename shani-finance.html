@@ -2152,7 +2152,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260810;
+var APP_VER=20260811;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2291,10 +2291,7 @@ var BIZ_PATTERNS=[
   /נסיעה ללקוחה|נסיעה לטיפול/i
 ];
 function isBizExpense(t){
-  if(t.biz===true)return true;
-  if(t.biz===false)return false;
-  for(var i=0;i<BIZ_PATTERNS.length;i++){if(BIZ_PATTERNS[i].test(t.desc))return true;}
-  return false;
+  return t.biz===true;
 }
 var _bizFilter=false;
 var _budgetEditLbl='';
@@ -2891,7 +2888,7 @@ function cycleBizInReport(encodedKey){
       var cur=arr[i].biz;
       if(cur===undefined){arr[i].biz=true;track('tag_biz',{action:'confirm',desc:desc});toast('סומן כהוצאה עסקית 💼');}
       else if(cur===true){arr[i].biz=false;track('tag_biz',{action:'personal',desc:desc});toast('סומן כהוצאה פרטית 👤');}
-      else{delete arr[i].biz;track('tag_biz',{action:'auto',desc:desc});toast('חזר לסיווג אוטומטי 🤖');}
+      else{delete arr[i].biz;track('tag_biz',{action:'clear',desc:desc});toast('הוסר הסיווג');}
       save();renderBizReport();return;
     }
   }
@@ -3538,9 +3535,10 @@ function renderExpenses(){
       var c=cat(t.desc);
       var key=encodeURIComponent(t.d+'|'+t.desc+'|'+t.a);
       var mt=t.method?'<span class="txn-method '+t.method+'" title="לחצי לשינוי" onclick="event.stopPropagation();cycleTxnMethod(\''+key+'\')" style="cursor:pointer">'+(t.method==='mc'?'MC':t.method==='visa'?'Visa':t.method==='cash'?'מזומן':'עוש')+'</span>':'';
-      var isBiz=isBizExpense(t);
       var bizSvg='<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>';
-      var bizBadge='<span class="txn-biz'+(t.biz===false?' no':'')+'" title="הוצאה עסקית — לחצי לשינוי" onclick="event.stopPropagation();cycleBizFlag(\''+key+'\')">'+(isBiz?bizSvg+' עסקי':'')+'</span>';
+      var bizBadge='';
+      if(t.biz===true){bizBadge='<span class="txn-biz" title="הוצאה עסקית — לחצי לשינוי" onclick="event.stopPropagation();cycleBizFlag(\''+key+'\')">'+bizSvg+' עסקי</span>';}
+      else if(t.biz===false){bizBadge='<span class="txn-biz no" title="מסומן כפרטי — לחצי לשינוי" onclick="event.stopPropagation();cycleBizFlag(\''+key+'\')">פרטי</span>';}
       var vatBadge='';
       if(APP_MODE==='business'&&SETTINGS.bizType==='murshe'&&isBiz){
         var vd=t.vatDed;
@@ -3599,7 +3597,7 @@ function cycleBizFlag(key){
       var cur=arr[i].biz;
       if(cur===undefined){arr[i].biz=true;track('tag_biz',{action:'set',desc:desc});toast('סומן כהוצאה עסקית 💼');}
       else if(cur===true){arr[i].biz=false;track('tag_biz',{action:'clear',desc:desc});toast('סומן כהוצאה לא עסקית');}
-      else{delete arr[i].biz;track('tag_biz',{action:'auto',desc:desc});toast('חזר לזיהוי אוטומטי');}
+      else{delete arr[i].biz;track('tag_biz',{action:'clear',desc:desc});toast('הוסר הסיווג');}
       save();renderExpenses();return;
     }
   }
