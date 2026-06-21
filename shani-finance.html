@@ -164,6 +164,26 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .auth-toggle b{color:var(--cyan);font-weight:500}
 .auth-forgot{font-size:13px;color:var(--muted);cursor:pointer;text-align:left;margin-top:6px;text-decoration:underline;text-decoration-color:rgba(255,255,255,.2)}
 .auth-forgot:hover{color:var(--text2)}
+/* Landing page sections inside auth-screen */
+.lp-hero{text-align:center;padding:10px 0 22px}
+.lp-tagline{font-size:26px;font-weight:700;color:var(--text);line-height:1.25;margin-bottom:8px;letter-spacing:-.5px}
+.lp-tagline span{color:var(--cyan)}
+.lp-sub{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:22px}
+.lp-feats{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;text-align:right}
+.lp-feat{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text2);line-height:1.5}
+.lp-feat-icon{width:20px;height:20px;border-radius:50%;background:rgba(45,212,191,.18);color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.lp-story{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:18px 18px 16px;margin-bottom:22px;text-align:right}
+.lp-story-text{font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:10px;font-style:italic}
+.lp-story-attr{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.lp-story-attr::before{content:'';flex:1;height:1px;background:var(--border)}
+.lp-pricing{display:flex;gap:10px;margin-bottom:22px}
+.lp-plan{flex:1;border-radius:14px;padding:14px 12px;border:1px solid var(--border2);text-align:right}
+.lp-plan.best{border-color:rgba(45,212,191,.4);background:rgba(45,212,191,.06)}
+.lp-plan-name{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;margin-bottom:4px}
+.lp-plan-price{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-1px;line-height:1.1}
+.lp-plan-price sub{font-size:12px;font-weight:400;color:var(--muted);letter-spacing:0}
+.lp-plan-feat{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.6}
+.lp-trial-badge{text-align:center;font-size:12px;color:var(--cyan);margin-bottom:16px;padding:8px;background:rgba(45,212,191,.08);border-radius:10px;border:1px solid rgba(45,212,191,.2)}
 .auth-sep{display:flex;flex-direction:column;gap:2px;margin-bottom:4px;text-align:right}
 .auth-sep-lbl{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:4px}
 .drw-account{font-size:11px;color:var(--muted);padding:6px 16px 2px;word-break:break-all;display:flex;align-items:center;gap:6px}
@@ -265,7 +285,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .mlabel{font-size:15px;font-weight:500;min-width:94px;text-align:center}
 
 /* ══ TILES ════════════════════════════════════════════════ */
-.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 16px 16px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 16px 16px}
 .tile{
   background:var(--card2);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);
   padding:18px 12px 16px;display:flex;flex-direction:column;align-items:center;gap:6px;
@@ -2040,7 +2060,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260795;
+var APP_VER=20260797;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2960,10 +2980,11 @@ function renderHome(){
       '<button onclick="openFab()" style="background:var(--cyan);color:#08131F;font-family:Rubik,sans-serif;font-size:14px;font-weight:500;padding:12px 28px;border-radius:12px;border:none;cursor:pointer">+ הוסיפי עסקה ראשונה</button>'+
       '</div>';
   } else {
-    // 2 tiles — income and expenses (forecast is already in the hero)
+    var bCls=r.balFull>=0?'pos':'neg';
     document.getElementById('home-tiles').innerHTML=
-      '<div class="tile stagger" style="--tc:var(--pos);--si:0" onclick="go(\'income\')" onpointerdown="addRipple(this,event)"><div class="tile-val pos">₪'+fmt(r.inc+r.doneAmt)+'</div><div class="tile-lbl">הכנסות החודש</div></div>'+
-      '<div class="tile stagger" style="--tc:var(--neg);--si:1" onclick="go(\'expenses\')" onpointerdown="addRipple(this,event)"><div class="tile-val orange">₪'+fmt(r.exp)+'</div><div class="tile-lbl">הוצאות החודש</div></div>';
+      '<div class="tile stagger" style="--tc:var(--pos);--si:0" onclick="go(\'income\')" onpointerdown="addRipple(this,event)"><div class="tile-val pos">₪'+fmt(r.inc+r.doneAmt)+'</div><div class="tile-lbl">הכנסות</div></div>'+
+      '<div class="tile stagger" style="--tc:var(--neg);--si:1" onclick="go(\'expenses\')" onpointerdown="addRipple(this,event)"><div class="tile-val orange">₪'+fmt(r.exp)+'</div><div class="tile-lbl">הוצאות</div></div>'+
+      '<div class="tile stagger" style="--tc:var(--cyan);--si:2" onclick="go(\'balance\')" onpointerdown="addRipple(this,event)"><div class="tile-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="tile-lbl">'+(r.isNow?'צפי סוף חודש':'יישאר')+'</div></div>';
   }
 
   renderUpcoming(r);
@@ -3158,7 +3179,7 @@ function renderPMCards(r){
       '<div class="pm-sub">הוצאות החודש: ₪'+fmt(cashTotal)+'</div>'+
       '<span class="pm-tag" style="background:rgba(255,179,71,.15);color:#FFB347">יתרה במזומן</span>'+
     '</div>';
-  renderBudgets();
+  // Budget bars removed from home — accessible via expenses page
 }
 
 // ── PAYMENT METHOD DETAIL ─────────────────────────────────
@@ -4909,7 +4930,15 @@ function runAdvisor(){
   showAdvisor(insights);
 }
 
-// FAB: short-tap = openAddTxn, long-press 600ms = openAdvisor
+// FAB: short-tap = openAddTxn (or add appointment on clients page), long-press 600ms = openAdvisor
+function fabTap(){
+  if(_prevScreen==='clients'){
+    var today=new Date();
+    openModal(today.getDate(),curCMi);
+  } else {
+    openAddTxn();
+  }
+}
 (function(){
   var fab=document.getElementById('main-fab');
   if(!fab)return;
@@ -4922,13 +4951,13 @@ function runAdvisor(){
     },600);
   },{passive:true});
   fab.addEventListener('touchend',function(e){
-    if(_lp){clearTimeout(_lp);_lp=null;e.preventDefault();openAddTxn();}
+    if(_lp){clearTimeout(_lp);_lp=null;e.preventDefault();fabTap();}
   });
   fab.addEventListener('touchmove',function(){
     if(_lp){clearTimeout(_lp);_lp=null;}
   });
   fab.addEventListener('click',function(){
-    if(!('ontouchstart' in window))openAddTxn();
+    if(!('ontouchstart' in window))fabTap();
   });
 })();
 
