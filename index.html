@@ -1174,6 +1174,7 @@ html.mode-private .biz-only{ display:none!important; }
 
   <div id="trial-bar-wrap"></div>
   <div class="alert-wrap" id="home-alert"></div>
+  <div id="home-insight"></div>
 
   <div class="mnav">
     <button class="marrow" onclick="moveHM(-1)">›</button>
@@ -2152,7 +2153,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260818;
+var APP_VER=20260819;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -3053,6 +3054,46 @@ function calc(mi){
           balNow:balNow,balFull:balFull,isPast:isPast,isNow:isNow};
 }
 
+// ── HOME INSIGHT ─────────────────────────────────────────
+function getTopInsight(r){
+  if(!r||!r.isNow) return null;
+  // Priority 1: negative forecast
+  if(r.balFull<0) return {type:'bad',text:'תחזית גרעון של ₪'+fmt(Math.abs(r.balFull))+' לסוף '+r.ml.label};
+  // Priority 2: upcoming clients
+  if(r.planList&&r.planList.length>0){
+    if(r.planList.length===1){
+      var c=r.planList[0];
+      return {type:'good',text:'לקוחה '+c.name+' ביום '+c.day+' — ₪'+fmt(c.amount)+' צפויים'};
+    }
+    return {type:'good',text:r.planList.length+' לקוחות מתוכננות החודש — צפי ₪'+fmt(r.planAmt)+' הכנסה'};
+  }
+  // Priority 3: great month
+  if(r.balFull>1500) return {type:'good',text:'חודש מצוין — צפי עודף ₪'+fmt(r.balFull)+' לסוף '+r.ml.label};
+  // Priority 4: high wolt spend
+  var exp=RAW.expense[r.m]||[];
+  var wolt=0;
+  for(var i=0;i<exp.length;i++){if(/וולט|bolt/i.test(exp[i].desc||''))wolt+=safeN(exp[i].a);}
+  if(wolt>250) return {type:'warn',text:'₪'+Math.round(wolt)+' על משלוחים החודש — '+(Math.round(wolt/30))+'₪ ביום בממוצע'};
+  return null;
+}
+function renderHomeInsight(r){
+  var el=document.getElementById('home-insight');
+  if(!el) return;
+  var ins=getTopInsight(r);
+  if(!ins){el.innerHTML='';return;}
+  var colors={
+    bad:{bg:'rgba(248,113,113,.09)',brd:'rgba(248,113,113,.28)',co:'#F87171',dot:'✕'},
+    warn:{bg:'rgba(245,158,11,.09)',brd:'rgba(245,158,11,.28)',co:'#F59E0B',dot:'!'},
+    good:{bg:'rgba(34,197,94,.09)',brd:'rgba(34,197,94,.25)',co:'#22C55E',dot:'✓'}
+  };
+  var c=colors[ins.type]||colors.warn;
+  el.innerHTML='<div style="margin:0 16px 12px;padding:11px 14px;border-radius:14px;background:'+c.bg+';border:1px solid '+c.brd+';display:flex;align-items:center;gap:10px;direction:rtl">'+
+    '<span style="width:20px;height:20px;border-radius:50%;background:'+c.brd+';color:'+c.co+';font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+c.dot+'</span>'+
+    '<span style="font-size:13px;font-weight:500;color:var(--text);line-height:1.4;flex:1">'+ins.text+'</span>'+
+    '<span style="font-size:9px;font-weight:700;letter-spacing:.8px;color:'+c.co+';border:1px solid '+c.brd+';padding:2px 6px;border-radius:6px">AI</span>'+
+    '</div>';
+}
+
 // ── HOME ─────────────────────────────────────────────────
 function renderHome(){
   renderTrialBar();
@@ -3134,6 +3175,7 @@ function renderHome(){
     alertHtml='<div class="alert-card bad"><div class="a-body"><div class="a-title">תחזית שלילית לסוף החודש</div><div class="a-sub">'+(r.mcDeduct>0?'מאסטרקארד ₪'+fmt(r.mcBill)+' ב-20':'')+' '+(r.vDeduct>0?'· ויזה ₪'+fmt(r.vBill)+' ב-15':'')+'</div></div><div class="a-amt">₪'+fmt(Math.abs(r.balFull))+'</div></div>';
   }
   wrap.innerHTML=alertHtml;
+  renderHomeInsight(r);
 
   // Empty state — no data yet
   var hasAnyData=(r.inc+r.doneAmt+r.exp)>0 || FIXED>0;
