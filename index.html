@@ -185,6 +185,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .lp-plan.best{border-color:rgba(45,212,191,.45);background:rgba(45,212,191,.07)}
 .lp-plan.selected{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(45,212,191,.15)}
 .lp-plan-badge{background:var(--cyan);color:#08131F;font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;display:inline-block;margin-bottom:5px;letter-spacing:.3px}
+.lp-plan-badge.nc{background:var(--gold);color:#08131F}
 .lp-plan-name{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;margin-bottom:4px}
 .lp-plan-price{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-1px;line-height:1.1}
 .lp-plan-price sub{font-size:11px;font-weight:400;color:var(--muted);letter-spacing:0}
@@ -712,7 +713,7 @@ select option{background:#111D2C;color:#fff}
 .pw-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9500;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .25s}
 .pw-sheet{background:var(--bg2);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:32px 22px calc(40px + env(safe-area-inset-bottom,0px));max-height:92dvh;overflow-y:auto;border-top:2px solid rgba(45,212,191,.35)}
 .pw-plan-row{display:flex;gap:10px;margin:20px 0}
-.pw-plan{flex:1;border-radius:16px;padding:16px 14px;border:2px solid var(--border2);text-align:right;cursor:pointer;transition:all .18s ease;-webkit-tap-highlight-color:transparent;opacity:.65}
+.pw-plan{flex:1;border-radius:16px;padding:12px 10px;border:2px solid var(--border2);text-align:right;cursor:pointer;transition:all .18s ease;-webkit-tap-highlight-color:transparent;opacity:.65}
 .pw-plan:active{transform:scale(.97)}
 .pw-plan.hero{border-color:var(--cyan);background:rgba(45,212,191,.12);box-shadow:0 0 0 3px rgba(45,212,191,.18);opacity:1}
 .pw-plan-badge{background:var(--cyan);color:#08131F;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:6px;letter-spacing:.3px}
@@ -1060,23 +1061,25 @@ html.mode-private .biz-only{ display:none!important; }
         <div class="lp-plan-feat">מעקב מלא<br>ייצוא CSV</div>
         <button class="lp-plan-btn" onclick="lpScrollToSignup()">בחר/י</button>
       </div>
-      <div class="lp-plan best" onclick="lpSelectPlan(this,'business')">
-        <div class="lp-plan-badge">הכי פופולרי</div>
-        <div class="lp-plan-name">עסקי ⭐</div>
-        <div class="lp-plan-price">₪59<sub>/חודש</sub></div>
-        <div class="lp-plan-feat">הכל + מע"מ<br>AI ללא הגבלה</div>
+      <div class="lp-plan best" onclick="lpSelectPlan(this,'nocommit')">
+        <div class="lp-plan-badge nc">ללא התחייבות</div>
+        <div class="lp-plan-name">חודשי</div>
+        <div class="lp-plan-price">₪49<sub>/חודש</sub></div>
+        <div class="lp-plan-feat">כל הפיצ'רים<br>בלי חיוב אוטו</div>
         <button class="lp-plan-btn" onclick="lpScrollToSignup()">בחר/י</button>
       </div>
-      <div class="lp-plan" onclick="lpSelectPlan(this,'free')">
-        <div class="lp-plan-name">חינמי</div>
-        <div class="lp-plan-price">₪0</div>
-        <div class="lp-plan-feat">מעקב בסיסי<br>10 ניתוחי AI/יום</div>
-        <button class="lp-plan-btn" onclick="lpScrollToSignup()">התחל/י</button>
+      <div class="lp-plan" onclick="lpSelectPlan(this,'business')">
+        <div class="lp-plan-badge">חיסכון 30%</div>
+        <div class="lp-plan-name">עסקי ⭐</div>
+        <div class="lp-plan-price">₪59<sub>/חודש</sub></div>
+        <div class="lp-plan-feat">הכל + מע"מ<br>₪499 לשנה</div>
+        <button class="lp-plan-btn" onclick="lpScrollToSignup()">בחר/י</button>
       </div>
     </div>
+    <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:6px">או <span style="color:var(--cyan);cursor:pointer" onclick="lpScrollToSignup()">התחל/י בחינם ←</span></div>
 
     <!-- Trial note -->
-    <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:18px">פחות מ-2 קפה בחודש · ₪29 בלבד · בטל/י בכל עת</div>
+    <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:18px">פחות מ-2 קפה בחודש · בטל/י בכל עת · ₪49 ללא התחייבות</div>
 
     <!-- Login / Signup -->
     <div class="auth-sub" id="auth-sub" style="margin-bottom:14px">כניסה — לסנכרון הנתונים בכל המכשירים</div>
@@ -2126,7 +2129,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260802;
+var APP_VER=20260803;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -4997,14 +5000,20 @@ function showPaywall(feat){
       '<div class="pw-plan-row">'+
         '<div class="pw-plan" onclick="pwSelectPlan(this,\'personal\')">'+
           '<div class="pw-plan-name">אישי</div>'+
-          '<div class="pw-plan-price" style="font-size:20px">₪29<span style="font-size:12px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
-          '<div class="pw-plan-sub">₪249 לשנה · חיסכון 28%</div>'+
+          '<div class="pw-plan-price" style="font-size:18px">₪29<span style="font-size:11px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
+          '<div class="pw-plan-sub">₪249 לשנה</div>'+
         '</div>'+
-        '<div class="pw-plan hero" onclick="pwSelectPlan(this,\'business\')">'+
-          '<div class="pw-plan-badge">הכי פופולרי</div>'+
+        '<div class="pw-plan hero" onclick="pwSelectPlan(this,\'nocommit\')">'+
+          '<div class="pw-plan-badge" style="background:var(--gold);color:#08131F">ללא התחייבות</div>'+
+          '<div class="pw-plan-name">חודשי</div>'+
+          '<div class="pw-plan-price" style="font-size:18px">₪49<span style="font-size:11px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
+          '<div class="pw-plan-sub">כל הפיצ\'רים</div>'+
+        '</div>'+
+        '<div class="pw-plan" onclick="pwSelectPlan(this,\'business\')">'+
+          '<div class="pw-plan-badge">חיסכון 30%</div>'+
           '<div class="pw-plan-name">עסקי ⭐</div>'+
-          '<div class="pw-plan-price">₪59<span style="font-size:12px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
-          '<div class="pw-plan-sub">₪499 לשנה · חיסכון 30%</div>'+
+          '<div class="pw-plan-price" style="font-size:18px">₪59<span style="font-size:11px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
+          '<div class="pw-plan-sub">₪499 לשנה</div>'+
         '</div>'+
       '</div>'+
       '<div class="pw-feats">'+
@@ -5026,12 +5035,15 @@ function closePaywall(){
   var el=document.getElementById('pw-overlay');
   if(el) el.remove();
 }
+var _pwPlan='nocommit';
 function pwSelectPlan(el, plan){
+  _pwPlan=plan;
   var plans=document.querySelectorAll('#pw-overlay .pw-plan');
   for(var i=0;i<plans.length;i++) plans[i].classList.remove('hero');
   el.classList.add('hero');
   var btn=document.getElementById('pw-cta-btn');
-  if(btn) btn.textContent='📱 שדרג/י ל'+(plan==='business'?'עסקי ₪59':'אישי ₪29')+' דרך WhatsApp';
+  var lbl=plan==='business'?'עסקי ₪59':plan==='personal'?'אישי ₪29':'ללא התחייבות ₪49';
+  if(btn) btn.textContent='📱 שדרג/י ל'+lbl+' דרך WhatsApp';
 }
 function lpSelectPlan(el, plan){
   var plans=document.querySelectorAll('.lp-plan');
@@ -5044,10 +5056,11 @@ function lpScrollToSignup(){
   if(btn) btn.scrollIntoView({behavior:'smooth',block:'center'});
 }
 function contactForUpgrade(){
-  var msg=encodeURIComponent('היי! אני רוצה לשדרג את My Money לגרסה המלאה 🌟');
+  var lbl=_pwPlan==='business'?'עסקי ₪59/חודש':_pwPlan==='personal'?'אישי ₪29/חודש':'ללא התחייבות ₪49/חודש';
+  var msg=encodeURIComponent('היי! אני רוצה לשדרג את My Money לתוכנית '+lbl+' 🌟');
   var num=(SETTINGS.bizWhatsApp||'').replace(/\D/g,'');
   window.open(num?'https://wa.me/'+num+'?text='+msg:'https://wa.me/?text='+msg,'_blank');
-  track('paywall_whatsapp_click',{});
+  track('paywall_whatsapp_click',{plan:_pwPlan});
 }
 
 // Trial banner injected into home screen
