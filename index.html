@@ -404,7 +404,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .bal-total-val.pos{color:var(--cyan)}.bal-total-val.neg{color:var(--neg)}
 
 /* ══ CLIENTS ══════════════════════════════════════════════ */
-.page-hdr{padding:16px 20px 6px;background:linear-gradient(170deg,#0C1E30,#0D1117)}
+.page-hdr{padding:16px 20px 6px;background:linear-gradient(170deg,#0C1E30,#0D1117);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .page-title{font-size:20px;font-weight:500;letter-spacing:-.5px}
 .page-sub  {font-size:13px;color:var(--muted);margin-top:3px}
 
@@ -1092,6 +1092,7 @@ html.mode-private .biz-only{ display:none!important; }
   <div class="page-hdr">
     <div class="page-title">לקוחות</div>
     <div class="page-sub" id="cl-sub"></div>
+    <button onclick="sendManualReminders()" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.25);color:var(--cyan);font-size:11px;font-weight:500;padding:6px 12px;border-radius:10px;cursor:pointer;white-space:nowrap" title="שלחי SMS תזכורת ללקוחות עם תור מחר">📱 תזכורות מחר</button>
   </div>
   <div class="mnav">
     <button class="marrow" onclick="moveCM(-1)">›</button>
@@ -1982,7 +1983,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260780;
+var APP_VER=20260781;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -6318,6 +6319,42 @@ function sendSMSOnDone(client) {
   }).then(function(){toast('📱 SMS נשלח ל-'+client.name);}).catch(function(){toast('שגיאה בשליחת SMS');});
 }
 
+// ── 24H APPOINTMENT REMINDERS ────────────────────────────
+function checkUpcomingReminders(){
+  if(!SETTINGS.twilioSid||!SETTINGS.twilioToken||!SETTINGS.twilioFrom) return;
+  var tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+  var tDay=tomorrow.getDate(), tMon=tomorrow.getMonth()+1, tYear=tomorrow.getFullYear();
+  // find matching MONTHS entry
+  var mk=null;
+  for(var i=0;i<MONTHS.length;i++){if(MONTHS[i].key===tMon&&MONTHS[i].year===tYear){mk=tMon;break;}}
+  if(!mk) return;
+  var reminded={}; try{reminded=JSON.parse(localStorage.getItem('pf_sms_reminded')||'{}');}catch(e){}
+  var sent=0;
+  (CLIENTS[mk]||[]).filter(function(c){return c.status==='planned'&&c.day===tDay;}).forEach(function(c){
+    var key=tYear+'-'+tMon+'-'+tDay+'-'+c.name;
+    if(reminded[key]) return;
+    var profile=CLIENT_PROFILES[c.name]||{};
+    if(!profile.phone) return;
+    var phone=profile.phone.replace(/[-\s]/g,'');
+    if(phone.charAt(0)==='0') phone='+972'+phone.slice(1);
+    var dateStr=String(tDay).padStart(2,'0')+'/'+String(tMon).padStart(2,'0');
+    var biz=SETTINGS.bizName||SETTINGS.userName||'';
+    var msg='שלום '+esc(c.name.split(' ')[0])+', תזכורת: יש לך תור מחר '+dateStr+(biz?' אצל '+biz:'')+'.'+(c.treat?' טיפול: '+c.treat+'.':'')+' לביטול — חזרי על הודעה זו.';
+    var url='https://api.twilio.com/2010-04-01/Accounts/'+SETTINGS.twilioSid+'/Messages.json';
+    var bd=new URLSearchParams({To:phone,From:SETTINGS.twilioFrom,Body:msg});
+    fetch(url,{method:'POST',headers:{'Authorization':'Basic '+btoa(SETTINGS.twilioSid+':'+SETTINGS.twilioToken),'Content-Type':'application/x-www-form-urlencoded'},body:bd.toString()})
+      .then(function(){reminded[key]=Date.now();try{localStorage.setItem('pf_sms_reminded',JSON.stringify(reminded));}catch(e){}})
+      .catch(function(){});
+    sent++;
+  });
+  if(sent>0) setTimeout(function(){toast('📱 '+sent+' תזכורות נשלחו ללקוחות מחר');},1500);
+}
+function sendManualReminders(){
+  if(!SETTINGS.twilioSid){toast('הגדירי Twilio בהגדרות כדי לשלוח SMS');return;}
+  checkUpcomingReminders();
+  toast('🔄 שולחת תזכורות...');
+}
+
 // ── INVOICE ON DONE ───────────────────────────────────────
 function sendInvoiceOnDone(client) {
   if(!SETTINGS.morningToken||!SETTINGS.bizName) return;
@@ -6845,6 +6882,8 @@ function onSignedIn(user){
   // show welcome wizard on very first login, tour on subsequent first sessions
   if(!localStorage.getItem('pf_welcomed')){ setTimeout(function(){showWelcomeWizard();}, 600); }
   else if(!localStorage.getItem('shani_onboarded')){ setTimeout(function(){startTour(false);}, 800); }
+  // check for tomorrow's appointments and auto-send SMS reminders (after data loads)
+  setTimeout(function(){checkUpcomingReminders();}, 3000);
   fbDb.collection('users').doc(FB_UID).get().then(function(doc){
     if(doc.exists){
       var data=doc.data();
