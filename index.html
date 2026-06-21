@@ -32,7 +32,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   position:fixed;inset:0;z-index:9999;overflow:hidden;
   background:#0D1117;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  transition:opacity .7s ease;
+  transition:opacity .5s ease;
 }
 /* radial glow behind content */
 #splash::before{
@@ -42,7 +42,11 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   top:50%;left:50%;transform:translate(-50%,-54%);
   pointer-events:none;
 }
+/* JS adds .out → fade out */
 #splash.out{opacity:0;pointer-events:none}
+/* Safety net: if JS never adds .out (old cached version / error), CSS hides after 1.5s */
+@keyframes splashSafe{to{opacity:0;pointer-events:none;visibility:hidden}}
+#splash:not(.out){animation:splashSafe .5s ease 1.5s both}
 
 /* sparkle stars */
 .sp-star{
@@ -1987,7 +1991,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260784;
+var APP_VER=20260785;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
