@@ -240,6 +240,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .osek-alert{margin-top:10px;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:500;line-height:1.5}
 .osek-alert.warn{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:var(--gold)}
 .osek-alert.danger{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);color:#FF8080}
+.osek-alert.ok{background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.2);color:var(--cyan)}
 .osek-bl{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)}
 .osek-bl-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:4px}
 .osek-bl-amt{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.3px}
@@ -1962,7 +1963,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260777;
+var APP_VER=20260778;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2859,10 +2860,64 @@ function calcBituachLeumi(annualInc){
   monthly=Math.max(monthly,325); // minimum payment ~₪325/month 2026
   return monthly;
 }
+function calcIncomeTaxAdvance(annualInc){
+  // Israeli 2026 income tax brackets for self-employed (rough estimate)
+  var brackets=[
+    {limit:81480,  rate:0.10},
+    {limit:116760, rate:0.14},
+    {limit:187440, rate:0.20},
+    {limit:260520, rate:0.31},
+    {limit:Infinity,rate:0.35}
+  ];
+  var tax=0,prev=0;
+  for(var i=0;i<brackets.length;i++){
+    if(annualInc<=prev) break;
+    var chunk=Math.min(annualInc,brackets[i].limit)-prev;
+    tax+=chunk*brackets[i].rate;
+    prev=brackets[i].limit;
+  }
+  return Math.round(tax/12);
+}
+function getVATDeadline(){
+  var now=new Date(), m=now.getMonth()+1, y=now.getFullYear();
+  // Bi-monthly VAT reporting: due 15th of month after each 2-month period
+  var DL=[{mo:3,period:'ינואר–פברואר'},{mo:5,period:'מרץ–אפריל'},{mo:7,period:'מאי–יוני'},
+           {mo:9,period:'יולי–אוגוסט'},{mo:11,period:'ספטמבר–אוקטובר'},{mo:13,period:'נובמבר–דצמבר'}];
+  for(var i=0;i<DL.length;i++){
+    var dlMo=DL[i].mo>12?1:DL[i].mo, dlY=DL[i].mo>12?y+1:y;
+    var dlDate=new Date(dlY,dlMo-1,15);
+    var daysLeft=Math.ceil((dlDate-now)/86400000);
+    if(daysLeft>=0) return {period:DL[i].period,date:'15/'+String(dlMo).padStart(2,'0'),daysLeft:daysLeft};
+  }
+  return null;
+}
 function renderOsekPatur(){
   var el=document.getElementById('home-osek');
-  if(!el)return;
-  if(APP_MODE!=='business'||SETTINGS.bizType==='murshe'){el.innerHTML='';return;}
+  if(!el||APP_MODE!=='business')return;
+  var ann=calcAnnualIncome();
+  var bl=calcBituachLeumi(ann);
+  var taxAdv=calcIncomeTaxAdvance(ann);
+  if(SETTINGS.bizType==='murshe'){
+    // עוסק מורשה: show VAT deadline + tax advance
+    var vat=getVATDeadline();
+    var vatHtml='';
+    if(vat){
+      var urgCls=vat.daysLeft<=7?'danger':vat.daysLeft<=21?'warn':'';
+      var urgIcon=vat.daysLeft<=7?'🚨':vat.daysLeft<=21?'⚠️':'📋';
+      vatHtml='<div class="osek-alert '+(urgCls||'ok')+'">'+urgIcon+' דוח מע"מ לתקופה '+vat.period+' — עד '+vat.date+(vat.daysLeft<=21?' (עוד '+vat.daysLeft+' ימים)':'')+' </div>';
+    }
+    el.innerHTML='<div class="osek-card">'+
+      '<div class="osek-head"><div class="osek-title">ניהול מס — עוסק מורשה</div></div>'+
+      vatHtml+
+      '<div class="osek-bl">'+
+        '<div class="osek-bl-row"><span>אומדן מקדמת מס הכנסה חודשית</span><div class="osek-bl-amt">₪'+fmt(taxAdv)+'</div></div>'+
+        '<div class="osek-bl-row"><span>אומדן ביטוח לאומי חודשי</span><div class="osek-bl-amt">₪'+fmt(bl)+'</div></div>'+
+        '<div style="font-size:10px;color:var(--muted);margin-top:4px">לפי הכנסה שנתית ממוצעת · הפרישי לחיסכון ייעודי</div>'+
+      '</div>'+
+    '</div>';
+    return;
+  }
+  // עוסק פטור: threshold tracker
   var LIMIT=120000;
   var ann=calcAnnualIncome();
   var pct=Math.min(Math.round(ann/LIMIT*100),100);
@@ -2905,6 +2960,11 @@ function renderUpcoming(r){
       var d=c.day,days=d-tD;
       if(days>=0) items.push({label:c.name,date:String(d).padStart(2,'0')+'/'+String(r.m).padStart(2,'0'),days:days,amt:c.amount,color:'#2DD4BF',income:true});
     });
+    // VAT deadline for עוסק מורשה — show when within 30 days
+    if(APP_MODE==='business'&&SETTINGS.bizType==='murshe'){
+      var vd=getVATDeadline();
+      if(vd&&vd.daysLeft<=30) items.push({label:'דיווח מע"מ — '+vd.period,date:vd.date,days:vd.daysLeft,amt:0,color:'#F59E0B',noAmt:true});
+    }
     items.sort(function(a,b){return parseInt(a.date)-parseInt(b.date);});
   }
   items.sort(function(a,b){return parseInt(a.date)-parseInt(b.date);});
@@ -2914,11 +2974,12 @@ function renderUpcoming(r){
   items.forEach(function(item){
     var dTxt=item.days===0?'היום':item.days===1?'מחר':'עוד '+item.days+'י׳';
     var sign=item.income?'+':'-';
+    var amtPart=item.noAmt?'':(sign+'₪'+fmt(item.amt));
     h+='<div class="upc-item">'+
       '<div class="upc-dot" style="background:'+item.color+'"></div>'+
       '<div class="upc-body"><div class="upc-label">'+item.label+'</div><div class="upc-date">'+item.date+'</div></div>'+
       '<div class="upc-badge" style="background:'+item.color+'22;color:'+item.color+'">'+dTxt+'</div>'+
-      '<div class="upc-amt" style="color:'+item.color+'">'+sign+'₪'+fmt(item.amt)+'</div>'+
+      (amtPart?'<div class="upc-amt" style="color:'+item.color+'">'+amtPart+'</div>':'')+
     '</div>';
   });
   el.innerHTML=h;
