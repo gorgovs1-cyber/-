@@ -2152,7 +2152,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260815;
+var APP_VER=20260816;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2507,25 +2507,45 @@ function sumI(m){
 
 // ── CATEGORY BADGE ───────────────────────────────────────
 function cat(d){
-  if(/קנאביס/i.test(d))   return{bg:'rgba(74,222,128,.15)',co:'#4ADE80',lbl:'קנב'};
-  if(/קפה|תה/i.test(d))   return{bg:'rgba(251,146,60,.15)',co:'#FB923C',lbl:'קפה'};
-  if(/יין|בירה|קוקטייל/i.test(d)) return{bg:'rgba(192,132,252,.15)',co:'#C084FC',lbl:'בר'};
-  if(/וולט|אוכל|סלט|מרק|פסטה|נודלס|קוסקוס|קבב|שווארמה|פיצה|סושי/i.test(d)) return{bg:'rgba(248,113,113,.15)',co:'#F87171',lbl:'אוכל'};
-  if(/שכירות/i.test(d))   return{bg:'rgba(129,140,248,.15)',co:'#818CF8',lbl:'שכ"ד'};
-  if(/חשמל/i.test(d))     return{bg:'rgba(252,211,77,.15)',co:'#FCD34D',lbl:'חשמל'};
-  if(/ביטוח|קופת חולים/i.test(d)) return{bg:'rgba(96,165,250,.15)',co:'#60A5FA',lbl:'ביטוח'};
-  if(/סופר|קניות/i.test(d)) return{bg:'rgba(244,114,182,.15)',co:'#F472B6',lbl:'קניות'};
-  if(/טבק/i.test(d))      return{bg:'rgba(168,162,158,.15)',co:'#A8A29E',lbl:'טבק'};
-  if(/דלק|פז|סונול/i.test(d)) return{bg:'rgba(239,68,68,.15)',co:'#EF4444',lbl:'דלק'};
-  if(/אייפון|טלפון|כיסוי|מדבקה|סלולר/i.test(d)) return{bg:'rgba(148,163,184,.15)',co:'#94A3B8',lbl:'טלפון'};
-  if(/מנוי|ספוטיפיי|נטפליקס|קלאוד/i.test(d)) return{bg:'rgba(124,58,237,.15)',co:'#7C3AED',lbl:'מנוי'};
-  if(/פרטנר/i.test(d))    return{bg:'rgba(6,182,212,.15)',co:'#06B6D4',lbl:'פרטנר'};
-  if(/טסט/i.test(d))      return{bg:'rgba(16,185,129,.15)',co:'#10B981',lbl:'טסט'};
-  if(/מים|חשבון/i.test(d)) return{bg:'rgba(14,165,233,.15)',co:'#0EA5E9',lbl:'חשבון'};
-  if(/מונית|אוטובוס|רכבת|גט|אינדרייב/i.test(d)) return{bg:'rgba(251,113,133,.15)',co:'#FB7185',lbl:'נסיעה'};
-  if(/חניה/i.test(d))     return{bg:'rgba(217,119,6,.15)',co:'#D97706',lbl:'חניה'};
-  if(/חומר|השחלה|קרטין|גלאם|ציוד שיער|צבע שיער/i.test(d)) return{bg:'rgba(232,121,249,.15)',co:'#E879F9',lbl:'חומרים'};
-  if(/כלי עבודה|מכשיר|מייבש|מחליק|ציוד/i.test(d)) return{bg:'rgba(45,212,191,.15)',co:'#2DD4BF',lbl:'ציוד'};
+  var s=d||'';
+  // קנאביס — מדויק
+  if(/קנאביס|קנאבי\b/i.test(s)) return{bg:'rgba(74,222,128,.15)',co:'#4ADE80',lbl:'קנב'};
+  // קפה
+  if(/קפה|כוס קפה|תה\b|ארומה|קפה גרג|נספרסו/i.test(s)) return{bg:'rgba(251,146,60,.15)',co:'#FB923C',lbl:'קפה'};
+  // בר / אלכוהול
+  if(/\bבר\b|יין|בירה|קוקטייל|וויסקי|ווודקה|ג'ין/i.test(s)) return{bg:'rgba(192,132,252,.15)',co:'#C084FC',lbl:'בר'};
+  // אוכל — מקומות, מנות, וולט/בומבה
+  if(/וולט|בומבה|אוכל|מסעדה|סלט|מרק|פסטה|נודלס|קוסקוס|קבב|שווארמה|פיצה|סושי|המבורגר|שניצל|פלאפל|טאקו|ראפ|ג'חנון|חומוס|שקשוקה|עוף|בשר|דגים|לחם|מאפה/i.test(s)) return{bg:'rgba(248,113,113,.15)',co:'#F87171',lbl:'אוכל'};
+  // שכירות / דיור
+  if(/שכירות|שכ.ד|ארנונה/i.test(s)) return{bg:'rgba(129,140,248,.15)',co:'#818CF8',lbl:'שכ"ד'};
+  // חשמל, גז
+  if(/חשמל|גז\b/i.test(s)) return{bg:'rgba(252,211,77,.15)',co:'#FCD34D',lbl:'חשמל'};
+  // ביטוח ובריאות
+  if(/ביטוח|קופת חולים|מכבי|כללית|מאוחדת|ביטוחי|לאומית/i.test(s)) return{bg:'rgba(96,165,250,.15)',co:'#60A5FA',lbl:'ביטוח'};
+  // דלק
+  if(/דלק|פז\b|סונול|דור אלון|יש דלק|Ten\b|טן\b/i.test(s)) return{bg:'rgba(239,68,68,.15)',co:'#EF4444',lbl:'דלק'};
+  // נסיעות ציבוריות
+  if(/מונית|גט|אינדרייב|uber|אוטובוס|רכבת|אופניים/i.test(s)) return{bg:'rgba(251,113,133,.15)',co:'#FB7185',lbl:'נסיעה'};
+  // חניה
+  if(/חניה|פארקינג|חניון/i.test(s)) return{bg:'rgba(217,119,6,.15)',co:'#D97706',lbl:'חניה'};
+  // מנויים ושירותי ענן
+  if(/ספוטיפיי|נטפליקס|מנוי|icloud|קלאוד|אפל TV|disney|יוטיוב|apple one/i.test(s)) return{bg:'rgba(124,58,237,.15)',co:'#7C3AED',lbl:'מנוי'};
+  // פרטנר — לפני "טלפון" כדי לא להיתפס שם
+  if(/פרטנר|012|hot mobile/i.test(s)) return{bg:'rgba(6,182,212,.15)',co:'#06B6D4',lbl:'פרטנר'};
+  // טלפון / גאדג'טים
+  if(/אייפון|טלפון|כיסוי|מדבקה|סלולר|אנדרואיד|אפל/i.test(s)) return{bg:'rgba(148,163,184,.15)',co:'#94A3B8',lbl:'טלפון'};
+  // חשבונות — מים, ועד
+  if(/מים|חשבון מים|ועד בית/i.test(s)) return{bg:'rgba(14,165,233,.15)',co:'#0EA5E9',lbl:'מים'};
+  // טבק — מדויק יותר
+  if(/טבק|סיגר|נרגילה|וייפ|Rolling/i.test(s)) return{bg:'rgba(168,162,158,.15)',co:'#A8A29E',lbl:'טבק'};
+  // טסט רכב
+  if(/טסט|רישיון רכב|בטיחות/i.test(s)) return{bg:'rgba(16,185,129,.15)',co:'#10B981',lbl:'טסט'};
+  // מוצרי יופי מקצועיים — ספציפי מאוד, לא "חומר" גנרי
+  if(/קרטין|גלאם|השחלה|olaplex|plex|wella|kerastase|schwarzkopf|loreal\s*pro|פרייסמרט|אי\.אן\.פי|INP\b|קוור|טינגטינג|צבע שיער/i.test(s)) return{bg:'rgba(232,121,249,.15)',co:'#E879F9',lbl:'יופי'};
+  // ציוד מקצועי — מדויק
+  if(/מייבש שיער|מחליק שיער|מכשיר שיער|כיסא פדיקור|מכשיר ציפורניים|UV lamp/i.test(s)) return{bg:'rgba(45,212,191,.15)',co:'#2DD4BF',lbl:'ציוד'};
+  // קניות כלליות — רחב, בסוף (לתפוס מה שנשאר)
+  if(/סופר|שופרסל|רמי לוי|מגה|קו-אופ|ניצבה|מחסני|סיטי|זול ובגדול|קניות|קנייה|קניה|רכישה|חנות|שוק|פארם|ספרפארם|super pharm|קיי אם|KM|ויקטורי/i.test(s)) return{bg:'rgba(244,114,182,.15)',co:'#F472B6',lbl:'קניות'};
   return{bg:'rgba(107,114,128,.15)',co:'#6B7280',lbl:'אחר'};
 }
 
