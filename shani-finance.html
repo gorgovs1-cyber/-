@@ -680,6 +680,24 @@ select option{background:#111D2C;color:#fff}
 ::-webkit-scrollbar{width:2px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
+/* ── PAYWALL ── */
+.pw-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9500;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .25s}
+.pw-sheet{background:var(--bg2);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:32px 22px calc(40px + env(safe-area-inset-bottom,0px));max-height:92dvh;overflow-y:auto;border-top:2px solid rgba(45,212,191,.35)}
+.pw-plan-row{display:flex;gap:10px;margin:20px 0}
+.pw-plan{flex:1;border-radius:16px;padding:16px 14px;border:1px solid var(--border2);text-align:right;cursor:pointer;transition:border-color .2s}
+.pw-plan.hero{border-color:var(--cyan);background:rgba(45,212,191,.07)}
+.pw-plan-name{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:3px}
+.pw-plan-price{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-1px}
+.pw-plan-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.pw-feats{font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:20px;text-align:right}
+.pw-feats span{color:var(--cyan);margin-left:5px}
+.pw-cta{display:block;width:100%;background:var(--cyan);color:#0D1117;font-family:'Rubik',sans-serif;font-size:15px;font-weight:600;padding:14px;border-radius:14px;border:none;cursor:pointer;text-align:center;margin-bottom:10px}
+.pw-dismiss{display:block;width:100%;background:none;border:none;color:var(--muted);font-family:'Rubik',sans-serif;font-size:13px;padding:10px;cursor:pointer;text-align:center}
+.trial-bar{background:rgba(45,212,191,.09);border:1px solid rgba(45,212,191,.2);border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.trial-bar-txt{font-size:12px;color:var(--cyan)}
+.trial-bar-btn{font-size:12px;font-weight:600;color:#0D1117;background:var(--cyan);border:none;border-radius:8px;padding:5px 12px;cursor:pointer;font-family:'Rubik',sans-serif}
+.lock-badge{font-size:10px;background:rgba(245,158,11,.15);color:var(--gold);border-radius:6px;padding:2px 6px;margin-right:6px;vertical-align:middle}
+
 /* ── AI ADVISOR ── */
 .advisor-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9000;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .3s}
 .advisor-card{background:var(--card2);border:1px solid var(--border2);border-radius:var(--r-xl,22px);padding:24px 20px;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6);position:relative}
@@ -858,7 +876,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="drw-item" data-page="expenses" onclick="go('expenses');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V16"/><path d="m8.5 12.5 3.5 3.5 3.5-3.5"/></svg></span><span>הוצאות</span></div>
     <div class="drw-item" data-page="balance" onclick="go('balance');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><rect x="5" y="10" width="3.4" height="8" rx="1"/><rect x="10.3" y="5.5" width="3.4" height="12.5" rx="1"/><rect x="15.6" y="13" width="3.4" height="5" rx="1"/></svg></span><span>מאזן</span></div>
     <div style="border-top:1px solid var(--border);margin:8px 0"></div>
-    <div class="drw-item" onclick="openAdvisor();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span><span>יועצת כלכלית</span></div>
+    <div class="drw-item" onclick="openAdvisor();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span><span id="adv-drw-lbl">יועצת כלכלית</span></div>
     <div class="drw-item" data-page="guide" onclick="go('guide');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span>מדריך ועזרה</span></div>
     <div class="drw-item" onclick="go('biz-report');closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span><span>דוח הוצאות עסקיות</span></div>
     <div class="drw-item biz-only" onclick="exportAccountantCSV();closeDrawer()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg></span><span>ייצוא לרואה חשבון CSV</span></div>
@@ -1029,6 +1047,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="hero-sub"     id="home-sub"></div>
   </div>
 
+  <div id="trial-bar-wrap"></div>
   <div class="alert-wrap" id="home-alert"></div>
 
   <div class="mnav">
@@ -1745,7 +1764,9 @@ html.mode-private .biz-only{ display:none!important; }
       <button class="modal-close" onclick="closeSettings()">✕</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <div style="font-size:13px;font-weight:500;color:var(--cyan);margin-bottom:4px">📱 Twilio SMS</div>
+      <div style="font-size:13px;font-weight:500;color:var(--cyan);margin-bottom:4px">💬 WhatsApp עסקי (לשדרוג לקוחות)</div>
+      <input id="set-biz-wa" class="inp" placeholder="מספר WhatsApp שלך 972..." oninput="SETTINGS.bizWhatsApp=this.value;saveSettings()">
+      <div style="font-size:13px;font-weight:500;color:var(--cyan);margin-top:8px;margin-bottom:4px">📱 Twilio SMS</div>
       <input id="set-twilio-sid" class="inp" placeholder="Twilio Account SID" oninput="SETTINGS.twilioSid=this.value;saveSettings()">
       <input id="set-twilio-token" class="inp" placeholder="Twilio Auth Token" type="password" oninput="SETTINGS.twilioToken=this.value;saveSettings()">
       <input id="set-twilio-from" class="inp" placeholder="מספר שולח Twilio (+1...)" oninput="SETTINGS.twilioFrom=this.value;saveSettings()">
@@ -2002,13 +2023,46 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260791;
+var APP_VER=20260792;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
 var APP_MODE       = localStorage.getItem('shani_mode')||'business';
 var CLIENT_PROFILES= JSON.parse(localStorage.getItem('shani_cp')||'{}');
 var CLIENT_RECORDS = {};
+
+// ── SUBSCRIPTION / PLAN ─────────────────────────────────
+var PLAN_DATA = (function(){
+  var isPaid = localStorage.getItem('shani_plan')==='paid';
+  var stored = parseInt(localStorage.getItem('shani_trial_start')||'0');
+  // Auto-start 14-day trial for any previously-onboarded user
+  if(!stored && !isPaid && localStorage.getItem('pf_welcomed')){
+    stored = Date.now();
+    localStorage.setItem('shani_trial_start',String(stored));
+  }
+  var daysLeft = stored > 0 ? Math.max(0, 14 - Math.floor((Date.now()-stored)/86400000)) : 0;
+  var inTrial = !isPaid && daysLeft > 0;
+  return {isPaid:isPaid, inTrial:inTrial, daysLeft:daysLeft};
+})();
+function getPlan(){ return PLAN_DATA.isPaid?'paid':PLAN_DATA.inTrial?'trial':'free'; }
+function canUse(feat){
+  var p=getPlan();
+  if(p==='paid'||p==='trial') return true;
+  if(feat==='advisor'){
+    var k='shani_adv_mo_'+new Date().getFullYear()+'_'+(new Date().getMonth()+1);
+    return parseInt(localStorage.getItem(k)||'0')<3;
+  }
+  return false; // csv, biz_report → paid/trial only
+}
+function _advTrackUse(){
+  var k='shani_adv_mo_'+new Date().getFullYear()+'_'+(new Date().getMonth()+1);
+  localStorage.setItem(k,String(parseInt(localStorage.getItem(k)||'0')+1));
+}
+function _advRemaining(){
+  var k='shani_adv_mo_'+new Date().getFullYear()+'_'+(new Date().getMonth()+1);
+  return Math.max(0, 3 - parseInt(localStorage.getItem(k)||'0'));
+}
+
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2406,6 +2460,7 @@ function exportData(){
 
 // ── ACCOUNTANT CSV EXPORT ─────────────────────────────────
 function exportAccountantCSV(){
+  if(!canUse('csv')){ showPaywall('csv'); return; }
   var isMurshe=(SETTINGS.bizType==='murshe');
   var VAT=0.17;
   var MONTH_NAMES=['','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
@@ -2801,6 +2856,7 @@ function calc(mi){
 
 // ── HOME ─────────────────────────────────────────────────
 function renderHome(){
+  renderTrialBar();
   var r=calc(homeMi);
   document.getElementById('home-mlbl').textContent=r.ml.label+' '+r.ml.year;
   document.getElementById('home-m-name').textContent=r.ml.label;
@@ -4864,10 +4920,92 @@ function runAdvisor(){
   });
 })();
 
+// ── PAYWALL ──────────────────────────────────────────────
+function showPaywall(feat){
+  var plan=getPlan();
+  var head={
+    advisor:'השתמשת ב-3 שאלות AI החינמיות החודש 🔒',
+    csv:'ייצוא לרואה חשבון — גרסה מלאה בלבד 🔒',
+    biz_report:'הדוח העסקי המלא — גרסה מלאה בלבד 🔒'
+  }[feat]||'תכונה זו דורשת שדרוג 🔒';
+  var sub={
+    advisor:'בגרסה החינמית: 3 שאלות AI לחודש. בגרסה המלאה: ניתוח ללא הגבלה.',
+    csv:'ייצוא מסווג לקטגוריות עם חישוב מע"מ — מוכן לרואה חשבון.',
+    biz_report:'דוח הוצאות עסקיות עם ניכויי מס וסיווג אוטומטי.'
+  }[feat]||'שדרגי לגרסה המלאה לגישה לכל התכונות.';
+  var html='<div class="pw-overlay" id="pw-overlay" onclick="if(event.target===this)closePaywall()">'+
+    '<div class="pw-sheet">'+
+      '<div style="text-align:right;margin-bottom:20px">'+
+        '<div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px">'+head+'</div>'+
+        '<div style="font-size:13px;color:var(--muted);line-height:1.65">'+sub+'</div>'+
+      '</div>'+
+      '<div class="pw-plan-row">'+
+        '<div class="pw-plan">'+
+          '<div class="pw-plan-name">אישי</div>'+
+          '<div class="pw-plan-price" style="font-size:20px">₪29<span style="font-size:12px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
+          '<div class="pw-plan-sub">₪249 לשנה · חיסכון 28%</div>'+
+        '</div>'+
+        '<div class="pw-plan hero">'+
+          '<div class="pw-plan-name">עסקי ⭐ <span style="font-size:10px;color:var(--cyan)">הכי פופולרי</span></div>'+
+          '<div class="pw-plan-price">₪59<span style="font-size:12px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
+          '<div class="pw-plan-sub">₪499 לשנה · חיסכון 30%</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="pw-feats">'+
+        '<div><span>✓</span>AI ייעוץ כלכלי ללא הגבלה</div>'+
+        '<div><span>✓</span>ייצוא CSV לרואה חשבון</div>'+
+        '<div><span>✓</span>דוחות מע"מ + תכנון מס</div>'+
+        '<div><span>✓</span>היסטוריה מלאה (כל החודשים)</div>'+
+        '<div><span>✓</span>יומן לקוחות + SMS תזכורות</div>'+
+        '<div><span>✓</span>גיבוי ענן + ריבוי מכשירים</div>'+
+      '</div>'+
+      '<button class="pw-cta" onclick="contactForUpgrade()">📱 שדרגי עכשיו דרך WhatsApp</button>'+
+      '<button class="pw-dismiss" onclick="closePaywall()">המשיכי בחינם</button>'+
+    '</div>'+
+  '</div>';
+  var ex=document.getElementById('pw-overlay');
+  if(ex) ex.outerHTML=html; else document.body.insertAdjacentHTML('beforeend',html);
+}
+function closePaywall(){
+  var el=document.getElementById('pw-overlay');
+  if(el) el.remove();
+}
+function contactForUpgrade(){
+  var msg=encodeURIComponent('היי! אני רוצה לשדרג את My Money לגרסה המלאה 🌟');
+  var num=(SETTINGS.bizWhatsApp||'').replace(/\D/g,'');
+  window.open(num?'https://wa.me/'+num+'?text='+msg:'https://wa.me/?text='+msg,'_blank');
+  track('paywall_whatsapp_click',{});
+}
+
+// Trial banner injected into home screen
+function renderTrialBar(){
+  var wrap=document.getElementById('trial-bar-wrap');
+  if(!wrap) return;
+  var plan=getPlan();
+  if(plan==='paid'){ wrap.innerHTML=''; return; }
+  if(plan==='trial'){
+    var d=PLAN_DATA.daysLeft;
+    wrap.innerHTML='<div class="trial-bar">'+
+      '<div class="trial-bar-txt">✨ ניסיון חינמי — נשארו <b>'+d+' ימים</b></div>'+
+      '<button class="trial-bar-btn" onclick="showPaywall(\'trial\')">שדרגי עכשיו</button>'+
+    '</div>';
+  } else {
+    // free — expired trial or never started
+    wrap.innerHTML='<div class="trial-bar" style="background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.2)">'+
+      '<div class="trial-bar-txt" style="color:var(--gold)">גרסה חינמית — 3 שאלות AI לחודש, אין ייצוא</div>'+
+      '<button class="trial-bar-btn" style="background:var(--gold)" onclick="showPaywall(\'free\')">שדרגי</button>'+
+    '</div>';
+  }
+}
+
 // Manual trigger — bypasses the 8h throttle (used by the 💡 button)
 function openAdvisor(){
+  if(!canUse('advisor')){
+    showPaywall('advisor');
+    return;
+  }
   track('open_advisor',{month:homeMi});
-  var saved=localStorage.getItem('shani_adv_last');
+  _advTrackUse();
   localStorage.removeItem('shani_adv_last');
   runAdvisor();
   // if nothing surfaced, show a positive default
@@ -6373,7 +6511,24 @@ if(!localStorage.getItem('pf_welcomed')){
 }
 
 // ── DRAWER ───────────────────────────────────────────────
-function openDrawer() { document.getElementById('drw-bg').classList.add('open'); var h=document.querySelector('.hdr-ham'); if(h)h.classList.add('open'); updateDrawerActive(); }
+function openDrawer() {
+  document.getElementById('drw-bg').classList.add('open');
+  var h=document.querySelector('.hdr-ham'); if(h)h.classList.add('open');
+  updateDrawerActive();
+  // Update AI advisor label with usage count for free users
+  var lbl=document.getElementById('adv-drw-lbl');
+  if(lbl){
+    var p=getPlan();
+    if(p==='free'){
+      var rem=_advRemaining();
+      lbl.innerHTML='יועצת כלכלית <span class="lock-badge">'+rem+'/3 נותרו</span>';
+    } else if(p==='trial'){
+      lbl.textContent='יועצת כלכלית';
+    } else {
+      lbl.textContent='יועצת כלכלית';
+    }
+  }
+}
 function closeDrawer() { document.getElementById('drw-bg').classList.remove('open'); var h=document.querySelector('.hdr-ham'); if(h)h.classList.remove('open'); }
 function updateDrawerActive() {
   document.querySelectorAll('.drw-item').forEach(function(el) {
@@ -6399,6 +6554,7 @@ function openSettings() {
   closeDrawer();
   var m = document.getElementById('settings-modal-bg');
   m.style.display = 'flex';
+  document.getElementById('set-biz-wa').value = SETTINGS.bizWhatsApp||'';
   document.getElementById('set-twilio-sid').value = SETTINGS.twilioSid||'';
   document.getElementById('set-twilio-token').value = SETTINGS.twilioToken||'';
   document.getElementById('set-twilio-from').value = SETTINGS.twilioFrom||'';
