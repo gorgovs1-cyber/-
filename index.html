@@ -765,6 +765,9 @@ select option{background:#111D2C;color:#fff}
 /* ── 5. DELETE TXN BTN ── */
 .txn-del{flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--muted2);font-size:13px;padding:4px 6px;transition:color .15s,background .15s;border-radius:6px;}
 .txn-del:active{color:var(--neg);background:rgba(248,113,113,.12);}
+.txn-receipt{flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--muted2);font-size:13px;padding:4px 5px;border-radius:6px;opacity:.45;transition:opacity .15s,background .15s;}
+.txn-receipt.has{opacity:1;filter:drop-shadow(0 0 3px rgba(45,212,191,.5));}
+.txn-receipt:active{background:rgba(45,212,191,.1);}
 
 /* ── 6. NAV PILL (legacy, kept for compat) ── */
 
@@ -927,6 +930,16 @@ html.mode-private .biz-only{ display:none!important; }
       <div class="wiz-tip"><span>💡</span><span>לחצי על המנורה לייעוץ כלכלי מבוסס AI לפי הנתונים שלך</span></div>
       <button class="wiz-btn" onclick="wizDone()">בואי נתחיל ✓</button>
     </div>
+  </div>
+</div>
+
+<!-- ══ RECEIPT VIEWER MODAL ════════════════════════════════ -->
+<div id="receipt-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.88);align-items:center;justify-content:center;flex-direction:column;gap:14px" onclick="if(event.target===this)this.style.display='none'">
+  <div style="font-size:13px;color:rgba(255,255,255,.6);max-width:88vw;text-align:center" id="receipt-name">קבלה</div>
+  <img id="receipt-img" style="max-width:92vw;max-height:72vh;object-fit:contain;border-radius:10px;border:1px solid rgba(255,255,255,.1)" src="" alt="קבלה">
+  <div style="display:flex;gap:12px">
+    <button id="receipt-del-btn" style="background:rgba(248,113,113,.15);border:1px solid rgba(248,113,113,.3);color:var(--neg);font-family:'Rubik',sans-serif;font-size:13px;padding:10px 20px;border-radius:12px;cursor:pointer">מחק קבלה</button>
+    <button onclick="document.getElementById('receipt-modal').style.display='none'" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);font-family:'Rubik',sans-serif;font-size:13px;padding:10px 20px;border-radius:12px;cursor:pointer">סגור</button>
   </div>
 </div>
 
@@ -1963,7 +1976,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260778;
+var APP_VER=20260779;
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
@@ -2040,6 +2053,7 @@ var FIXED_PAYMENTS = [];
 var _fpEditId=null;
 var _fpMethod='bank';
 var RECURRING_DISMISSED=[];
+var RECEIPTS={};
 var FIXED_INCOME=[];
 var INCOME_DISMISSED=[];
 var _fiEditId=null;
@@ -2346,6 +2360,7 @@ function load(){
     var fi=localStorage.getItem('pf_fixed_income'); if(fi){try{FIXED_INCOME=JSON.parse(fi);}catch(ex){FIXED_INCOME=[];}}
     var iid=localStorage.getItem('pf_income_dismissed'); if(iid){try{INCOME_DISMISSED=JSON.parse(iid);}catch(ex){INCOME_DISMISSED=[];}}
     var crld=localStorage.getItem('pf_client_records'); if(crld){try{CLIENT_RECORDS=JSON.parse(crld);}catch(ex){CLIENT_RECORDS={};}}
+    var rcpts=localStorage.getItem('pf_receipts'); if(rcpts){try{RECEIPTS=JSON.parse(rcpts);}catch(ex){RECEIPTS={};}}
   }catch(e){}
 }
 function exportData(){
@@ -3263,7 +3278,10 @@ function renderExpenses(){
       var bizBadge='<span class="txn-biz'+(t.biz===false?' no':'')+'" title="הוצאה עסקית — לחצי לשינוי" onclick="event.stopPropagation();cycleBizFlag(\''+key+'\')">'+(isBiz?bizSvg+' עסקי':'')+'</span>';
       var chips='';
       if(t.tags&&t.tags.length)chips='<div class="txn-chips">'+t.tags.map(function(g){return'<span class="txn-chip" data-tag="'+esc(g)+'" onclick="setTagFilter(this.dataset.tag)">#'+esc(g)+'</span>';}).join('')+'</div>';
-      h+='<div class="txn-item stagger" style="--si:'+ti+'"><div class="txn-icon" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="txn-body"><div class="txn-desc">'+esc(t.desc)+mt+bizBadge+'</div><div class="txn-date">'+esc(dt)+'</div>'+chips+'</div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div><button class="txn-del" onclick="delExpTxn(\''+key+'\')">✕</button></div>';
+      var rKey=t.d+'|'+t.desc+'|'+t.a;
+      var hasRec=!!RECEIPTS[rKey];
+      var recBtn='<button class="txn-receipt'+(hasRec?' has':'')+'" onclick="event.stopPropagation();'+(hasRec?'viewReceipt':'uploadReceipt')+'(\''+encodeURIComponent(rKey)+'\')" title="'+(hasRec?'צפי בקבלה':'צרפי קבלה')+'">📎</button>';
+      h+='<div class="txn-item stagger" style="--si:'+ti+'"><div class="txn-icon" style="background:'+c.bg+';color:'+c.co+'">'+c.lbl+'</div><div class="txn-body"><div class="txn-desc">'+esc(t.desc)+mt+bizBadge+'</div><div class="txn-date">'+esc(dt)+'</div>'+chips+'</div><div class="txn-amt neg">-₪'+fmt(t.a)+'</div>'+recBtn+'<button class="txn-del" onclick="delExpTxn(\''+key+'\')">✕</button></div>';
       ti++;
     });
   });
@@ -3272,6 +3290,33 @@ function renderExpenses(){
 
 function setTagFilter(tag){_tagFilter=tag;renderExpenses();}
 function toggleBizFilter(){_bizFilter=!_bizFilter;renderExpenses();}
+function saveReceipts(){ try{localStorage.setItem('pf_receipts',JSON.stringify(RECEIPTS));}catch(e){toast('אחסון מלא — לא ניתן לשמור קבלה');} }
+function uploadReceipt(txKey){
+  var inp=document.createElement('input');
+  inp.type='file'; inp.accept='image/*,application/pdf'; inp.capture='environment';
+  inp.onchange=function(){
+    var file=inp.files[0]; if(!file)return;
+    if(file.size>3*1024*1024){toast('הקובץ גדול מדי — עד 3MB');return;}
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      RECEIPTS[txKey]={data:ev.target.result,name:file.name,type:file.type};
+      saveReceipts(); renderExpenses(); toast('✓ קבלה נשמרה');
+    };
+    reader.readAsDataURL(file);
+  };
+  inp.click();
+}
+function viewReceipt(txKey){
+  var r=RECEIPTS[txKey]; if(!r)return;
+  if(r.type&&r.type.indexOf('pdf')>=0){
+    var w=window.open('','_blank'); w.document.write('<iframe src="'+r.data+'" style="width:100%;height:100%;border:none"></iframe>'); return;
+  }
+  document.getElementById('receipt-img').src=r.data;
+  document.getElementById('receipt-name').textContent=r.name||'קבלה';
+  document.getElementById('receipt-modal').style.display='flex';
+  document.getElementById('receipt-del-btn').onclick=function(){ deleteReceipt(txKey); document.getElementById('receipt-modal').style.display='none'; };
+}
+function deleteReceipt(txKey){ delete RECEIPTS[txKey]; saveReceipts(); renderExpenses(); toast('קבלה נמחקה'); }
 function cycleBizFlag(key){
   var parts=decodeURIComponent(key).split('|');
   var d=parts[0],desc=parts[1],a=parseFloat(parts[2]);
