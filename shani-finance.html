@@ -2183,7 +2183,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260826;
+var APP_VER=20260827;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -3207,23 +3207,22 @@ function renderHome(){
   document.getElementById('home-date').innerHTML='יום '+days[now.getDay()]+', '+now.getDate()+' ב'+mos[now.getMonth()]+' <span style="opacity:.4;font-size:9px">· v'+APP_VER+'</span>';
 
   var bEl=document.getElementById('home-bal');
-  // Big number = forecast (how much left at end of month) — always
-  var bigVal=r.balFull;
+  // Big number = bank balance NOW (current month) or balFull for past months
+  var bigVal=r.isNow?-safeN(CARDS.bank):r.balFull;
   bEl.className='hero-bal '+(bigVal>=0?'pos':'neg');
   countUp(bEl,bigVal);
 
-  // Label: what the big number means
-  document.getElementById('home-lbl').textContent=r.isNow?'יישאר בסוף '+r.ml.label:'מאזן '+r.ml.label;
+  // Label
+  document.getElementById('home-lbl').textContent=r.isNow?'עו"ש עכשיו':'מאזן '+r.ml.label;
 
-  // Secondary row: show bank balance (עו"ש עכשיו) for current month
+  // Secondary row: show forecast (צפי סוף חודש) for current month
   var fRow=document.getElementById('home-forecast-row');
   var fEl=document.getElementById('home-forecast');
   var fLblEl=document.getElementById('home-forecast-lbl');
   if(r.isNow){
-    var bankNow=-safeN(CARDS.bank);
-    if(fLblEl) fLblEl.textContent='עו"ש עכשיו';
-    fEl.className='hero-forecast-val '+(bankNow>=0?'pos':'neg');
-    fEl.textContent=(bankNow>=0?'+':'')+'₪'+fmt(Math.abs(bankNow));
+    if(fLblEl) fLblEl.textContent='צפי סוף '+r.ml.label;
+    fEl.className='hero-forecast-val '+(r.balFull>=0?'pos':'neg');
+    fEl.textContent=(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull));
     fRow.style.display='flex';
   } else {
     fRow.style.display='none';
