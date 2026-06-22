@@ -538,8 +538,9 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .hdr-ham.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); background:var(--cyan); }
 .hdr-ham.open span:nth-child(2){ opacity:0; }
 .hdr-ham.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); background:var(--cyan); }
-.hdr-brand { display:flex; align-items:center; gap:8px; font-size:15px; font-weight:500; font-style:italic; color:var(--text); letter-spacing:.2px; }
-.hdr-brand-mark { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; font-style:normal; font-weight:500; font-size:15px; box-shadow:0 2px 8px rgba(0,0,0,.25); }
+.hdr-brand { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:500; font-style:italic; color:var(--text); letter-spacing:.2px; }
+.hdr-brand-mark { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:5px; background:linear-gradient(135deg,var(--cyan),#00BCD4); color:#08141E; font-style:normal; font-weight:500; font-size:12px; box-shadow:0 2px 8px rgba(0,0,0,.25); }
+.hdr-greet { font-size:11px; color:var(--muted); font-style:normal; font-weight:400; white-space:nowrap; padding: 0 8px 0 0; border-right:1px solid var(--border); margin-right:2px; }
 
 /* DRAWER */
 .drw-bg { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:400; display:none; animation:none; }
@@ -927,7 +928,11 @@ html.mode-private .biz-only{ display:none!important; }
   <button class="hdr-ham" onclick="openDrawer()" aria-label="תפריט">
     <span></span><span></span><span></span>
   </button>
-  <div class="hdr-brand"><span>My Money</span><span class="hdr-brand-mark">₪</span></div>
+  <div style="display:flex;align-items:center;gap:0">
+    <span id="hdr-greet" class="hdr-greet"></span>
+    <div class="hdr-brand"><span>My Money</span><span class="hdr-brand-mark">₪</span></div>
+  </div>
+  <span id="hdr-trial" style="display:none;font-size:10px;font-weight:600;color:var(--cyan);background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.25);border-radius:8px;padding:2px 8px;cursor:pointer;white-space:nowrap" onclick="showPaywall('trial')"></span>
 </header>
 
 <!-- DRAWER -->
@@ -1185,13 +1190,6 @@ html.mode-private .biz-only{ display:none!important; }
     </div>
   </div>
   <div class="hero">
-    <div class="hero-top">
-      <div class="hero-right">
-        <div class="hero-greet" id="home-greet"></div>
-        <div class="hero-date"  id="home-date"></div>
-      </div>
-      <div></div>
-    </div>
     <div class="hero-lbl" id="home-lbl">עו"ש עכשיו</div>
     <div class="hero-bal pos" id="home-bal"></div>
     <div class="hero-forecast-row" id="home-forecast-row">
@@ -2187,7 +2185,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260828;
+var APP_VER=20260829;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -3114,11 +3112,9 @@ function renderBizKPIs(r){
   var cumSum=0,top80=0;
   for(var p=0;p<revArr.length;p++){cumSum+=revArr[p];top80++;if(cumSum>=revTotal*0.8) break;}
   var paretoText=revArr.length>1?(top80+'/'+revArr.length):null;
-  if(!avgPerTmt&&!thisMoTmt&&!paretoText){el.innerHTML='';return;}
+  if(!paretoText){el.innerHTML='';return;}
   var h='<div class="biz-kpi-strip">';
-  if(avgPerTmt) h+='<div class="biz-kpi"><div class="bkv">₪'+fmt(avgPerTmt)+'</div><div class="bkl">ממוצע לטיפול</div></div>';
-  if(thisMoTmt)  h+='<div class="biz-kpi"><div class="bkv">'+thisMoTmt+'</div><div class="bkl">טיפולים החודש</div></div>';
-  if(paretoText) h+='<div class="biz-kpi"><div class="bkv">'+paretoText+'</div><div class="bkl">מניבות 80%</div></div>';
+  if(paretoText) h+='<div class="biz-kpi"><div class="bkv">'+paretoText+'</div><div class="bkl">מניבות 80% מהכנסה</div></div>';
   h+='</div>';
   el.innerHTML=h;
 }
@@ -3160,8 +3156,8 @@ function renderSimSection(r){
 // ── HOME INSIGHT ─────────────────────────────────────────
 function getTopInsight(r){
   if(!r||!r.isNow) return null;
-  // Priority 1: negative forecast
-  if(r.balFull<0) return {type:'bad',text:'תחזית גרעון של ₪'+fmt(Math.abs(r.balFull))+' לסוף '+r.ml.label};
+  // Alert card already handles negative forecast — don't duplicate
+  if(r.balFull<0) return null;
   // Priority 2: upcoming clients
   if(r.planList&&r.planList.length>0){
     if(r.planList.length===1){
@@ -3207,8 +3203,8 @@ function renderHome(){
   var gr=h<5?'לילה טוב':h<12?'בוקר טוב':h<17?'צהריים טובים':'ערב טוב';
   var days=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
   var mos=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
-  document.getElementById('home-greet').textContent=gr+(SETTINGS.userName?' '+SETTINGS.userName:'')+' ✨';
-  document.getElementById('home-date').innerHTML='יום '+days[now.getDay()]+', '+now.getDate()+' ב'+mos[now.getMonth()]+' <span style="opacity:.4;font-size:9px">· v'+APP_VER+'</span>';
+  var grEl=document.getElementById('hdr-greet');
+  if(grEl) grEl.textContent=gr+(SETTINGS.userName?' '+SETTINGS.userName:'');
 
   var bEl=document.getElementById('home-bal');
   // Big number = bank balance NOW (current month) or balFull for past months
@@ -3474,8 +3470,8 @@ function renderPMCards(r){
     '</div>'+
     '<div class="pm-card" style="--pm-c:#B57BEE" onclick="showPMDetail(\'mc\')">'+
       '<div class="pm-name">מאסטרקארד</div>'+
-      '<div class="pm-amt" style="color:#B57BEE">₪'+fmt(r.mcBill)+'</div>'+
-      '<div class="pm-sub">חיוב ב-20'+(CARDS.mc>0?' · ניצול: ₪'+fmt(CARDS.mc):'')+' · '+fmt(mcTotal)+' החודש</div>'+
+      '<div class="pm-amt" style="color:#B57BEE">₪'+fmt(CARDS.mc_charge||r.mcBill)+'</div>'+
+      '<div class="pm-sub">חיוב ב-20 לחודש'+(CARDS.mc>0?' · חיובים מתפרשים: ₪'+fmt(CARDS.mc):'')+' · ₪'+fmt(mcTotal)+' החודש</div>'+
       (dMC>=0?'<span class="pm-tag" style="background:rgba(181,123,238,.15);color:#B57BEE">עוד '+dMC+' ימים</span>':'<span class="pm-tag" style="background:rgba(0,230,118,.1);color:var(--pos)">כבר ירד</span>')+
     '</div>'+
     '<div class="pm-card" style="--pm-c:#6BA3FF" onclick="showPMDetail(\'visa\')">'+
@@ -4042,15 +4038,11 @@ function renderClients(){
   var plan=all.filter(function(c){return c.status==='planned';});
   var doneAmt=done.reduce(function(s,c){return s+c.amount;},0);
   var planAmt=plan.reduce(function(s,c){return s+c.amount;},0);
-  var pendingPay=done.filter(function(c){return c.payStatus!=='paid';});
-  var pendingAmt=pendingPay.reduce(function(s,c){return s+c.amount;},0);
   var r=calc(curCMi);
   var clientForecast=doneAmt+planAmt;
-  var pendingCard=pendingPay.length>0?'<div class="cl-sum-card" style="border-color:rgba(245,158,11,.3)"><div class="cls-title" style="color:var(--gold)">ממתין תשלום</div><div class="cls-val" style="color:var(--gold)">₪'+fmt(pendingAmt)+'</div><div class="cls-sub">'+pendingPay.length+' לקוחות</div></div>':'';
   var forecastSub=(doneAmt>0&&planAmt>0)?'₪'+fmt(doneAmt)+' בוצע · ₪'+fmt(planAmt)+' מתוכנן':(doneAmt>0?(done.length+' לקוחות בוצעו'):(plan.length+' לקוחות מתוכננות'));
   document.getElementById('cl-summary').innerHTML=
     '<div class="cl-sum-card done-c"><div class="cls-title">בוצע</div><div class="cls-val pos">₪'+fmt(doneAmt)+'</div><div class="cls-sub">'+done.length+' לקוחות'+(done.length>0?' · '+done.map(function(c){return esc(c.name.split(' ')[0]);}).join(', '):'')+'</div></div>'+
-    pendingCard+
     '<div class="cl-sum-card plan-c"><div class="cls-title">צפי סוף חודש</div><div class="cls-val cyn">+₪'+fmt(clientForecast)+'</div><div class="cls-sub">'+forecastSub+'</div></div>';
   var today=new Date();
   var isNow=today.getMonth()+1===m&&today.getFullYear()===ml.year;
@@ -4140,7 +4132,7 @@ function modalAdd(){
   CLIENTS[mk]=CLIENTS[mk]||[];
   CLIENTS[mk].push({day:modalDay,name:name,amount:amt,status:st,payMethod:pay,payStatus:st==='done'?'pending':''});
   document.getElementById('m-name').value='';document.getElementById('m-amt').value='';document.getElementById('m-pay').value='';
-  save();renderMC();renderClients();toast('✓ '+name+' נוספה');
+  save();renderMC();try{renderClients();}catch(e){}toast('✓ '+name+' נוספה');
 }
 function closeMbg(id){var bg=document.getElementById(id);if(!bg)return;bg.classList.add('closing');setTimeout(function(){bg.classList.remove('open','closing');},195);}
 function closeModal(){closeMbg('mbg');}
@@ -4567,18 +4559,6 @@ function renderGoals(){
         '<div class="goal-amounts"><div class="goal-saved" style="color:'+col+'">₪'+fmt(g.saved)+'</div><div class="goal-target">מתוך ₪'+fmt(g.target)+'</div></div>'+
       '</div>'+
       '<div class="goal-bar-bg"><div class="goal-bar-fill" data-pct="'+pct+'" style="width:0%;background:'+col+'"></div></div>'+
-      (function(){
-        var ins=getGoalAIInsight(g);
-        if(!ins) return '';
-        var dotColors={done:'#22C55E',good:'#22C55E',warn:'#F59E0B',info:'#2DD4BF'};
-        var dc=dotColors[ins.type]||'#2DD4BF';
-        var bg=ins.type==='warn'?'rgba(245,158,11,.08)':ins.type==='good'?'rgba(34,197,94,.07)':'rgba(255,255,255,.04)';
-        return '<div class="goal-ai-row" style="background:'+bg+'">'+
-          '<div class="goal-ai-dot" style="background:'+dc+'"></div>'+
-          '<span class="goal-ai-txt">'+ins.text+'</span>'+
-          '<span class="goal-ai-chip">AI</span>'+
-          '</div>';
-      })()+
       '<div class="goal-footer"><span class="goal-pct" style="color:'+col+'">'+pct+'%</span>'+
         '<span class="goal-monthly">'+(left>0?'נותר: ₪'+fmt(left):'הושג!')+'</span>'+
         '<button class="goal-add-btn" onclick="openGoalAdd('+idx+')">+ הוסף חיסכון</button>'+
@@ -5550,21 +5530,16 @@ function contactForUpgrade(){
 // Trial banner injected into home screen
 function renderTrialBar(){
   var wrap=document.getElementById('trial-bar-wrap');
-  if(!wrap) return;
+  if(wrap) wrap.innerHTML=''; // No longer shows full bar
+  var el=document.getElementById('hdr-trial');
+  if(!el) return;
   var plan=getPlan();
-  if(plan==='paid'){ wrap.innerHTML=''; return; }
+  if(plan==='paid'){ el.style.display='none'; return; }
   if(plan==='trial'){
-    var d=PLAN_DATA.daysLeft;
-    wrap.innerHTML='<div class="trial-bar">'+
-      '<div class="trial-bar-txt">✨ ניסיון חינמי — נשארו <b>'+d+' ימים</b></div>'+
-      '<button class="trial-bar-btn" onclick="showPaywall(\'trial\')">שדרגי עכשיו</button>'+
-    '</div>';
+    el.textContent='ניסיון · '+PLAN_DATA.daysLeft+'ד';
+    el.style.display='inline-block';
   } else {
-    // free — expired trial or never started
-    wrap.innerHTML='<div class="trial-bar" style="background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.2)">'+
-      '<div class="trial-bar-txt" style="color:var(--gold)">גרסה חינמית — עד 10 ניתוחי AI ביום, אין ייצוא</div>'+
-      '<button class="trial-bar-btn" style="background:var(--gold)" onclick="showPaywall(\'free\')">שדרגי</button>'+
-    '</div>';
+    el.style.display='none';
   }
 }
 
