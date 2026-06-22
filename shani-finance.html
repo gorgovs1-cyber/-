@@ -2177,7 +2177,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260823;
+var APP_VER=20260824;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -5210,6 +5210,25 @@ function runAdvisor(){
 
   // Great month
   if(r.balFull>2000 && r.isNow && insights.length===0) insights.push({emoji:'✅',msg:'חודש מעולה! תחזית חיובית של <strong>₪'+Math.round(r.balFull)+'</strong> לסוף '+r.ml.label+'.',tip:'מומלץ לראות אם יש מה לשים בצד לחיסכון.'});
+
+  // What-if simulations — always added when advisor is opened
+  if(r.isNow){
+    var avgPrc=0;
+    if(r.doneList&&r.doneList.length>0) avgPrc=Math.round(r.doneAmt/r.doneList.length);
+    if(!avgPrc&&SETTINGS&&SETTINGS.avgPrice) avgPrc=safeN(SETTINGS.avgPrice);
+    if(avgPrc>0){
+      var sim1=r.balFull+avgPrc*2;
+      insights.push({emoji:'💡',msg:'מה יקרה אם תוסיפי <strong>2 לקוחות</strong> החודש?<br>יישאר '+(sim1>=0?'+':'')+'<strong>₪'+fmt(Math.abs(sim1))+'</strong> בסוף '+r.ml.label+'.',tip:'תוספת של ₪'+fmt(avgPrc*2)+' הכנסה — ממוצע ₪'+fmt(avgPrc)+' לטיפול.'});
+    }
+    if(r.exp>400){
+      var sim2=r.balFull+Math.round(r.exp*0.10);
+      insights.push({emoji:'💡',msg:'מה יקרה אם <strong>תורידי הוצאות ב-10%</strong>?<br>יישאר '+(sim2>=0?'+':'')+'<strong>₪'+fmt(Math.abs(sim2))+'</strong> בסוף '+r.ml.label+'.',tip:'חיסכון חודשי של ₪'+fmt(Math.round(r.exp*0.10))+' — ₪'+fmt(Math.round(r.exp*1.2))+' בשנה.'});
+    }
+    if(r.doneList&&r.doneList.length>0){
+      var sim3=r.balFull+r.doneList.length*50;
+      insights.push({emoji:'💡',msg:'מה יקרה אם <strong>תעלי מחיר ב-₪50</strong> לטיפול?<br>יישאר '+(sim3>=0?'+':'')+'<strong>₪'+fmt(Math.abs(sim3))+'</strong> בסוף '+r.ml.label+'.',tip:'תוספת של ₪'+fmt(r.doneList.length*50)+' מהלקוחות הנוכחיות בלבד.'});
+    }
+  }
 
   if(!insights.length) return;
 
