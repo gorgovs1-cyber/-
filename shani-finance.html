@@ -632,6 +632,10 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .goal-add-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--text);font-family:'Rubik',sans-serif;font-size:11px;font-weight:500;padding:5px 12px;border-radius:12px;cursor:pointer;flex-shrink:0}
 .goal-del{position:absolute;top:10px;left:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 5px}
 .goal-del:hover{color:var(--neg)}
+.goal-ai-row{display:flex;align-items:center;gap:7px;margin:8px 0 10px;padding:6px 10px;border-radius:9px;background:rgba(255,255,255,.04)}
+.goal-ai-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.goal-ai-txt{font-size:11px;color:var(--muted);line-height:1.3;flex:1}
+.goal-ai-chip{font-size:9px;font-weight:700;letter-spacing:.6px;padding:2px 5px;border-radius:5px;flex-shrink:0;color:var(--cyan);border:1px solid rgba(45,212,191,.3)}
 .add-goal-card{background:rgba(45,212,191,.05);border:1.5px dashed rgba(45,212,191,.28);border-radius:var(--r);padding:18px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer}
 .add-goal-card:active{background:rgba(45,212,191,.1)}
 .add-goal-lbl{font-size:13px;font-weight:500;color:var(--cyan)}
@@ -2183,7 +2187,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260827;
+var APP_VER=20260828;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -4501,6 +4505,41 @@ function saveQA(){
 var activeGoalIdx=-1;
 var GOAL_COLORS=['#2DD4BF','rgba(255,255,255,.55)','#FFB347','#6BA3FF','#00E676','#FF6B6B','rgba(45,212,191,.65)'];
 
+function getGoalAIInsight(g){
+  var left=Math.max(0,safeN(g.target)-safeN(g.saved));
+  if(left<=0) return {type:'done',text:'מטרה הושגה!'};
+  // Find last 3 past months
+  var now=new Date(),cy=now.getFullYear(),cm=now.getMonth()+1;
+  var pastMos=[];
+  for(var i=0;i<MONTHS.length;i++){
+    var ml=MONTHS[i];
+    if(ml.year<cy||(ml.year===cy&&ml.key<cm)) pastMos.push(ml);
+  }
+  pastMos=pastMos.slice(-3);
+  if(!pastMos.length) return null;
+  var totalSurplus=0,validMo=0;
+  for(var j=0;j<pastMos.length;j++){
+    var m=pastMos[j].key;
+    var inc=sumI(m),exp=sumE(m);
+    if(inc>0){totalSurplus+=(inc-exp);validMo++;}
+  }
+  if(!validMo) return null;
+  var avgSurplus=totalSurplus/validMo;
+  if(avgSurplus<=50) return {type:'warn',text:'הוצאות גבוהות מהכנסות — קשה לחסוך כרגע'};
+  var monthsToGo=Math.ceil(left/avgSurplus);
+  var eta=new Date(cy,cm-1+monthsToGo,1);
+  var etaStr=eta.toLocaleDateString('he-IL',{month:'long',year:'numeric'});
+  if(g.deadline){
+    var dl=new Date(g.deadline);
+    if(eta>dl){
+      var delay=Math.round((eta-dl)/(1000*60*60*24*30));
+      return {type:'warn',text:'צפי: '+etaStr+' · '+delay+' חוד\' אחרי היעד'};
+    }
+    return {type:'good',text:'צפי: '+etaStr+' · לפני המועד'};
+  }
+  return {type:'info',text:'בקצב הנוכחי: צפי ב-'+etaStr};
+}
+
 function renderGoals(){
   var totalT=GOALS.reduce(function(s,g){return s+g.target;},0);
   var totalS=GOALS.reduce(function(s,g){return s+g.saved;},0);
@@ -4528,6 +4567,18 @@ function renderGoals(){
         '<div class="goal-amounts"><div class="goal-saved" style="color:'+col+'">₪'+fmt(g.saved)+'</div><div class="goal-target">מתוך ₪'+fmt(g.target)+'</div></div>'+
       '</div>'+
       '<div class="goal-bar-bg"><div class="goal-bar-fill" data-pct="'+pct+'" style="width:0%;background:'+col+'"></div></div>'+
+      (function(){
+        var ins=getGoalAIInsight(g);
+        if(!ins) return '';
+        var dotColors={done:'#22C55E',good:'#22C55E',warn:'#F59E0B',info:'#2DD4BF'};
+        var dc=dotColors[ins.type]||'#2DD4BF';
+        var bg=ins.type==='warn'?'rgba(245,158,11,.08)':ins.type==='good'?'rgba(34,197,94,.07)':'rgba(255,255,255,.04)';
+        return '<div class="goal-ai-row" style="background:'+bg+'">'+
+          '<div class="goal-ai-dot" style="background:'+dc+'"></div>'+
+          '<span class="goal-ai-txt">'+ins.text+'</span>'+
+          '<span class="goal-ai-chip">AI</span>'+
+          '</div>';
+      })()+
       '<div class="goal-footer"><span class="goal-pct" style="color:'+col+'">'+pct+'%</span>'+
         '<span class="goal-monthly">'+(left>0?'נותר: ₪'+fmt(left):'הושג!')+'</span>'+
         '<button class="goal-add-btn" onclick="openGoalAdd('+idx+')">+ הוסף חיסכון</button>'+
