@@ -1212,7 +1212,6 @@ html.mode-private .biz-only{ display:none!important; }
   </div>
 
   <div class="tiles" id="home-tiles"></div>
-  <div id="home-sim"></div>
   <div id="home-biz-kpis" class="biz-only"></div>
 
   <div class="upcoming-wrap" id="home-upcoming"></div>
@@ -2184,7 +2183,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260825;
+var APP_VER=20260826;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -3295,7 +3294,6 @@ function renderHome(){
       '<div class="tile stagger" style="--tc:var(--cyan);--si:2" onclick="go(\'balance\')" onpointerdown="addRipple(this,event)"><div class="tile-val '+bCls+'">'+(r.balFull>=0?'+':'')+'₪'+fmt(Math.abs(r.balFull))+'</div><div class="tile-lbl">'+(r.isNow?'צפי סוף חודש':'יישאר')+'</div></div>';
   }
 
-  renderSimSection(r);
   renderBizKPIs(r);
   renderUpcoming(r);
   renderPMCards(r);
@@ -5253,6 +5251,36 @@ function runAdvisor(){
 
   // Great month
   if(r.balFull>2000 && r.isNow && insights.length===0) insights.push({emoji:'✅',msg:'חודש מעולה! תחזית חיובית של <strong>₪'+Math.round(r.balFull)+'</strong> לסוף '+r.ml.label+'.',tip:'מומלץ לראות אם יש מה לשים בצד לחיסכון.'});
+
+  // Business intelligence insights (biz mode only)
+  if(APP_MODE==='business'){
+    var dowRev={},dowCnt={};
+    var dayNms=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+    for(var bni in CLIENT_RECORDS){
+      var bnh=(CLIENT_RECORDS[bni].history||[]).filter(function(h){return h.status==='done';});
+      for(var bi=0;bi<bnh.length;bi++){
+        var bd=parseClientDate(bnh[bi].date);
+        if(bd.getTime()>0){var bdow=bd.getDay();dowRev[bdow]=(dowRev[bdow]||0)+safeN(bnh[bi].amount);dowCnt[bdow]=(dowCnt[bdow]||0)+1;}
+      }
+    }
+    var bestDow=-1,bestDowRev=0;
+    for(var bd2 in dowRev){if(dowRev[bd2]>bestDowRev){bestDowRev=dowRev[bd2];bestDow=parseInt(bd2);}}
+    if(bestDow>=0&&(dowCnt[bestDow]||0)>=3){
+      var avgDow=Math.round(dowRev[bestDow]/(dowCnt[bestDow]||1));
+      insights.push({emoji:'📅',msg:'יום <strong>'+dayNms[bestDow]+'</strong> הוא הכי רווחי שלך — ₪'+fmt(bestDowRev)+' סה"כ.',tip:'ממוצע ₪'+fmt(avgDow)+' לביקור, מ-'+dowCnt[bestDow]+' ביקורים.'});
+    }
+    var topClRev={};
+    for(var tcn in CLIENT_RECORDS){
+      var tch=(CLIENT_RECORDS[tcn].history||[]).filter(function(h){return h.status==='done';});
+      if(tch.length>0) topClRev[tcn]=tch.reduce(function(s,h){return s+safeN(h.amount);},0);
+    }
+    var topCl=null,topClAmt=0;
+    for(var tc in topClRev){if(topClRev[tc]>topClAmt){topClAmt=topClRev[tc];topCl=tc;}}
+    if(topCl&&topClAmt>500){
+      var topClV=(CLIENT_RECORDS[topCl].history||[]).filter(function(h){return h.status==='done';}).length;
+      insights.push({emoji:'⭐',msg:'הלקוחה הכי רווחית: <strong>'+esc(topCl)+'</strong> — ₪'+fmt(topClAmt)+' ב-'+topClV+' ביקורים.',tip:'לקוחות כאלה הן הלב של העסק.'});
+    }
+  }
 
   // What-if simulations — always added when advisor is opened
   if(r.isNow){
