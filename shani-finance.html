@@ -682,6 +682,12 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .cd-item-amt{font-size:13px;font-weight:500;color:var(--neg);font-variant-numeric:tabular-nums;flex-shrink:0}
 .cc-hint{font-size:9px;color:rgba(255,255,255,.32);margin-top:7px;letter-spacing:.3px}
 
+/* ══ BIZ KPI STRIP ══════════════════════════════════════ */
+.biz-kpi-strip{display:flex;gap:8px;padding:0 16px 14px;direction:rtl}
+.biz-kpi{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:10px 8px 8px;text-align:center}
+.bkv{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)}
+.bkl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
+
 /* ══ SIM SECTION ════════════════════════════════════════ */
 .sim-hdr{padding:14px 16px 6px;direction:rtl;display:flex;align-items:center;gap:6px}
 .sim-hdr-lbl{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
@@ -1207,6 +1213,7 @@ html.mode-private .biz-only{ display:none!important; }
 
   <div class="tiles" id="home-tiles"></div>
   <div id="home-sim"></div>
+  <div id="home-biz-kpis" class="biz-only"></div>
 
   <div class="upcoming-wrap" id="home-upcoming"></div>
 
@@ -2177,7 +2184,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260824;
+var APP_VER=20260825;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -3078,6 +3085,41 @@ function calc(mi){
           balNow:balNow,balFull:balFull,isPast:isPast,isNow:isNow};
 }
 
+// ── BIZ KPIs ─────────────────────────────────────────────
+function renderBizKPIs(r){
+  var el=document.getElementById('home-biz-kpis');
+  if(!el||APP_MODE!=='business'){if(el)el.innerHTML='';return;}
+  // Average revenue per treatment (all-time from CLIENT_RECORDS history)
+  var allHist=[];
+  for(var nm in CLIENT_RECORDS){
+    var hist=(CLIENT_RECORDS[nm].history||[]).filter(function(h){return h.status==='done'&&h.amount>0;});
+    for(var i=0;i<hist.length;i++) allHist.push(hist[i].amount);
+  }
+  var avgPerTmt=allHist.length>0?Math.round(allHist.reduce(function(s,v){return s+v;},0)/allHist.length):0;
+  // This month treatments count
+  var thisMoTmt=r.doneList?r.doneList.length:0;
+  // Pareto: how many clients generate 80% of all-time revenue
+  var cRev={};
+  for(var n2 in CLIENT_RECORDS){
+    var h2=(CLIENT_RECORDS[n2].history||[]).filter(function(h){return h.status==='done';});
+    for(var j=0;j<h2.length;j++) cRev[n2]=(cRev[n2]||0)+safeN(h2[j].amount);
+  }
+  var revArr=[];
+  for(var k in cRev) revArr.push(cRev[k]);
+  revArr.sort(function(a,b){return b-a;});
+  var revTotal=revArr.reduce(function(s,v){return s+v;},0);
+  var cumSum=0,top80=0;
+  for(var p=0;p<revArr.length;p++){cumSum+=revArr[p];top80++;if(cumSum>=revTotal*0.8) break;}
+  var paretoText=revArr.length>1?(top80+'/'+revArr.length):null;
+  if(!avgPerTmt&&!thisMoTmt&&!paretoText){el.innerHTML='';return;}
+  var h='<div class="biz-kpi-strip">';
+  if(avgPerTmt) h+='<div class="biz-kpi"><div class="bkv">₪'+fmt(avgPerTmt)+'</div><div class="bkl">ממוצע לטיפול</div></div>';
+  if(thisMoTmt)  h+='<div class="biz-kpi"><div class="bkv">'+thisMoTmt+'</div><div class="bkl">טיפולים החודש</div></div>';
+  if(paretoText) h+='<div class="biz-kpi"><div class="bkv">'+paretoText+'</div><div class="bkl">מניבות 80%</div></div>';
+  h+='</div>';
+  el.innerHTML=h;
+}
+
 // ── SIMULATIONS ──────────────────────────────────────────
 function makeSimChip(topLbl,nameLbl,newBal,delta){
   var cls=newBal>=0?'pos':'neg';
@@ -3254,6 +3296,7 @@ function renderHome(){
   }
 
   renderSimSection(r);
+  renderBizKPIs(r);
   renderUpcoming(r);
   renderPMCards(r);
   renderNetWorth();
