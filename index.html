@@ -2185,7 +2185,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260830;
+var APP_VER=20260831;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -3239,16 +3239,7 @@ function renderHome(){
     dEl.style.display='inline-flex';
   } else { dEl.style.display='none'; }
 
-  // Pace forecast — only shown for current month after a few days
-  var subHtml='';
-  if(r.isNow && r.exp>0){
-    var dayOfMon2=new Date().getDate();
-    if(dayOfMon2>3){
-      var projExp=Math.round((r.exp/dayOfMon2)*r.ml.days);
-      subHtml='בקצב הנוכחי צפויות <b>₪'+fmt(projExp)+'</b> הוצאות עד סוף החודש';
-    }
-  }
-  document.getElementById('home-sub').innerHTML=subHtml;
+  document.getElementById('home-sub').innerHTML='';
 
   // Alert — only show upcoming bills that haven't been paid yet
   var todayD2=now.getDate(), todayM2=now.getMonth()+1;
