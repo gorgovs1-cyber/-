@@ -2185,7 +2185,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260829;
+var APP_VER=20260830;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -3469,10 +3469,10 @@ function renderPMCards(r){
       (CARDS.bank>CARDS.limit?'<span class="pm-tag" style="background:rgba(248,113,113,.2);color:#FF6B6B">חריגה ₪'+fmt(CARDS.bank-CARDS.limit)+'</span>':'<span class="pm-tag" style="background:rgba(0,230,118,.1);color:var(--pos)">בתוך המסגרת</span>')+
     '</div>'+
     '<div class="pm-card" style="--pm-c:#B57BEE" onclick="showPMDetail(\'mc\')">'+
-      '<div class="pm-name">מאסטרקארד</div>'+
-      '<div class="pm-amt" style="color:#B57BEE">₪'+fmt(CARDS.mc_charge||r.mcBill)+'</div>'+
-      '<div class="pm-sub">חיוב ב-20 לחודש'+(CARDS.mc>0?' · חיובים מתפרשים: ₪'+fmt(CARDS.mc):'')+' · ₪'+fmt(mcTotal)+' החודש</div>'+
-      (dMC>=0?'<span class="pm-tag" style="background:rgba(181,123,238,.15);color:#B57BEE">עוד '+dMC+' ימים</span>':'<span class="pm-tag" style="background:rgba(0,230,118,.1);color:var(--pos)">כבר ירד</span>')+
+      '<div class="pm-name">מאסטרקארד — תשלומים</div>'+
+      '<div class="pm-amt" style="color:#B57BEE">₪'+fmt(CARDS.mc)+'</div>'+
+      '<div class="pm-sub">חיוב ב-20 לחודש: ₪'+fmt(CARDS.mc_charge||r.mcBill)+(mcTotal>0?' · ₪'+fmt(mcTotal)+' החודש':'')+' </div>'+
+      (dMC>=0?'<span class="pm-tag" style="background:rgba(181,123,238,.15);color:#B57BEE">עוד '+dMC+' ימים</span>':'<span class="pm-tag" style="background:rgba(0,230,118,.1);color:var(--pos)">כבר ירד החודש</span>')+
     '</div>'+
     '<div class="pm-card" style="--pm-c:#6BA3FF" onclick="showPMDetail(\'visa\')">'+
       '<div class="pm-name">ויזה</div>'+
@@ -3524,13 +3524,25 @@ function showPMDetail(method){
       '</div>';
   }
   if(method==='mc'){
+    var _today=new Date();
+    var _tD=_today.getDate(),_tM=_today.getMonth()+1,_tY=_today.getFullYear();
+    var _nextM=_tD>=20?((_tM===12?1:_tM+1)):_tM;
+    var _nextY=_tD>=20?(_tM===12?_tY+1:_tY):_tY;
+    var _moN=['','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+    var _nextLbl='20 '+_moN[_nextM]+' '+_nextY;
+    var _chg=CARDS.mc_charge||0;
+    var _bal=CARDS.mc||0;
+    var _afterNext=Math.max(0,_bal-_chg);
+    var _moLeft=_chg>0?Math.ceil(_bal/_chg):null;
     h+='<div style="padding:12px 14px;border-radius:var(--rs);background:rgba(181,123,238,.08);border:1px solid rgba(181,123,238,.2);margin-top:8px">'+
-      '<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--muted)">חיוב ב-20 לחודש</span><span style="font-size:15px;font-weight:500;color:#B57BEE">₪'+fmt(CARDS.mc_charge||CARDS.mc)+'</span></div>'+
-      '<div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:var(--muted)">ניצול כולל (תשלומים)</span><span style="font-size:13px;color:var(--muted)">₪'+fmt(CARDS.mc)+'</span></div>'+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:7px"><span style="font-size:11px;color:var(--muted)">חיובים מתפרשים (יתרה)</span><span style="font-size:16px;font-weight:600;color:#B57BEE">₪'+fmt(_bal)+'</span></div>'+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;color:var(--muted)">חיוב הבא — '+_nextLbl+'</span><span style="font-size:13px;font-weight:500;color:#B57BEE">₪'+fmt(_chg||_bal)+'</span></div>'+
+      (_afterNext>0?'<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--muted)">יישארו אחרי החיוב</span><span style="font-size:12px;color:var(--text2)">₪'+fmt(_afterNext)+'</span></div>':'')+
+      (_moLeft&&_moLeft>1?'<div style="font-size:10px;color:var(--muted);margin-top:4px;text-align:left">כ-'+_moLeft+' תשלומים נותרו</div>':'')+
     '</div>';
     h+='<div class="mi-row" style="margin-top:8px">'+
         '<div class="mfld"><label>חיוב חודשי ₪ (מה יורד ב-20)</label><input type="number" id="pm-mc-charge" placeholder="'+(CARDS.mc_charge||'')+'"></div>'+
-        '<div class="mfld" style="max-width:110px"><label>ניצול כולל ₪</label><input type="number" id="pm-mc-total" placeholder="'+CARDS.mc+'"></div>'+
+        '<div class="mfld" style="max-width:110px"><label>יתרה כוללת ₪</label><input type="number" id="pm-mc-total" placeholder="'+CARDS.mc+'"></div>'+
         '<button onclick="updMCFromPM()" style="background:rgba(255,255,255,.1);border:1px solid var(--border2);color:var(--text);font-family:Rubik,sans-serif;font-size:13px;font-weight:500;padding:10px 14px;border-radius:12px;border:none;cursor:pointer;align-self:flex-end;flex-shrink:0">עדכן</button>'+
       '</div>';
   }
