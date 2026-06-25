@@ -2182,7 +2182,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260835;
+var APP_VER=20260836;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -7689,7 +7689,7 @@ function updateAccountUI(user){
   var ac=document.getElementById('drw-account'); if(ac) ac.style.display=user?'flex':'none';
   var em=document.getElementById('drw-account-email'); if(em) em.textContent=user?(user.email||user.displayName||'מחוברת'):'';
   var ad=document.getElementById('drw-admin');
-  if(ad) ad.style.display=(user&&(user.uid===ADMIN_UID||ADMIN_UID==='REPLACE_WITH_YOUR_UID'))?'flex':'none';
+  if(ad) ad.style.display=(user&&user.uid===ADMIN_UID)?'flex':'none';
   updateBaseIncDisplay();
   updateBizTypeDisplay();
 }
@@ -7726,7 +7726,7 @@ function editBaseIncome(){
 
 // ── USER ANALYTICS ────────────────────────────────────────
 var _sessionStart=0, _sessionInterval=null;
-var ADMIN_UID='REPLACE_WITH_YOUR_UID'; // set to your Firebase UID to enable admin panel
+var ADMIN_UID='7Nz62B3VTcZ1ZcCOfUunHnxNpel2';
 
 function _logSession(user){
   if(!fbDb||!user)return;
