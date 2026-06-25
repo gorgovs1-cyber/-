@@ -18,6 +18,7 @@
   --bg:#0D1117;--bg2:#161B22;--card:#1C2128;--card2:#21262D;
   --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
   --cyan:#2DD4BF;--pos:#22C55E;--neg:#F87171;
+  --mint:#22C55E;--rose:#F87171;
   --gold:#F59E0B;
   --text:#fff;--text2:rgba(255,255,255,.75);--muted:rgba(255,255,255,.42);--muted2:rgba(255,255,255,.22);
   --r:18px;--rs:12px;--rl:18px;
@@ -1368,7 +1369,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="mi-row" style="margin-bottom:12px">
       <div class="mfld"><label>יום</label><input type="number" id="qa-day" placeholder="1-31" min="1" max="31"></div>
       <div class="mfld"><label>חודש</label>
-        <select id="qa-m"><option value="5">מאי</option><option value="6">יוני</option><option value="7">יולי</option><option value="8">אוגוסט</option></select>
+        <select id="qa-m"><option value="1">ינואר</option><option value="2">פברואר</option><option value="3">מרץ</option><option value="4">אפריל</option><option value="5">מאי</option><option value="6">יוני</option><option value="7">יולי</option><option value="8">אוגוסט</option><option value="9">ספטמבר</option><option value="10">אוקטובר</option><option value="11">נובמבר</option><option value="12">דצמבר</option></select>
       </div>
       <div class="mfld"><label>סטטוס</label>
         <select id="qa-st"><option value="done">בוצע ✓</option><option value="planned">מתוכנן</option></select>
@@ -2181,7 +2182,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260834;
+var APP_VER=20260835;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2269,6 +2270,14 @@ var MONTHS = [
   {key:3, label:'מרץ',   year:2026,days:31},{key:4, label:'אפריל', year:2026,days:30},
   {key:5, label:'מאי',   year:2026,days:31},{key:6, label:'יוני',  year:2026,days:30},
   {key:7, label:'יולי',  year:2026,days:31},{key:8, label:'אוגוסט',year:2026,days:31},
+  {key:9, label:'ספטמבר',year:2026,days:30},{key:10,label:'אוקטובר',year:2026,days:31},
+  {key:11,label:'נובמבר',year:2026,days:30},{key:12,label:'דצמבר',year:2026,days:31},
+  {key:1, label:'ינואר', year:2027,days:31},{key:2, label:'פברואר',year:2027,days:28},
+  {key:3, label:'מרץ',   year:2027,days:31},{key:4, label:'אפריל', year:2027,days:30},
+  {key:5, label:'מאי',   year:2027,days:31},{key:6, label:'יוני',  year:2027,days:30},
+  {key:7, label:'יולי',  year:2027,days:31},{key:8, label:'אוגוסט',year:2027,days:31},
+  {key:9, label:'ספטמבר',year:2027,days:30},{key:10,label:'אוקטובר',year:2027,days:31},
+  {key:11,label:'נובמבר',year:2027,days:30},{key:12,label:'דצמבר',year:2027,days:31},
 ];
 var NOW_IDX = (function(){
   var d=new Date(),y=d.getFullYear(),m=d.getMonth()+1;
@@ -4260,6 +4269,8 @@ function closeClientCard(){ closeMbg('cc-mbg'); _ccName=''; }
 function openQuickAdd(){
   var bg=document.getElementById('qa-mbg');
   if(bg){ if(_ccName)document.getElementById('qa-name').value=_ccName; bg.classList.add('open'); }
+  var qaM=document.getElementById('qa-m');
+  if(qaM) qaM.value=String(new Date().getMonth()+1);
 }
 
 // Save editable profile fields
@@ -4959,7 +4970,8 @@ function addSingleTxn(){
   var amt=pa(document.getElementById('sf-amt').value);
   var dateVal=document.getElementById('sf-date').value;
   var mo=MONTHS[homeMi];
-  if(!desc||!amt)return;
+  if(!desc){toast('⚠️ נא להזין תיאור');return;}
+  if(!amt){toast('⚠️ נא להזין סכום');return;}
   var d,m2;
   if(dateVal){var p=dateVal.split('-');d=p[2];m2=p[1];}
   else{var now=new Date();d=String(now.getDate()).padStart(2,'0');m2=String(mo.key).padStart(2,'0');}
@@ -7412,9 +7424,16 @@ function importGCalEvent(idx,evId){
   }
   CLIENTS[mk]=CLIENTS[mk]||[];
   CLIENTS[mk].push({day:day,name:name,amount:amt,status:'planned',treat:treat});
+  if(amt>0){
+    RAW.income[mk]=RAW.income[mk]||[];
+    var incDesc=treat?treat+' — '+name:name;
+    var incDate=String(day).padStart(2,'0')+'/'+String(mk).padStart(2,'0');
+    RAW.income[mk].push({d:incDate,desc:incDesc,a:amt});
+  }
   save();
-  if(evId){var el=document.getElementById(evId);if(el)el.style.opacity='.4';}
-  toast('✓ '+name+' נוספה — '+mk+'/'+day+(treat?' · '+treat:''));
+  if(evId){var el=document.getElementById(evId);if(el){el.style.opacity='.4';el.style.pointerEvents='none';}}
+  toast('✓ '+name+(amt>0?' — ₪'+amt+' נוסף להכנסות':''));
+  renderHome();
 }
 
 // ── LIGHT/DARK THEME ──────────────────────────────────────
