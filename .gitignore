@@ -6,3 +6,6 @@ dist/
 # Android signing key — DO NOT COMMIT
 twa/*.jks
 twa/*.keystore
+
+# Internal tooling
+twa-build/
