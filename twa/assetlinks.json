@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.shanifin.mymoney",
+    "sha256_cert_fingerprints": [
+      "CF:1A:C4:C8:AF:C1:34:5F:DE:70:ED:F8:D0:5E:8A:1D:79:54:E3:F1:B6:41:E6:C8:2F:9D:DF:35:7A:A6:77:7F"
+    ]
+  }
+}]
