@@ -1110,32 +1110,27 @@ html.mode-private .biz-only{ display:none!important; }
     </div>
 
     <!-- Pricing -->
-    <div class="lp-pricing">
+    <div class="lp-pricing" style="justify-content:center;gap:12px">
       <div class="lp-plan" onclick="lpSelectPlan(this,'personal')">
-        <div class="lp-plan-name">אישי</div>
-        <div class="lp-plan-price">₪29<sub>/חודש</sub></div>
-        <div class="lp-plan-feat">מעקב מלא<br>ייצוא CSV</div>
-        <button class="lp-plan-btn" onclick="lpScrollToSignup()">בחר/י</button>
-      </div>
-      <div class="lp-plan best" onclick="lpSelectPlan(this,'nocommit')">
-        <div class="lp-plan-badge nc">ללא התחייבות</div>
-        <div class="lp-plan-name">חודשי</div>
+        <div class="lp-plan-name">אישי פרטי</div>
+        <div style="font-size:11px;color:var(--cyan);margin:3px 0 8px;font-weight:500">תשלום חד פעמי חודשי</div>
         <div class="lp-plan-price">₪49<sub>/חודש</sub></div>
-        <div class="lp-plan-feat">כל הפיצ'רים<br>בלי חיוב אוטו</div>
+        <div class="lp-plan-feat">ללא התחייבות<br>בטל/י בכל עת</div>
         <button class="lp-plan-btn" onclick="lpScrollToSignup()">בחר/י</button>
       </div>
-      <div class="lp-plan" onclick="lpSelectPlan(this,'business')">
+      <div class="lp-plan best" onclick="lpSelectPlan(this,'business')">
         <div class="lp-plan-badge">חיסכון 30%</div>
         <div class="lp-plan-name">עסקי ⭐</div>
-        <div class="lp-plan-price">₪59<sub>/חודש</sub></div>
-        <div class="lp-plan-feat">הכל + מע"מ<br>₪499 לשנה</div>
+        <div style="font-size:11px;color:var(--cyan);margin:3px 0 8px;font-weight:500">מנוי קבוע שנתי</div>
+        <div class="lp-plan-price">₪499<sub>/שנה</sub></div>
+        <div class="lp-plan-feat">הכל + מע"מ<br>כ-₪41 לחודש</div>
         <button class="lp-plan-btn" onclick="lpScrollToSignup()">בחר/י</button>
       </div>
     </div>
     <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:6px">או <span style="color:var(--cyan);cursor:pointer" onclick="lpScrollToSignup()">התחל/י בחינם ←</span></div>
 
     <!-- Trial note -->
-    <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:18px">פחות מ-2 קפה בחודש · בטל/י בכל עת · ₪49 ללא התחייבות</div>
+    <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:18px">אישי פרטי: ₪49 ללא התחייבות · עסקי: ₪499 לשנה · בטל/י בכל עת</div>
 
     <!-- Login / Signup -->
     <div class="auth-sub" id="auth-sub" style="margin-bottom:14px">כניסה — לסנכרון הנתונים בכל המכשירים</div>
@@ -2185,7 +2180,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260831;
+var APP_VER=20260832;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -5389,48 +5384,32 @@ function showPaywall(feat){
   }[feat]||'שדרגי לגרסה המלאה לגישה לכל התכונות.';
   var html='<div class="pw-overlay" id="pw-overlay" onclick="if(event.target===this)closePaywall()">'+
     '<div class="pw-sheet">'+
-      '<div style="text-align:right;margin-bottom:16px">'+
+      '<div style="text-align:right;margin-bottom:20px">'+
         '<div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px">'+head+'</div>'+
         '<div style="font-size:13px;color:var(--muted);line-height:1.65">'+sub+'</div>'+
       '</div>'+
-      '<div class="pw-billing">'+
-        '<button class="pw-billing-btn active" onclick="pwToggleBilling(this,\'annual\')">שנתי <span class="pw-save-badge">חיסכון 40%</span></button>'+
-        '<button class="pw-billing-btn" onclick="pwToggleBilling(this,\'monthly\')">חודשי</button>'+
-      '</div>'+
       '<div class="pw-plan-row">'+
         '<div class="pw-plan" id="pw-p-personal" onclick="pwSelectPlan(this,\'personal\')">'+
-          '<div style="display:flex;justify-content:space-between;align-items:flex-start">'+
-            '<div>'+
-              '<div class="pw-plan-name">פרטי</div>'+
-              '<div style="font-size:11px;color:var(--muted);margin-top:2px">מעקב פיננסי אישי בסיסי</div>'+
-            '</div>'+
-            '<div style="text-align:left;flex-shrink:0;margin-right:4px">'+
-              '<div class="pw-plan-price" id="pw-price-personal">₪29<span style="font-size:11px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
-              '<div class="pw-plan-sub" id="pw-sub-personal" style="text-align:left">₪249 לשנה</div>'+
-            '</div>'+
-          '</div>'+
+          '<div class="pw-plan-name">אישי פרטי</div>'+
+          '<div style="font-size:11px;color:var(--cyan);margin:4px 0 10px;font-weight:500;background:rgba(45,212,191,.1);border-radius:6px;padding:3px 7px;display:inline-block">תשלום חד פעמי חודשי</div>'+
+          '<div class="pw-plan-price">₪49<span style="font-size:11px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
+          '<div class="pw-plan-sub">ללא התחייבות · בטל/י בכל עת</div>'+
           '<div class="pw-plan-feats">'+
             '<div>✓ מעקב הכנסות והוצאות</div>'+
-            '<div>✓ דוח חודשי בסיסי</div>'+
-            '<div>✓ AI ייעוץ כלכלי — עד 5 שאלות ביום</div>'+
-            '<div>✓ גיבוי ענן — מכשיר אחד</div>'+
+            '<div>✓ דוח חודשי מלא</div>'+
+            '<div>✓ ייצוא CSV לרואה חשבון</div>'+
+            '<div>✓ AI ייעוץ כלכלי — עד 5 שאלות</div>'+
+            '<div>✓ גיבוי ענן</div>'+
           '</div>'+
         '</div>'+
         '<div class="pw-plan hero" id="pw-p-business" onclick="pwSelectPlan(this,\'business\')">'+
-          '<div style="display:flex;justify-content:space-between;align-items:flex-start">'+
-            '<div>'+
-              '<div class="pw-plan-badge">עסקי ⭐</div>'+
-              '<div style="font-size:11px;color:var(--muted);margin-top:3px">לעצמאי/ת עם עוסק מורשה/פטור</div>'+
-            '</div>'+
-            '<div style="text-align:left;flex-shrink:0;margin-right:4px">'+
-              '<div class="pw-plan-price" id="pw-price-business">₪49<span style="font-size:11px;font-weight:400;color:var(--muted)">/חודש</span></div>'+
-              '<div class="pw-plan-sub" id="pw-sub-business" style="text-align:left">₪499 לשנה</div>'+
-            '</div>'+
-          '</div>'+
+          '<div class="pw-plan-badge">עסקי ⭐</div>'+
+          '<div style="font-size:11px;color:var(--cyan);margin:4px 0 10px;font-weight:500;background:rgba(45,212,191,.1);border-radius:6px;padding:3px 7px;display:inline-block">מנוי קבוע שנתי</div>'+
+          '<div class="pw-plan-price">₪499<span style="font-size:11px;font-weight:400;color:var(--muted)">/שנה</span></div>'+
+          '<div class="pw-plan-sub">כ-₪41 לחודש · חיסכון 30%</div>'+
           '<div class="pw-plan-feats">'+
-            '<div>✓ הכל מתוכנית פרטי</div>'+
+            '<div>✓ הכל מתוכנית אישי</div>'+
             '<div>✓ AI ייעוץ כלכלי ללא הגבלה</div>'+
-            '<div>✓ ייצוא CSV לרואה חשבון</div>'+
             '<div>✓ דוחות מע"מ + תכנון מס</div>'+
             '<div>✓ ניהול ספקים והזמנות</div>'+
             '<div>✓ היסטוריה מלאה ללא הגבלה</div>'+
@@ -5439,39 +5418,19 @@ function showPaywall(feat){
           '</div>'+
         '</div>'+
       '</div>'+
-      '<button class="pw-cta" id="pw-cta-btn" onclick="contactForUpgrade()">📱 שדרג/י עסקי שנתי ₪49 דרך WhatsApp</button>'+
+      '<button class="pw-cta" id="pw-cta-btn" onclick="contactForUpgrade()">📱 שדרג/י עסקי ₪499 לשנה דרך WhatsApp</button>'+
       '<button class="pw-dismiss" onclick="closePaywall()">המשיכ/י בחינם</button>'+
     '</div>'+
   '</div>';
   var ex=document.getElementById('pw-overlay');
   if(ex) ex.outerHTML=html; else document.body.insertAdjacentHTML('beforeend',html);
-  _pwPlan='business'; _pwBilling='annual';
+  _pwPlan='business';
 }
 function closePaywall(){
   var el=document.getElementById('pw-overlay');
   if(el) el.remove();
 }
 var _pwPlan='business';
-var _pwBilling='annual';
-var _pwPrices={
-  personal:{annual:{price:'₪29',sub:'₪249 לשנה'},monthly:{price:'₪49',sub:'ללא התחייבות'}},
-  business:{annual:{price:'₪49',sub:'₪499 לשנה'},monthly:{price:'₪69',sub:'ללא התחייבות'}}
-};
-function pwToggleBilling(btn, billing){
-  _pwBilling=billing;
-  var btns=document.querySelectorAll('#pw-overlay .pw-billing-btn');
-  for(var i=0;i<btns.length;i++) btns[i].classList.remove('active');
-  btn.classList.add('active');
-  var plans=['personal','business'];
-  for(var j=0;j<plans.length;j++){
-    var p=plans[j];
-    var prEl=document.getElementById('pw-price-'+p);
-    var sbEl=document.getElementById('pw-sub-'+p);
-    if(prEl) prEl.innerHTML=_pwPrices[p][billing].price+'<span style="font-size:11px;font-weight:400;color:var(--muted)">/חודש</span>';
-    if(sbEl) sbEl.textContent=_pwPrices[p][billing].sub;
-  }
-  _updatePwCta();
-}
 function pwSelectPlan(el, plan){
   _pwPlan=plan;
   var plans=document.querySelectorAll('#pw-overlay .pw-plan');
@@ -5482,10 +5441,11 @@ function pwSelectPlan(el, plan){
 function _updatePwCta(){
   var btn=document.getElementById('pw-cta-btn');
   if(!btn) return;
-  var planLbl=_pwPlan==='business'?'עסקי':'פרטי';
-  var price=_pwPrices[_pwPlan][_pwBilling].price;
-  var bLbl=_pwBilling==='annual'?'שנתי':'חודשי';
-  btn.textContent='📱 שדרג/י '+planLbl+' '+bLbl+' '+price+' דרך WhatsApp';
+  if(_pwPlan==='business'){
+    btn.textContent='📱 שדרג/י עסקי ₪499 לשנה דרך WhatsApp';
+  } else {
+    btn.textContent='📱 שדרג/י אישי פרטי ₪49 לחודש דרך WhatsApp';
+  }
 }
 function lpSelectPlan(el, plan){
   var plans=document.querySelectorAll('.lp-plan');
