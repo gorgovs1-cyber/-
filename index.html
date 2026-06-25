@@ -2182,7 +2182,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260836;
+var APP_VER=20260837;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -5790,7 +5790,7 @@ function gmailFetch(days){
   gmStatus('מחפש עסקאות...');
   document.getElementById('gmail-found').style.display='none';
   // broad query: banks + card companies + any mail containing ILS/₪/receipt keywords
-  var query='newer_than:'+days+'d (from:(max.co.il OR isracard.co.il OR leumi.co.il OR bankhapoalim.co.il OR cal.co.il OR mizrahi-tefahot.co.il OR discountbank.co.il OR pepper.co.il OR onezero.co.il OR wolt.com OR noreply.payments OR paybox) OR subject:(קבלה OR חשבונית OR אישור OR receipt OR invoice OR חיוב OR ILS) OR ILS)';
+  var query='newer_than:'+days+'d (from:(max.co.il OR isracard.co.il OR leumi.co.il OR bankhapoalim.co.il OR cal.co.il OR mizrahi-tefahot.co.il OR discountbank.co.il OR bankdiscount.co.il OR pepper.co.il OR onezero.co.il OR wolt.com OR noreply.payments OR paybox OR bit.co.il OR leumipay.co.il OR fibi.co.il OR unionbank.co.il) OR subject:(קבלה OR חשבונית OR אישור OR receipt OR invoice OR חיוב OR ILS OR זוכה OR קיבלת) OR ILS)';
   fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?q='+encodeURIComponent(query)+'&maxResults=120',{
     headers:{Authorization:'Bearer '+_gmailToken}
   }).then(function(r){
@@ -6009,6 +6009,12 @@ function parseGmailMsg(msg){
 
   // ── DESCRIPTION ──
   function findDesc(){
+    // Isracard: "שם בית עסק: מסקית"
+    var ibm=text.match(/שם\s*בית\s*עסק[:\s]+([^\d₪\n,]{2,35}?)(?:\s*(?:\n|סכום|בתאריך|$))/);
+    if(ibm&&ibm[1].trim().length>1)return ibm[1].trim();
+    // Bit income: "ביט — שני לוי שלחה לך ₪350" or "קיבלת מ-שני לוי"
+    var bitm=text.match(/(?:קיבלת\s+מ-?|הועבר\s+(?:ממך|מ-?))\s*([א-ת][א-ת\s]{1,20}?)(?:\s|$)/);
+    if(bitm)return 'ביט — '+bitm[1].trim();
     var bm=text.match(/(?:בבית\s*עסק|בית\s*העסק|אצל|ב-)\s*[:\-]?\s*([^\d₪\n,.]{2,30}?)(?:\s*(?:בסך|בסכום|בתאריך|ב-?\d|₪|\.|,|$))/);
     if(bm&&bm[1].trim().length>1)return bm[1].trim();
     var wm=text.match(/(?:הנה הקבלה שלך|הזמנה מ-?|ordered from)[:\s-]*([^\d\n,]{2,35}?)(?:\s*(?:\d|₪|ILS|\n|$))/i);
@@ -6034,7 +6040,8 @@ function parseGmailMsg(msg){
   var amt=Math.max.apply(null,amts);
   var desc=findDesc();
 
-  _gmailParsed.push({d:txnD,desc:desc,a:amt,method:method,monthKey:txnMo,year:yr,raw:(subj+' · '+body.slice(0,80)).slice(0,110)});
+  var isIncome=/קיבלת\s+תשלום|זוכה\s+חשבונך|הופקד\s+לחשבונך|התקבלה\s+העברה|הועבר\s+לחשבונך|קבלת\s+כסף|שולמת\s+לך|paybox.*קיבל|ביט.*קיבל|כסף\s+התקבל/i.test(text);
+  _gmailParsed.push({d:txnD,desc:desc,a:amt,method:method,type:isIncome?'income':'expense',monthKey:txnMo,year:yr,raw:(subj+' · '+body.slice(0,80)).slice(0,110)});
 }
 function renderGmailTxns(){
   if(!_gmailParsed.length){
@@ -6073,11 +6080,11 @@ function renderGmailTxns(){
         '<input type="checkbox" id="gt'+i+'"'+(checked?' checked':'')+' style="width:16px;height:16px;accent-color:var(--cyan)">'+
         '<div>'+
           '<div style="font-size:13px;font-weight:400">'+dupBadge+esc(t.desc)+'</div>'+
-          '<div style="font-size:10px;color:var(--muted);margin-top:2px">'+t.d+' · <span style="color:'+col+'">'+mLbl[t.method]+'</span></div>'+
+          '<div style="font-size:10px;color:var(--muted);margin-top:2px">'+t.d+' · <span style="color:'+col+'">'+mLbl[t.method]+'</span>'+(t.type==='income'?' · <span style="color:var(--pos);font-weight:500">הכנסה</span>':'')+'</div>'+
           '<div style="font-size:9px;color:var(--muted2);margin-top:2px;direction:ltr">'+t.raw.slice(0,70)+'</div>'+
         '</div>'+
       '</label>'+
-      '<div style="font-size:15px;font-weight:500;color:var(--neg);flex-shrink:0;padding-top:2px">-₪'+fmt(t.a)+'</div>'+
+      '<div style="font-size:15px;font-weight:500;color:'+(t.type==='income'?'var(--pos)':'var(--neg)')+';flex-shrink:0;padding-top:2px">'+(t.type==='income'?'+':'-')+'₪'+fmt(t.a)+'</div>'+
     '</div>';
   });
   document.getElementById('gmail-txns').innerHTML=h;
@@ -6119,18 +6126,32 @@ function renderGmailTxns(){
   }
 }
 function gmailImportAll(){
-  var added=0;
+  var added=0,incAdded=0,expAdded=0;
   _gmailParsed.forEach(function(t,i){
     var cb=document.getElementById('gt'+i);
     if(!cb||!cb.checked)return;
     var key=t.monthKey;
-    RAW.expense[key]=RAW.expense[key]||[];
     var entry={d:t.d,desc:t.desc,a:t.a};
-    if(t.method&&t.method!=='bank')entry.method=t.method;
-    RAW.expense[key].push(entry);
+    if(t.type==='income'){
+      RAW.income[key]=RAW.income[key]||[];
+      RAW.income[key].push(entry);
+      incAdded++;
+    } else {
+      RAW.expense[key]=RAW.expense[key]||[];
+      if(t.method&&t.method!=='bank')entry.method=t.method;
+      RAW.expense[key].push(entry);
+      expAdded++;
+    }
     added++;
   });
-  if(added){save();renderHome();toast('✓ '+added+' עסקאות יובאו');showRecurringSuggestion();}
+  if(added){
+    save();renderHome();
+    var msg='✓ יובאו: ';
+    if(expAdded)msg+=expAdded+' הוצאות';
+    if(incAdded)msg+=(expAdded?' · ':'')+incAdded+' הכנסות';
+    toast(msg);
+    showRecurringSuggestion();
+  }
   document.getElementById('gmail-found').style.display='none';
   _gmailParsed=[];_gmailSubs=[];
 }
