@@ -2180,7 +2180,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260832;
+var APP_VER=20260833;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -5480,14 +5480,12 @@ function showPrivacy(){
   document.body.insertAdjacentHTML('beforeend',html);
 }
 function contactForUpgrade(){
-  var planLbl=_pwPlan==='business'?'עסקי':'פרטי';
-  var price=_pwPrices[_pwPlan][_pwBilling].price;
-  var annualAmt=_pwPlan==='business'?'₪499':'₪249';
-  var bLbl=_pwBilling==='annual'?'שנתי ('+annualAmt+'/שנה)':'חודשי';
-  var msg=encodeURIComponent('היי! אני רוצה לשדרג את My Money לתוכנית '+planLbl+' '+bLbl+', '+price+'/חודש 🌟');
-  var num=(SETTINGS.bizWhatsApp||'').replace(/\D/g,'');
-  window.open(num?'https://wa.me/'+num+'?text='+msg:'https://wa.me/?text='+msg,'_blank');
-  track('paywall_whatsapp_click',{plan:_pwPlan,billing:_pwBilling});
+  var planLbl=_pwPlan==='business'?'עסקי ₪499/שנה':'אישי פרטי ₪49/חודש';
+  var msg=encodeURIComponent('היי שני! אני רוצה לשדרג את My Money לתוכנית '+planLbl+' 🌟');
+  var raw=(SETTINGS.bizWhatsApp||'').replace(/\D/g,'');
+  var num=raw||'972504744815';
+  window.open('https://wa.me/'+num+'?text='+msg,'_blank');
+  track('paywall_whatsapp_click',{plan:_pwPlan});
 }
 
 // Trial banner injected into home screen
