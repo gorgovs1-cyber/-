@@ -1941,10 +1941,7 @@ html.mode-private .biz-only{ display:none!important; }
     <div style="display:flex;flex-direction:column;gap:12px">
       <div style="font-size:13px;font-weight:500;color:var(--cyan);margin-bottom:4px">💬 WhatsApp עסקי (לשדרוג לקוחות)</div>
       <input id="set-biz-wa" class="inp" placeholder="מספר WhatsApp שלך 972..." oninput="SETTINGS.bizWhatsApp=this.value;saveSettings()">
-      <div style="font-size:13px;font-weight:500;color:var(--cyan);margin-top:8px;margin-bottom:4px">📱 Twilio SMS</div>
-      <input id="set-twilio-sid" class="inp" placeholder="Twilio Account SID" oninput="SETTINGS.twilioSid=this.value;saveSettings()">
-      <input id="set-twilio-token" class="inp" placeholder="Twilio Auth Token" type="password" oninput="SETTINGS.twilioToken=this.value;saveSettings()">
-      <input id="set-twilio-from" class="inp" placeholder="מספר שולח Twilio (+1...)" oninput="SETTINGS.twilioFrom=this.value;saveSettings()">
+      <div style="font-size:11px;color:var(--muted);background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.18);border-radius:10px;padding:9px 12px;margin-top:4px;line-height:1.5">📱 <b style="color:var(--cyan)">SMS אוטומטי</b> — מוגדר בצד השרת (Vercel env vars). לשינוי פרטי Twilio — כנסי לדשבורד Vercel.</div>
       <div style="font-size:13px;font-weight:500;color:var(--cyan);margin-top:8px;margin-bottom:4px">🧾 Morning חשבוניות</div>
       <input id="set-morning-token" class="inp" placeholder="Morning API Token" oninput="SETTINGS.morningToken=this.value;saveSettings()">
       <input id="set-biz-name" class="inp" placeholder="שם העסק" oninput="SETTINGS.bizName=this.value;saveSettings()">
@@ -2199,7 +2196,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260847;
+var APP_VER=20260848;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -4333,18 +4330,12 @@ function openWhatsApp(name){
 // Manual SMS send (with custom message option)
 function manualSMS(name){
   var prof=CLIENT_PROFILES[name]||{};
-  if(!SETTINGS.twilioSid){toast('הגדירי Twilio בהגדרות');return;}
   if(!prof.phone){toast('הוסיפי מספר טלפון תחילה');return;}
   var first=name.split(' ')[0];
   var msg=window.prompt('תוכן ה-SMS ל-'+first+':','שלום '+first+', מזכירה לך שיש לנו תור קרוב. לביטול/שינוי תורי אותי 💛 — '+(SETTINGS.userName||''));
   if(!msg)return;
   var phone=(prof.phone||'').replace(/[-\s]/g,'');
-  if(phone.charAt(0)==='0')phone='+972'+phone.slice(1);
-  var url='https://api.twilio.com/2010-04-01/Accounts/'+SETTINGS.twilioSid+'/Messages.json';
-  var body=new URLSearchParams({To:phone,From:SETTINGS.twilioFrom,Body:msg});
-  fetch(url,{method:'POST',headers:{'Authorization':'Basic '+btoa(SETTINGS.twilioSid+':'+SETTINGS.twilioToken),'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()})
-    .then(function(){toast('📱 SMS נשלח ל-'+name);})
-    .catch(function(){toast('שגיאה בשליחת SMS');});
+  _sendSmsProxy(phone,msg,function(){toast('📱 SMS נשלח ל-'+name);},function(){toast('שגיאה בשליחת SMS');});
 }
 
 // Manual invoice
@@ -4419,7 +4410,7 @@ function renderClientCard(name){
   document.getElementById('cc-subtitle').innerHTML='ביקור אחרון: '+lastVisitStr+' '+trendHtml;
 
   var hasPhone=!!(prof.phone);
-  var hasTwilio=!!(SETTINGS.twilioSid);
+  var hasTwilio=true;
   var hasMorning=!!(SETTINGS.morningToken);
 
   var html='';
@@ -7312,34 +7303,37 @@ function openSettings() {
   var m = document.getElementById('settings-modal-bg');
   m.style.display = 'flex';
   document.getElementById('set-biz-wa').value = SETTINGS.bizWhatsApp||'';
-  document.getElementById('set-twilio-sid').value = SETTINGS.twilioSid||'';
-  document.getElementById('set-twilio-token').value = SETTINGS.twilioToken||'';
-  document.getElementById('set-twilio-from').value = SETTINGS.twilioFrom||'';
   document.getElementById('set-morning-token').value = SETTINGS.morningToken||'';
   document.getElementById('set-biz-name').value = SETTINGS.bizName||'';
 }
 function closeSettings() { document.getElementById('settings-modal-bg').style.display='none'; }
 
+// ── SMS PROXY (calls serverless /api/send-sms) ────────────
+function _sendSmsProxy(to,body,onOk,onErr){
+  fetch('/api/send-sms',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({to:to,body:body})
+  }).then(function(r){
+    if(r.ok){if(onOk)onOk();}
+    else{if(onErr)onErr();}
+  }).catch(function(){if(onErr)onErr();});
+}
+
 // ── SMS ON DONE ───────────────────────────────────────────
 function sendSMSOnDone(client) {
-  if(!SETTINGS.twilioSid||!SETTINGS.twilioToken||!SETTINGS.twilioFrom) return;
+  var profile = CLIENT_PROFILES[client.name]||{};
+  if(!profile.phone) return;
   var profile = CLIENT_PROFILES[client.name]||{};
   if(!profile.phone) return;
   var phone = profile.phone.replace(/[-\s]/g,'');
   if(phone.charAt(0)==='0') phone = '+972'+phone.slice(1);
   var msg = 'שלום '+client.name.split(' ')[0]+', תודה על הביקור! הטיפול שלך בוצע. סכום: ₪'+client.amount+'. - '+(SETTINGS.userName||'');
-  var url = 'https://api.twilio.com/2010-04-01/Accounts/'+SETTINGS.twilioSid+'/Messages.json';
-  var body = new URLSearchParams({To:phone,From:SETTINGS.twilioFrom,Body:msg});
-  fetch(url,{
-    method:'POST',
-    headers:{'Authorization':'Basic '+btoa(SETTINGS.twilioSid+':'+SETTINGS.twilioToken),'Content-Type':'application/x-www-form-urlencoded'},
-    body:body.toString()
-  }).then(function(){toast('📱 SMS נשלח ל-'+client.name);}).catch(function(){toast('שגיאה בשליחת SMS');});
+  _sendSmsProxy(phone,msg,function(){toast('📱 SMS נשלח ל-'+client.name);},function(){});
 }
 
 // ── 24H APPOINTMENT REMINDERS ────────────────────────────
 function checkUpcomingReminders(){
-  if(!SETTINGS.twilioSid||!SETTINGS.twilioToken||!SETTINGS.twilioFrom) return;
   var tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
   var tDay=tomorrow.getDate(), tMon=tomorrow.getMonth()+1, tYear=tomorrow.getFullYear();
   // find matching MONTHS entry
@@ -7358,17 +7352,12 @@ function checkUpcomingReminders(){
     var dateStr=String(tDay).padStart(2,'0')+'/'+String(tMon).padStart(2,'0');
     var biz=SETTINGS.bizName||SETTINGS.userName||'';
     var msg='שלום '+esc(c.name.split(' ')[0])+', תזכורת: יש לך תור מחר '+dateStr+(biz?' אצל '+biz:'')+'.'+(c.treat?' טיפול: '+c.treat+'.':'')+' לביטול — חזרי על הודעה זו.';
-    var url='https://api.twilio.com/2010-04-01/Accounts/'+SETTINGS.twilioSid+'/Messages.json';
-    var bd=new URLSearchParams({To:phone,From:SETTINGS.twilioFrom,Body:msg});
-    fetch(url,{method:'POST',headers:{'Authorization':'Basic '+btoa(SETTINGS.twilioSid+':'+SETTINGS.twilioToken),'Content-Type':'application/x-www-form-urlencoded'},body:bd.toString()})
-      .then(function(){reminded[key]=Date.now();try{localStorage.setItem('pf_sms_reminded',JSON.stringify(reminded));}catch(e){}})
-      .catch(function(){});
+    _sendSmsProxy(phone,msg,function(){reminded[key]=Date.now();try{localStorage.setItem('pf_sms_reminded',JSON.stringify(reminded));}catch(e){}},function(){});
     sent++;
   });
   if(sent>0) setTimeout(function(){toast('📱 '+sent+' תזכורות נשלחו ללקוחות מחר');},1500);
 }
 function sendManualReminders(){
-  if(!SETTINGS.twilioSid){toast('הגדירי Twilio בהגדרות כדי לשלוח SMS');return;}
   checkUpcomingReminders();
   toast('🔄 שולחת תזכורות...');
 }

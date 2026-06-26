@@ -22,6 +22,7 @@
   "rewrites": [
     { "source": "/landing.html", "destination": "/landing.html" },
     { "source": "/.well-known/assetlinks.json", "destination": "/.well-known/assetlinks.json" },
+    { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
