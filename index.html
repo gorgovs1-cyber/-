@@ -2185,7 +2185,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260838;
+var APP_VER=20260839;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -7845,7 +7845,7 @@ function onSignedIn(user){
 // ── SERVICE WORKER + OFFLINE INDICATOR ──────────────────
 (function(){
   if(!('serviceWorker' in navigator)) return;
-  navigator.serviceWorker.register('/sw.js').catch(function(){});
+  navigator.serviceWorker.register('./sw.js').catch(function(){});
   function setOffline(offline){
     setSyncDot(offline?'err':'');
     var dot=document.getElementById('sync-dot');
@@ -7854,6 +7854,53 @@ function onSignedIn(user){
   window.addEventListener('online',  function(){ setOffline(false); cloudPush&&cloudPush(); });
   window.addEventListener('offline', function(){ setOffline(true); });
   if(!navigator.onLine) setOffline(true);
+})();
+
+// ── PWA INSTALL PROMPT ───────────────────────────────────
+(function(){
+  var _deferredPrompt=null;
+  var DISMISSED_KEY='pwa_install_dismissed';
+
+  function isIOS(){return/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;}
+  function isInStandaloneMode(){return window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;}
+  function wasDismissed(){return localStorage.getItem(DISMISSED_KEY)==='1';}
+
+  function showInstallBanner(mode){
+    if(wasDismissed()||isInStandaloneMode()) return;
+    var existing=document.getElementById('pwa-install-banner');
+    if(existing) return;
+    var msg = mode==='ios'
+      ? 'להוסיף לדף הבית: לחצי על <b>שתף</b> (□↑) ואז <b>"הוסף למסך הבית"</b>'
+      : 'התקיני את האפליקציה על המסך הבית לגישה מהירה 📲';
+    var banner=document.createElement('div');
+    banner.id='pwa-install-banner';
+    banner.style.cssText='position:fixed;bottom:calc(70px + env(safe-area-inset-bottom,0px));left:12px;right:12px;background:var(--card2);border:1px solid rgba(45,212,191,.3);border-radius:16px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:1500;box-shadow:0 8px 24px rgba(0,0,0,.4)';
+    banner.innerHTML='<span style="font-size:13px;color:var(--text2);line-height:1.5;flex:1;direction:rtl;text-align:right">'+msg+'</span>'
+      +(mode==='android'?'<button onclick="window._pwaTriggerInstall&&window._pwaTriggerInstall()" style="background:var(--cyan);color:#0A1520;border:none;border-radius:10px;padding:7px 14px;font-family:Rubik,sans-serif;font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0">התקיני</button>':'')
+      +'<button onclick="document.getElementById(\'pwa-install-banner\').remove();localStorage.setItem(\''+DISMISSED_KEY+'\',\'1\')" style="background:rgba(255,255,255,.1);border:none;border-radius:8px;padding:6px 10px;color:var(--muted);font-family:Rubik,sans-serif;font-size:13px;cursor:pointer;flex-shrink:0">✕</button>';
+    document.body.appendChild(banner);
+    setTimeout(function(){if(document.getElementById('pwa-install-banner'))document.getElementById('pwa-install-banner').remove();},15000);
+  }
+
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault();
+    _deferredPrompt=e;
+    window._pwaTriggerInstall=function(){
+      if(!_deferredPrompt) return;
+      _deferredPrompt.prompt();
+      _deferredPrompt.userChoice.then(function(r){
+        if(r.outcome==='accepted') localStorage.setItem(DISMISSED_KEY,'1');
+        _deferredPrompt=null;
+        var b=document.getElementById('pwa-install-banner');
+        if(b) b.remove();
+      });
+    };
+    setTimeout(function(){showInstallBanner('android');},5000);
+  });
+
+  if(isIOS()&&!isInStandaloneMode()&&!wasDismissed()){
+    setTimeout(function(){showInstallBanner('ios');},6000);
+  }
 })();
 </script>
 </body>
