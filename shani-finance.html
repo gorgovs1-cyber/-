@@ -487,6 +487,23 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .cal-dot.done   {background:rgba(34,197,94,.15);color:#22C55E}
 .cal-dot.planned{background:rgba(212,149,106,.18);color:#D4956A}
 
+/* ══ CONFIRM / PROMPT DIALOG ══════════════════════════════ */
+#ui-dialog-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);z-index:1100;align-items:center;justify-content:center;padding:24px}
+#ui-dialog-bg.open{display:flex}
+.ui-dialog{background:#141F30;border:1px solid var(--border2);border-radius:20px;width:100%;max-width:340px;padding:24px 22px 20px;text-align:center;animation:dlgPop .2s cubic-bezier(.2,1,.35,1);direction:rtl}
+@keyframes dlgPop{0%{opacity:0;transform:scale(.9)}100%{opacity:1;transform:scale(1)}}
+.ui-dlg-icon{font-size:34px;margin-bottom:10px}
+.ui-dlg-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.4}
+.ui-dlg-msg{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px;white-space:pre-line}
+.ui-dlg-input{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:11px 14px;color:var(--text);font-family:'Rubik',sans-serif;font-size:14px;margin-bottom:18px;text-align:right;direction:rtl;box-sizing:border-box}
+.ui-dlg-input:focus{outline:none;border-color:var(--cyan)}
+.ui-dlg-btns{display:flex;gap:10px}
+.ui-dlg-btn{flex:1;font-family:'Rubik',sans-serif;font-size:14px;font-weight:500;padding:12px;border-radius:12px;border:none;cursor:pointer;transition:opacity .15s}
+.ui-dlg-btn:active{opacity:.75}
+.ui-dlg-btn.cancel{background:var(--card2);color:var(--muted);border:1px solid var(--border2)}
+.ui-dlg-btn.ok{background:var(--cyan);color:#08131F}
+.ui-dlg-btn.danger{background:var(--neg);color:#fff}
+
 /* ══ MODAL ════════════════════════════════════════════════ */
 .mbg {display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:500;align-items:flex-end;justify-content:center}
 .mbg.open{display:flex}
@@ -2192,6 +2209,20 @@ html.mode-private .biz-only{ display:none!important; }
 
 <div id="toast"></div>
 
+<!-- ══ STYLED CONFIRM / PROMPT DIALOG ══════════════════════ -->
+<div id="ui-dialog-bg">
+  <div class="ui-dialog">
+    <div class="ui-dlg-icon" id="ui-dlg-icon">❓</div>
+    <div class="ui-dlg-title" id="ui-dlg-title"></div>
+    <div class="ui-dlg-msg" id="ui-dlg-msg"></div>
+    <input type="text" class="ui-dlg-input" id="ui-dlg-input" style="display:none">
+    <div class="ui-dlg-btns">
+      <button class="ui-dlg-btn cancel" id="ui-dlg-cancel" onclick="_uiDlgResolve(false)">ביטול</button>
+      <button class="ui-dlg-btn ok" id="ui-dlg-ok" onclick="_uiDlgResolve(true)">אישור</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -2203,7 +2234,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260850;
+var APP_VER=20260851;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2813,6 +2844,51 @@ function toast(msg){
   else if(err){ void t.offsetWidth; t.classList.add('error'); haptic(20); }
   t.style.opacity='1';t.style.transform='translate(-50%,0)';
   setTimeout(function(){t.style.opacity='0';t.style.transform='translate(-50%,10px)';},2600);
+}
+
+// ── STYLED CONFIRM / PROMPT (replaces native window.confirm/prompt) ──
+var _uiDlgCb=null,_uiDlgIsPrompt=false;
+function _uiDlgResolve(ok){
+  var bg=document.getElementById('ui-dialog-bg');
+  bg.classList.remove('open');
+  var cb=_uiDlgCb;_uiDlgCb=null;
+  var val=_uiDlgIsPrompt?document.getElementById('ui-dlg-input').value:ok;
+  if(cb){ if(_uiDlgIsPrompt) cb(ok?val:null); else cb(ok); }
+}
+function uiConfirm(opts,cb){
+  // opts: {title, msg, icon, okText, cancelText, danger} or just a string title
+  if(typeof opts==='string')opts={title:opts};
+  _uiDlgIsPrompt=false;_uiDlgCb=cb;
+  document.getElementById('ui-dlg-icon').textContent=opts.icon||'⚠️';
+  document.getElementById('ui-dlg-title').textContent=opts.title||'';
+  document.getElementById('ui-dlg-msg').textContent=opts.msg||'';
+  document.getElementById('ui-dlg-msg').style.display=opts.msg?'block':'none';
+  document.getElementById('ui-dlg-input').style.display='none';
+  var okBtn=document.getElementById('ui-dlg-ok');
+  okBtn.textContent=opts.okText||'אישור';
+  okBtn.className='ui-dlg-btn '+(opts.danger?'danger':'ok');
+  document.getElementById('ui-dlg-cancel').textContent=opts.cancelText||'ביטול';
+  haptic(10);
+  document.getElementById('ui-dialog-bg').classList.add('open');
+}
+function uiPrompt(opts,cb){
+  if(typeof opts==='string')opts={title:opts};
+  _uiDlgIsPrompt=true;_uiDlgCb=cb;
+  document.getElementById('ui-dlg-icon').textContent=opts.icon||'✏️';
+  document.getElementById('ui-dlg-title').textContent=opts.title||'';
+  document.getElementById('ui-dlg-msg').textContent=opts.msg||'';
+  document.getElementById('ui-dlg-msg').style.display=opts.msg?'block':'none';
+  var inp=document.getElementById('ui-dlg-input');
+  inp.style.display='block';
+  inp.value=opts.def||'';
+  inp.type=opts.inputType||'text';
+  var okBtn=document.getElementById('ui-dlg-ok');
+  okBtn.textContent=opts.okText||'שמור';
+  okBtn.className='ui-dlg-btn ok';
+  document.getElementById('ui-dlg-cancel').textContent=opts.cancelText||'ביטול';
+  haptic(10);
+  document.getElementById('ui-dialog-bg').classList.add('open');
+  setTimeout(function(){inp.focus();},100);
 }
 
 // ── NAVIGATION ───────────────────────────────────────────
@@ -4357,25 +4433,27 @@ function manualSMS(name){
   var prof=CLIENT_PROFILES[name]||{};
   if(!prof.phone){toast('הוסיפי מספר טלפון תחילה');return;}
   var first=name.split(' ')[0];
-  var msg=window.prompt('תוכן ה-SMS ל-'+first+':','שלום '+first+', מזכירה לך שיש לנו תור קרוב. לביטול/שינוי תורי אותי 💛 — '+(SETTINGS.userName||''));
-  if(!msg)return;
-  var phone=(prof.phone||'').replace(/[-\s]/g,'');
-  _sendSmsProxy(phone,msg,function(){toast('📱 SMS נשלח ל-'+name);},function(){toast('שגיאה בשליחת SMS');});
+  uiPrompt({icon:'📱',title:'שליחת SMS ל-'+first,def:'שלום '+first+', מזכירה לך שיש לנו תור קרוב. לביטול/שינוי תורי אותי 💛 — '+(SETTINGS.userName||''),okText:'שלח SMS'},function(msg){
+    if(!msg)return;
+    var phone=(prof.phone||'').replace(/[-\s]/g,'');
+    _sendSmsProxy(phone,msg,function(){toast('📱 SMS נשלח ל-'+name);},function(){toast('שגיאה בשליחת SMS');});
+  });
 }
 
 // Manual invoice
 function manualInvoice(name){
   if(!SETTINGS.morningToken){toast('הגדירי Morning בהגדרות');return;}
   var prof=CLIENT_PROFILES[name]||{};
-  var amtStr=window.prompt('סכום החשבונית ל-'+name+' (₪):','800');
-  if(!amtStr)return;
-  var amt=parseFloat(amtStr)||0;
-  if(!amt)return;
-  var payload={description:'טיפול',income:[{catalogNum:'1',description:prof.treatType||'טיפול',quantity:1,price:amt,taxAmount:0}],client:{name:name,phone:prof.phone||'',address:prof.address||''},type:'receipt',lang:'he',currency:'ILS'};
-  fetch('https://api.morning.co.il/v1/documents',{method:'POST',headers:{'Authorization':'Bearer '+SETTINGS.morningToken,'Content-Type':'application/json'},body:JSON.stringify(payload)})
-    .then(function(r){return r.json();})
-    .then(function(d){toast('🧾 חשבונית נוצרה: #'+(d.id||''));})
-    .catch(function(){toast('שגיאה ביצירת חשבונית');});
+  uiPrompt({icon:'🧾',title:'חשבונית ל-'+name,msg:'סכום בש״ח',def:'800',inputType:'number',okText:'צור חשבונית'},function(amtStr){
+    if(!amtStr)return;
+    var amt=parseFloat(amtStr)||0;
+    if(!amt)return;
+    var payload={description:'טיפול',income:[{catalogNum:'1',description:prof.treatType||'טיפול',quantity:1,price:amt,taxAmount:0}],client:{name:name,phone:prof.phone||'',address:prof.address||''},type:'receipt',lang:'he',currency:'ILS'};
+    fetch('https://api.morning.co.il/v1/documents',{method:'POST',headers:{'Authorization':'Bearer '+SETTINGS.morningToken,'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .then(function(r){return r.json();})
+      .then(function(d){toast('🧾 חשבונית נוצרה: #'+(d.id||''));})
+      .catch(function(){toast('שגיאה ביצירת חשבונית');});
+  });
 }
 
 // Save/update note on a history entry
@@ -4646,8 +4724,10 @@ function saveNewGoal(){
   saveGoals();renderGoals();toast('✓ מטרה נוצרה: '+name);
 }
 function deleteGoal(idx){
-  if(!confirm('למחוק את "'+GOALS[idx].name+'"?'))return;
-  GOALS.splice(idx,1);saveGoals();renderGoals();
+  uiConfirm({icon:'🗑️',title:'למחוק את היעד?',msg:'"'+GOALS[idx].name+'" יימחק לצמיתות',okText:'מחק',danger:true},function(ok){
+    if(!ok)return;
+    GOALS.splice(idx,1);saveGoals();renderGoals();toast('✓ היעד נמחק');
+  });
 }
 
 // ── ADD TRANSACTION ───────────────────────────────────────
@@ -5769,8 +5849,9 @@ var _gmailToken=null;
 var _gmailDays=30;
 
 function openGoogleConnections(){
-  var choice=window.confirm('בחרי חיבור Google:\n\nאישור → Gmail (ייבוא הוצאות ממיילים)\nביטול → יומן Google (ייבוא תורים)');
-  if(choice) go('gmail'); else go('gcal');
+  uiConfirm({icon:'🔗',title:'חיבורי Google',msg:'מה לחבר?',okText:'📧 Gmail',cancelText:'📅 יומן'},function(gmail){
+    if(gmail) go('gmail'); else go('gcal');
+  });
 }
 
 function setGmailPeriod(d){
@@ -7872,24 +7953,26 @@ function updateBizTypeDisplay(){
 function editBizType(){
   closeDrawer&&closeDrawer();
   var cur=SETTINGS.bizType==='murshe'?'עוסק מורשה':'עוסק פטור';
-  var choice=window.confirm('סוג עוסק נוכחי: '+cur+'\n\nלחצי אישור לעוסק פטור, ביטול לעוסק מורשה.');
-  SETTINGS.bizType=choice?'patur':'murshe';
-  saveSettings();
-  updateBizTypeDisplay();
-  renderHome();
-  toast('סוג עוסק עודכן: '+(SETTINGS.bizType==='patur'?'עוסק פטור':'עוסק מורשה'));
+  uiConfirm({icon:'🏷️',title:'סוג עוסק',msg:'נוכחי: '+cur,okText:'עוסק פטור',cancelText:'עוסק מורשה'},function(patur){
+    SETTINGS.bizType=patur?'patur':'murshe';
+    saveSettings();
+    updateBizTypeDisplay();
+    renderHome();
+    toast('סוג עוסק עודכן: '+(SETTINGS.bizType==='patur'?'עוסק פטור':'עוסק מורשה'));
+  });
 }
 function editBaseIncome(){
   closeDrawer&&closeDrawer();
   var cur=FIXED>0?String(FIXED):'';
-  var val=window.prompt('הכנסה קבועה חודשית (₪) — מתווספת לכל חודש:',cur);
-  if(val===null)return;
-  var n=parseFloat(val)||0;
-  FIXED=n;
-  localStorage.setItem('pf_base_income',String(n));
-  updateBaseIncDisplay();
-  renderHome();
-  toast(n>0?'הכנסה קבועה עודכנה ל-₪'+fmt(n):'הכנסה קבועה אופסה');
+  uiPrompt({icon:'💰',title:'הכנסה קבועה חודשית',msg:'מתווספת לכל חודש (₪)',def:cur,inputType:'number',okText:'שמור'},function(val){
+    if(val===null)return;
+    var n=parseFloat(val)||0;
+    FIXED=n;
+    localStorage.setItem('pf_base_income',String(n));
+    updateBaseIncDisplay();
+    renderHome();
+    toast(n>0?'הכנסה קבועה עודכנה ל-₪'+fmt(n):'הכנסה קבועה אופסה');
+  });
 }
 
 // ── USER ANALYTICS ────────────────────────────────────────
