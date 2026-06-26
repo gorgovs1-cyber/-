@@ -2203,7 +2203,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260849;
+var APP_VER=20260850;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2285,21 +2285,21 @@ var firebaseConfig={
 })();
 var FIXED = parseInt(localStorage.getItem('pf_base_income')||'0');
 var FIXED_MAP = {};
-var MONTHS = [
-  {key:11,label:'נובמבר',year:2025,days:30},{key:12,label:'דצמבר',year:2025,days:31},
-  {key:1, label:'ינואר', year:2026,days:31},{key:2, label:'פברואר',year:2026,days:28},
-  {key:3, label:'מרץ',   year:2026,days:31},{key:4, label:'אפריל', year:2026,days:30},
-  {key:5, label:'מאי',   year:2026,days:31},{key:6, label:'יוני',  year:2026,days:30},
-  {key:7, label:'יולי',  year:2026,days:31},{key:8, label:'אוגוסט',year:2026,days:31},
-  {key:9, label:'ספטמבר',year:2026,days:30},{key:10,label:'אוקטובר',year:2026,days:31},
-  {key:11,label:'נובמבר',year:2026,days:30},{key:12,label:'דצמבר',year:2026,days:31},
-  {key:1, label:'ינואר', year:2027,days:31},{key:2, label:'פברואר',year:2027,days:28},
-  {key:3, label:'מרץ',   year:2027,days:31},{key:4, label:'אפריל', year:2027,days:30},
-  {key:5, label:'מאי',   year:2027,days:31},{key:6, label:'יוני',  year:2027,days:30},
-  {key:7, label:'יולי',  year:2027,days:31},{key:8, label:'אוגוסט',year:2027,days:31},
-  {key:9, label:'ספטמבר',year:2027,days:30},{key:10,label:'אוקטובר',year:2027,days:31},
-  {key:11,label:'נובמבר',year:2027,days:30},{key:12,label:'דצמבר',year:2027,days:31},
-];
+// Dynamic rolling window so the app never "expires" — regenerated from today's date.
+// Spans BACK months before the current month and FWD months after it.
+var MONTHS = (function(){
+  var HEB=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+  var BACK=13, FWD=12;
+  var now=new Date();
+  var arr=[];
+  for(var off=-BACK; off<=FWD; off++){
+    var d=new Date(now.getFullYear(), now.getMonth()+off, 1);
+    var y=d.getFullYear(), mo=d.getMonth()+1;
+    var days=new Date(y, mo, 0).getDate();
+    arr.push({key:mo, label:HEB[mo-1], year:y, days:days});
+  }
+  return arr;
+})();
 var NOW_IDX = (function(){
   var d=new Date(),y=d.getFullYear(),m=d.getMonth()+1;
   // Find the last month in MONTHS that is <= current real date
