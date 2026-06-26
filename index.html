@@ -2234,7 +2234,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260852;
+var APP_VER=20260853;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2679,10 +2679,13 @@ var CLIENTS_VERSION=20;  // bump to force reload clients from code
 var CARDS_VERSION=10;    // bump to force reload cards from code
 function load(){
   try{
+    // Non-destructive version migration: advance the marker WITHOUT wiping the
+    // user's own clients/cards. Seed data is empty, so there is nothing to
+    // reload from code — a wipe here would silently delete real client history.
     var cv=parseInt(localStorage.getItem('shani_cv')||'0');
-    if(cv<CLIENTS_VERSION){localStorage.removeItem('shani_clients');localStorage.setItem('shani_cv',CLIENTS_VERSION);}
+    if(cv<CLIENTS_VERSION){localStorage.setItem('shani_cv',CLIENTS_VERSION);}
     var kv=parseInt(localStorage.getItem('shani_kv')||'0');
-    if(kv<CARDS_VERSION){localStorage.removeItem('shani_cards');localStorage.setItem('shani_kv',CARDS_VERSION);}
+    if(kv<CARDS_VERSION){localStorage.setItem('shani_kv',CARDS_VERSION);}
     var c=localStorage.getItem('shani_clients'); if(c){var d=JSON.parse(c);Object.keys(d).forEach(function(k){CLIENTS[k]=d[k];});}
     var e=localStorage.getItem('shani_expense'); if(e){var d=JSON.parse(e);Object.keys(d).forEach(function(k){RAW.expense[k]=d[k];});}
     var i=localStorage.getItem('shani_income');  if(i){var d=JSON.parse(i);Object.keys(d).forEach(function(k){RAW.income[k]=d[k];});}
