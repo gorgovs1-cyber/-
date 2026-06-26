@@ -607,6 +607,7 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
   box-shadow:0 4px 12px -4px rgba(0,0,0,.35);
 }
 #toast.success{animation:toastPop .4s cubic-bezier(.2,1.5,.4,1)}
+#toast.error{background:var(--neg);color:#fff}
 @keyframes toastPop{0%{transform:translate(-50%,10px) scale(.9)}60%{transform:translate(-50%,0) scale(1.04)}100%{transform:translate(-50%,0) scale(1)}}
 
 /* ══ TRENDS ══════════════════════════════════════════════ */
@@ -2185,7 +2186,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260839;
+var APP_VER=20260840;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2789,8 +2790,10 @@ function toast(msg){
   var t=document.getElementById('toast');
   t.textContent=msg;
   var ok=msg.indexOf('✓')>=0||msg.indexOf('📱')>=0;
-  t.classList.remove('success');
+  var err=/⚠️|❌|שגיאה|לא ניתן|נא ל/.test(msg);
+  t.classList.remove('success','error');
   if(ok){ void t.offsetWidth; t.classList.add('success'); haptic(12); }
+  else if(err){ void t.offsetWidth; t.classList.add('error'); haptic(20); }
   t.style.opacity='1';t.style.transform='translate(-50%,0)';
   setTimeout(function(){t.style.opacity='0';t.style.transform='translate(-50%,10px)';},2600);
 }
