@@ -524,6 +524,13 @@ body{font-family:'Rubik',sans-serif;direction:rtl;color:var(--text);max-width:43
 .es-icon{font-size:44px;margin-bottom:14px;animation:floatY 3s ease-in-out infinite}
 .es-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px}
 .es-sub{font-size:13px;color:var(--muted);line-height:1.6;max-width:260px;margin:0 auto 20px}
+/* ── Skeleton loading shimmer ── */
+.skel{position:relative;overflow:hidden;background:var(--card2);border-radius:10px}
+.skel::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 25%,rgba(255,255,255,.07) 50%,transparent 75%);background-size:200% 100%;animation:skelShim 1.3s ease-in-out infinite}
+@keyframes skelShim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-tile{height:84px;border-radius:14px}
+.skel-pm{height:78px;border-radius:var(--r);margin-bottom:10px}
+.skel-line{height:13px;border-radius:6px}
 .sbtn.cancelled{background:rgba(248,113,113,.15);color:var(--neg)}
 .cal-dot.cancelled{background:rgba(255,107,138,.15);color:#F87171}
 .mc-amt.cancelled{color:var(--neg)}
@@ -2196,7 +2203,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260848;
+var APP_VER=20260849;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -3214,8 +3221,26 @@ function renderHomeInsight(r){
     '</div>';
 }
 
+// ── SKELETON LOADING (shown during first cloud sync on empty device) ──
+var _skelActive=false;
+function showHomeSkeleton(){
+  _skelActive=true;
+  var t=document.getElementById('home-tiles');
+  if(t)t.innerHTML='<div class="skel skel-tile"></div><div class="skel skel-tile"></div><div class="skel skel-tile"></div>';
+  var pm=document.getElementById('home-pmcards')||document.getElementById('home-pm');
+  if(pm)pm.innerHTML='<div class="skel skel-pm"></div><div class="skel skel-pm"></div>';
+  var up=document.getElementById('home-upcoming');
+  if(up)up.innerHTML='<div class="skel skel-line" style="width:60%;margin:0 16px 10px"></div><div class="skel skel-line" style="width:85%;margin:0 16px"></div>';
+}
+function hideHomeSkeleton(){
+  if(!_skelActive)return;
+  _skelActive=false;
+  try{renderHome();}catch(e){}
+}
+
 // ── HOME ─────────────────────────────────────────────────
 function renderHome(){
+  if(_skelActive)return;
   renderTrialBar();
   var r=calc(homeMi);
   document.getElementById('home-mlbl').textContent=r.ml.label+' '+r.ml.year;
@@ -7906,6 +7931,10 @@ function onSignedIn(user){
   else if(!localStorage.getItem('shani_onboarded')){ setTimeout(function(){startTour(false);}, 800); }
   // check for tomorrow's appointments and auto-send SMS reminders (after data loads)
   setTimeout(function(){checkUpcomingReminders();}, 3000);
+  // Show skeleton if this device has no local data yet (fresh device, existing cloud account)
+  var _emptyDevice=Object.keys(CLIENTS).length===0 &&
+    Object.keys(RAW.expense||{}).length===0 && Object.keys(RAW.income||{}).length===0;
+  if(_emptyDevice){ showHomeSkeleton(); setTimeout(hideHomeSkeleton,6000); }
   fbDb.collection('users').doc(FB_UID).get().then(function(doc){
     if(doc.exists){
       var data=doc.data();
@@ -7916,20 +7945,24 @@ function onSignedIn(user){
       var localHasClients=Object.keys(CLIENTS).length>0;
       if(cloudAt > localAt && (cloudHasClients || !localHasClients)){
         applyCloud(data);
+        hideHomeSkeleton();
         setSyncDot('ok');
         toast('✓ סונכרן מהענן');
       } else if(cloudAt > localAt && !cloudHasClients && localHasClients){
         // cloud is newer but has no clients — local wins, push up
+        hideHomeSkeleton();
         _cloudPushNow();
         toast('✓ גיבוי מקומי נשמר לענן');
       } else {
+        hideHomeSkeleton();
         _cloudPushNow();      // local is newer/equal → push our copy up
       }
     } else {
+      hideHomeSkeleton();
       _cloudPushNow();        // first sign-in → seed cloud with local data
       toast('✓ מחוברת — גיבוי בענן פעיל');
     }
-  }).catch(function(){ setSyncDot('err'); });
+  }).catch(function(){ hideHomeSkeleton(); setSyncDot('err'); });
 }
 
 (function initFirebase(){
