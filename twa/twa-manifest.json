@@ -1,6 +1,6 @@
 {
   "packageId": "com.shanifin.mymoney",
-  "host": "YOUR-DOMAIN.vercel.app",
+  "host": "my-money-app-tau.vercel.app",
   "name": "My Money",
   "launcherName": "My Money",
   "display": "standalone",
@@ -13,9 +13,9 @@
   "backgroundColor": "#0D1117",
   "enableNotifications": false,
   "startUrl": "/",
-  "iconUrl": "https://YOUR-DOMAIN.vercel.app/icon-512.png",
-  "maskableIconUrl": "https://YOUR-DOMAIN.vercel.app/icon-512.png",
-  "monochromeIconUrl": "https://YOUR-DOMAIN.vercel.app/icon-512.png",
+  "iconUrl": "https://my-money-app-tau.vercel.app/icon-512.png",
+  "maskableIconUrl": "https://my-money-app-tau.vercel.app/icon-512.png",
+  "monochromeIconUrl": "https://my-money-app-tau.vercel.app/icon-512.png",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
     "path": "mymoney-release.jks",
@@ -25,14 +25,14 @@
   "appVersionName": "1.0.0",
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
-  "webManifestUrl": "https://YOUR-DOMAIN.vercel.app/manifest.json",
+  "webManifestUrl": "https://my-money-app-tau.vercel.app/manifest.json",
   "fallbackType": "customtabs",
   "features": {},
   "alphaDependencies": false,
   "enableSiteSettingsShortcut": true,
   "isChromeOSOnly": false,
   "isMetaQuest": false,
-  "fullScopeUrl": "https://YOUR-DOMAIN.vercel.app/",
+  "fullScopeUrl": "https://my-money-app-tau.vercel.app/",
   "minSdkVersion": 24,
   "fingerprints": []
 }
