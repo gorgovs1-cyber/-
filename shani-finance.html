@@ -2234,7 +2234,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260851;
+var APP_VER=20260852;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2292,7 +2292,14 @@ var firebaseConfig={
 // Robust auto-update: fetch the live file (bypassing cache) and hard-reload past
 // the iOS/CDN cache via a ?v= URL when a newer deploy is detected.
 (function(){
-  if(location.search.indexOf('v=')>-1){ // arrived fresh — tidy the URL
+  // Capture referral attribution before tidying the URL
+  try{
+    var rm=location.search.match(/[?&]ref=([A-Za-z0-9]+)/);
+    if(rm && rm[1] && !localStorage.getItem('pf_referred_by')){
+      localStorage.setItem('pf_referred_by',rm[1]);
+    }
+  }catch(e){}
+  if(location.search.indexOf('v=')>-1 || location.search.indexOf('ref=')>-1){ // arrived fresh — tidy the URL
     try{history.replaceState(null,'',location.pathname);}catch(e){}
   }
   function checkVer(){
@@ -4408,14 +4415,34 @@ function saveClientProfile(){
   toast('✓ פרטי '+name+' נשמרו');
 }
 
-// WhatsApp referral share
+// Referral share — unique code, native share sheet, analytics
+function _getRefCode(){
+  var code=localStorage.getItem('pf_ref_code');
+  if(!code){
+    var base=(FB_UID||'')+String(new Date().getTime());
+    code='';
+    for(var i=0;i<6;i++){code+=(base.charCodeAt(i%base.length)%36).toString(36);}
+    code=code.toUpperCase();
+    localStorage.setItem('pf_ref_code',code);
+  }
+  return code;
+}
 function shareReferral(){
   var myName=SETTINGS.userName||'חברה';
-  var url=location.origin+location.pathname;
-  var msg='היי! אני '+myName+' משתמשת באפליקציה My Money לניהול הכספים שלי כעצמאית — מעקב הוצאות/הכנסות, דוחות מעמ״ד, SMS ללקוחות ועוד \u{1F4B8}\n\nנסי חינם: '+url;
-  var wa='https://wa.me/?text='+encodeURIComponent(msg);
-  window.open(wa,'_blank');
+  var code=_getRefCode();
+  var url=location.origin+location.pathname+'?ref='+code;
+  var msg='היי! אני '+myName+' משתמשת באפליקציה My Money לניהול הכספים שלי כעצמאית — מעקב הוצאות/הכנסות, דוחות מעמ״ד, SMS ללקוחות ועוד \u{1F4B8}\n\nנסי חודש חינם: '+url;
+  track('referral_share',{ref_code:code});
   closeDrawer&&closeDrawer();
+  // Prefer the native share sheet (lets her pick WhatsApp / SMS / anything)
+  if(navigator.share){
+    navigator.share({title:'My Money',text:msg}).then(function(){
+      toast('✓ תודה ששיתפת! 🎁');
+    }).catch(function(){ /* user cancelled — fall through silently */ });
+  } else {
+    var wa='https://wa.me/?text='+encodeURIComponent(msg);
+    window.open(wa,'_blank');
+  }
 }
 
 // WhatsApp quick-open
@@ -7985,7 +8012,9 @@ function _logSession(user){
   var rec={uid:user.uid, email:user.email||user.displayName||'',
     startTime:_sessionStart, lastSeen:_sessionStart, duration:0,
     device:navigator.userAgent.slice(0,100), appVer:APP_VER};
-  fbDb.collection('analytics').doc(user.uid).set(rec,{merge:false}).catch(function(){});
+  var refBy=localStorage.getItem('pf_referred_by');
+  if(refBy) rec.referredBy=refBy;
+  fbDb.collection('analytics').doc(user.uid).set(rec,{merge:true}).catch(function(){});
   if(_sessionInterval)clearInterval(_sessionInterval);
   _sessionInterval=setInterval(function(){
     if(!fbDb||!FB_UID)return;
