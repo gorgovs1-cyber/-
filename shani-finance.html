@@ -9,6 +9,22 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>My Money</title>
+<meta name="description" content="ניהול הכנסות, הוצאות ודוחות לעצמאיות בתחום היופי. בעברית, פשוט.">
+<!-- Open Graph / WhatsApp / Facebook link preview -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="My Money">
+<meta property="og:title" content="My Money — הכספים של העסק במקום אחד">
+<meta property="og:description" content="ניהול הכנסות, הוצאות ודוחות לעצמאיות בתחום היופי. בעברית, פשוט.">
+<meta property="og:image" content="https://my-money-app-tau.vercel.app/og-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://my-money-app-tau.vercel.app/">
+<meta property="og:locale" content="he_IL">
+<!-- Twitter card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="My Money — הכספים של העסק במקום אחד">
+<meta name="twitter:description" content="ניהול הכנסות, הוצאות ודוחות לעצמאיות בתחום היופי. בעברית, פשוט.">
+<meta name="twitter:image" content="https://my-money-app-tau.vercel.app/og-banner.png">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -2234,7 +2250,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260853;
+var APP_VER=20260854;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
