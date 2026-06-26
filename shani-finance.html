@@ -2194,7 +2194,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260842;
+var APP_VER=20260843;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -5786,7 +5786,7 @@ function gmailAuth(){
       document.getElementById('gmail-period-wrap').style.display='block';
     }
   });
-  tc.requestAccessToken();
+  tc.requestAccessToken({prompt:_gcalToken?'':'consent'});
 }
 
 // Duplicate detection — returns 'exact' | 'close' | null
