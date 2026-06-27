@@ -2252,7 +2252,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260855;
+var APP_VER=20260856;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -8141,7 +8141,31 @@ function onSignedIn(user){
 // ── SERVICE WORKER + OFFLINE INDICATOR ──────────────────
 (function(){
   if(!('serviceWorker' in navigator)) return;
-  navigator.serviceWorker.register('./sw.js').catch(function(){});
+  // updateViaCache:'none' → the sw.js script itself is always fetched fresh,
+  // so a new deploy is detected even inside an installed iOS home-screen app.
+  var _hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(function(reg){
+    function poke(){ try{ reg.update(); }catch(e){} }
+    poke();                       // check for a newer worker right away
+    setInterval(poke,60000);      // and once a minute while the app is open
+    // When a fresh worker finishes installing, activate it immediately.
+    reg.addEventListener('updatefound',function(){
+      var nw=reg.installing;
+      if(!nw) return;
+      nw.addEventListener('statechange',function(){
+        if(nw.state==='installed' && navigator.serviceWorker.controller){
+          try{ nw.postMessage&&nw.postMessage('skipWaiting'); }catch(e){}
+        }
+      });
+    });
+  }).catch(function(){});
+  // A new worker took control → reload once to pick up the new shell + prices.
+  var _reloaded=false;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){
+    if(_reloaded || !_hadController) return; // skip the very first install
+    _reloaded=true;
+    location.reload();
+  });
   function setOffline(offline){
     setSyncDot(offline?'err':'');
     var dot=document.getElementById('sync-dot');

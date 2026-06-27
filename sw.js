@@ -1,4 +1,9 @@
-var CACHE = 'shani-money-v20260855';
+var CACHE = 'shani-money-v20260856';
+
+// Allow the page to force an immediately-waiting worker to activate.
+self.addEventListener('message', function(e){
+  if(e.data === 'skipWaiting') self.skipWaiting();
+});
 var SHELL = [
   '/manifest.json',
   '/icon-180.png',
