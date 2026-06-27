@@ -1,4 +1,4 @@
-var CACHE = 'shani-money-v20260854';
+var CACHE = 'shani-money-v20260855';
 var SHELL = [
   '/manifest.json',
   '/icon-180.png',
