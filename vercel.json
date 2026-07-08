@@ -54,6 +54,30 @@
       "destination": "/api/$1"
     },
     {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/privacy.html",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/terms.html",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/accessibility",
+      "destination": "/accessibility.html"
+    },
+    {
+      "source": "/accessibility.html",
+      "destination": "/accessibility.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

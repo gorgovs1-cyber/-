@@ -1041,6 +1041,9 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="drw-item" onclick="toggleTheme()"><span class="di-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></span><span id="theme-lbl">מצב ים</span></div>
     <div class="drw-item" id="drw-logout" style="display:none" onclick="authLogout()"><span class="di-icon"><svg viewBox="0 0 24 24"><path d="M14 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H14"/><path d="M18 15.5 21.5 12 18 8.5"/><path d="M21 12h-10"/></svg></span><span>התנתקות</span></div>
     <div class="drw-account" id="drw-account" style="display:none"><span class="sync-dot" id="sync-dot"></span><span id="drw-account-email"></span></div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;line-height:2;color:var(--muted)">
+      <a href="/privacy" style="color:var(--muted)">מדיניות פרטיות</a> · <a href="/terms" style="color:var(--muted)">תנאי שימוש</a> · <a href="/accessibility" style="color:var(--muted)">הצהרת נגישות</a>
+    </div>
   </nav>
 </div>
 
@@ -1217,6 +1220,9 @@ html.mode-private .biz-only{ display:none!important; }
     <div class="auth-err" id="auth-err"></div>
     <div class="auth-toggle" id="auth-toggle" onclick="authToggleMode()">אין לך חשבון? <b>הרשמ/י בחינם</b></div>
     <div style="font-size:11px;color:var(--muted);margin-top:18px;line-height:1.6;text-align:center">🔒 הנתונים שלך מוצפנים ומאובטחים<br>כל משתמש רואה רק את הנתונים שלו</div>
+    <div style="margin-top:16px;text-align:center;font-size:12px;line-height:2">
+      <a href="/privacy" style="color:var(--muted)">מדיניות פרטיות</a> · <a href="/terms" style="color:var(--muted)">תנאי שימוש</a> · <a href="/accessibility" style="color:var(--muted)">הצהרת נגישות</a>
+    </div>
 
   </div>
 </div>
@@ -2070,7 +2076,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260865;
+var APP_VER=20260866;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -5127,6 +5133,7 @@ _migrateTxIds();
 // Default to the current real month (avoid landing on a future/wrong month)
 homeMi=curCMi=modalMi=NOW_IDX;
 initSplash();
+setTimeout(showCookieBannerIfNeeded,1200);
 applyTheme();
 renderHome();
 updateBaseIncDisplay();
@@ -7003,8 +7010,17 @@ var fbAuth=null, fbDb=null, fbAnalytics=null, FB_UID=null, _syncTimer=null;
 // ── GA4 event tracker ─────────────────────────────────────
 function track(eventName, params){
   try{
-    if(fbAnalytics) fbAnalytics.logEvent(eventName, params||{});
+    if(fbAnalytics && localStorage.getItem('shani_analytics_consent')==='granted') fbAnalytics.logEvent(eventName, params||{});
   }catch(e){}
+}
+function setAnalyticsConsent(ok){
+  try{ localStorage.setItem('shani_analytics_consent', ok?'granted':'denied'); }catch(e){}
+  var el=document.getElementById('cookie-consent'); if(el) el.style.display='none';
+  if(ok){ try{ if(!fbAnalytics && typeof firebase!=='undefined' && firebase.analytics) fbAnalytics=firebase.analytics(); }catch(e){} }
+}
+function showCookieBannerIfNeeded(){
+  try{ if(localStorage.getItem('shani_analytics_consent')) return; }catch(e){}
+  var el=document.getElementById('cookie-consent'); if(el) el.style.display='block';
 }
 var _authMode='login', _authPickedMode='business';
 
@@ -7368,7 +7384,7 @@ function onSignedIn(user){
     firebase.initializeApp(firebaseConfig);
     fbAuth=firebase.auth();
     fbDb=firebase.firestore();
-    try{ fbAnalytics=firebase.analytics(); }catch(e){}
+    try{ if(localStorage.getItem('shani_analytics_consent')==='granted') fbAnalytics=firebase.analytics(); }catch(e){}
     // keep the user signed in across browser restarts / app re-opens (one-time login)
     try{ fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(){}); }catch(e){}
     try{ fbDb.enablePersistence({synchronizeTabs:true}).catch(function(){}); }catch(e){}
@@ -7473,5 +7489,12 @@ function onSignedIn(user){
   }
 })();
 </script>
+<div id="cookie-consent" role="region" aria-label="הסכמה לעוגיות" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:9998;background:#111823;border-top:1px solid rgba(255,255,255,.12);padding:14px 16px;box-shadow:0 -6px 20px rgba(0,0,0,.4)">
+  <div style="max-width:540px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:center;font-size:13px;color:var(--text2);line-height:1.6">
+    <span style="flex:1;min-width:200px">אנחנו משתמשים באחסון מקומי לתפעול ובאנליטיקס לשיפור המוצר. <a href="/privacy" style="color:var(--cyan)">מדיניות פרטיות</a></span>
+    <button type="button" onclick="setAnalyticsConsent(false)" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--text);font-family:Rubik,sans-serif;font-size:13px;padding:8px 16px;border-radius:10px;cursor:pointer;min-height:38px">לא תודה</button>
+    <button type="button" onclick="setAnalyticsConsent(true)" style="background:var(--cyan);border:none;color:#08131F;font-family:Rubik,sans-serif;font-weight:600;font-size:13px;padding:8px 18px;border-radius:10px;cursor:pointer;min-height:38px">מאשרת</button>
+  </div>
+</div>
 </body>
 </html>
