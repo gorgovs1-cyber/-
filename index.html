@@ -2070,7 +2070,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260864;
+var APP_VER=20260865;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -7280,4 +7280,198 @@ function editBaseIncome(){
     localStorage.setItem('pf_base_income',String(n));
     updateBaseIncDisplay();
     renderHome();
-    toast(n>0?'הכנסה קבועה עודכנה ל-₪'+fmt(n):'הכנסה קבוע
+    toast(n>0?'הכנסה קבועה עודכנה ל-₪'+fmt(n):'הכנסה קבועה אופסה');
+  });
+}
+
+// ── USER ANALYTICS ────────────────────────────────────────
+var _sessionStart=0, _sessionInterval=null;
+var ADMIN_UID='7Nz62B3VTcZ1ZcCOfUunHnxNpel2';
+
+function _logSession(user){
+  if(!fbDb||!user)return;
+  _sessionStart=Date.now();
+  var rec={uid:user.uid, email:user.email||user.displayName||'',
+    startTime:_sessionStart, lastSeen:_sessionStart, duration:0,
+    device:navigator.userAgent.slice(0,100), appVer:APP_VER};
+  var refBy=localStorage.getItem('pf_referred_by');
+  if(refBy) rec.referredBy=refBy;
+  fbDb.collection('analytics').doc(user.uid).set(rec,{merge:true}).catch(function(){});
+  if(_sessionInterval)clearInterval(_sessionInterval);
+  _sessionInterval=setInterval(function(){
+    if(!fbDb||!FB_UID)return;
+    var elapsed=Math.round((Date.now()-_sessionStart)/1000);
+    fbDb.collection('analytics').doc(FB_UID).update({lastSeen:Date.now(),duration:elapsed}).catch(function(){});
+  },300000); // every 5 minutes
+}
+function _finalizeSession(){
+  if(!fbDb||!FB_UID||!_sessionStart)return;
+  var elapsed=Math.round((Date.now()-_sessionStart)/1000);
+  try{ fbDb.collection('analytics').doc(FB_UID).update({lastSeen:Date.now(),duration:elapsed,endTime:Date.now()}); }catch(e){}
+}
+window.addEventListener('beforeunload', _finalizeSession);
+window.addEventListener('pagehide', _finalizeSession);
+
+function onSignedIn(user){
+  FB_UID=user.uid;
+  hideAuthScreen();
+  updateAccountUI(user);
+  setSyncDot('busy');
+  _logSession(user);
+  // auto-restore Google OAuth token if still valid in this session
+  setTimeout(function(){ _restoreGoogToken(); }, 300);
+  // show welcome wizard on very first login, tour on subsequent first sessions
+  if(!localStorage.getItem('pf_welcomed')){ setTimeout(function(){showWelcomeWizard();}, 600); }
+  else if(!localStorage.getItem('shani_onboarded')){ setTimeout(function(){startTour(false);}, 800); }
+  // check for tomorrow's appointments and auto-send SMS reminders (after data loads)
+  setTimeout(function(){checkUpcomingReminders();}, 3000);
+  // Show skeleton if this device has no local data yet (fresh device, existing cloud account)
+  var _emptyDevice=Object.keys(CLIENTS).length===0 &&
+    Object.keys(RAW.expense||{}).length===0 && Object.keys(RAW.income||{}).length===0;
+  if(_emptyDevice){ showHomeSkeleton(); setTimeout(hideHomeSkeleton,6000); }
+  fbDb.collection('users').doc(FB_UID).get().then(function(doc){
+    if(doc.exists){
+      var data=doc.data();
+      var localAt=parseInt(localStorage.getItem('shani_synced_at')||'0');
+      var cloudAt=data.updatedAt||0;
+      // safety: only apply cloud if cloud is clearly newer AND has non-empty client data
+      var cloudHasClients=data.clients&&Object.keys(data.clients).length>0;
+      var localHasClients=Object.keys(CLIENTS).length>0;
+      if(cloudAt > localAt && (cloudHasClients || !localHasClients)){
+        applyCloud(data);
+        hideHomeSkeleton();
+        setSyncDot('ok');
+        toast('✓ סונכרן מהענן');
+      } else if(cloudAt > localAt && !cloudHasClients && localHasClients){
+        // cloud is newer but has no clients — local wins, push up
+        hideHomeSkeleton();
+        _cloudPushNow();
+        toast('✓ גיבוי מקומי נשמר לענן');
+      } else {
+        hideHomeSkeleton();
+        _cloudPushNow();      // local is newer/equal → push our copy up
+      }
+    } else {
+      hideHomeSkeleton();
+      _cloudPushNow();        // first sign-in → seed cloud with local data
+      toast('✓ מחוברת — גיבוי בענן פעיל');
+    }
+  }).catch(function(){ hideHomeSkeleton(); setSyncDot('err'); });
+}
+
+(function initFirebase(){
+  if(typeof firebase==='undefined' || !firebaseConfig.apiKey){
+    // SDK failed to load (offline / blocked) → run as local-only app
+    hideAuthScreen(); return;
+  }
+  try{
+    firebase.initializeApp(firebaseConfig);
+    fbAuth=firebase.auth();
+    fbDb=firebase.firestore();
+    try{ fbAnalytics=firebase.analytics(); }catch(e){}
+    // keep the user signed in across browser restarts / app re-opens (one-time login)
+    try{ fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(){}); }catch(e){}
+    try{ fbDb.enablePersistence({synchronizeTabs:true}).catch(function(){}); }catch(e){}
+    // complete any pending redirect-based Google sign-in and save token
+    fbAuth.getRedirectResult().then(function(result){
+      if(result && result.credential){
+        try{
+          var cred=firebase.auth.GoogleAuthProvider.credentialFromResult(result);
+          if(cred && cred.accessToken){ _saveGoogToken(cred.accessToken); }
+        }catch(e){}
+      }
+    }).catch(function(){});
+    fbAuth.onAuthStateChanged(function(user){
+      if(user){ onSignedIn(user); }
+      else { FB_UID=null; updateAccountUI(null); setSyncDot(''); showAuthScreen(); }
+    });
+  }catch(e){ hideAuthScreen(); }
+})();
+
+// ── SERVICE WORKER + OFFLINE INDICATOR ──────────────────
+(function(){
+  if(!('serviceWorker' in navigator)) return;
+  // updateViaCache:'none' → the sw.js script itself is always fetched fresh,
+  // so a new deploy is detected even inside an installed iOS home-screen app.
+  var _hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(function(reg){
+    function poke(){ try{ reg.update(); }catch(e){} }
+    poke();                       // check for a newer worker right away
+    setInterval(poke,60000);      // and once a minute while the app is open
+    // When a fresh worker finishes installing, activate it immediately.
+    reg.addEventListener('updatefound',function(){
+      var nw=reg.installing;
+      if(!nw) return;
+      nw.addEventListener('statechange',function(){
+        if(nw.state==='installed' && navigator.serviceWorker.controller){
+          try{ nw.postMessage&&nw.postMessage('skipWaiting'); }catch(e){}
+        }
+      });
+    });
+  }).catch(function(){});
+  // A new worker took control → reload once to pick up the new shell + prices.
+  var _reloaded=false;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){
+    if(_reloaded || !_hadController) return; // skip the very first install
+    _reloaded=true;
+    location.reload();
+  });
+  function setOffline(offline){
+    setSyncDot(offline?'err':'');
+    var dot=document.getElementById('sync-dot');
+    if(dot) dot.title=offline?'אין חיבור לאינטרנט':'';
+  }
+  window.addEventListener('online',  function(){ setOffline(false); cloudPush&&cloudPush(); });
+  window.addEventListener('offline', function(){ setOffline(true); });
+  if(!navigator.onLine) setOffline(true);
+})();
+
+// ── PWA INSTALL PROMPT ───────────────────────────────────
+(function(){
+  var _deferredPrompt=null;
+  var DISMISSED_KEY='pwa_install_dismissed';
+
+  function isIOS(){return/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;}
+  function isInStandaloneMode(){return window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;}
+  function wasDismissed(){return localStorage.getItem(DISMISSED_KEY)==='1';}
+
+  function showInstallBanner(mode){
+    if(wasDismissed()||isInStandaloneMode()) return;
+    var existing=document.getElementById('pwa-install-banner');
+    if(existing) return;
+    var msg = mode==='ios'
+      ? 'להוסיף לדף הבית: לחצי על <b>שתף</b> (□↑) ואז <b>"הוסף למסך הבית"</b>'
+      : 'התקיני את האפליקציה על המסך הבית לגישה מהירה 📲';
+    var banner=document.createElement('div');
+    banner.id='pwa-install-banner';
+    banner.style.cssText='position:fixed;bottom:calc(70px + env(safe-area-inset-bottom,0px));left:12px;right:12px;background:var(--card2);border:1px solid rgba(45,212,191,.3);border-radius:16px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:1500;box-shadow:0 8px 24px rgba(0,0,0,.4)';
+    banner.innerHTML='<span style="font-size:13px;color:var(--text2);line-height:1.5;flex:1;direction:rtl;text-align:right">'+msg+'</span>'
+      +(mode==='android'?'<button onclick="window._pwaTriggerInstall&&window._pwaTriggerInstall()" style="background:var(--cyan);color:#0A1520;border:none;border-radius:10px;padding:7px 14px;font-family:Rubik,sans-serif;font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0">התקיני</button>':'')
+      +'<button onclick="document.getElementById(\'pwa-install-banner\').remove();localStorage.setItem(\''+DISMISSED_KEY+'\',\'1\')" style="background:rgba(255,255,255,.1);border:none;border-radius:8px;padding:6px 10px;color:var(--muted);font-family:Rubik,sans-serif;font-size:13px;cursor:pointer;flex-shrink:0">✕</button>';
+    document.body.appendChild(banner);
+    setTimeout(function(){if(document.getElementById('pwa-install-banner'))document.getElementById('pwa-install-banner').remove();},15000);
+  }
+
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault();
+    _deferredPrompt=e;
+    window._pwaTriggerInstall=function(){
+      if(!_deferredPrompt) return;
+      _deferredPrompt.prompt();
+      _deferredPrompt.userChoice.then(function(r){
+        if(r.outcome==='accepted') localStorage.setItem(DISMISSED_KEY,'1');
+        _deferredPrompt=null;
+        var b=document.getElementById('pwa-install-banner');
+        if(b) b.remove();
+      });
+    };
+    setTimeout(function(){showInstallBanner('android');},5000);
+  });
+
+  if(isIOS()&&!isInStandaloneMode()&&!wasDismissed()){
+    setTimeout(function(){showInstallBanner('ios');},6000);
+  }
+})();
+</script>
+</body>
+</html>
