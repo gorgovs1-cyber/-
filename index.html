@@ -2062,7 +2062,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260857;
+var APP_VER=20260858;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -5007,139 +5007,6 @@ function showCardDetail(type){
 // ── INIT ─────────────────────────────────────────────────
 load();
 
-// One-time: move הילה → 19/06 ₪800, נועם → 21/06 ₪900
-function _apptFix180626(){
-  if(localStorage.getItem('_apptfix180626'))return;
-  var changed=false;
-  var jun=CLIENTS[6]||CLIENTS['6']||[];
-  jun.forEach(function(ap){
-    if(ap.name==='הילה'&&ap.status!=='done'){ap.day=19;ap.amount=800;changed=true;}
-    if(ap.name==='נועם'&&ap.status!=='done'){ap.day=21;ap.amount=900;changed=true;}
-  });
-  if(changed){
-    save();cloudPush();
-    localStorage.setItem('_apptfix180626','1');
-    try{renderClients();}catch(e){}
-    try{renderHome();}catch(e){}
-    toast('✓ תורים הועברו: הילה→19/06, נועם→21/06');
-  }
-}
-setTimeout(_apptFix180626, 2500);
-
-// One-time: move נועם → 25/06 ₪900 (update planned) + ensure הילה on 22/06 ₪800
-function _apptFix210626(){
-  if(localStorage.getItem('_apptfix210626'))return;
-  var changed=false;
-  var jun=CLIENTS[6]||CLIENTS['6']||[];
-  jun.forEach(function(ap){
-    if(ap.name==='נועם'&&ap.status!=='done'&&ap.status!=='cancelled'){ap.day=25;ap.amount=900;changed=true;}
-  });
-  localStorage.setItem('_apptfix210626','1');
-}
-setTimeout(_apptFix210626, 2700);
-// v2: ensure הילה appears on 22/06 even if she had no planned entry
-function _apptFix210626b(){
-  if(localStorage.getItem('_apptfix210626b'))return;
-  var jun=CLIENTS[6]||CLIENTS['6']||[];
-  var hilaOn22=jun.filter(function(ap){return ap.name==='הילה'&&ap.day===22&&ap.status==='planned';});
-  if(hilaOn22.length===0){
-    jun.push({day:22,name:'הילה',amount:800,status:'planned',payMethod:'',payStatus:''});
-    CLIENTS[6]=jun;
-    save();cloudPush();
-    try{renderClients();}catch(e){}
-    try{renderHome();}catch(e){}
-    toast('✓ הילה נוספה: 22/06 ₪800');
-  }
-  localStorage.setItem('_apptfix210626b','1');
-}
-setTimeout(_apptFix210626b, 2900);
-
-// One-time: set bank balance to 9980 (overdrawn — stored as positive)
-function _balFix180626(){
-  if(localStorage.getItem('_balfx180626b'))return;
-  CARDS.bank=9980;
-  save();cloudPush();
-  localStorage.setItem('_balfx180626','1');
-  localStorage.setItem('_balfx180626b','1');
-  try{renderHome();}catch(e){}
-  toast('✓ עו"ש עודכן: -₪9,980');
-}
-setTimeout(_balFix180626, 2800);
-
-// One-time: set MC monthly charge to 4094.40 (June 2026 billing amount — corrected)
-function _mcChargeFix180626(){
-  if(localStorage.getItem('_mcchg180626b'))return;
-  CARDS.mc_charge=4094.40;
-  save();cloudPush();
-  localStorage.setItem('_mcchg180626','1');
-  localStorage.setItem('_mcchg180626b','1');
-  try{renderHome();}catch(e){}
-  toast('✓ חיוב MC עודכן: ₪4,094');
-}
-setTimeout(_mcChargeFix180626, 2400);
-
-// One-time: add June 16-18 transactions from user-provided data
-function _txFix180626(){
-  if(localStorage.getItem('_txfix180626'))return;
-  RAW.expense[6]=RAW.expense[6]||[];
-  var toAdd=[
-    {d:'16/06',desc:'WOLT סלט',a:65,method:'mc'},
-    {d:'17/06',desc:'WOLT גוד פארם',a:152,method:'mc'},
-    {d:'18/06',desc:'חשבון מים',a:95,method:'bank'}
-  ];
-  toAdd.forEach(function(t){
-    var dup=false;
-    for(var i=0;i<RAW.expense[6].length;i++){
-      if(RAW.expense[6][i].d===t.d&&RAW.expense[6][i].a===t.a&&RAW.expense[6][i].desc===t.desc){dup=true;break;}
-    }
-    if(!dup) RAW.expense[6].push(t);
-  });
-  save();cloudPush();
-  localStorage.setItem('_txfix180626','1');
-  try{renderHome();}catch(e){}try{renderExpenses();}catch(e){}
-  toast('✓ 3 הוצאות נוספו (16-18/6)');
-}
-setTimeout(_txFix180626, 2600);
-
-// One-time: fix גוד פארם 17/6 — method was mc, corrected to visa. Also reset visa to new cycle.
-function _visaFix180626(){
-  if(localStorage.getItem('_visafx180626'))return;
-  var arr=RAW.expense[6]||[];
-  for(var i=0;i<arr.length;i++){
-    if(arr[i].d==='17/06'&&arr[i].a===152&&arr[i].desc==='WOLT גוד פארם'){
-      arr[i].method='visa';break;
-    }
-  }
-  // Visa billed & paid on 15th — new cycle starts at 152 (this purchase)
-  CARDS.visa=152;
-  save();cloudPush();
-  localStorage.setItem('_visafx180626','1');
-  try{renderHome();}catch(e){}try{renderExpenses();}catch(e){}
-  toast('✓ ויזה עודכנה: גוד פארם = visa, יתרה ₪152');
-}
-setTimeout(_visaFix180626, 3200);
-
-// One-time: add חניה ₪500 on day 25 to FIXED_PAYMENTS
-function _parkFix180626(){
-  if(localStorage.getItem('_parkfx180626'))return;
-  var exists=FIXED_PAYMENTS.some(function(p){return p.name==='חניה'&&p.amount===500;});
-  if(!exists) FIXED_PAYMENTS.push({id:9,name:'חניה',amount:500,day:25,method:'bank',active:true});
-  localStorage.setItem('shani_fp',JSON.stringify(FIXED_PAYMENTS));
-  localStorage.setItem('_parkfx180626','1');
-  toast('✓ תשלום קבוע נוסף: חניה ₪500 ב-25 לחודש');
-}
-setTimeout(_parkFix180626, 3400);
-
-// One-time: set Mastercard balance to 10078.34 (ניצול from June 2026 statement)
-function _mcFix180626(){
-  if(localStorage.getItem('_mcfx180626'))return;
-  CARDS.mc=10078.34;
-  save();cloudPush();
-  localStorage.setItem('_mcfx180626','1');
-  try{renderHome();}catch(e){}
-  toast('✓ מאסטרקארד עודכן: ₪10,078');
-}
-setTimeout(_mcFix180626, 3100);
 
 // Default to last month that has income entries (= most recently active month)
 (function(){
@@ -7077,11 +6944,6 @@ function applyCloud(d){
     localStorage.setItem('shani_synced_at', String(d.updatedAt||Date.now()));
   }catch(e){}
   // re-render whatever is on screen
-  _apptFix180626();
-  _balFix180626();
-  _mcFix180626();
-  _mcChargeFix180626();
-  _txFix180626();
   renderHome();
   if(_prevScreen==='clients')  try{renderClients();}catch(e){}
   if(_prevScreen==='expenses') try{renderExpenses();}catch(e){}
