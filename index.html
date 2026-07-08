@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -28,6 +28,11 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -2052,8 +2057,8 @@ html.mode-private .biz-only{ display:none!important; }
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <!-- Firebase (compat build — works without bundler, ES5-friendly) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -2063,7 +2068,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260862;
+var APP_VER=20260863;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2757,6 +2762,20 @@ function exportAccountantCSV(){
 
 // ── TOAST ────────────────────────────────────────────────
 function haptic(p){ if(navigator.vibrate){ try{navigator.vibrate(p||10);}catch(e){} } }
+// Visible inline field validation: red border that clears on next input (2.3)
+function _markField(id,bad){
+  var el=document.getElementById(id);
+  if(!el)return;
+  if(bad){
+    el.style.borderColor='var(--neg)';
+    el.style.boxShadow='0 0 0 2px rgba(248,113,113,.25)';
+    el.setAttribute('aria-invalid','true');
+    var clr=function(){el.style.borderColor='';el.style.boxShadow='';el.removeAttribute('aria-invalid');el.removeEventListener('input',clr);};
+    el.addEventListener('input',clr);
+  } else {
+    el.style.borderColor='';el.style.boxShadow='';el.removeAttribute('aria-invalid');
+  }
+}
 function toast(msg){
   var t=document.getElementById('toast');
   t.textContent=msg;
@@ -5047,8 +5066,8 @@ function addSingleTxn(){
   var amt=pa(document.getElementById('sf-amt').value);
   var dateVal=document.getElementById('sf-date').value;
   var mo=MONTHS[homeMi];
-  if(!desc){toast('⚠️ נא להזין תיאור');return;}
-  if(!amt){toast('⚠️ נא להזין סכום');return;}
+  if(!desc){toast('⚠️ נא להזין תיאור');_markField('sf-desc',true);return;}
+  if(!amt){toast('⚠️ נא להזין סכום');_markField('sf-amt',true);return;}
   var d,m2;
   if(dateVal){var p=dateVal.split('-');d=p[2];m2=p[1];}
   else{var now=new Date();d=String(now.getDate()).padStart(2,'0');m2=String(mo.mon).padStart(2,'0');}
@@ -7270,22 +7289,4 @@ var ADMIN_UID='7Nz62B3VTcZ1ZcCOfUunHnxNpel2';
 function _logSession(user){
   if(!fbDb||!user)return;
   _sessionStart=Date.now();
-  var rec={uid:user.uid, email:user.email||user.displayName||'',
-    startTime:_sessionStart, lastSeen:_sessionStart, duration:0,
-    device:navigator.userAgent.slice(0,100), appVer:APP_VER};
-  var refBy=localStorage.getItem('pf_referred_by');
-  if(refBy) rec.referredBy=refBy;
-  fbDb.collection('analytics').doc(user.uid).set(rec,{merge:true}).catch(function(){});
-  if(_sessionInterval)clearInterval(_sessionInterval);
-  _sessionInterval=setInterval(function(){
-    if(!fbDb||!FB_UID)return;
-    var elapsed=Math.round((Date.now()-_sessionStart)/1000);
-    fbDb.collection('analytics').doc(FB_UID).update({lastSeen:Date.now(),duration:elapsed}).catch(function(){});
-  },300000); // every 5 minutes
-}
-function _finalizeSession(){
-  if(!fbDb||!FB_UID||!_sessionStart)return;
-  var elapsed=Math.round((Date.now()-_sessionStart)/1000);
-  try{ fbDb.collection('analytics').doc(FB_UID).update({lastSeen:Date.now(),duration:elapsed,endTime:Date.now()}); }catch(e){}
-}
-window.addEventListener(
+  var rec={uid:user
