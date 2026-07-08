@@ -2062,7 +2062,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260859;
+var APP_VER=20260860;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2187,6 +2187,10 @@ var RAW = {
 var IGNORED_EMAIL_IDS = (function(){try{return JSON.parse(localStorage.getItem('shani_ignored_emails')||'[]');}catch(e){return [];}})();
 function saveIgnoredEmails(){try{localStorage.setItem('shani_ignored_emails',JSON.stringify(IGNORED_EMAIL_IDS));}catch(e){}}
 function ignoreEmailId(id){if(id&&IGNORED_EMAIL_IDS.indexOf(id)<0){IGNORED_EMAIL_IDS.push(id);saveIgnoredEmails();}}
+// Tombstones for deleted transactions — kept so a stale device can't resurrect them via sync (1.4)
+var DELETED_IDS = (function(){try{return JSON.parse(localStorage.getItem('shani_deleted_ids')||'[]');}catch(e){return [];}})();
+function saveDeletedIds(){try{localStorage.setItem('shani_deleted_ids',JSON.stringify(DELETED_IDS));}catch(e){}}
+function markDeleted(id){if(id&&DELETED_IDS.indexOf(id)<0){DELETED_IDS.push(id);saveDeletedIds();}}
 function newTxId(){return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);}
 // Find a transaction index by encoded key: id (no '|') preferred, legacy d|desc|a fallback
 function _findTxIdx(arr,key){
@@ -3800,6 +3804,7 @@ function delIncTxn(key){
   if(idx<0)return;
   var removed=arr[idx];
   arr.splice(idx,1);
+  if(removed&&removed.id)markDeleted(removed.id);
   if(removed&&removed.srcMsgId)ignoreEmailId(removed.srcMsgId);
   save();renderIncome();renderHome();
   toast('נמחק');
@@ -3813,6 +3818,7 @@ function delExpTxn(key){
   if(idx<0)return;
   var removed=arr[idx];
   arr.splice(idx,1);
+  if(removed&&removed.id)markDeleted(removed.id);
   if(removed&&removed.srcMsgId)ignoreEmailId(removed.srcMsgId);
   save();renderExpenses();renderHome();
   toast('נמחק');
@@ -6957,6 +6963,7 @@ function cloudSnapshot(){
     clients:CLIENTS, expense:RAW.expense, income:RAW.income,
     cards:CARDS, budgets:BUDGETS, fp:FIXED_PAYMENTS, goals:GOALS,
     cp:CLIENT_PROFILES, settings:SETTINGS, cr:CLIENT_RECORDS,
+    deletedIds:DELETED_IDS, ignoredEmails:IGNORED_EMAIL_IDS,
     mode:APP_MODE, theme:_theme, ver:APP_VER, updatedAt:Date.now()
   };
 }
@@ -6967,6 +6974,38 @@ function _mergeMonthObj(target, src){
   Object.keys(src).forEach(function(k){
     var a=src[k];
     if(Array.isArray(a)&&a.length>0) target[k]=a;
+  });
+}
+
+// Union-merge month-keyed TRANSACTION object by id, minus DELETED_IDS (1.4).
+// Prevents a stale device from resurrecting deleted txns, and avoids whole-month clobber.
+function _mergeTxnMonthObj(target, src){
+  if(!src||typeof src!=='object') return;
+  var allKeys={}, k;
+  for(k in target){if(target.hasOwnProperty(k))allKeys[k]=1;}
+  for(k in src){if(src.hasOwnProperty(k))allKeys[k]=1;}
+  Object.keys(allKeys).forEach(function(mk){
+    var localArr=Array.isArray(target[mk])?target[mk]:[];
+    var cloudArr=Array.isArray(src[mk])?src[mk]:[];
+    var byId={}, out=[], i, t, id, j, dup;
+    for(i=0;i<localArr.length;i++){
+      t=localArr[i]; if(!t)continue; id=t.id;
+      if(id&&DELETED_IDS.indexOf(id)>=0) continue; // drop locally-held tombstoned txns
+      if(id)byId[id]=1;
+      out.push(t);
+    }
+    for(i=0;i<cloudArr.length;i++){
+      t=cloudArr[i]; if(!t)continue; id=t.id;
+      if(id&&DELETED_IDS.indexOf(id)>=0) continue; // stay deleted
+      if(id&&byId[id]) continue;                    // already present
+      if(!id){                                      // legacy cloud item — dedupe by d|desc|a
+        dup=false;
+        for(j=0;j<out.length;j++){ if(out[j].d===t.d&&out[j].desc===t.desc&&out[j].a===t.a){dup=true;break;} }
+        if(dup) continue;
+      }
+      out.push(t); if(id)byId[id]=1;
+    }
+    target[mk]=out;
   });
 }
 
@@ -6981,9 +7020,12 @@ function _mergeObj(target, src){
 // Apply a cloud snapshot — 3-way merge so empty cloud fields never delete local data
 function applyCloud(d){
   if(!d) return;
+  // Merge tombstones & ignored-emails FIRST so the txn merges below respect them
+  if(Array.isArray(d.deletedIds)){var _di,_id;for(_di=0;_di<d.deletedIds.length;_di++){_id=d.deletedIds[_di];if(_id&&DELETED_IDS.indexOf(_id)<0)DELETED_IDS.push(_id);}saveDeletedIds();}
+  if(Array.isArray(d.ignoredEmails)){var _ii,_ie;for(_ii=0;_ii<d.ignoredEmails.length;_ii++){_ie=d.ignoredEmails[_ii];if(_ie&&IGNORED_EMAIL_IDS.indexOf(_ie)<0)IGNORED_EMAIL_IDS.push(_ie);}saveIgnoredEmails();}
   _mergeMonthObj(CLIENTS,     d.clients);
-  _mergeMonthObj(RAW.expense, d.expense);
-  _mergeMonthObj(RAW.income,  d.income);
+  _mergeTxnMonthObj(RAW.expense, d.expense);
+  _mergeTxnMonthObj(RAW.income,  d.income);
   _mergeObj(CARDS, d.cards); if(!CARDS.limit)CARDS.limit=10000; if(CARDS.mc_charge>4500||!CARDS.mc_charge)CARDS.mc_charge=4094.40;
   _mergeObj(BUDGETS, d.budgets);
   _mergeObj(CLIENT_PROFILES, d.cp);
@@ -7264,55 +7306,4 @@ function onSignedIn(user){
 }
 
 (function initFirebase(){
-  if(typeof firebase==='undefined' || !firebaseConfig.apiKey){
-    // SDK failed to load (offline / blocked) → run as local-only app
-    hideAuthScreen(); return;
-  }
-  try{
-    firebase.initializeApp(firebaseConfig);
-    fbAuth=firebase.auth();
-    fbDb=firebase.firestore();
-    try{ fbAnalytics=firebase.analytics(); }catch(e){}
-    // keep the user signed in across browser restarts / app re-opens (one-time login)
-    try{ fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(){}); }catch(e){}
-    try{ fbDb.enablePersistence({synchronizeTabs:true}).catch(function(){}); }catch(e){}
-    // complete any pending redirect-based Google sign-in and save token
-    fbAuth.getRedirectResult().then(function(result){
-      if(result && result.credential){
-        try{
-          var cred=firebase.auth.GoogleAuthProvider.credentialFromResult(result);
-          if(cred && cred.accessToken){ _saveGoogToken(cred.accessToken); }
-        }catch(e){}
-      }
-    }).catch(function(){});
-    fbAuth.onAuthStateChanged(function(user){
-      if(user){ onSignedIn(user); }
-      else { FB_UID=null; updateAccountUI(null); setSyncDot(''); showAuthScreen(); }
-    });
-  }catch(e){ hideAuthScreen(); }
-})();
-
-// ── SERVICE WORKER + OFFLINE INDICATOR ──────────────────
-(function(){
-  if(!('serviceWorker' in navigator)) return;
-  // updateViaCache:'none' → the sw.js script itself is always fetched fresh,
-  // so a new deploy is detected even inside an installed iOS home-screen app.
-  var _hadController = !!navigator.serviceWorker.controller;
-  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(function(reg){
-    function poke(){ try{ reg.update(); }catch(e){} }
-    poke();                       // check for a newer worker right away
-    setInterval(poke,60000);      // and once a minute while the app is open
-    // When a fresh worker finishes installing, activate it immediately.
-    reg.addEventListener('updatefound',function(){
-      var nw=reg.installing;
-      if(!nw) return;
-      nw.addEventListener('statechange',function(){
-        if(nw.state==='installed' && navigator.serviceWorker.controller){
-          try{ nw.postMessage&&nw.postMessage('skipWaiting'); }catch(e){}
-        }
-      });
-    });
-  }).catch(function(){});
-  // A new worker took control → reload once to pick up the new shell + prices.
-  var _reloaded=false;
-  navigator.serviceWorker.addEventListener('controll
+  if(typeof firebase==='undefined' || !f
