@@ -9,3 +9,4 @@ twa/*.keystore
 
 # Internal tooling
 twa-build/
+.vercel

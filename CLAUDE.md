@@ -1,59 +1,46 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+הנחיות ל-Claude Code בעבודה על הריפו הזה.
+**קודם כל בשיחה חדשה: לקרוא את `STATUS.md`, ואז את `index.html`.**
 
-## Commands
+## מה זו האפליקציה
 
-```bash
-npm install          # install dependencies
-npm run dev          # dev server → http://localhost:3000 (Hebrew RTL finance app)
-npm run build        # production build → dist/
-npm run preview      # serve production build locally
-npx gh-pages -d dist -b gh-pages   # deploy to GitHub Pages
-```
+"My Money" — אפליקציית כספים (PWA) בעברית RTL לעצמאיות בתחום היופי.
+חיה ב: **https://my-money-app-tau.vercel.app/** (Vercel מפרסם אוטומטית מ-`main`).
 
-## Architecture
+## ארכיטקטורה — חשוב לפני כל עריכה
 
-Single-page React + Vite personal finance app in Hebrew (RTL). No router — tab navigation is pure React state in `App.jsx`. All data persists in **localStorage** under two keys: `pf_transactions` and `pf_goals`.
+- **הכל בקובץ אחד**: `index.html` (HTML + CSS + JS ביחד). ~7,500 שורות.
+- **ES5 בלבד!** רק `var` ו-`function`. בלי arrow functions, בלי `const`/`let`, בלי template literals (`` `...` ``), בלי class. קריטי לתאימות.
+- `shani-finance.html` = **עותק זהה** של `index.html`. אחרי כל שינוי: `cp index.html shani-finance.html`.
+- נתונים: **localStorage** + סנכרון ל-**Firebase/Firestore** (התחברות Google).
+- `sw.js` = Service Worker (network-first ל-`index.html`), עם גרסת cache.
+- `api/send-sms.js` = פונקציית serverless (Twilio).
 
-**State lives in `App.jsx`** and flows down as props. No context, no external state library. The four views (`Dashboard`, `Transactions`, `Summary`, `Goals`) are swapped by `activeTab` state.
+> הערה: `package.json`/`vite.config.js`/`src/` הם שרידי ניסוי React/Vite ישן — **לא בשימוש** באפליקציה החיה. אל תסתמכי עליהם.
 
-### Data model
+## תהליך עבודה אחרי כל שינוי (חובה)
 
-```js
-// Transaction
-{ id, type: 'income'|'expense', amount: number, category: string, description: string, date: 'YYYY-MM-DD' }
+1. לערוך את `index.html` בלבד.
+2. **להעלות `APP_VER` ב-1** (`var APP_VER=...` סביב שורה 2070) — מנגנון הרענון האוטומטי מסתמך על זה.
+3. **לעדכן `CACHE` ב-`sw.js`** לאותו מספר: `shani-money-v<APP_VER>`.
+4. `cp index.html shani-finance.html`.
+5. `git add index.html shani-finance.html sw.js`
+6. commit + `git push origin main` (Vercel מפרסם תוך 1-2 דק').
+7. סנכרון לענף: `git checkout claude/hebrew-finance-app-Xz4Pg && git merge --ff-only main && git push origin claude/hebrew-finance-app-Xz4Pg && git checkout main`.
 
-// Goal
-{ id, name, icon, target: number, saved: number, color: string, deadline: 'YYYY-MM-DD' }
-```
+## ענפי git
 
-### Key files
+- מפתחים על: `claude/hebrew-finance-app-Xz4Pg`
+- דוחפים גם ל-`main` (זה מה ש-Vercel מפרסם).
 
-| File | Role |
-|------|------|
-| `src/constants.js` | Category definitions, `fmt()`, `byMonth()`, date helpers |
-| `src/index.css` | Full design system via CSS custom properties (`--gold`, `--rose`, `--mint`, etc.) |
-| `src/App.jsx` | Root state, localStorage persistence, view routing |
-| `src/components/Dashboard.jsx` | Home: balance card, category spending, recent transactions |
-| `src/components/AddTransaction.jsx` | Bottom-sheet modal for adding income/expense |
-| `src/components/Transactions.jsx` | Filterable, searchable transaction list |
-| `src/components/Summary.jsx` | Monthly summary with Doughnut + Bar charts (Chart.js) |
-| `src/components/Goals.jsx` | Savings goals with progress and "add savings" inline flow |
+## קבצים מרכזיים
 
-### Design tokens (CSS custom properties)
-
-Primary colour scale: `--gold` / `--gold-dk` / `--gold-lt`. Semantic colours: `--rose` (expense/negative), `--mint` (income/positive). All spacing and radii use `--r-s` / `--r` / `--r-l` / `--r-xl`. Safe-area insets for iPhone notch/home-bar via `--safe-top` / `--safe-bottom`.
-
-### Charts
-
-`Summary.jsx` registers Chart.js elements once at module level (`ChartJS.register(...)`). Adding a new chart type requires importing and registering its element (e.g. `LineElement`) there.
-
-### Deployment
-
-The `gh-pages` branch is the live deployment target. After building, run:
-```bash
-npx gh-pages -d dist -b gh-pages
-```
-GitHub Pages must be enabled in repo Settings → Pages → Source: `gh-pages` branch / `(root)`.
-Live URL: `https://gorgovs1-cyber.github.io/-/`
+| קובץ | תפקיד |
+|------|--------|
+| `index.html` | כל האפליקציה (ערוך רק כאן) |
+| `shani-finance.html` | עותק זהה (sync אחרי כל שינוי) |
+| `sw.js` | Service Worker + גרסת cache |
+| `api/send-sms.js` | serverless לשליחת SMS (Twilio) |
+| `marketing/` | נכסי שיווק (PNG) + תבניות + `render.sh` |
+| `STATUS.md` | איפה אנחנו עומדים — לקרוא ראשון |
