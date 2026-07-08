@@ -2062,7 +2062,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260860;
+var APP_VER=20260861;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2162,7 +2162,7 @@ var MONTHS = (function(){
     var d=new Date(now.getFullYear(), now.getMonth()+off, 1);
     var y=d.getFullYear(), mo=d.getMonth()+1;
     var days=new Date(y, mo, 0).getDate();
-    arr.push({key:mo, label:HEB[mo-1], year:y, days:days});
+    arr.push({key:y+'-'+(mo<10?'0'+mo:''+mo), mon:mo, label:HEB[mo-1], year:y, days:days});
   }
   return arr;
 })();
@@ -2172,15 +2172,15 @@ var NOW_IDX = (function(){
   var best=0;
   for(var i=0;i<MONTHS.length;i++){
     var ml=MONTHS[i];
-    if(ml.year<y||(ml.year===y&&ml.key<=m)) best=i;
+    if(ml.year<y||(ml.year===y&&ml.mon<=m)) best=i;
   }
   return best;
 })();
 var MAY_IDX = NOW_IDX; // kept for compatibility
 
 var RAW = {
-  expense:{1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[],10:[],11:[],12:[]},
-  income: {1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[],10:[],11:[],12:[]}
+  expense:{},
+  income: {}
 };
 
 // ── Stable transaction IDs + Gmail dedup infrastructure (1.2) ──
@@ -2192,6 +2192,35 @@ var DELETED_IDS = (function(){try{return JSON.parse(localStorage.getItem('shani_
 function saveDeletedIds(){try{localStorage.setItem('shani_deleted_ids',JSON.stringify(DELETED_IDS));}catch(e){}}
 function markDeleted(id){if(id&&DELETED_IDS.indexOf(id)<0){DELETED_IDS.push(id);saveDeletedIds();}}
 function newTxId(){return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);}
+// ── Year-aware month keys (1.5) ──
+function _pad2(n){n=parseInt(n);return (n<10?'0':'')+n;}
+function _mkey(y,m){return y+'-'+_pad2(m);}                 // (2026,7) -> '2026-07'
+function _monNum(k){var s=String(k);return s.indexOf('-')>=0?parseInt(s.split('-')[1]):parseInt(s);} // '2026-07'|7 -> 7
+// For a bare numeric month (legacy data), pick the YYYY-MM occurrence nearest to NOW_IDX
+function _monthKeyForNumeric(m){
+  var best=null,bestDist=1e9,i,dist;
+  for(i=0;i<MONTHS.length;i++){ if(MONTHS[i].mon===m){ dist=Math.abs(i-NOW_IDX); if(dist<bestDist){bestDist=dist;best=MONTHS[i];} } }
+  return best?best.key:_mkey(new Date().getFullYear(),m);
+}
+// Return a copy of a month-keyed object with any bare-numeric keys remapped to YYYY-MM
+function _normMonthKeys(obj){
+  if(!obj||typeof obj!=='object') return obj;
+  var out={},k,nk;
+  for(k in obj){ if(!obj.hasOwnProperty(k))continue;
+    if(/^\d{1,2}$/.test(k)){ nk=_monthKeyForNumeric(parseInt(k)); out[nk]=(out[nk]||[]).concat(obj[k]||[]); }
+    else { out[k]=(out[k]||[]).concat(obj[k]||[]); }
+  }
+  return out;
+}
+// One-time migration of locally-stored numeric month buckets -> YYYY-MM
+function _migrateMonthKeys(){
+  if(localStorage.getItem('shani_ykey_migrated')) return;
+  _replaceObj(RAW.expense, _normMonthKeys(RAW.expense));
+  _replaceObj(RAW.income,  _normMonthKeys(RAW.income));
+  _replaceObj(CLIENTS,     _normMonthKeys(CLIENTS));
+  localStorage.setItem('shani_ykey_migrated','1');
+  save();
+}
 // Find a transaction index by encoded key: id (no '|') preferred, legacy d|desc|a fallback
 function _findTxIdx(arr,key){
   var k=decodeURIComponent(key),i;
@@ -2247,7 +2276,7 @@ function showUndoToast(msg,fn){
   _undoTimer=setTimeout(function(){el.style.opacity='0';},6500);
 }
 
-var CLIENTS = {1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[],10:[],11:[],12:[]};
+var CLIENTS = {};
 
 var CARDS = {visa:0,mc:0,mc_charge:0,bank:0,cashBal:0,limit:10000};
 var GOALS = [];
@@ -2654,7 +2683,7 @@ function exportAccountantCSV(){
 
   // All expense rows (private transactions excluded)
   for(var m=1;m<=12;m++){
-    var items=RAW.expense[m]||[];
+    var items=RAW.expense[_mkey(year,m)]||[];
     items.forEach(function(t){
       if(t.priv) return; // פרטי — לא לייצוא
       var total=safeN(t.a);
@@ -2682,14 +2711,14 @@ function exportAccountantCSV(){
   rows.push('חודש,הכנסות');
   var totalAnnualInc=0;
   for(var mi=1;mi<=12;mi++){
-    var inc=sumI(mi);
+    var inc=sumI(_mkey(year,mi));
     if(inc>0){ rows.push(MONTH_NAMES[mi]+','+Math.round(inc)); totalAnnualInc+=inc; }
   }
 
   // Annual totals
   var totalExp=0,totalBizExp=0,totalPrivExp=0,totalVatDedBase=0;
   for(var tm=1;tm<=12;tm++){
-    (RAW.expense[tm]||[]).forEach(function(t){
+    (RAW.expense[_mkey(year,tm)]||[]).forEach(function(t){
       if(t.priv) return;
       var a=safeN(t.a);
       totalExp+=a;
@@ -2933,7 +2962,7 @@ function renderBizReport(){
 
 function cycleBizInReport(encodedKey){
   var parts=decodeURIComponent(encodedKey).split('|');
-  var moKey=parseInt(parts[0]),d=parts[1],desc=parts[2],a=parseFloat(parts[3]);
+  var moKey=parts[0],d=parts[1],desc=parts[2],a=parseFloat(parts[3]);
   var arr=RAW.expense[moKey]||[];
   for(var i=0;i<arr.length;i++){
     if(arr[i].d===d&&arr[i].desc===desc&&arr[i].a===a){
@@ -2986,7 +3015,7 @@ function closeBizAiModal(){var el=document.getElementById('biz-ai-modal');if(el)
 
 function confirmBizItem(encodedKey,isBiz){
   var parts=decodeURIComponent(encodedKey).split('|');
-  var moKey=parseInt(parts[0]),d=parts[1],desc=parts[2],a=parseFloat(parts[3]);
+  var moKey=parts[0],d=parts[1],desc=parts[2],a=parseFloat(parts[3]);
   var arr=RAW.expense[moKey]||[];
   for(var i=0;i<arr.length;i++){
     if(arr[i].d===d&&arr[i].desc===desc&&arr[i].a===a){arr[i].biz=isBiz;save();break;}
@@ -2997,7 +3026,7 @@ function confirmBizItem(encodedKey,isBiz){
 function bizConfirmAll(keys){
   keys.forEach(function(encodedKey){
     var parts=decodeURIComponent(encodedKey).split('|');
-    var moKey=parseInt(parts[0]),d=parts[1],desc=parts[2],a=parseFloat(parts[3]);
+    var moKey=parts[0],d=parts[1],desc=parts[2],a=parseFloat(parts[3]);
     var arr=RAW.expense[moKey]||[];
     for(var i=0;i<arr.length;i++){if(arr[i].d===d&&arr[i].desc===desc&&arr[i].a===a){arr[i].biz=true;break;}}
   });
@@ -3044,8 +3073,8 @@ function calc(mi){
   // Smart deduction: only subtract bills that haven't been paid yet this month
   var today=new Date();
   var tM=today.getMonth()+1,tD=today.getDate(),tY=today.getFullYear();
-  var isNow=(tM===m&&tY===ml.year);
-  var isPast=(ml.year<tY)||(ml.year===tY&&m<tM);
+  var isNow=(tM===ml.mon&&tY===ml.year);
+  var isPast=(ml.year<tY)||(ml.year===tY&&ml.mon<tM);
 
   var mcDeduct=0,vDeduct=0;
   if(isPast){
@@ -3306,8 +3335,9 @@ function renderHome(){
 // ── OSEK PATUR THRESHOLD TRACKER ─────────────────────────
 function calcAnnualIncome(){
   var total=0;
+  var _cy=new Date().getFullYear();
   for(var m=1;m<=12;m++){
-    var items=RAW.income[m]||[];
+    var items=RAW.income[_mkey(_cy,m)]||[];
     for(var i=0;i<items.length;i++) total+=(items[i].a||0);
   }
   FIXED_INCOME.forEach(function(fi){
@@ -3419,13 +3449,13 @@ function renderUpcoming(r){
   var items=[];
   if(r.isNow){
     var rentFp=FIXED_PAYMENTS.filter(function(p){return p.active&&/שכירות/i.test(p.name);})[0];
-    if(tD<2&&rentFp) items.push({label:'שכירות',date:'02/'+String(r.m).padStart(2,'0'),days:2-tD,amt:rentFp.amount,color:'#FF6B6B'});
-    if(tD<15) items.push({label:'ויזה',date:'15/'+String(r.m).padStart(2,'0'),days:15-tD,amt:r.vBill,color:'#6BA3FF'});
-    if(tD<20) items.push({label:'מאסטרקארד',date:'20/'+String(r.m).padStart(2,'0'),days:20-tD,amt:r.mcBill,color:'#B57BEE'});
-    if(tD<25) items.push({label:'ביטוח לאומי נכנס',date:'25/'+String(r.m).padStart(2,'0'),days:25-tD,amt:FIXED_MAP[r.m]||FIXED,color:'#2DD4BF',income:true});
+    if(tD<2&&rentFp) items.push({label:'שכירות',date:'02/'+String(r.ml.mon).padStart(2,'0'),days:2-tD,amt:rentFp.amount,color:'#FF6B6B'});
+    if(tD<15) items.push({label:'ויזה',date:'15/'+String(r.ml.mon).padStart(2,'0'),days:15-tD,amt:r.vBill,color:'#6BA3FF'});
+    if(tD<20) items.push({label:'מאסטרקארד',date:'20/'+String(r.ml.mon).padStart(2,'0'),days:20-tD,amt:r.mcBill,color:'#B57BEE'});
+    if(tD<25) items.push({label:'ביטוח לאומי נכנס',date:'25/'+String(r.ml.mon).padStart(2,'0'),days:25-tD,amt:FIXED_MAP[r.m]||FIXED,color:'#2DD4BF',income:true});
     if(APP_MODE==='business') r.planList.forEach(function(c){
       var d=c.day,days=d-tD;
-      if(days>=0) items.push({label:c.name,date:String(d).padStart(2,'0')+'/'+String(r.m).padStart(2,'0'),days:days,amt:c.amount,color:'#2DD4BF',income:true});
+      if(days>=0) items.push({label:c.name,date:String(d).padStart(2,'0')+'/'+String(r.ml.mon).padStart(2,'0'),days:days,amt:c.amount,color:'#2DD4BF',income:true});
     });
     // VAT deadline for עוסק מורשה — show when within 30 days
     if(APP_MODE==='business'&&SETTINGS.bizType==='murshe'){
@@ -3572,7 +3602,7 @@ function addFromPM(){
   if(!desc||!amt)return;
   var d,m2;
   if(dateVal){var p=dateVal.split('-');d=p[2];m2=p[1];}
-  else{var now=new Date();d=String(now.getDate()).padStart(2,'0');m2=String(r.m).padStart(2,'0');}
+  else{var now=new Date();d=String(now.getDate()).padStart(2,'0');m2=String(r.ml.mon).padStart(2,'0');}
   var entry={d:d+'/'+m2,desc:desc,a:amt};
   if(curPMMethod==='mc'||curPMMethod==='visa') entry.method=curPMMethod;
   if(curPMMethod==='cash') entry.method='cash';
@@ -3948,7 +3978,7 @@ function renderBalance(){
     h+='<div class="txn-group-hdr">נקודת התחלה</div>';
     h+='<div class="bal-row"><span class="bal-row-lbl">עו"ש עכשיו</span><span class="bal-row-val neg">-₪'+fmt(CARDS.bank)+'</span></div>';
     h+='<div class="txn-group-hdr">הכנסות צפויות עד סוף החודש</div>';
-    if(futureFixed>0) h+='<div class="bal-row"><span class="bal-row-lbl">ביטוח לאומי — 25/'+String(r.m).padStart(2,'0')+'</span><span class="bal-row-val pos">+₪'+fmt(futureFixed)+'</span></div>';
+    if(futureFixed>0) h+='<div class="bal-row"><span class="bal-row-lbl">ביטוח לאומי — 25/'+String(r.ml.mon).padStart(2,'0')+'</span><span class="bal-row-val pos">+₪'+fmt(futureFixed)+'</span></div>';
     else h+='<div class="bal-row"><span class="bal-row-lbl">ביטוח לאומי ✓ נכנס</span><span class="bal-row-val" style="color:var(--muted)">כבר נכנס</span></div>';
     if(futureRawInc>0) h+='<div class="bal-row"><span class="bal-row-lbl">הכנסות נוספות</span><span class="bal-row-val pos">+₪'+fmt(futureRawInc)+'</span></div>';
     if(r.planAmt>0) h+='<div class="bal-row"><span class="bal-row-lbl">לקוחות מתוכננות ('+r.planList.length+')</span><span class="bal-row-val amb">+₪'+fmt(r.planAmt)+'</span></div>';
@@ -4072,7 +4102,7 @@ function openModal(day,mi){
   modalDay=day;modalMi=mi;
   var ml=MONTHS[mi];
   var mo=['','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
-  document.getElementById('m-title').innerHTML='<span style="color:var(--cyan);font-size:20px">'+day+'</span> <span style="font-size:20px;opacity:.8">ב'+mo[ml.key]+'</span>';
+  document.getElementById('m-title').innerHTML='<span style="color:var(--cyan);font-size:20px">'+day+'</span> <span style="font-size:20px;opacity:.8">ב'+mo[ml.mon]+'</span>';
   renderMC();
   document.getElementById('mbg').classList.add('open');
 }
@@ -4155,7 +4185,7 @@ function startMove(idx){
   document.getElementById('move-name').textContent=list[idx].name;
   // set date input to current modal date
   var yr=MONTHS[modalMi].year;
-  var mo=MONTHS[modalMi].key;
+  var mo=MONTHS[modalMi].mon;
   var dd=modalDay<10?'0'+modalDay:String(modalDay);
   var mm=mo<10?'0'+mo:String(mo);
   document.getElementById('move-date').value=yr+'-'+mm+'-'+dd;
@@ -4186,7 +4216,7 @@ function confirmMove(){
   // find MONTHS index for the chosen year+month
   var newMi=-1;
   for(var i=0;i<MONTHS.length;i++){
-    if(MONTHS[i].year===newYear&&MONTHS[i].key===newMonth){newMi=i;break;}
+    if(MONTHS[i].year===newYear&&MONTHS[i].mon===newMonth){newMi=i;break;}
   }
   if(newMi<0)return;
   // get the client from the current day
@@ -4197,8 +4227,9 @@ function confirmMove(){
   if(!client)return;
   var ai=allList.indexOf(client);
   // store old date info before moving
+  var oldMon=MONTHS[modalMi].mon;
   var oldDd=modalDay<10?'0'+modalDay:String(modalDay);
-  var oldMm=mk<10?'0'+mk:String(mk);
+  var oldMm=oldMon<10?'0'+oldMon:String(oldMon);
   var oldYr=MONTHS[modalMi].year;
   _lastMovedName=client.name;
   _lastMovedDateStr=oldDd+'/'+oldMm+'/'+oldYr;
@@ -4211,7 +4242,7 @@ function confirmMove(){
   CLIENTS[newMk].push(moved);
   save();renderMC();renderClients();renderHome();
   _moveIdx=-1;
-  toast('✓ '+esc(client.name)+' הועברה ל-'+newDay+'/'+MONTHS[newMi].key);
+  toast('✓ '+esc(client.name)+' הועברה ל-'+newDay+'/'+MONTHS[newMi].mon);
   // show who-cancelled sub-section
   var panel=document.getElementById('move-panel');
   panel.style.display='block';
@@ -4232,7 +4263,7 @@ function recordCancellation(name, byBusiness, dateStr){
 function appendHistoryDone(client){
   var mk=MONTHS[modalMi].key;
   var dd=modalDay<10?'0'+modalDay:String(modalDay);
-  var mm=mk<10?'0'+mk:String(mk);
+  var mm=_pad2(_monNum(mk));
   var yr=MONTHS[modalMi].year;
   var dateStr=dd+'/'+mm+'/'+yr;
   CLIENT_RECORDS[client.name]=CLIENT_RECORDS[client.name]||{cancellations:[],history:[]};
@@ -4242,7 +4273,7 @@ function appendHistoryDone(client){
 function appendHistoryCancelled(client){
   var mk=MONTHS[modalMi].key;
   var dd=modalDay<10?'0'+modalDay:String(modalDay);
-  var mm=mk<10?'0'+mk:String(mk);
+  var mm=_pad2(_monNum(mk));
   var yr=MONTHS[modalMi].year;
   var dateStr=dd+'/'+mm+'/'+yr;
   CLIENT_RECORDS[client.name]=CLIENT_RECORDS[client.name]||{cancellations:[],history:[]};
@@ -4380,9 +4411,9 @@ function renderClientCard(name){
     for(var ci=0;ci<arr.length;ci++){
       var ap=arr[ci];
       if(ap.name===name&&ap.status==='done'){
-        var yr2=null;
-        for(var mii=0;mii<MONTHS.length;mii++){if(MONTHS[mii].key===parseInt(mk)){yr2=MONTHS[mii].year;break;}}
-        doneAppts.push({day:ap.day,month:parseInt(mk),year:yr2,amount:ap.amount,treat:ap.treat||''});
+        var yr2=null,mon2=_monNum(mk);
+        for(var mii=0;mii<MONTHS.length;mii++){if(MONTHS[mii].key===mk){yr2=MONTHS[mii].year;mon2=MONTHS[mii].mon;break;}}
+        doneAppts.push({day:ap.day,month:mon2,year:yr2,amount:ap.amount,treat:ap.treat||''});
       }
     }
   }
@@ -4529,7 +4560,7 @@ function getGoalAIInsight(g){
   var pastMos=[];
   for(var i=0;i<MONTHS.length;i++){
     var ml=MONTHS[i];
-    if(ml.year<cy||(ml.year===cy&&ml.key<cm)) pastMos.push(ml);
+    if(ml.year<cy||(ml.year===cy&&ml.mon<cm)) pastMos.push(ml);
   }
   pastMos=pastMos.slice(-3);
   if(!pastMos.length) return null;
@@ -4709,7 +4740,7 @@ function parseTextInput(){
     var amt=parseFloat(m[1].replace(/,/g,''));
     var desc=m[2].trim();
     if(!amt||!desc)return;
-    var useDate=curDate||(String(new Date().getDate()).padStart(2,'0')+'/'+String(mo.key).padStart(2,'0'));
+    var useDate=curDate||(String(new Date().getDate()).padStart(2,'0')+'/'+String(mo.mon).padStart(2,'0'));
     results.push({date:useDate,desc:desc,amount:amt,method:detM,type:addType,monthKey:mo.key});
   });
   addParsed=results;
@@ -4749,7 +4780,7 @@ function parseImgText(){
     var amt=parseFloat(m[1].replace(/,/g,''));
     var desc=m[2].trim();
     if(!amt||!desc)return;
-    var useDate=curDate||(String(new Date().getDate()).padStart(2,'0')+'/'+String(mo.key).padStart(2,'0'));
+    var useDate=curDate||(String(new Date().getDate()).padStart(2,'0')+'/'+String(mo.mon).padStart(2,'0'));
     results.push({date:useDate,desc:desc,amount:amt,method:detM,type:addType,monthKey:mo.key});
   });
   imgParsed=results;
@@ -4782,19 +4813,16 @@ function importImgParsed(){
 
 // ── EDIT TRANSACTION METHOD ───────────────────────────────
 function cycleTxnMethod(key){
-  var parts=decodeURIComponent(key).split('|');
-  var d=parts[0],desc=parts[1],a=parseFloat(parts[2]);
   var m=MONTHS[homeMi].key;
   var arr=RAW.expense[m]||[];
   var order=['bank','mc','visa','cash'];
-  for(var i=0;i<arr.length;i++){
-    if(arr[i].d===d&&arr[i].desc===desc&&arr[i].a===a){
-      var cur=arr[i].method||'bank';
-      var ni=(order.indexOf(cur)+1)%order.length;
-      arr[i].method=order[ni];
-      save();renderExpenses();
-      return;
-    }
+  var i=_findTxIdx(arr,key);
+  if(i>=0){
+    var cur=arr[i].method||'bank';
+    var ni=(order.indexOf(cur)+1)%order.length;
+    arr[i].method=order[ni];
+    save();renderExpenses();
+    return;
   }
 }
 
@@ -4804,11 +4832,12 @@ var _lastDetectedBank='';
 function _cleanCell(s){return (s||'').toString().trim().replace(/^[“'””״]+|[“'””״]+$/g,'').trim();}
 function _parseAmt(s){var n=parseFloat((s||'').toString().replace(/[^0-9.\-]/g,''));return isNaN(n)?0:n;}
 function _fmtDate(raw,moKey){
+  var mnum=_monNum(moKey); // accept YYYY-MM or numeric month
   var s=(raw||'').toString().trim();
   var dp=s.match(/(\d{1,4})[\/\-\.](\d{1,2})(?:[\/\-\.](\d{2,4}))?/);
-  if(!dp)return String(new Date().getDate()).padStart(2,'0')+'/'+String(moKey).padStart(2,'0');
+  if(!dp)return String(new Date().getDate()).padStart(2,'0')+'/'+_pad2(mnum);
   var a=dp[1],b=dp[2];
-  if(a.length===4) return b.padStart(2,'0')+'/'+String(moKey).padStart(2,'0');
+  if(a.length===4) return b.padStart(2,'0')+'/'+_pad2(mnum);
   return a.padStart(2,'0')+'/'+b.padStart(2,'0');
 }
 function _detectIsraeliFormat(headers){
@@ -5018,7 +5047,7 @@ function addSingleTxn(){
   if(!amt){toast('⚠️ נא להזין סכום');return;}
   var d,m2;
   if(dateVal){var p=dateVal.split('-');d=p[2];m2=p[1];}
-  else{var now=new Date();d=String(now.getDate()).padStart(2,'0');m2=String(mo.key).padStart(2,'0');}
+  else{var now=new Date();d=String(now.getDate()).padStart(2,'0');m2=String(mo.mon).padStart(2,'0');}
   var entry={d:d+'/'+m2,desc:desc,a:amt};
   if(addMethod!=='cash'&&addMethod!=='bank')entry.method=addMethod;
   var tagsVal=document.getElementById('sf-tags').value.trim();
@@ -5066,16 +5095,12 @@ function showCardDetail(type){
 
 // ── INIT ─────────────────────────────────────────────────
 load();
+_migrateMonthKeys();
 _migrateTxIds();
 
 
-// Default to last month that has income entries (= most recently active month)
-(function(){
-  for(var i=MONTHS.length-1;i>=0;i--){
-    var mk=MONTHS[i].key;
-    if(RAW.income[mk]&&RAW.income[mk].length){homeMi=curCMi=modalMi=i;return;}
-  }
-})();
+// Default to the current real month (avoid landing on a future/wrong month)
+homeMi=curCMi=modalMi=NOW_IDX;
 initSplash();
 applyTheme();
 renderHome();
@@ -5981,7 +6006,7 @@ function parseGmailMsg(msg){
   var desc=findDesc();
 
   var isIncome=/קיבלת\s+תשלום|זוכה\s+חשבונך|הופקד\s+לחשבונך|התקבלה\s+העברה|הועבר\s+לחשבונך|קבלת\s+כסף|שולמת\s+לך|paybox.*קיבל|ביט.*קיבל|כסף\s+התקבל/i.test(text);
-  _gmailParsed.push({d:txnD,desc:desc,a:amt,method:method,type:isIncome?'income':'expense',monthKey:txnMo,year:yr,srcMsgId:msg.id,raw:(subj+' · '+body.slice(0,80)).slice(0,110)});
+  _gmailParsed.push({d:txnD,desc:desc,a:amt,method:method,type:isIncome?'income':'expense',monthKey:_mkey(yr,txnMo),year:yr,srcMsgId:msg.id,raw:(subj+' · '+body.slice(0,80)).slice(0,110)});
 }
 function renderGmailTxns(){
   // Never show emails already imported or previously deleted
@@ -6668,7 +6693,7 @@ function checkUpcomingReminders(){
   var tDay=tomorrow.getDate(), tMon=tomorrow.getMonth()+1, tYear=tomorrow.getFullYear();
   // find matching MONTHS entry
   var mk=null;
-  for(var i=0;i<MONTHS.length;i++){if(MONTHS[i].key===tMon&&MONTHS[i].year===tYear){mk=tMon;break;}}
+  for(var i=0;i<MONTHS.length;i++){if(MONTHS[i].mon===tMon&&MONTHS[i].year===tYear){mk=MONTHS[i].key;break;}}
   if(!mk) return;
   var reminded={}; try{reminded=JSON.parse(localStorage.getItem('pf_sms_reminded')||'{}');}catch(e){}
   var sent=0;
@@ -6886,7 +6911,8 @@ function importGCalEvent(idx,evId){
   if(!ev)return;
   var dt=new Date(ev.start.dateTime||ev.start.date);
   var day=dt.getDate();
-  var mk=dt.getMonth()+1;
+  var _emon=dt.getMonth()+1;
+  var mk=_mkey(dt.getFullYear(),_emon);
   var name=ev.summary||'לקוחה';
   var amt=0,treat='';
   if(evId){
@@ -6900,8 +6926,8 @@ function importGCalEvent(idx,evId){
   if(amt>0){
     RAW.income[mk]=RAW.income[mk]||[];
     var incDesc=treat?treat+' — '+name:name;
-    var incDate=String(day).padStart(2,'0')+'/'+String(mk).padStart(2,'0');
-    RAW.income[mk].push({d:incDate,desc:incDesc,a:amt});
+    var incDate=String(day).padStart(2,'0')+'/'+String(_emon).padStart(2,'0');
+    RAW.income[mk].push({id:newTxId(),d:incDate,desc:incDesc,a:amt});
   }
   save();
   if(evId){var el=document.getElementById(evId);if(el){el.style.opacity='.4';el.style.pointerEvents='none';}}
@@ -7023,9 +7049,9 @@ function applyCloud(d){
   // Merge tombstones & ignored-emails FIRST so the txn merges below respect them
   if(Array.isArray(d.deletedIds)){var _di,_id;for(_di=0;_di<d.deletedIds.length;_di++){_id=d.deletedIds[_di];if(_id&&DELETED_IDS.indexOf(_id)<0)DELETED_IDS.push(_id);}saveDeletedIds();}
   if(Array.isArray(d.ignoredEmails)){var _ii,_ie;for(_ii=0;_ii<d.ignoredEmails.length;_ii++){_ie=d.ignoredEmails[_ii];if(_ie&&IGNORED_EMAIL_IDS.indexOf(_ie)<0)IGNORED_EMAIL_IDS.push(_ie);}saveIgnoredEmails();}
-  _mergeMonthObj(CLIENTS,     d.clients);
-  _mergeTxnMonthObj(RAW.expense, d.expense);
-  _mergeTxnMonthObj(RAW.income,  d.income);
+  _mergeMonthObj(CLIENTS,     _normMonthKeys(d.clients));
+  _mergeTxnMonthObj(RAW.expense, _normMonthKeys(d.expense));
+  _mergeTxnMonthObj(RAW.income,  _normMonthKeys(d.income));
   _mergeObj(CARDS, d.cards); if(!CARDS.limit)CARDS.limit=10000; if(CARDS.mc_charge>4500||!CARDS.mc_charge)CARDS.mc_charge=4094.40;
   _mergeObj(BUDGETS, d.budgets);
   _mergeObj(CLIENT_PROFILES, d.cp);
@@ -7275,35 +7301,4 @@ function onSignedIn(user){
   var _emptyDevice=Object.keys(CLIENTS).length===0 &&
     Object.keys(RAW.expense||{}).length===0 && Object.keys(RAW.income||{}).length===0;
   if(_emptyDevice){ showHomeSkeleton(); setTimeout(hideHomeSkeleton,6000); }
-  fbDb.collection('users').doc(FB_UID).get().then(function(doc){
-    if(doc.exists){
-      var data=doc.data();
-      var localAt=parseInt(localStorage.getItem('shani_synced_at')||'0');
-      var cloudAt=data.updatedAt||0;
-      // safety: only apply cloud if cloud is clearly newer AND has non-empty client data
-      var cloudHasClients=data.clients&&Object.keys(data.clients).length>0;
-      var localHasClients=Object.keys(CLIENTS).length>0;
-      if(cloudAt > localAt && (cloudHasClients || !localHasClients)){
-        applyCloud(data);
-        hideHomeSkeleton();
-        setSyncDot('ok');
-        toast('✓ סונכרן מהענן');
-      } else if(cloudAt > localAt && !cloudHasClients && localHasClients){
-        // cloud is newer but has no clients — local wins, push up
-        hideHomeSkeleton();
-        _cloudPushNow();
-        toast('✓ גיבוי מקומי נשמר לענן');
-      } else {
-        hideHomeSkeleton();
-        _cloudPushNow();      // local is newer/equal → push our copy up
-      }
-    } else {
-      hideHomeSkeleton();
-      _cloudPushNow();        // first sign-in → seed cloud with local data
-      toast('✓ מחוברת — גיבוי בענן פעיל');
-    }
-  }).catch(function(){ hideHomeSkeleton(); setSyncDot('err'); });
-}
-
-(function initFirebase(){
-  if(typeof firebase==='undefined' || !f
+  fbDb.collection(
