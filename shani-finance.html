@@ -977,12 +977,14 @@ html.mode-private .biz-only{ display:none!important; }
 .drw-more-arrow{transition:transform .2s;display:inline-block;font-size:11px}
 
 /* accessibility: respect reduced-motion preference */
+.a11y-skip{position:absolute;right:-999px;top:0;z-index:10000;background:var(--cyan);color:#08131F;padding:10px 16px;border-radius:0 0 10px 0;font-family:Rubik,sans-serif;font-weight:600;text-decoration:none}.a11y-skip:focus{right:0}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{ animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; }
 }
 </style>
 </head>
 <body>
+<a href="#main-content" class="a11y-skip">דלג לתוכן</a>
 
 <!-- TOP HEADER -->
 <header class="top-hdr">
@@ -1228,6 +1230,7 @@ html.mode-private .biz-only{ display:none!important; }
 </div>
 
 <!-- ══ HOME ══════════════════════════════════════════════ -->
+<span id="main-content" tabindex="-1"></span>
 <div class="screen active" id="s-home">
   <!-- Subscription renewal alert bar (hidden until a sub is near expiry) -->
   <div id="subs-alert-bar" style="display:none;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.1);padding:8px 16px;font-size:13px;font-weight:400;color:var(--text2);line-height:1.6;cursor:pointer" onclick="go('gmail')"></div>
@@ -2076,7 +2079,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260866;
+var APP_VER=20260867;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
