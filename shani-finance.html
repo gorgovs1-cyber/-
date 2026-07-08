@@ -1678,7 +1678,8 @@ html.mode-private .biz-only{ display:none!important; }
         <div style="font-size:13px;font-weight:500;color:var(--cyan);letter-spacing:.5px;margin-bottom:12px;text-transform:uppercase">הגדרה חד-פעמית · 3 דקות</div>
         <div style="font-size:13px;color:var(--text2);line-height:2">
           <b style="color:var(--cyan)">1.</b> פתחי <span style="color:var(--cyan);text-decoration:underline" onclick="window.open('https://console.cloud.google.com')">console.cloud.google.com</span><br>
-          <b style="color:var(--cyan)">2.</b> צרי פרויקט → הפעילי <b>Gmail API</b> → Credentials → OAuth Web App<br>
+          <b style="color:var(--cyan)">2.</b> צרי פרויקט → הפעילי <b>Gmail API</b> וגם <b>Google Calendar API</b> → Credentials → OAuth Web App<br>
+          <span style="font-size:11px;color:var(--muted);margin-right:14px">בהגדרות ה-OAuth consent הוסיפי את ה-scope <code>calendar.readonly</code></span><br>
           <span style="font-size:11px;color:var(--muted);margin-right:14px">Authorized origins: gorgovs1-cyber.github.io</span><br>
           <b style="color:var(--cyan)">3.</b> העתיקי את ה-<b>Client ID</b> והדביקי כאן:
         </div>
@@ -2062,7 +2063,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260861;
+var APP_VER=20260862;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -2106,6 +2107,9 @@ function _advRemaining(){
 }
 
 var GMAIL_CID='1009165520878-j4hhl59soqimhufdmri1dliodrfvj8ll.apps.googleusercontent.com';
+// Use a user-supplied Client ID if they entered one, else the built-in project (1.3)
+function _googCid(){try{return localStorage.getItem('shani_gmail_cid')||GMAIL_CID;}catch(e){return GMAIL_CID;}}
+var GCAL_SCOPES='https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.readonly';
 // Firebase config (web API key is public by design — security is enforced by
 // Firestore rules + Auth, not by hiding this key).
 var firebaseConfig={
@@ -5665,34 +5669,23 @@ function gmailAuth(){
     return;
   }
   document.getElementById('gmail-status').textContent='';
+  // Request Gmail + Calendar together in a single user gesture (avoids blocked popups)
   var tc=google.accounts.oauth2.initTokenClient({
-    client_id:GMAIL_CID,
-    scope:'https://www.googleapis.com/auth/gmail.readonly',
+    client_id:_googCid(),
+    scope:GCAL_SCOPES,
     callback:function(resp){
       if(resp.error){
         document.getElementById('gmail-status').textContent='שגיאה: '+resp.error;
         return;
       }
       _gmailToken=resp.access_token;
+      _gcalToken=resp.access_token; // same token carries both scopes
       var pre=document.getElementById('gmail-pre-auth');
       if(pre)pre.style.display='none';
       document.getElementById('gmail-period-wrap').style.display='block';
-      _gmailRequestCalendar();
     }
   });
   tc.requestAccessToken();
-}
-function _gmailRequestCalendar(){
-  if(_gcalToken||typeof google==='undefined'||!google.accounts) return;
-  var calTc=google.accounts.oauth2.initTokenClient({
-    client_id:GMAIL_CID,
-    scope:'https://www.googleapis.com/auth/calendar.readonly',
-    include_granted_scopes:true,
-    callback:function(resp){
-      if(!resp.error){ _gcalToken=resp.access_token; }
-    }
-  });
-  calTc.requestAccessToken();
 }
 
 // Duplicate detection — returns 'exact' | 'close' | null
@@ -6817,8 +6810,8 @@ function gcalConnect(){
   }
   gcalStatus('מתחבר...');
   var tc=google.accounts.oauth2.initTokenClient({
-    client_id:GMAIL_CID,
-    scope:'https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.readonly',
+    client_id:_googCid(),
+    scope:GCAL_SCOPES,
     callback:function(resp){
       if(resp.error){gcalStatus('שגיאה: '+resp.error,'var(--neg)');return;}
       _gcalToken=resp.access_token;
@@ -6843,15 +6836,21 @@ function gcalFetchEvents(){
   fetch(url,{headers:{Authorization:'Bearer '+_gcalToken}})
     .then(function(r){return r.json();})
     .then(function(d){
-      if(d.error){gcalStatus('שגיאה: '+d.error.message,'var(--neg)');return;}
+      if(d.error){
+        var em=d.error.message||'';
+        var es=d.error.status||d.error.code||'';
+        var disabled=/not been used|has not been used|disabled|not enabled|PERMISSION_DENIED|SERVICE_DISABLED|accessNotConfigured/i.test(em+' '+es);
+        var hint=disabled?' — נראה ש-Google Calendar API לא מופעל בפרויקט. יש להפעיל אותו ב-Google Cloud Console (APIs & Services).':'';
+        gcalStatus('שגיאה'+(es?' ('+es+')':'')+': '+em+hint,'var(--neg)');
+        return;
+      }
       var all=d.items||[];
       var hasColors=CAL_FILTER.colors&&CAL_FILTER.colors.length>0;
       var hasKw=CAL_FILTER.keyword&&CAL_FILTER.keyword.trim().length>0;
       var filtered;
       if(!hasColors&&!hasKw){
-        // legacy default: prefer red events, fall back to all
-        var red=all.filter(function(e){return e.colorId==='11'||e.colorId==='4';});
-        filtered=red.length?red:all;
+        // Default: show ALL events (color filter is opt-in only)
+        filtered=all;
       }else{
         filtered=all.filter(function(e){
           var colorOk=!hasColors||(CAL_FILTER.colors.indexOf(e.colorId)>=0);
@@ -6874,6 +6873,7 @@ function renderGCalEvents(events){
   _gcalEvents=events;
   var mon=['ינו','פבר','מרץ','אפר','מאי','יוני','יולי','אוג','ספט','אוק','נוב','דצמ'];
   var h='<div style="font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.5px;margin-bottom:12px">'+events.length+' תורים — לחצי על תור לייבוא</div>';
+  h+='<button onclick="gcalImportAll()" style="width:100%;background:var(--cyan);color:#08141E;border:none;border-radius:12px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:Rubik,sans-serif;margin-bottom:12px">+ ייבוא כל התורים ללקוחות</button>';
   for(var i=0;i<events.length;i++){
     var ev=events[i];
     var dt=new Date(ev.start.dateTime||ev.start.date);
@@ -6906,6 +6906,13 @@ function gcalToggleForm(id){
   if(f)f.style.display=f.style.display==='none'?'block':'none';
 }
 
+function gcalImportAll(){
+  if(!_gcalEvents||!_gcalEvents.length){toast('אין תורים לייבוא');return;}
+  var n=_gcalEvents.length,i,ok=0;
+  for(i=0;i<n;i++){ try{importGCalEvent(i,'');ok++;}catch(e){} }
+  toast('✓ '+ok+' תורים יובאו ללקוחות');
+  gcalStatus('✓ '+ok+' תורים יובאו ללקוחות','var(--pos)');
+}
 function importGCalEvent(idx,evId){
   var ev=_gcalEvents[idx];
   if(!ev)return;
@@ -7281,24 +7288,4 @@ function _finalizeSession(){
   var elapsed=Math.round((Date.now()-_sessionStart)/1000);
   try{ fbDb.collection('analytics').doc(FB_UID).update({lastSeen:Date.now(),duration:elapsed,endTime:Date.now()}); }catch(e){}
 }
-window.addEventListener('beforeunload', _finalizeSession);
-window.addEventListener('pagehide', _finalizeSession);
-
-function onSignedIn(user){
-  FB_UID=user.uid;
-  hideAuthScreen();
-  updateAccountUI(user);
-  setSyncDot('busy');
-  _logSession(user);
-  // auto-restore Google OAuth token if still valid in this session
-  setTimeout(function(){ _restoreGoogToken(); }, 300);
-  // show welcome wizard on very first login, tour on subsequent first sessions
-  if(!localStorage.getItem('pf_welcomed')){ setTimeout(function(){showWelcomeWizard();}, 600); }
-  else if(!localStorage.getItem('shani_onboarded')){ setTimeout(function(){startTour(false);}, 800); }
-  // check for tomorrow's appointments and auto-send SMS reminders (after data loads)
-  setTimeout(function(){checkUpcomingReminders();}, 3000);
-  // Show skeleton if this device has no local data yet (fresh device, existing cloud account)
-  var _emptyDevice=Object.keys(CLIENTS).length===0 &&
-    Object.keys(RAW.expense||{}).length===0 && Object.keys(RAW.income||{}).length===0;
-  if(_emptyDevice){ showHomeSkeleton(); setTimeout(hideHomeSkeleton,6000); }
-  fbDb.collection(
+window.addEventListener(
