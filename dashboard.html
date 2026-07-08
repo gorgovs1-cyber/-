@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>לוח בקרה — My Money</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+:root{--bg:#0D1117;--card:#161B22;--card2:#1c2330;--border:rgba(255,255,255,.09);--text:#fff;--muted:rgba(255,255,255,.62);--cyan:#2DD4BF;--pos:#00E676;--gold:#FFD54F;--neg:#F87171}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Rubik','Assistant',system-ui,Arial,sans-serif;font-size:15px;line-height:1.6}
+.wrap{max-width:960px;margin:0 auto;padding:24px 16px 80px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.logo{font-weight:800}
+.back{font-size:14px;text-decoration:none;border:1px solid var(--border);padding:8px 14px;border-radius:10px;color:var(--text)}
+h1{font-size:24px;margin:.2em 0}
+.sub{color:var(--muted);font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:16px 0}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;text-align:center}
+.kpi .v{font-size:26px;font-weight:600}
+.kpi .l{font-size:12px;color:var(--muted);margin-top:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
+.panel h2{font-size:14px;margin:0 0 10px;color:var(--muted);font-weight:500}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--border);white-space:nowrap}
+th{color:var(--muted);font-weight:500;font-size:12px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-inline-start:5px}
+.btn{background:var(--cyan);color:#08131F;border:none;border-radius:10px;padding:9px 16px;font-family:Rubik,sans-serif;font-weight:600;font-size:13px;cursor:pointer}
+.btn.ghost{background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--border)}
+.center{text-align:center;padding:40px 10px;color:var(--muted)}
+a{color:var(--cyan)}
+.tbl-wrap{overflow-x:auto}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div><span class="logo">My Money</span> <span class="sub">· לוח בקרה</span></div>
+  <a class="back" href="/">חזרה לאפליקציה →</a>
+</header>
+<div id="root"><div class="center">טוען…</div></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script>
+var ADMIN_UID='7Nz62B3VTcZ1ZcCOfUunHnxNpel2';
+var firebaseConfig={
+  apiKey:"AIzaSyAKS7Y4rxWqwGvwhxB2RL-jaf8tMZuV-as",
+  authDomain:"my-money-a8eb7.firebaseapp.com",
+  projectId:"my-money-a8eb7",
+  storageBucket:"my-money-a8eb7.firebasestorage.app",
+  messagingSenderId:"191495526763",
+  appId:"1:191495526763:web:f467d2352e5c5fd78a142e"
+};
+var fbAuth=null, fbDb=null, _users=[], _charts=[];
+var root=document.getElementById('root');
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function msg(html){root.innerHTML='<div class="center">'+html+'</div>';}
+
+try{
+  firebase.initializeApp(firebaseConfig);
+  fbAuth=firebase.auth();
+  fbDb=firebase.firestore();
+  fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(){});
+}catch(e){ msg('שגיאת אתחול: '+esc(e.message)); }
+
+if(fbAuth){
+  fbAuth.onAuthStateChanged(function(user){
+    if(!user){ msg('כדי לצפות בלוח הבקרה יש להתחבר.<br><br><button class="btn" onclick="signIn()">התחברי עם Google</button>'); return; }
+    if(user.uid!==ADMIN_UID){ msg('החשבון הזה אינו מורשה לצפות בלוח הבקרה.<br><span class="sub">'+esc(user.email||'')+'</span><br><br><button class="btn ghost" onclick="signOut()">התנתקי</button>'); return; }
+    loadData();
+  });
+}
+function signIn(){ var p=new firebase.auth.GoogleAuthProvider(); fbAuth.signInWithPopup(p).catch(function(e){ msg('שגיאת התחברות: '+esc(e.message)); }); }
+function signOut(){ fbAuth.signOut(); }
+
+function loadData(){
+  msg('טוען נתונים…');
+  fbDb.collection('analytics').get().then(function(snap){
+    _users=[]; snap.forEach(function(d){ _users.push(d.data()); });
+    render();
+  }).catch(function(e){ msg('שגיאת Firestore: '+esc(e.message)+'<br><span class="sub">ייתכן שצריך להרשות ל-admin לקרוא את אוסף analytics ב-Firestore Rules.</span>'); });
+}
+
+function isMobile(ua){ return /iPhone|iPad|Android|Mobile/i.test(ua||''); }
+
+function render(){
+  var now=Date.now(), DAY=86400000;
+  var total=_users.length;
+  var activeToday=_users.filter(function(u){return u.lastSeen&&(now-u.lastSeen)<DAY;}).length;
+  var active7=_users.filter(function(u){return u.lastSeen&&(now-u.lastSeen)<7*DAY;}).length;
+  var totalHours=Math.round(_users.reduce(function(s,u){return s+(u.duration||0);},0)/360)/10;
+  var withTime=_users.filter(function(u){return u.duration;});
+  var avgMin=withTime.length?Math.round(withTime.reduce(function(s,u){return s+u.duration;},0)/withTime.length/60):0;
+
+  var h='<div class="kpis">';
+  h+='<div class="kpi"><div class="v" style="color:var(--cyan)">'+total+'</div><div class="l">משתמשים רשומים</div></div>';
+  h+='<div class="kpi"><div class="v" style="color:var(--pos)">'+activeToday+'</div><div class="l">פעילים היום</div></div>';
+  h+='<div class="kpi"><div class="v" style="color:var(--gold)">'+active7+'</div><div class="l">פעילים 7 ימים</div></div>';
+  h+='<div class="kpi"><div class="v">'+totalHours+'</div><div class="l">שעות שימוש</div></div>';
+  h+='<div class="kpi"><div class="v">'+avgMin+"'"+'</div><div class="l">ממוצע למשתמשת</div></div>';
+  h+='</div>';
+
+  h+='<div class="grid2">';
+  h+='<div class="panel"><h2>פעילות ב-14 הימים האחרונים (לפי כניסה אחרונה)</h2><canvas id="chActive" height="150"></canvas></div>';
+  h+='<div class="panel"><h2>סוג מכשיר</h2><canvas id="chDevice" height="150"></canvas></div>';
+  h+='</div>';
+  h+='<div class="grid2">';
+  h+='<div class="panel"><h2>גרסת אפליקציה</h2><canvas id="chVer" height="150"></canvas></div>';
+  h+='<div class="panel"><h2>מקור הגעה</h2><canvas id="chRef" height="150"></canvas></div>';
+  h+='</div>';
+
+  h+='<div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h2 style="margin:0">כל המשתמשים ('+total+')</h2><button class="btn ghost" onclick="exportCSV()">ייצוא CSV</button></div>';
+  h+='<div class="tbl-wrap"><table><thead><tr><th>אימייל</th><th>סטטוס</th><th>כניסה אחרונה</th><th>זמן שימוש</th><th>גרסה</th></tr></thead><tbody>';
+  _users.slice().sort(function(a,b){return (b.lastSeen||0)-(a.lastSeen||0);}).forEach(function(u){
+    var online=u.lastSeen&&(now-u.lastSeen)<600000;
+    var ls=u.lastSeen?new Date(u.lastSeen).toLocaleString('he-IL'):'—';
+    var min=u.duration?Math.round(u.duration/60)+"'":'—';
+    h+='<tr><td>'+esc(u.email||'—')+'</td><td><span class="dot" style="background:'+(online?'var(--pos)':'rgba(255,255,255,.25)')+'"></span>'+(online?'מחוברת':'לא מחוברת')+'</td><td>'+esc(ls)+'</td><td>'+min+'</td><td>'+esc(u.appVer||'—')+'</td></tr>';
+  });
+  if(!total) h+='<tr><td colspan="5" class="center">עוד אין נתונים</td></tr>';
+  h+='</tbody></table></div></div>';
+
+  root.innerHTML=h;
+  drawCharts();
+}
+
+function drawCharts(){
+  _charts.forEach(function(c){try{c.destroy();}catch(e){}}); _charts=[];
+  var now=Date.now(), DAY=86400000;
+  var txt='rgba(255,255,255,.7)', grid='rgba(255,255,255,.08)';
+  Chart.defaults.color=txt; Chart.defaults.borderColor=grid; Chart.defaults.font.family='Rubik,sans-serif';
+
+  // active last 14 days by lastSeen
+  var labels=[],data=[];
+  for(var i=13;i>=0;i--){ var d=new Date(now-i*DAY); labels.push(d.getDate()+'/'+(d.getMonth()+1)); data.push(0); }
+  _users.forEach(function(u){ if(!u.lastSeen) return; var diff=Math.floor((now-u.lastSeen)/DAY); if(diff>=0&&diff<14) data[13-diff]++; });
+  _charts.push(new Chart(document.getElementById('chActive'),{type:'bar',data:{labels:labels,datasets:[{data:data,backgroundColor:'#2DD4BF'}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}}));
+
+  // device
+  var mob=0,desk=0; _users.forEach(function(u){ isMobile(u.device)?mob++:desk++; });
+  _charts.push(new Chart(document.getElementById('chDevice'),{type:'doughnut',data:{labels:['נייד','מחשב'],datasets:[{data:[mob,desk],backgroundColor:['#2DD4BF','#6BA3FF']}]},options:{plugins:{legend:{position:'bottom'}}}}));
+
+  // app version
+  var vers={}; _users.forEach(function(u){ var v=u.appVer||'—'; vers[v]=(vers[v]||0)+1; });
+  var vk=Object.keys(vers).sort();
+  _charts.push(new Chart(document.getElementById('chVer'),{type:'bar',data:{labels:vk,datasets:[{data:vk.map(function(k){return vers[k];}),backgroundColor:'#FFD54F'}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{precision:0}}}}}));
+
+  // referral
+  var refs={}; _users.forEach(function(u){ var r=u.referredBy||'ישיר'; refs[r]=(refs[r]||0)+1; });
+  var rk=Object.keys(refs);
+  _charts.push(new Chart(document.getElementById('chRef'),{type:'doughnut',data:{labels:rk,datasets:[{data:rk.map(function(k){return refs[k];}),backgroundColor:['#2DD4BF','#6BA3FF','#FFD54F','#F87171','#B57BEE','#00E676']}]},options:{plugins:{legend:{position:'bottom'}}}}));
+}
+
+function exportCSV(){
+  if(!_users.length){ alert('אין נתונים'); return; }
+  var rows=['email,uid,lastSeen,duration_sec,appVer,device,referredBy'];
+  _users.forEach(function(u){
+    rows.push([u.email||'',u.uid||'',u.lastSeen?new Date(u.lastSeen).toISOString():'',u.duration||0,u.appVer||'',(u.device||'').replace(/,/g,' '),u.referredBy||''].join(','));
+  });
+  var blob=new Blob(['﻿'+rows.join('\n')],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='mymoney-users.csv'; a.click(); URL.revokeObjectURL(a.href);
+}
+</script>
+</body>
+</html>

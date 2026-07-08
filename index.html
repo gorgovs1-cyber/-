@@ -2079,7 +2079,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260867;
+var APP_VER=20260868;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -3280,13 +3280,13 @@ function renderHome(){
   if(grEl) grEl.textContent=gr+(SETTINGS.userName?' '+SETTINGS.userName:'');
 
   var bEl=document.getElementById('home-bal');
-  // Big number = bank balance NOW (current month) or balFull for past months
-  var bigVal=r.isNow?-safeN(CARDS.bank):r.balFull;
+  // Big number = this month's income minus expenses (what's left); balFull for past months
+  var bigVal=r.isNow?r.balNow:r.balFull;
   bEl.className='hero-bal '+(bigVal>=0?'pos':'neg');
   countUp(bEl,bigVal);
 
   // Label
-  document.getElementById('home-lbl').textContent=r.isNow?'עו"ש עכשיו':'מאזן '+r.ml.label;
+  document.getElementById('home-lbl').textContent=r.isNow?'נשאר החודש (הכנסות − הוצאות)':'מאזן '+r.ml.label;
 
   // Secondary row: show forecast (צפי סוף חודש) for current month
   var fRow=document.getElementById('home-forecast-row');
