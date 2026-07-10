@@ -1337,6 +1337,21 @@ html.mode-private .biz-only{ display:none!important; }
   </div>
 </div>
 
+<!-- ══ SETTINGS ═══════════════════════════════════════════ -->
+<div class="mbg" id="settings-modal-bg" onclick="if(event.target===this)closeSettings()">
+  <div class="modal" id="settings-modal">
+    <div class="modal-title">הגדרות</div>
+    <div style="font-size:12px;color:var(--muted);margin:12px 2px 4px">שם העסק</div>
+    <input class="minput" id="set-biz-name" placeholder="לדוגמה: Shani Straightening" />
+    <div style="font-size:12px;color:var(--muted);margin:12px 2px 4px">וואטסאפ לפניות שדרוג</div>
+    <input class="minput" id="set-biz-wa" type="tel" inputmode="tel" placeholder="למשל 0501234567" />
+    <div style="font-size:12px;color:var(--muted);margin:12px 2px 4px">טוקן Morning (להפקת חשבוניות)</div>
+    <input class="minput" id="set-morning-token" placeholder="אופציונלי — להפקת קבלות אוטומטית" />
+    <button class="modal-btn" onclick="saveSettingsForm()">שמור</button>
+    <button class="modal-btn" style="background:rgba(255,255,255,.07);color:var(--text);margin-top:8px" onclick="closeSettings()">ביטול</button>
+  </div>
+</div>
+
 <!-- ══ BALANCE ════════════════════════════════════════════ -->
 <div class="screen" id="s-balance">
   <div class="detail-hdr">
@@ -2079,7 +2094,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260868;
+var APP_VER=20260869;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -6685,7 +6700,15 @@ function openSettings() {
   document.getElementById('set-morning-token').value = SETTINGS.morningToken||'';
   document.getElementById('set-biz-name').value = SETTINGS.bizName||'';
 }
-function closeSettings() { document.getElementById('settings-modal-bg').style.display='none'; }
+function closeSettings() { var m=document.getElementById('settings-modal-bg'); if(m) m.style.display='none'; }
+function saveSettingsForm() {
+  var n=document.getElementById('set-biz-name'); if(n) SETTINGS.bizName=n.value.trim();
+  var w=document.getElementById('set-biz-wa'); if(w) SETTINGS.bizWhatsApp=w.value.trim();
+  var t=document.getElementById('set-morning-token'); if(t) SETTINGS.morningToken=t.value.trim();
+  saveSettings();
+  closeSettings();
+  toast('✓ ההגדרות נשמרו');
+}
 
 // ── SMS PROXY (calls serverless /api/send-sms) ────────────
 function _sendSmsProxy(to,body,onOk,onErr){
