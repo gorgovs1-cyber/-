@@ -1366,7 +1366,6 @@ html.mode-private .biz-only{ display:none!important; }
   <div class="page-hdr">
     <div class="page-title">לקוחות</div>
     <div class="page-sub" id="cl-sub"></div>
-    <button onclick="sendManualReminders()" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.25);color:var(--cyan);font-size:11px;font-weight:500;padding:6px 12px;border-radius:10px;cursor:pointer;white-space:nowrap" title="שלחי SMS תזכורת ללקוחות עם תור מחר">📱 תזכורות מחר</button>
   </div>
   <div class="mnav">
     <button class="marrow" onclick="moveCM(-1)">›</button>
@@ -2094,7 +2093,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260869;
+var APP_VER=20260870;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -4185,7 +4184,6 @@ function toggleC(idx){
     var next=cur==='planned'?'done':cur==='done'?'cancelled':'planned';
     list[ai].status=next;
     if(next==='done'){
-      sendSMSOnDone(list[ai]);
       sendInvoiceOnDone(list[ai]);
       appendHistoryDone(list[ai]);
     } else if(next==='cancelled'){
@@ -4384,7 +4382,7 @@ function shareReferral(){
   var myName=SETTINGS.userName||'חברה';
   var code=_getRefCode();
   var url=location.origin+location.pathname+'?ref='+code;
-  var msg='היי! אני '+myName+' משתמשת באפליקציה My Money לניהול הכספים שלי כעצמאית — מעקב הוצאות/הכנסות, דוחות מעמ״ד, SMS ללקוחות ועוד \u{1F4B8}\n\nנסי חודש חינם: '+url;
+  var msg='היי! אני '+myName+' משתמשת באפליקציה My Money לניהול הכספים שלי כעצמאית — מעקב הוצאות/הכנסות, דוחות מעמ״ד ועוד \u{1F4B8}\n\nנסי חודש חינם: '+url;
   track('referral_share',{ref_code:code});
   closeDrawer&&closeDrawer();
   // Prefer the native share sheet (lets her pick WhatsApp / SMS / anything)
@@ -4406,18 +4404,6 @@ function openWhatsApp(name){
   if(phone.charAt(0)==='0')phone='972'+phone.slice(1);
   if(phone.charAt(0)==='+')phone=phone.slice(1);
   window.open('https://wa.me/'+phone,'_blank');
-}
-
-// Manual SMS send (with custom message option)
-function manualSMS(name){
-  var prof=CLIENT_PROFILES[name]||{};
-  if(!prof.phone){toast('הוסיפי מספר טלפון תחילה');return;}
-  var first=name.split(' ')[0];
-  uiPrompt({icon:'📱',title:'שליחת SMS ל-'+first,def:'שלום '+first+', מזכירה לך שיש לנו תור קרוב. לביטול/שינוי תורי אותי 💛 — '+(SETTINGS.userName||''),okText:'שלח SMS'},function(msg){
-    if(!msg)return;
-    var phone=(prof.phone||'').replace(/[-\s]/g,'');
-    _sendSmsProxy(phone,msg,function(){toast('📱 SMS נשלח ל-'+name);},function(){toast('שגיאה בשליחת SMS');});
-  });
 }
 
 // Manual invoice
@@ -4493,7 +4479,6 @@ function renderClientCard(name){
   document.getElementById('cc-subtitle').innerHTML='ביקור אחרון: '+lastVisitStr+' '+trendHtml;
 
   var hasPhone=!!(prof.phone);
-  var hasTwilio=true;
   var hasMorning=!!(SETTINGS.morningToken);
 
   var html='';
@@ -4537,8 +4522,6 @@ function renderClientCard(name){
   html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px">';
   html+='<button data-n="'+esc(name)+'" onclick="openWhatsApp(this.dataset.n)" style="background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
     +'<span style="font-size:20px">💬</span><span style="font-size:10px;color:#25D366;font-family:Rubik,sans-serif">וואטסאפ</span></button>';
-  html+='<button data-n="'+esc(name)+'" onclick="manualSMS(this.dataset.n)" style="background:'+(hasTwilio?'rgba(45,212,191,.1)':'rgba(255,255,255,.05)')+';border:1px solid '+(hasTwilio?'rgba(45,212,191,.25)':'rgba(255,255,255,.1)')+';border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
-    +'<span style="font-size:20px">📱</span><span style="font-size:10px;color:'+(hasTwilio?'var(--cyan)':'var(--muted)')+';font-family:Rubik,sans-serif">SMS</span></button>';
   html+='<button data-n="'+esc(name)+'" onclick="manualInvoice(this.dataset.n)" style="background:'+(hasMorning?'rgba(232,168,62,.1)':'rgba(255,255,255,.05)')+';border:1px solid '+(hasMorning?'rgba(232,168,62,.25)':'rgba(255,255,255,.1)')+';border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
     +'<span style="font-size:20px">🧾</span><span style="font-size:10px;color:'+(hasMorning?'var(--gold)':'var(--muted)')+';font-family:Rubik,sans-serif">חשבונית</span></button>';
   html+='<button onclick="closeClientCard();openQuickAdd()" style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.28);border-radius:12px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">'
@@ -6710,59 +6693,7 @@ function saveSettingsForm() {
   toast('✓ ההגדרות נשמרו');
 }
 
-// ── SMS PROXY (calls serverless /api/send-sms) ────────────
-function _sendSmsProxy(to,body,onOk,onErr){
-  fetch('/api/send-sms',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({to:to,body:body})
-  }).then(function(r){
-    if(r.ok){if(onOk)onOk();}
-    else{if(onErr)onErr();}
-  }).catch(function(){if(onErr)onErr();});
-}
-
-// ── SMS ON DONE ───────────────────────────────────────────
-function sendSMSOnDone(client) {
-  var profile = CLIENT_PROFILES[client.name]||{};
-  if(!profile.phone) return;
-  var profile = CLIENT_PROFILES[client.name]||{};
-  if(!profile.phone) return;
-  var phone = profile.phone.replace(/[-\s]/g,'');
-  if(phone.charAt(0)==='0') phone = '+972'+phone.slice(1);
-  var msg = 'שלום '+client.name.split(' ')[0]+', תודה על הביקור! הטיפול שלך בוצע. סכום: ₪'+client.amount+'. - '+(SETTINGS.userName||'');
-  _sendSmsProxy(phone,msg,function(){toast('📱 SMS נשלח ל-'+client.name);},function(){});
-}
-
-// ── 24H APPOINTMENT REMINDERS ────────────────────────────
-function checkUpcomingReminders(){
-  var tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
-  var tDay=tomorrow.getDate(), tMon=tomorrow.getMonth()+1, tYear=tomorrow.getFullYear();
-  // find matching MONTHS entry
-  var mk=null;
-  for(var i=0;i<MONTHS.length;i++){if(MONTHS[i].mon===tMon&&MONTHS[i].year===tYear){mk=MONTHS[i].key;break;}}
-  if(!mk) return;
-  var reminded={}; try{reminded=JSON.parse(localStorage.getItem('pf_sms_reminded')||'{}');}catch(e){}
-  var sent=0;
-  (CLIENTS[mk]||[]).filter(function(c){return c.status==='planned'&&c.day===tDay;}).forEach(function(c){
-    var key=tYear+'-'+tMon+'-'+tDay+'-'+c.name;
-    if(reminded[key]) return;
-    var profile=CLIENT_PROFILES[c.name]||{};
-    if(!profile.phone) return;
-    var phone=profile.phone.replace(/[-\s]/g,'');
-    if(phone.charAt(0)==='0') phone='+972'+phone.slice(1);
-    var dateStr=String(tDay).padStart(2,'0')+'/'+String(tMon).padStart(2,'0');
-    var biz=SETTINGS.bizName||SETTINGS.userName||'';
-    var msg='שלום '+esc(c.name.split(' ')[0])+', תזכורת: יש לך תור מחר '+dateStr+(biz?' אצל '+biz:'')+'.'+(c.treat?' טיפול: '+c.treat+'.':'')+' לביטול — חזרי על הודעה זו.';
-    _sendSmsProxy(phone,msg,function(){reminded[key]=Date.now();try{localStorage.setItem('pf_sms_reminded',JSON.stringify(reminded));}catch(e){}},function(){});
-    sent++;
-  });
-  if(sent>0) setTimeout(function(){toast('📱 '+sent+' תזכורות נשלחו ללקוחות מחר');},1500);
-}
-function sendManualReminders(){
-  checkUpcomingReminders();
-  toast('🔄 שולחת תזכורות...');
-}
+// (SMS reminder feature removed)
 
 // ── INVOICE ON DONE ───────────────────────────────────────
 function sendInvoiceOnDone(client) {
@@ -7365,8 +7296,6 @@ function onSignedIn(user){
   // show welcome wizard on very first login, tour on subsequent first sessions
   if(!localStorage.getItem('pf_welcomed')){ setTimeout(function(){showWelcomeWizard();}, 600); }
   else if(!localStorage.getItem('shani_onboarded')){ setTimeout(function(){startTour(false);}, 800); }
-  // check for tomorrow's appointments and auto-send SMS reminders (after data loads)
-  setTimeout(function(){checkUpcomingReminders();}, 3000);
   // Show skeleton if this device has no local data yet (fresh device, existing cloud account)
   var _emptyDevice=Object.keys(CLIENTS).length===0 &&
     Object.keys(RAW.expense||{}).length===0 && Object.keys(RAW.income||{}).length===0;

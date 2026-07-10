@@ -1,4 +1,4 @@
-var CACHE = 'shani-money-v20260869';
+var CACHE = 'shani-money-v20260870';
 
 // Allow the page to force an immediately-waiting worker to activate.
 self.addEventListener('message', function(e){
