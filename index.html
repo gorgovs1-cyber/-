@@ -2086,7 +2086,7 @@ html.mode-private .biz-only{ display:none!important; }
 <script>
 'use strict';
 // Force hard-reload when code version bumps (breaks iOS cache)
-var APP_VER=20260872;
+var APP_VER=20260873;
 // These globals must be initialized before any function that reads them.
 // (var hoisting makes them undefined until the declaration line executes.)
 var SETTINGS       = JSON.parse(localStorage.getItem('shani_settings')||'{}');
@@ -4122,10 +4122,10 @@ function renderClients(){
     '<div class="cl-sum-card done-c"><div class="cls-title">בוצע</div><div class="cls-val pos">₪'+fmt(doneAmt)+'</div><div class="cls-sub">'+done.length+' לקוחות'+(done.length>0?' · '+done.map(function(c){return esc(c.name.split(' ')[0]);}).join(', '):'')+'</div></div>'+
     '<div class="cl-sum-card plan-c"><div class="cls-title">צפי סוף חודש</div><div class="cls-val cyn">+₪'+fmt(clientForecast)+'</div><div class="cls-sub">'+forecastSub+'</div></div>';
   var today=new Date();
-  var isNow=today.getMonth()+1===m&&today.getFullYear()===ml.year;
+  var isNow=today.getMonth()+1===ml.mon&&today.getFullYear()===ml.year;
   var byDay={};
   all.forEach(function(c){if(!byDay[c.day])byDay[c.day]=[];byDay[c.day].push(c);});
-  var fd=new Date(ml.year,m-1,1).getDay();
+  var fd=new Date(ml.year,ml.mon-1,1).getDay();
   var h='';
   for(var i=0;i<fd;i++)h+='<div class="cal-cell empty"><div class="cal-num"></div></div>';
   for(var d=1;d<=ml.days;d++){
