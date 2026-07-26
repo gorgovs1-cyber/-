@@ -1,3 +1,12 @@
 node_modules/
 dist/
 .DS_Store
+.claude/
+
+# Android signing key — DO NOT COMMIT
+twa/*.jks
+twa/*.keystore
+
+# Internal tooling
+twa-build/
+.vercel
